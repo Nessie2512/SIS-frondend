@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { z } from 'zod'
@@ -27,12 +28,13 @@ export const Route = createFileRoute('/turmas/')({
 })
 
 function EcraTurmas() {
+  const { t } = useLingui()
   const { anoLectivoId } = Route.useRouteContext()
   if (!anoLectivoId) {
     return (
       <EstadoVazio
-        titulo="Ainda não há anos lectivos."
-        descricao="Crie o primeiro ano lectivo para começar."
+        titulo={t`Ainda não há anos lectivos.`}
+        descricao={t`Crie o primeiro ano lectivo para começar.`}
       />
     )
   }
@@ -40,19 +42,23 @@ function EcraTurmas() {
 }
 
 function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
+  const { t } = useLingui()
   const search = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const filtros: FiltrosTurma = { anoLectivoId, ...search }
   const { data, isPlaceholderData } = useQuery(turmasQuery(filtros))
   if (!data) return <TurmasEsqueleto />
+  const { page: pagina, totalPaginas } = data
 
   return (
     <section className="flex flex-col gap-6">
       <div className="flex items-end justify-between gap-4">
-        <h1 className="text-titulo-pagina">Turmas</h1>
+        <h1 className="text-titulo-pagina">
+          <Trans>Turmas</Trans>
+        </h1>
         <div
           role="group"
-          aria-label="Estado"
+          aria-label={t`Estado`}
           className="flex rounded-controlo bg-linha p-0.5 text-secundario"
         >
           {(['ACTIVA', 'ENCERRADA'] as const).map((estado) => (
@@ -66,7 +72,7 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
                 search.estado === estado && 'bg-superficie text-texto-1 shadow-elevado',
               )}
             >
-              {estado === 'ACTIVA' ? 'Activas' : 'Encerradas'}
+              {estado === 'ACTIVA' ? <Trans>Activas</Trans> : <Trans>Encerradas</Trans>}
             </Link>
           ))}
         </div>
@@ -74,8 +80,8 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
 
       {data.turmas.length === 0 ? (
         <EstadoVazio
-          titulo="Ainda não há turmas neste ano."
-          descricao="Crie a primeira ou duplique as do ano anterior."
+          titulo={t`Ainda não há turmas neste ano.`}
+          descricao={t`Crie a primeira ou duplique as do ano anterior.`}
         />
       ) : (
         <div
@@ -88,19 +94,19 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
             <thead className="text-legenda text-texto-3">
               <tr className="border-b border-linha">
                 <th scope="col" className="px-4 py-3">
-                  Turma
+                  <Trans>Turma</Trans>
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Classe
+                  <Trans>Classe</Trans>
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Turno
+                  <Trans>Turno</Trans>
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Sala
+                  <Trans>Sala</Trans>
                 </th>
                 <th scope="col" className="px-4 py-3">
-                  Ocupação
+                  <Trans>Ocupação</Trans>
                 </th>
               </tr>
             </thead>
@@ -125,23 +131,28 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
       )}
 
       {data.totalPaginas > 1 && (
-        <nav aria-label="Paginação" className="flex items-center justify-end gap-3 text-secundario">
+        <nav
+          aria-label={t`Paginação`}
+          className="flex items-center justify-end gap-3 text-secundario"
+        >
           <span className="tabular text-texto-2">
-            Página {data.page} de {data.totalPaginas}
+            <Trans>
+              Página {pagina} de {totalPaginas}
+            </Trans>
           </span>
           <Button
             tamanho="compacto"
             disabled={search.page <= 1}
             onClick={() => void navigate({ search: (s) => ({ ...s, page: s.page - 1 }) })}
           >
-            Anterior
+            <Trans>Anterior</Trans>
           </Button>
           <Button
             tamanho="compacto"
             disabled={search.page >= data.totalPaginas}
             onClick={() => void navigate({ search: (s) => ({ ...s, page: s.page + 1 }) })}
           >
-            Seguinte
+            <Trans>Seguinte</Trans>
           </Button>
         </nav>
       )}
@@ -150,8 +161,9 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
 }
 
 function TurmasEsqueleto() {
+  const { t } = useLingui()
   return (
-    <section className="flex flex-col gap-6" aria-busy="true" aria-label="A carregar turmas">
+    <section className="flex flex-col gap-6" aria-busy="true" aria-label={t`A carregar turmas`}>
       <Esqueleto className="h-[34px] w-40" />
       <div className="rounded-cartao bg-superficie ring-1 ring-linha">
         {Array.from({ length: 8 }, (_, i) => (

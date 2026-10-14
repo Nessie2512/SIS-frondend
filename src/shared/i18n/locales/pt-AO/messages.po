@@ -1,0 +1,238 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-10-15 00:46+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: pt-AO\n"
+
+#: src/entities/turma/ui/barra-ocupacao.tsx
+msgid "{inscritos} de {lotacaoMaxima}"
+msgstr "{inscritos} de {lotacaoMaxima}"
+
+#: src/routes/turmas/index.tsx
+msgid "A carregar turmas"
+msgstr "A carregar turmas"
+
+#: src/routes/turmas/index.tsx
+msgid "Activas"
+msgstr "Activas"
+
+#: src/routes/turmas/index.tsx
+msgid "Ainda não há anos lectivos."
+msgstr "Ainda não há anos lectivos."
+
+#: src/routes/turmas/index.tsx
+msgid "Ainda não há turmas neste ano."
+msgstr "Ainda não há turmas neste ano."
+
+#: src/shared/config/glossario.ts
+msgid "ano lectivo"
+msgstr "ano lectivo"
+
+#: src/entities/ano-lectivo/ui/selector-ano.tsx
+msgid "Ano lectivo"
+msgstr "Ano lectivo"
+
+#: src/shared/config/glossario.ts
+msgid "anos lectivos"
+msgstr "anos lectivos"
+
+#: src/routes/turmas/index.tsx
+msgid "Anterior"
+msgstr "Anterior"
+
+#: src/entities/turma/ui/barra-ocupacao.tsx
+msgid "cheia"
+msgstr "cheia"
+
+#: src/shared/config/glossario.ts
+msgid "ciclo"
+msgstr "ciclo"
+
+#: src/shared/config/glossario.ts
+msgid "ciclos"
+msgstr "ciclos"
+
+#: src/shared/config/glossario.ts
+msgid "classe"
+msgstr "classe"
+
+#: src/routes/turmas/index.tsx
+msgid "Classe"
+msgstr "Classe"
+
+#: src/shared/config/glossario.ts
+msgid "classes"
+msgstr "classes"
+
+#: src/routes/turmas/index.tsx
+msgid "Crie a primeira ou duplique as do ano anterior."
+msgstr "Crie a primeira ou duplique as do ano anterior."
+
+#: src/routes/turmas/index.tsx
+msgid "Crie o primeiro ano lectivo para começar."
+msgstr "Crie o primeiro ano lectivo para começar."
+
+#: src/entities/ano-lectivo/model/mapeadores.ts
+msgid "Em curso"
+msgstr "Em curso"
+
+#: src/shared/config/glossario.ts
+msgid "encarregado"
+msgstr "encarregado"
+
+#: src/shared/config/glossario.ts
+msgid "encarregados"
+msgstr "encarregados"
+
+#: src/routes/turmas/index.tsx
+msgid "Encerradas"
+msgstr "Encerradas"
+
+#: src/entities/ano-lectivo/model/mapeadores.ts
+msgid "Encerrado"
+msgstr "Encerrado"
+
+#: src/routes/turmas/index.tsx
+msgid "Estado"
+msgstr "Estado"
+
+#: src/shared/config/glossario.ts
+msgid "estudante"
+msgstr "estudante"
+
+#: src/shared/config/glossario.ts
+msgid "estudantes"
+msgstr "estudantes"
+
+#: src/routes/__root.tsx
+#: src/routes/index.tsx
+msgid "Início"
+msgstr "Início"
+
+#: src/shared/config/glossario.ts
+msgid "Inscrever na turma"
+msgstr "Inscrever na turma"
+
+#: src/shared/config/glossario.ts
+msgid "inscrição"
+msgstr "inscrição"
+
+#: src/shared/config/glossario.ts
+msgid "inscrições"
+msgstr "inscrições"
+
+#: src/entities/turma/model/mapeadores.ts
+msgid "Manhã"
+msgstr "Manhã"
+
+#: src/shared/config/glossario.ts
+msgid "matrícula"
+msgstr "matrícula"
+
+#: src/shared/config/glossario.ts
+msgid "Matricular"
+msgstr "Matricular"
+
+#: src/shared/config/glossario.ts
+msgid "matrículas"
+msgstr "matrículas"
+
+#: src/shared/ui/erro-de-rota.tsx
+msgid "Não foi possível carregar esta página."
+msgstr "Não foi possível carregar esta página."
+
+#: src/entities/turma/model/mapeadores.ts
+msgid "Noite"
+msgstr "Noite"
+
+#: src/routes/index.tsx
+msgid "O painel com indicadores e pendências do dia chega aqui."
+msgstr "O painel com indicadores e pendências do dia chega aqui."
+
+#: src/routes/turmas/index.tsx
+msgid "Ocupação"
+msgstr "Ocupação"
+
+#: src/entities/turma/ui/barra-ocupacao.tsx
+msgid "Ocupação da turma"
+msgstr "Ocupação da turma"
+
+#: src/routes/turmas/index.tsx
+msgid "Página {pagina} de {totalPaginas}"
+msgstr "Página {pagina} de {totalPaginas}"
+
+#: src/routes/turmas/index.tsx
+msgid "Paginação"
+msgstr "Paginação"
+
+#: src/entities/ano-lectivo/model/mapeadores.ts
+msgid "Planeado"
+msgstr "Planeado"
+
+#: src/routes/__root.tsx
+msgid "Principal"
+msgstr "Principal"
+
+#: src/shared/config/glossario.ts
+msgid "professor"
+msgstr "professor"
+
+#: src/shared/config/glossario.ts
+msgid "professores"
+msgstr "professores"
+
+#: src/routes/turmas/index.tsx
+msgid "Sala"
+msgstr "Sala"
+
+#: src/routes/__root.tsx
+msgid "Saltar para o conteúdo"
+msgstr "Saltar para o conteúdo"
+
+#: src/routes/__root.tsx
+msgid "Secretaria"
+msgstr "Secretaria"
+
+#: src/routes/turmas/index.tsx
+msgid "Seguinte"
+msgstr "Seguinte"
+
+#: src/entities/turma/model/mapeadores.ts
+msgid "Tarde"
+msgstr "Tarde"
+
+#: src/shared/ui/erro-de-rota.tsx
+msgid "Tentar de novo"
+msgstr "Tentar de novo"
+
+#: src/shared/config/glossario.ts
+msgid "turma"
+msgstr "turma"
+
+#: src/routes/turmas/index.tsx
+msgid "Turma"
+msgstr "Turma"
+
+#: src/shared/config/glossario.ts
+msgid "turmas"
+msgstr "turmas"
+
+#: src/routes/__root.tsx
+#: src/routes/turmas/index.tsx
+msgid "Turmas"
+msgstr "Turmas"
+
+#: src/routes/turmas/index.tsx
+msgid "Turno"
+msgstr "Turno"
+
+#: src/routes/index.tsx
+msgid "Ver turmas"
+msgstr "Ver turmas"
+
+#: src/shared/ui/erro-de-rota.tsx
+msgid "Verifique a ligação e tente de novo."
+msgstr "Verifique a ligação e tente de novo."

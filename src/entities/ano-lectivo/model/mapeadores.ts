@@ -1,11 +1,13 @@
+import { i18n } from '@lingui/core'
+import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
 import type { AnoLectivo, EstadoAnoLectivo } from './tipos'
 
-const ROTULO: Record<EstadoAnoLectivo, string> = {
-  PLANEADO: 'Planeado',
-  EM_CURSO: 'Em curso',
-  ENCERRADO: 'Encerrado',
-}
+const ROTULO = {
+  PLANEADO: msg`Planeado`,
+  EM_CURSO: msg`Em curso`,
+  ENCERRADO: msg`Encerrado`,
+} satisfies Record<EstadoAnoLectivo, unknown>
 
 export function paraAnoLectivo(dto: Dto<'AnoLectivoDto'>): AnoLectivo {
   return {
@@ -14,7 +16,7 @@ export function paraAnoLectivo(dto: Dto<'AnoLectivoDto'>): AnoLectivo {
     dataInicio: dto.dataInicio,
     dataFim: dto.dataFim,
     estado: dto.estado,
-    estadoRotulo: ROTULO[dto.estado],
+    estadoRotulo: i18n._(ROTULO[dto.estado]),
     soLeitura: dto.estado === 'ENCERRADO',
   }
 }

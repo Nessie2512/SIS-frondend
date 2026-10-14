@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
 import { anosLectivosQuery } from '../api/queries'
@@ -17,7 +18,9 @@ export function SelectorAno() {
 
   return (
     <label className="flex items-center gap-2 rounded-full bg-fundo px-3 py-1 text-secundario ring-1 ring-linha">
-      <span className="sr-only">Ano lectivo</span>
+      <span className="sr-only">
+        <Trans>Ano lectivo</Trans>
+      </span>
       <select
         className="bg-transparent font-medium text-texto-1 outline-none"
         value={anoLectivoId ?? ''}

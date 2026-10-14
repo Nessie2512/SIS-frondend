@@ -3,6 +3,7 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
+import { lingui, linguiTransformerBabelPreset } from '@lingui/vite-plugin'
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
 
@@ -18,7 +19,9 @@ export default defineConfig({
       routeFileIgnorePrefix: '-',
     }),
     react(),
-    babel({ presets: [reactCompilerPreset()] }),
+    // Macros do Lingui e React Compiler na mesma passagem de Babel
+    babel({ presets: [linguiTransformerBabelPreset(), reactCompilerPreset()] }),
+    lingui(),
     tailwindcss(),
   ],
   resolve: {

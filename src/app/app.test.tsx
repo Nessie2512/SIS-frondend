@@ -1,7 +1,7 @@
-import { QueryClientProvider } from '@tanstack/react-query'
 import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
 import { render, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
+import { Providers } from './providers'
 import { criarQueryClient } from './query-client'
 import { routeTree } from './routeTree.gen'
 
@@ -13,9 +13,9 @@ function renderizarEm(url: string) {
     history: createMemoryHistory({ initialEntries: [url] }),
   })
   render(
-    <QueryClientProvider client={queryClient}>
+    <Providers queryClient={queryClient}>
       <RouterProvider router={router} />
-    </QueryClientProvider>,
+    </Providers>,
   )
   return router
 }

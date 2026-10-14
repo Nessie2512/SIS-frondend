@@ -1,3 +1,4 @@
+import { Trans } from '@lingui/react/macro'
 import type { ErrorComponentProps } from '@tanstack/react-router'
 import { useQueryErrorResetBoundary } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
@@ -15,8 +16,12 @@ export function ErroDeRota({ reset }: ErrorComponentProps) {
 
   return (
     <div role="alert" className="flex flex-col items-start gap-3 py-16">
-      <p className="text-subtitulo">Não foi possível carregar esta página.</p>
-      <p className="text-secundario text-texto-2">Verifique a ligação e tente de novo.</p>
+      <p className="text-subtitulo">
+        <Trans>Não foi possível carregar esta página.</Trans>
+      </p>
+      <p className="text-secundario text-texto-2">
+        <Trans>Verifique a ligação e tente de novo.</Trans>
+      </p>
       <Button
         variante="secundario"
         onClick={() => {
@@ -24,7 +29,7 @@ export function ErroDeRota({ reset }: ErrorComponentProps) {
           void router.invalidate()
         }}
       >
-        Tentar de novo
+        <Trans>Tentar de novo</Trans>
       </Button>
     </div>
   )
