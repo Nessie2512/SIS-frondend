@@ -1,0 +1,6 @@
+dist
+pnpm-lock.yaml
+public/mockServiceWorker.js
+src/app/routeTree.gen.ts
+src/shared/api/schema.d.ts
+*.pdf
