@@ -108,7 +108,7 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
               {data.turmas.map((turma) => (
                 <tr
                   key={turma.id}
-                  className="h-11 border-b border-linha last:border-0 hover:bg-fundo"
+                  className="h-linha border-b border-linha last:border-0 hover:bg-fundo"
                 >
                   <td className="px-4 font-medium">{turma.designacao}</td>
                   <td className="px-4 text-texto-2">{turma.classe}</td>
@@ -157,7 +157,7 @@ function TurmasEsqueleto() {
         {Array.from({ length: 8 }, (_, i) => (
           <div
             key={i}
-            className="flex h-11 items-center gap-6 border-b border-linha px-4 last:border-0"
+            className="flex h-linha items-center gap-6 border-b border-linha px-4 last:border-0"
           >
             <Esqueleto className="h-4 w-16" />
             <Esqueleto className="h-4 w-24" />

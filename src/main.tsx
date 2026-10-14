@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './app/app'
+import { sincronizarPreferencias } from './shared/lib/preferencias'
 import './shared/styles/tokens.css'
 
 async function prepararApiSimulada() {
@@ -11,6 +12,8 @@ async function prepararApiSimulada() {
     await worker.start({ onUnhandledFrame: 'bypass' })
   }
 }
+
+sincronizarPreferencias()
 
 void prepararApiSimulada().then(() => {
   createRoot(document.getElementById('root')!).render(
