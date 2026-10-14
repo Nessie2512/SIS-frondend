@@ -1,0 +1,92 @@
+/* shared/styles/tokens.css: única fonte de valores visuais (Tailwind v4, CSS-first). Guia 6.1 */
+@import 'tailwindcss';
+
+/* Classes dark: seguem o atributo data-tema, não só a preferência do sistema */
+@custom-variant dark (&:where([data-tema='escuro'], [data-tema='escuro'] *));
+
+@theme {
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter Variable', system-ui, sans-serif;
+
+  --color-fundo: #f6f6f8;
+  --color-superficie: #ffffff;
+  --color-texto-1: #1d1d1f;
+  --color-texto-2: #55555b;
+  --color-texto-3: #6b6b73;
+  --color-linha: rgb(0 0 0 / 0.08);
+  --color-acento: #0a63e8;
+  --color-perigo: #d70015;
+  --color-sucesso: #1e7b34;
+  --color-aviso: #8a5a00;
+
+  --radius-controlo: 8px;
+  --radius-cartao: 12px;
+  --radius-folha: 16px;
+
+  --shadow-elevado: 0 1px 2px rgb(0 0 0 / 0.06), 0 4px 12px rgb(0 0 0 / 0.06);
+  --shadow-flutuante: 0 8px 30px rgb(0 0 0 / 0.12);
+
+  --ease-padrao: cubic-bezier(0.2, 0, 0, 1);
+  --duracao-micro: 120ms;
+  --duracao-padrao: 200ms;
+  --duracao-painel: 320ms;
+
+  /* Escala tipográfica: seis níveis fixos (guia 6.1) */
+  --text-titulo-pagina: 28px;
+  --text-titulo-pagina--line-height: 34px;
+  --text-titulo-pagina--font-weight: 600;
+  --text-titulo-seccao: 20px;
+  --text-titulo-seccao--line-height: 26px;
+  --text-titulo-seccao--font-weight: 600;
+  --text-subtitulo: 15px;
+  --text-subtitulo--line-height: 20px;
+  --text-subtitulo--font-weight: 600;
+  --text-corpo: 14px;
+  --text-corpo--line-height: 20px;
+  --text-corpo--font-weight: 400;
+  --text-secundario: 13px;
+  --text-secundario--line-height: 18px;
+  --text-secundario--font-weight: 400;
+  --text-legenda: 12px;
+  --text-legenda--line-height: 16px;
+  --text-legenda--font-weight: 500;
+}
+
+:root[data-tema='escuro'] {
+  --color-fundo: #0b0b0d;
+  --color-superficie: #1c1c1e;
+  --color-texto-1: #f5f5f7;
+  --color-texto-2: #a1a1a6;
+  --color-texto-3: #8e8e93;
+  --color-linha: rgb(255 255 255 / 0.1);
+  --color-acento: #4c9aff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duracao-micro: 1ms;
+    --duracao-padrao: 1ms;
+    --duracao-painel: 1ms;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-acento);
+  outline-offset: 2px;
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  html[data-tema='escuro'] {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-fundo font-sans text-corpo text-texto-1 antialiased;
+  }
+  /* Números tabulares em processos, datas e contagens (guia 6.1) */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+}
