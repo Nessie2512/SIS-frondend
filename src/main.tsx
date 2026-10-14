@@ -5,7 +5,8 @@ import './shared/styles/tokens.css'
 
 async function prepararApiSimulada() {
   // Enquanto não há backend/OpenAPI: `pnpm dev:mock` (ou VITE_API_MOCK=true em .env.local)
-  if (import.meta.env.DEV && import.meta.env.VITE_API_MOCK === 'true') {
+  const simulada = import.meta.env.MODE === 'mock' || import.meta.env.VITE_API_MOCK === 'true'
+  if (import.meta.env.DEV && simulada) {
     const { worker } = await import('./mocks/browser')
     await worker.start({ onUnhandledFrame: 'bypass' })
   }
