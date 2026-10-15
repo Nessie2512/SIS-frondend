@@ -1,4 +1,5 @@
 dist
+dist-e2e
 pnpm-lock.yaml
 public/mockServiceWorker.js
 src/app/routeTree.gen.ts

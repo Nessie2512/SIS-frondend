@@ -10,6 +10,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores([
     'dist',
+    'dist-e2e',
     'storybook-static',
     'public/mockServiceWorker.js',
     'src/app/routeTree.gen.ts',

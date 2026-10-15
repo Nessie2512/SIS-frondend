@@ -18,6 +18,7 @@ coverage
 storybook-static
 __screenshots__
 playwright-report
+dist-e2e
 test-results
 
 # Editor directories and files
