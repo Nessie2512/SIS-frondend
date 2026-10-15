@@ -48,6 +48,49 @@
   --duracao-padrao: 200ms;
   --duracao-painel: 320ms;
 
+  /* Movimento de camadas (guia 1.1 Profundidade): painéis a 320 ms, diálogos a 200 ms */
+  --animate-indeterminado: indeterminado 1.2s var(--ease-padrao) infinite;
+  --animate-folha-entrar: folha-entrar var(--duracao-painel) var(--ease-padrao);
+  --animate-folha-sair: folha-sair var(--duracao-padrao) var(--ease-padrao);
+  --animate-dialogo-entrar: dialogo-entrar var(--duracao-padrao) var(--ease-padrao);
+  --animate-desvanecer-entrar: desvanecer-entrar var(--duracao-padrao) var(--ease-padrao);
+  --animate-desvanecer-sair: desvanecer-sair var(--duracao-padrao) var(--ease-padrao);
+
+  @keyframes indeterminado {
+    from {
+      left: -33%;
+    }
+    to {
+      left: 100%;
+    }
+  }
+  @keyframes folha-entrar {
+    from {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes folha-sair {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes dialogo-entrar {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.97);
+    }
+  }
+  @keyframes desvanecer-entrar {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes desvanecer-sair {
+    to {
+      opacity: 0;
+    }
+  }
+
   /* Densidade (guia 6.1): confortável 44 px, compacta 36 px; ver [data-densidade] */
   --spacing-linha: 44px;
 

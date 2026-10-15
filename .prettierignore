@@ -4,3 +4,5 @@ public/mockServiceWorker.js
 src/app/routeTree.gen.ts
 src/shared/api/schema.d.ts
 *.pdf
+storybook-static
+docs/contraste.md

@@ -10,6 +10,7 @@ import { defineConfig, globalIgnores } from 'eslint/config'
 export default defineConfig([
   globalIgnores([
     'dist',
+    'storybook-static',
     'public/mockServiceWorker.js',
     'src/app/routeTree.gen.ts',
     'src/shared/api/schema.d.ts',
@@ -69,6 +70,8 @@ export default defineConfig([
             '^[A-Z0-9_:./-]+$',
             // fusos horários IANA
             '^[A-Z][a-z]+/[A-Za-z_]+$',
+            // directivas do React Compiler
+            '^use (no )?memo$',
           ],
           ignoreNames: [
             { regex: { pattern: '^class|class(es)?(Name)?$', flags: 'i' } },
@@ -135,7 +138,7 @@ export default defineConfig([
   },
   {
     // Ficheiros de rota exportam `Route`; o plugin do TanStack Router trata do HMR
-    files: ['src/routes/**/*.tsx'],
+    files: ['src/routes/**/*.tsx', '.storybook/**/*.tsx', 'src/**/*.stories.tsx'],
     rules: { 'react-refresh/only-export-components': 'off' },
   },
   {

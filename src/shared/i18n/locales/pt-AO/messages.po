@@ -7,13 +7,46 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: pt-AO\n"
 
+#. placeholder {0}: idsSeleccionados.length
+#: src/shared/ui/tabela-dados.tsx
+msgid "{0, plural, one {# seleccionado} other {# seleccionados}}"
+msgstr "{0, plural, one {# seleccionado} other {# seleccionados}}"
+
 #: src/entities/turma/ui/barra-ocupacao.tsx
 msgid "{inscritos} de {lotacaoMaxima}"
 msgstr "{inscritos} de {lotacaoMaxima}"
 
+#: src/shared/ui/selector.tsx
+msgid "{quantos} seleccionados"
+msgstr "{quantos} seleccionados"
+
+#: src/shared/ui/selector-data.tsx
+msgid "{textoInicio} – escolha o fim"
+msgstr "{textoInicio} – escolha o fim"
+
+#: src/shared/ui/progresso.tsx
+msgid "A carregar"
+msgstr "A carregar"
+
+#: src/shared/ui/selector.tsx
+msgid "A carregar opções"
+msgstr "A carregar opções"
+
 #: src/routes/turmas/index.tsx
 msgid "A carregar turmas"
 msgstr "A carregar turmas"
+
+#: src/shared/ui/selector-data.tsx
+msgid "A data está fora do ano lectivo ({de} a {ate})."
+msgstr "A data está fora do ano lectivo ({de} a {ate})."
+
+#: src/shared/ui/selector-data.tsx
+msgid "Abrir calendário"
+msgstr "Abrir calendário"
+
+#: src/shared/ui/tabela-dados.tsx
+msgid "Acções em lote"
+msgstr "Acções em lote"
 
 #: src/routes/turmas/index.tsx
 msgid "Activas"
@@ -75,6 +108,22 @@ msgstr "Crie a primeira ou duplique as do ano anterior."
 msgid "Crie o primeiro ano lectivo para começar."
 msgstr "Crie o primeiro ano lectivo para começar."
 
+#: src/shared/ui/selector-data.tsx
+msgid "Data inválida. Use o formato dd/mm/aaaa."
+msgstr "Data inválida. Use o formato dd/mm/aaaa."
+
+#: src/shared/ui/selector-data.tsx
+msgid "dd/mm/aaaa"
+msgstr "dd/mm/aaaa"
+
+#: src/shared/ui/notificacoes.tsx
+msgid "Desfazer"
+msgstr "Desfazer"
+
+#: src/shared/ui/aviso.tsx
+msgid "Dispensar"
+msgstr "Dispensar"
+
 #: src/entities/ano-lectivo/model/mapeadores.ts
 msgid "Em curso"
 msgstr "Em curso"
@@ -95,6 +144,18 @@ msgstr "Encerradas"
 msgid "Encerrado"
 msgstr "Encerrado"
 
+#: src/shared/ui/selector-data.tsx
+msgid "Escolha o último dia do período."
+msgstr "Escolha o último dia do período."
+
+#: src/shared/ui/selector.tsx
+msgid "Escolher"
+msgstr "Escolher"
+
+#: src/shared/ui/selector-data.tsx
+msgid "Escolher período"
+msgstr "Escolher período"
+
 #: src/routes/turmas/index.tsx
 msgid "Estado"
 msgstr "Estado"
@@ -106,6 +167,10 @@ msgstr "estudante"
 #: src/shared/config/glossario.ts
 msgid "estudantes"
 msgstr "estudantes"
+
+#: src/shared/ui/folha.tsx
+msgid "Fechar"
+msgstr "Fechar"
 
 #: src/routes/__root.tsx
 #: src/routes/index.tsx
@@ -124,6 +189,10 @@ msgstr "inscrição"
 msgid "inscrições"
 msgstr "inscrições"
 
+#: src/shared/ui/tabela-dados.tsx
+msgid "Limpar selecção"
+msgstr "Limpar selecção"
+
 #: src/entities/turma/model/mapeadores.ts
 msgid "Manhã"
 msgstr "Manhã"
@@ -139,6 +208,18 @@ msgstr "Matricular"
 #: src/shared/config/glossario.ts
 msgid "matrículas"
 msgstr "matrículas"
+
+#: src/shared/ui/calendario.tsx
+msgid "Mês anterior"
+msgstr "Mês anterior"
+
+#: src/shared/ui/calendario.tsx
+msgid "Mês seguinte"
+msgstr "Mês seguinte"
+
+#: src/shared/ui/tabela-dados.tsx
+msgid "Não foi possível carregar a lista."
+msgstr "Não foi possível carregar a lista."
 
 #: src/shared/ui/erro-de-rota.tsx
 msgid "Não foi possível carregar esta página."
@@ -167,6 +248,10 @@ msgstr "Página {pagina} de {totalPaginas}"
 #: src/routes/turmas/index.tsx
 msgid "Paginação"
 msgstr "Paginação"
+
+#: src/shared/ui/selector.tsx
+msgid "Pesquisar"
+msgstr "Pesquisar"
 
 #: src/entities/ano-lectivo/model/mapeadores.ts
 msgid "Planeado"
@@ -200,11 +285,25 @@ msgstr "Secretaria"
 msgid "Seguinte"
 msgstr "Seguinte"
 
+#: src/shared/ui/tabela-dados.tsx
+msgid "Seleccionar linha"
+msgstr "Seleccionar linha"
+
+#: src/shared/ui/tabela-dados.tsx
+msgid "Seleccionar todas"
+msgstr "Seleccionar todas"
+
+#: src/shared/ui/selector.tsx
+msgid "Sem resultados."
+msgstr "Sem resultados."
+
 #: src/entities/turma/model/mapeadores.ts
 msgid "Tarde"
 msgstr "Tarde"
 
 #: src/shared/ui/erro-de-rota.tsx
+#: src/shared/ui/notificacoes.tsx
+#: src/shared/ui/tabela-dados.tsx
 msgid "Tentar de novo"
 msgstr "Tentar de novo"
 
