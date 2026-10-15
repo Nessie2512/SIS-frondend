@@ -3,17 +3,20 @@ import { anosLectivos, turmas, utilizador } from './dados'
 
 const API = '/api/v1'
 
+/** Latência simulada só no navegador; nos testes responde de imediato. */
+const latencia = (ms: number) => delay(import.meta.env.MODE === 'test' ? 0 : ms)
+
 /** Os mesmos handlers servem desenvolvimento, testes e Storybook (guia 3.2). */
 export const handlers = [
   http.get(`${API}/auth/me`, () => HttpResponse.json(utilizador)),
 
   http.get(`${API}/anos-lectivos`, async () => {
-    await delay(150)
+    await latencia(150)
     return HttpResponse.json(anosLectivos)
   }),
 
   http.get(`${API}/turmas`, async ({ request }) => {
-    await delay(250)
+    await latencia(250)
     const url = new URL(request.url)
     const anoLectivoId = url.searchParams.get('anoLectivoId')
     const estado = url.searchParams.get('estado')

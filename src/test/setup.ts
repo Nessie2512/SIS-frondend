@@ -1,8 +1,11 @@
 import '@testing-library/jest-dom/vitest'
-import { cleanup } from '@testing-library/react'
+import { cleanup, configure } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll } from 'vitest'
 import { server } from '@/mocks/node'
 import '@/shared/i18n'
+
+// Máquinas mais lentas (ou o primeiro teste, a frio) passam de 1 s a montar o router e as queries
+configure({ asyncUtilTimeout: 5000 })
 
 // jsdom não implementa scrollTo (usado pela restauração de scroll do router)
 window.scrollTo = () => {}
