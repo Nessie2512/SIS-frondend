@@ -38,11 +38,11 @@ describe('Assistente de matrícula', () => {
     ]) {
       await utilizador.click(screen.getByLabelText(doc))
     }
-    expect(screen.getByText(/a matrícula fica confirmada/)).toBeInTheDocument()
+    expect(await screen.findByText(/a matrícula fica confirmada/)).toBeInTheDocument()
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
 
     expect(await screen.findByRole('heading', { name: 'Classe e turma' })).toBeInTheDocument()
-    await utilizador.click(screen.getByRole('combobox', { name: /Classe/ }))
+    await utilizador.click(await screen.findByRole('combobox', { name: /Classe/ }))
     await utilizador.click(await screen.findByRole('option', { name: /7\.ª classe/ }))
     // A turma com mais vagas é sugerida e fica escolhida
     expect(await screen.findByText('Sugerida')).toBeInTheDocument()
@@ -50,7 +50,7 @@ describe('Assistente de matrícula', () => {
 
     const revisao = await screen.findByRole('heading', { name: 'Revisão' })
     expect(revisao).toBeInTheDocument()
-    expect(screen.getByText('Esperança Txilombo Nunda')).toBeInTheDocument()
+    expect(await screen.findByText('Esperança Txilombo Nunda')).toBeInTheDocument()
     await utilizador.click(screen.getByRole('button', { name: 'Matricular' }))
 
     expect(
@@ -80,12 +80,9 @@ describe('Assistente de matrícula', () => {
     const utilizador = userEvent.setup()
     await preencherDados(utilizador, existente.nome)
 
-    const cartao = await screen.findByRole(
-      'region',
-      { name: 'Pode ser o mesmo estudante' },
-      { timeout: 3000 },
-    )
-    expect(within(cartao).getByText(existente.nome)).toBeInTheDocument()
+    const cartao = await screen.findByRole('region', { name: 'Pode ser o mesmo estudante' })
+    // O avatar pode repetir o nome para leitores de ecrã enquanto a imagem não chega
+    expect((await within(cartao).findAllByText(existente.nome))[0]).toBeInTheDocument()
     expect(within(cartao).getByRole('link', { name: 'Abrir processo' })).toBeInTheDocument()
 
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
@@ -95,7 +92,7 @@ describe('Assistente de matrícula', () => {
 
     await utilizador.click(within(cartao).getByLabelText('Não é o mesmo estudante'))
     await utilizador.type(
-      screen.getByLabelText(/Porque não é o mesmo estudante/),
+      await screen.findByLabelText(/Porque não é o mesmo estudante/),
       'Pais diferentes, outra escola',
     )
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
