@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
 // zod/mini nas rotas: os esquemas de pesquisa vão no JavaScript inicial e o mini pesa uma fracção
 import * as z from 'zod/mini'
@@ -107,19 +107,26 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
         <h1 className="text-titulo-pagina">
           <Trans>Turmas</Trans>
         </h1>
-        <ControloSegmentado
-          rotulo={t`Estado das turmas`}
-          valor={search.estado}
-          aoMudar={(estado) =>
-            void navigate({
-              search: (s) => ({ ...s, estado: estado as 'ACTIVA' | 'ENCERRADA', page: 1 }),
-            })
-          }
-          opcoes={[
-            { valor: 'ACTIVA', rotulo: t`Activas` },
-            { valor: 'ENCERRADA', rotulo: t`Encerradas` },
-          ]}
-        />
+        <div className="flex items-center gap-3">
+          <Button asChild>
+            <Link to="/turmas/quadro" search={{ classeId: search.classeId ?? 'c7' }}>
+              <Trans>Distribuir estudantes</Trans>
+            </Link>
+          </Button>
+          <ControloSegmentado
+            rotulo={t`Estado das turmas`}
+            valor={search.estado}
+            aoMudar={(estado) =>
+              void navigate({
+                search: (s) => ({ ...s, estado: estado as 'ACTIVA' | 'ENCERRADA', page: 1 }),
+              })
+            }
+            opcoes={[
+              { valor: 'ACTIVA', rotulo: t`Activas` },
+              { valor: 'ENCERRADA', rotulo: t`Encerradas` },
+            ]}
+          />
+        </div>
       </div>
 
       <div

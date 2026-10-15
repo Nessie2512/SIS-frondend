@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
-import type { PaginaTurmas, Turma, Turno } from './tipos'
+import type { Inscrito, PaginaTurmas, Turma, Turno } from './tipos'
 
 const ROTULO_TURNO = {
   MANHA: msg`Manhã`,
@@ -35,5 +35,16 @@ export function paraPaginaTurmas(dto: Dto<'PaginaTurmaDto'>): PaginaTurmas {
     total: dto.total,
     page: dto.page,
     totalPaginas: Math.max(1, Math.ceil(dto.total / dto.pageSize)),
+  }
+}
+
+export function paraInscrito(dto: Dto<'InscritoDto'>): Inscrito {
+  return {
+    matriculaId: dto.matriculaId,
+    estudanteId: dto.estudanteId,
+    turmaId: dto.turmaId,
+    nome: dto.nome,
+    numeroProcesso: dto.numeroProcesso,
+    fotografiaUrl: dto.fotografiaUrl,
   }
 }

@@ -80,6 +80,8 @@ export default defineConfig([
             // teclas de atalho (mod+k, g t, Esc)
             '^(mod\\+|shift\\+)*[a-z?/]+( [a-z])?$',
             '^(Esc|Enter|Ctrl\\+)$',
+            // valores CSS (curvas, durações)
+            '^cubic-bezier\\(',
             // directivas do React Compiler
             '^use (no )?memo$',
           ],

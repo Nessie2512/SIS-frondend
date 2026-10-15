@@ -33,3 +33,13 @@ export interface PaginaTurmas {
   page: number
   totalPaginas: number
 }
+
+/** Estudante inscrito numa turma (cartão do quadro, guia 6.3). */
+export interface Inscrito {
+  matriculaId: string
+  estudanteId: string
+  turmaId: string | null
+  nome: string
+  numeroProcesso: string
+  fotografiaUrl: string | null
+}

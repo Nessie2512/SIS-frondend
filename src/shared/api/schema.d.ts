@@ -107,6 +107,10 @@ export interface paths {
   '/turmas/{id}/inscricoes': {
     post: Op<{ path: { id: string }; body: S['InscreverDto']; ok: S['InscritoDto']; erros: 403 | 409 }>
   }
+  '/inscricoes/{matriculaId}': {
+    /** Retira a matrícula da turma (desfazer uma inscrição) */
+    delete: Op<{ path: { matriculaId: string }; ok: S['VazioDto']; erros: 403 | 404 | 409 }>
+  }
   '/inscricoes/{matriculaId}/mover': {
     post: Op<{
       path: { matriculaId: string }

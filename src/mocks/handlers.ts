@@ -564,6 +564,24 @@ export const handlers = [
     }),
   ),
 
+  http.delete(
+    `${API}/inscricoes/:matriculaId`,
+    protegido('turmas:escrever', ({ params }) => {
+      const matricula = db.matriculas.find((m) => m.id === params.matriculaId)
+      if (!matricula?.turmaId) return problema(404, 'Inscrição não encontrada')
+      const turma = turmaPorId(matricula.turmaId)!
+      if (anoEncerrado(turma.anoLectivoId))
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      matricula.turmaId = null
+      registarPercurso(
+        matricula.estudanteId,
+        'RECTIFICACAO',
+        `Inscrição na turma ${turma.designacao} desfeita`,
+      )
+      return HttpResponse.json({})
+    }),
+  ),
+
   http.post(
     `${API}/inscricoes/:matriculaId/mover`,
     protegido('turmas:escrever', async ({ request, params }) => {

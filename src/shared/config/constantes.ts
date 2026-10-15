@@ -22,3 +22,6 @@ export const PAGINACAO = { porPagina: 50, maximo: 100 } as const
 
 /** Minutos sem interacção até bloquear o ecrã (guia 4.4); configurável por escola mais tarde. */
 export const INACTIVIDADE_MINUTOS = 15
+
+/** Curva padrão de movimento, igual a --ease-padrao nos tokens (para APIs em JavaScript) */
+export const CURVA_PADRAO = 'cubic-bezier(0.2, 0, 0, 1)'

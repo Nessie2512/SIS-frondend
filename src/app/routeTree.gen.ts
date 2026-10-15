@@ -17,6 +17,7 @@ import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/e
 import { Route as AppMatriculasIndexRouteImport } from './../routes/_app/matriculas/index'
 import { Route as AppMatriculasNovaRouteImport } from './../routes/_app/matriculas/nova'
 import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/index'
+import { Route as AppTurmasQuadroRouteImport } from './../routes/_app/turmas/quadro'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -58,12 +59,18 @@ const AppTurmasIndexRoute = AppTurmasIndexRouteImport.update({
   path: '/turmas/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTurmasQuadroRoute = AppTurmasQuadroRouteImport.update({
+  id: '/turmas/quadro',
+  path: '/turmas/quadro',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/entrar': typeof EntrarRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/turmas/quadro': typeof AppTurmasQuadroRoute
   '/estudantes/': typeof AppEstudantesIndexRoute
   '/matriculas/': typeof AppMatriculasIndexRoute
   '/turmas/': typeof AppTurmasIndexRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/turmas/quadro': typeof AppTurmasQuadroRoute
   '/estudantes': typeof AppEstudantesIndexRoute
   '/matriculas': typeof AppMatriculasIndexRoute
   '/turmas': typeof AppTurmasIndexRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/_app/': typeof AppIndexRoute
   '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/_app/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/_app/turmas/quadro': typeof AppTurmasQuadroRoute
   '/_app/estudantes/': typeof AppEstudantesIndexRoute
   '/_app/matriculas/': typeof AppMatriculasIndexRoute
   '/_app/turmas/': typeof AppTurmasIndexRoute
@@ -95,6 +104,7 @@ export interface FileRouteTypes {
     | '/entrar'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
+    | '/turmas/quadro'
     | '/estudantes/'
     | '/matriculas/'
     | '/turmas/'
@@ -104,6 +114,7 @@ export interface FileRouteTypes {
     | '/'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
+    | '/turmas/quadro'
     | '/estudantes'
     | '/matriculas'
     | '/turmas'
@@ -114,6 +125,7 @@ export interface FileRouteTypes {
     | '/_app/'
     | '/_app/estudantes/$estudanteId'
     | '/_app/matriculas/nova'
+    | '/_app/turmas/quadro'
     | '/_app/estudantes/'
     | '/_app/matriculas/'
     | '/_app/turmas/'
@@ -182,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTurmasIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/turmas/quadro': {
+      id: '/_app/turmas/quadro'
+      path: '/turmas/quadro'
+      fullPath: '/turmas/quadro'
+      preLoaderRoute: typeof AppTurmasQuadroRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -189,6 +208,7 @@ interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
   AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
   AppMatriculasNovaRoute: typeof AppMatriculasNovaRoute
+  AppTurmasQuadroRoute: typeof AppTurmasQuadroRoute
   AppEstudantesIndexRoute: typeof AppEstudantesIndexRoute
   AppMatriculasIndexRoute: typeof AppMatriculasIndexRoute
   AppTurmasIndexRoute: typeof AppTurmasIndexRoute
@@ -198,6 +218,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
   AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
   AppMatriculasNovaRoute: AppMatriculasNovaRoute,
+  AppTurmasQuadroRoute: AppTurmasQuadroRoute,
   AppEstudantesIndexRoute: AppEstudantesIndexRoute,
   AppMatriculasIndexRoute: AppMatriculasIndexRoute,
   AppTurmasIndexRoute: AppTurmasIndexRoute,

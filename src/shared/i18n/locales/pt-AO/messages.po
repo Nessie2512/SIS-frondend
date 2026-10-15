@@ -41,6 +41,26 @@ msgstr "{inscritos} de {lotacaoMaxima}"
 msgid "{n} em falta"
 msgstr "{n} em falta"
 
+#: src/features/inscrever-na-turma/model/use-colocar-na-turma.ts
+msgid "{nome} colocado na {turma}."
+msgstr "{nome} colocado na {turma}."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "{nome} fora das turmas."
+msgstr "{nome} fora das turmas."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "{nome} largado em {destino}."
+msgstr "{nome} largado em {destino}."
+
+#: src/features/inscrever-na-turma/model/use-colocar-na-turma.ts
+msgid "{nome} retirado da turma."
+msgstr "{nome} retirado da turma."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "{nome} sobre {destino}."
+msgstr "{nome} sobre {destino}."
+
 #: src/shared/ui/selector.tsx
 msgid "{quantos} seleccionados"
 msgstr "{quantos} seleccionados"
@@ -56,6 +76,18 @@ msgstr "{total} estudantes"
 #: src/routes/_app/matriculas/index.tsx
 msgid "{total} matrículas"
 msgstr "{total} matrículas"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "A {nomeDestino} está cheia. Uma excepção fica registada com a justificação."
+msgstr "A {nomeDestino} está cheia. Uma excepção fica registada com a justificação."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra turma."
+msgstr "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra turma."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "A arrastar {nome}. Use as setas e Espaço para largar."
+msgstr "A arrastar {nome}. Use as setas e Espaço para largar."
 
 #: src/shared/ui/progresso.tsx
 msgid "A carregar"
@@ -216,6 +248,14 @@ msgstr "Anulada"
 msgid "Anulado"
 msgstr "Anulado"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Arrastar {nome}"
+msgstr "Arrastar {nome}"
+
+#: src/routes/_app/turmas/quadro.tsx
+msgid "Arraste os estudantes entre turmas, ou use o menu de cada cartão. Mudar de turma pede o motivo."
+msgstr "Arraste os estudantes entre turmas, ou use o menu de cada cartão. Mudar de turma pede o motivo."
+
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Atalhos de teclado"
 msgstr "Atalhos de teclado"
@@ -236,13 +276,30 @@ msgstr "Avô"
 msgid "Bilhete de identidade"
 msgstr "Bilhete de identidade"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Cancelado."
+msgstr "Cancelado."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Cancelar"
+msgstr "Cancelar"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "cartão arrastável"
+msgstr "cartão arrastável"
+
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Certidão de nascimento"
 msgstr "Certidão de nascimento"
 
 #: src/entities/turma/ui/barra-ocupacao.tsx
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "cheia"
 msgstr "cheia"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Cheia"
+msgstr "Cheia"
 
 #: src/shared/config/glossario.ts
 msgid "ciclo"
@@ -265,6 +322,7 @@ msgstr "classe"
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/turmas/index.tsx
+#: src/routes/_app/turmas/quadro.tsx
 msgid "Classe"
 msgstr "Classe"
 
@@ -335,6 +393,10 @@ msgstr "Corrigir"
 msgid "Crie a primeira ou duplique as do ano anterior."
 msgstr "Crie a primeira ou duplique as do ano anterior."
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Crie as turmas antes de distribuir os estudantes."
+msgstr "Crie as turmas antes de distribuir os estudantes."
+
 #: src/routes/_app/turmas/index.tsx
 msgid "Crie o primeiro ano lectivo para começar."
 msgstr "Crie o primeiro ano lectivo para começar."
@@ -385,6 +447,10 @@ msgstr "Desfazer"
 msgid "Desfazer a última acção reversível"
 msgstr "Desfazer a última acção reversível"
 
+#: src/features/inscrever-na-turma/model/use-colocar-na-turma.ts
+msgid "Desfeito pelo utilizador"
+msgstr "Desfeito pelo utilizador"
+
 #: src/entities/estudante/model/mapeadores.ts
 #: src/routes/_app/estudantes/index.tsx
 msgid "Desistente"
@@ -397,6 +463,14 @@ msgstr "Dispensado"
 #: src/shared/ui/aviso.tsx
 msgid "Dispensar"
 msgstr "Dispensar"
+
+#: src/routes/_app/turmas/quadro.tsx
+msgid "Distribuição por turmas"
+msgstr "Distribuição por turmas"
+
+#: src/routes/_app/turmas/index.tsx
+msgid "Distribuir estudantes"
+msgstr "Distribuir estudantes"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
@@ -561,6 +635,10 @@ msgstr "Escreva um email válido."
 msgid "Escuro"
 msgstr "Escuro"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Esta classe ainda não tem turmas neste ano."
+msgstr "Esta classe ainda não tem turmas neste ano."
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
 msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
@@ -627,6 +705,10 @@ msgstr "Estudantes"
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Ex.: Mãe, Pai, Tia"
 msgstr "Ex.: Mãe, Pai, Tia"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Ex.: pedido do encarregado"
+msgstr "Ex.: pedido do encarregado"
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Explique em poucas palavras porque não é o mesmo estudante."
@@ -759,6 +841,10 @@ msgstr "Irmã"
 msgid "Irmão"
 msgstr "Irmão"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Justificação"
+msgstr "Justificação"
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Limpar filtros"
 msgstr "Limpar filtros"
@@ -857,9 +943,29 @@ msgstr "Morada"
 msgid "Mostrar todos os atalhos"
 msgstr "Mostrar todos os atalhos"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Motivo"
+msgstr "Motivo"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Mover {nome} para…"
+msgstr "Mover {nome} para…"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Mover para…"
+msgstr "Mover para…"
+
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Mudança de turma"
 msgstr "Mudança de turma"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Mudar {nome} para {nomeDestino}"
+msgstr "Mudar {nome} para {nomeDestino}"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Mudar de turma"
+msgstr "Mudar de turma"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
@@ -954,6 +1060,10 @@ msgstr "O ano lectivo {designacao} está encerrado. Só é possível consultar."
 msgid "O ano lectivo está encerrado. Escolha o ano em curso no cabeçalho para matricular."
 msgstr "O ano lectivo está encerrado. Escolha o ano em curso no cabeçalho para matricular."
 
+#: src/routes/_app/turmas/quadro.tsx
+msgid "O ano lectivo está encerrado. O quadro está só de leitura."
+msgstr "O ano lectivo está encerrado. O quadro está só de leitura."
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 msgid "O ano lectivo está encerrado. Só é possível consultar."
@@ -963,6 +1073,10 @@ msgstr "O ano lectivo está encerrado. Só é possível consultar."
 #: src/shared/lib/erros-dominio.ts
 msgid "O email ou a palavra-passe não estão correctos."
 msgstr "O email ou a palavra-passe não estão correctos."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "O motivo fica no percurso do estudante."
+msgstr "O motivo fica no percurso do estudante."
 
 #: src/routes/_app/index.tsx
 msgid "O painel com indicadores e pendências do dia chega aqui."
@@ -1035,6 +1149,10 @@ msgstr "Paleta de comandos"
 msgid "Paleta de comandos: navegar, pesquisar, agir"
 msgstr "Paleta de comandos: navegar, pesquisar, agir"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
+msgstr "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
+
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Parentesco"
 msgstr "Parentesco"
@@ -1046,6 +1164,14 @@ msgstr "Passo {numero} de 5: {nome}"
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Passos da matrícula"
 msgstr "Passos da matrícula"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Pedir excepção"
+msgstr "Pedir excepção"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Pedir excepção de lotação"
+msgstr "Pedir excepção de lotação"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Percurso"
@@ -1223,6 +1349,7 @@ msgstr "Sem resultados."
 msgid "sem turma"
 msgstr "sem turma"
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "Sem turma"
 msgstr "Sem turma"
@@ -1307,12 +1434,21 @@ msgstr "Turma"
 msgid "Turma cheia: escolha outra ou peça uma excepção depois."
 msgstr "Turma cheia: escolha outra ou peça uma excepção depois."
 
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Turma cheia: largar aqui pede uma excepção justificada."
+msgstr "Turma cheia: largar aqui pede uma excepção justificada."
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Turma cheia: não aceita mais estudantes."
+msgstr "Turma cheia: não aceita mais estudantes."
+
 #: src/shared/config/glossario.ts
 msgid "turmas"
 msgstr "turmas"
 
 #: src/routes/_app.tsx
 #: src/routes/_app/turmas/index.tsx
+#: src/routes/_app/turmas/quadro.tsx
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Turmas"
 msgstr "Turmas"
