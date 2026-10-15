@@ -18,6 +18,15 @@ export default defineConfig({
     tanstackRouter({
       target: 'react',
       autoCodeSplitting: true,
+      // Os loaders também ficam fora do JavaScript inicial (puxam queries, mapeadores e date-fns);
+      // descarregam em paralelo com o componente da rota
+      codeSplittingOptions: {
+        defaultBehavior: [
+          ['loader'],
+          ['component'],
+          ['pendingComponent', 'errorComponent', 'notFoundComponent'],
+        ],
+      },
       routesDirectory: './src/routes',
       generatedRouteTree: './src/app/routeTree.gen.ts',
       routeFileIgnorePrefix: '-',
