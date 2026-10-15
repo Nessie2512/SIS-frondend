@@ -10,6 +10,7 @@ import {
   type Announcements,
   type DragEndEvent,
   type DragStartEvent,
+  type KeyboardCoordinateGetter,
 } from '@dnd-kit/core'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
@@ -41,6 +42,33 @@ interface Props {
   soLeitura: boolean
 }
 
+/**
+ * Com teclado, as setas esquerda e direita saltam de coluna em coluna (em vez de 25 px):
+ * espaço pega, setas escolhem a turma, espaço larga, Esc cancela. Colunas cheias são saltadas.
+ */
+const saltarEntreColunas: KeyboardCoordinateGetter = (evento, { context }) => {
+  const direita = evento.code === 'ArrowRight'
+  if (!direita && evento.code !== 'ArrowLeft') return undefined
+  evento.preventDefault()
+  const { collisionRect, droppableRects, droppableContainers } = context
+  if (!collisionRect) return undefined
+  const centro = collisionRect.left + collisionRect.width / 2
+  const alvo = droppableContainers
+    .getEnabled()
+    .map((c) => droppableRects.get(c.id))
+    .filter((r) => r !== undefined)
+    .filter((r) => (direita ? r.left > centro : r.left + r.width < centro))
+    .sort((a, b) => (direita ? a.left - b.left : b.left - a.left))[0]
+  if (!alvo) return undefined
+  return {
+    x: alvo.left + (alvo.width - collisionRect.width) / 2,
+    y: Math.max(
+      alvo.top + 8,
+      Math.min(collisionRect.top, alvo.top + alvo.height - collisionRect.height - 8),
+    ),
+  }
+}
+
 type Pedido = { tipo: 'motivo' | 'excepcao'; colocacao: Colocacao }
 
 /**
@@ -61,7 +89,7 @@ export function QuadroTurmas({ anoLectivoId, classeId, soLeitura }: Props) {
 
   const sensores = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 6 } }),
-    useSensor(KeyboardSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: saltarEntreColunas }),
   )
 
   if (!quadro) return <Esqueleto className="h-[28rem] w-full" />
