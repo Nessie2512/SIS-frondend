@@ -76,6 +76,10 @@ msgstr "ano lectivo"
 msgid "Ano lectivo"
 msgstr "Ano lectivo"
 
+#: src/entities/ano-lectivo/ui/selector-ano.tsx
+msgid "Ano lectivo {designacao}, {estado}. Mudar de ano"
+msgstr "Ano lectivo {designacao}, {estado}. Mudar de ano"
+
 #: src/shared/config/glossario.ts
 msgid "anos lectivos"
 msgstr "anos lectivos"
@@ -159,6 +163,10 @@ msgstr "Escolha o último dia do período."
 #: src/shared/ui/selector.tsx
 msgid "Escolher"
 msgstr "Escolher"
+
+#: src/entities/ano-lectivo/ui/selector-ano.tsx
+msgid "Escolher ano lectivo"
+msgstr "Escolher ano lectivo"
 
 #: src/shared/ui/selector-data.tsx
 msgid "Escolher período"
