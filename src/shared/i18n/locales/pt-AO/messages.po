@@ -40,6 +40,10 @@ msgstr "A carregar turmas"
 msgid "A data está fora do ano lectivo ({de} a {ate})."
 msgstr "A data está fora do ano lectivo ({de} a {ate})."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "A sessão terminou. Entre de novo para continuar."
+msgstr "A sessão terminou. Entre de novo para continuar."
+
 #: src/shared/ui/selector-data.tsx
 msgid "Abrir calendário"
 msgstr "Abrir calendário"
@@ -59,6 +63,10 @@ msgstr "Ainda não há anos lectivos."
 #: src/routes/turmas/index.tsx
 msgid "Ainda não há turmas neste ano."
 msgstr "Ainda não há turmas neste ano."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Algo correu mal do nosso lado. Tente de novo dentro de momentos."
+msgstr "Algo correu mal do nosso lado. Tente de novo dentro de momentos."
 
 #: src/shared/config/glossario.ts
 msgid "ano lectivo"
@@ -156,9 +164,25 @@ msgstr "Escolher"
 msgid "Escolher período"
 msgstr "Escolher período"
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
+msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
+
 #: src/routes/turmas/index.tsx
 msgid "Estado"
 msgstr "Estado"
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Este ano lectivo está encerrado. Só é possível consultar."
+msgstr "Este ano lectivo está encerrado. Só é possível consultar."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Este estudante já tem matrícula neste ano lectivo. Abrimos a matrícula existente."
+msgstr "Este estudante já tem matrícula neste ano lectivo. Abrimos a matrícula existente."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Este professor não está habilitado para esta disciplina."
+msgstr "Este professor não está habilitado para esta disciplina."
 
 #: src/shared/config/glossario.ts
 msgid "estudante"
@@ -217,6 +241,14 @@ msgstr "Mês anterior"
 msgid "Mês seguinte"
 msgstr "Mês seguinte"
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
+msgstr "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Não é possível eliminar porque está em uso. Pode inactivar em vez disso."
+msgstr "Não é possível eliminar porque está em uso. Pode inactivar em vez disso."
+
 #: src/shared/ui/tabela-dados.tsx
 msgid "Não foi possível carregar a lista."
 msgstr "Não foi possível carregar a lista."
@@ -224,6 +256,14 @@ msgstr "Não foi possível carregar a lista."
 #: src/shared/ui/erro-de-rota.tsx
 msgid "Não foi possível carregar esta página."
 msgstr "Não foi possível carregar esta página."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Não foi possível guardar. A sua alteração continua aqui."
+msgstr "Não foi possível guardar. A sua alteração continua aqui."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Não tem permissão para esta acção."
+msgstr "Não tem permissão para esta acção."
 
 #: src/entities/turma/model/mapeadores.ts
 msgid "Noite"
@@ -241,6 +281,10 @@ msgstr "Ocupação"
 msgid "Ocupação da turma"
 msgstr "Ocupação da turma"
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
+msgstr "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
+
 #: src/routes/turmas/index.tsx
 msgid "Página {pagina} de {totalPaginas}"
 msgstr "Página {pagina} de {totalPaginas}"
@@ -257,6 +301,10 @@ msgstr "Pesquisar"
 msgid "Planeado"
 msgstr "Planeado"
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Pode já existir um processo para este estudante. Confirme antes de continuar."
+msgstr "Pode já existir um processo para este estudante. Confirme antes de continuar."
+
 #: src/routes/__root.tsx
 msgid "Principal"
 msgstr "Principal"
@@ -268,6 +316,10 @@ msgstr "professor"
 #: src/shared/config/glossario.ts
 msgid "professores"
 msgstr "professores"
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Reveja os campos assinalados."
+msgstr "Reveja os campos assinalados."
 
 #: src/routes/turmas/index.tsx
 msgid "Sala"
