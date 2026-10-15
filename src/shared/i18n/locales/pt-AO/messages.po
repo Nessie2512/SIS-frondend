@@ -60,6 +60,10 @@ msgstr "Activa"
 msgid "Activas"
 msgstr "Activas"
 
+#: src/app/pwa.ts
+msgid "Actualizar"
+msgstr "Actualizar"
+
 #: src/routes/turmas/index.tsx
 msgid "Ainda não há anos lectivos."
 msgstr "Ainda não há anos lectivos."
@@ -295,6 +299,10 @@ msgstr "Guardar rascunho e sair"
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Há alterações por guardar"
 msgstr "Há alterações por guardar"
+
+#: src/app/pwa.ts
+msgid "Há uma nova versão da Secretaria."
+msgstr "Há uma nova versão da Secretaria."
 
 #: src/routes/-casca/menu-preferencias.tsx
 msgid "Igual ao sistema"

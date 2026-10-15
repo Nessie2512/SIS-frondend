@@ -45,6 +45,11 @@ export default defineConfig([
           paths: [
             { name: 'moment', message: 'Usa date-fns e Intl (guia 3.3).' },
             { name: 'lodash', message: 'Não importar Lodash inteiro (guia 3.3).' },
+            {
+              name: 'zod',
+              message:
+                'Nas rotas usa zod/mini (vai no JavaScript inicial); o zod completo só em features carregadas sob procura.',
+            },
           ],
         },
       ],
@@ -145,6 +150,11 @@ export default defineConfig([
     // Ficheiros de rota exportam `Route`; o plugin do TanStack Router trata do HMR
     files: ['src/routes/**/*.tsx', '.storybook/**/*.tsx', 'src/**/*.stories.tsx'],
     rules: { 'react-refresh/only-export-components': 'off' },
+  },
+  {
+    // Formulários (features) podem usar o zod completo: carregam com a rota que os usa
+    files: ['src/features/**/*.{ts,tsx}'],
+    rules: { 'no-restricted-imports': 'off' },
   },
   {
     // A camada de API é a única que pode usar fetch directamente

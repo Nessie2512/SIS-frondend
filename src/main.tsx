@@ -21,4 +21,10 @@ void prepararApiSimulada().then(() => {
       <App />
     </StrictMode>,
   )
+
+  if (import.meta.env.PROD) {
+    // Fora do JavaScript inicial: só depois da primeira pintura
+    void import('./app/observabilidade').then((m) => m.iniciarObservabilidade())
+    void import('./app/pwa').then((m) => m.registarServiceWorker())
+  }
 })

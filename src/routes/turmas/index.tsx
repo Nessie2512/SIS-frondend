@@ -2,7 +2,8 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMemo } from 'react'
-import { z } from 'zod'
+// zod/mini nas rotas: os esquemas de pesquisa vão no JavaScript inicial e o mini pesa uma fracção
+import * as z from 'zod/mini'
 import {
   BarraOcupacao,
   turmaQuery,
@@ -27,12 +28,12 @@ import {
 
 // Filtros, página e turma aberta vivem no URL; valores inválidos regressam ao padrão (guia 4.6, 7.1)
 const pesquisaTurmas = z.object({
-  classeId: z.string().optional().catch(undefined),
-  turno: z.enum(['MANHA', 'TARDE', 'NOITE']).optional().catch(undefined),
-  estado: z.enum(['ACTIVA', 'ENCERRADA']).default('ACTIVA').catch('ACTIVA'),
-  page: z.number().int().min(1).default(1).catch(1),
+  classeId: z.catch(z.optional(z.string()), undefined),
+  turno: z.catch(z.optional(z.enum(['MANHA', 'TARDE', 'NOITE'])), undefined),
+  estado: z.catch(z._default(z.enum(['ACTIVA', 'ENCERRADA']), 'ACTIVA'), 'ACTIVA'),
+  page: z.catch(z._default(z.int().check(z.minimum(1)), 1), 1),
   /** Turma aberta no painel lateral */
-  turma: z.string().optional().catch(undefined),
+  turma: z.catch(z.optional(z.string()), undefined),
 })
 
 export const Route = createFileRoute('/turmas/')({
@@ -61,12 +62,11 @@ function EcraTurmas() {
   return <ListaTurmas anoLectivoId={anoLectivoId} />
 }
 
-const c = colunasDe<Turma>()
-
 function useColunas(): ColunaTabela<Turma>[] {
   const { t } = useLingui()
-  return useMemo(
-    () => [
+  return useMemo(() => {
+    const c = colunasDe<Turma>()
+    return [
       c.accessor('designacao', {
         header: t`Turma`,
         cell: (info) => <span className="font-medium">{info.getValue()}</span>,
@@ -87,9 +87,8 @@ function useColunas(): ColunaTabela<Turma>[] {
         header: t`Ocupação`,
         cell: (info) => <BarraOcupacao turma={info.row.original} />,
       }),
-    ],
-    [t],
-  )
+    ]
+  }, [t])
 }
 
 function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
