@@ -163,3 +163,39 @@
     font-variant-numeric: tabular-nums;
   }
 }
+
+/* Impressão (guia 7.6): listas nominais e fichas imprimem-se limpas, sem casca nem cor de fundo */
+@page {
+  margin: 15mm;
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+    --color-fundo: #ffffff;
+    --color-superficie: #ffffff;
+    --color-texto-1: #000000;
+    --color-texto-2: #333333;
+    --color-texto-3: #555555;
+    --color-linha: #cccccc;
+  }
+  body {
+    font-size: 11pt;
+  }
+  /* Tabelas: cabeçalho repetido em cada página, linhas sem cortes */
+  thead {
+    display: table-header-group;
+  }
+  tr {
+    break-inside: avoid;
+  }
+  [role='toolbar'],
+  [data-sonner-toaster],
+  .nao-imprimir {
+    display: none !important;
+  }
+  * {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+  }
+}

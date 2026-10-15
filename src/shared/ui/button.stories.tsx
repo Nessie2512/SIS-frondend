@@ -54,3 +54,8 @@ export const Todos: Historia = {
     </div>
   ),
 }
+
+/** asChild: o botão empresta o estilo a uma ligação (sem envolver o filho) */
+export const ComoLigacao: Historia = {
+  args: { asChild: true, variante: 'primario', children: <a href="#turmas">Ver turmas</a> },
+}

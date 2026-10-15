@@ -19,3 +19,6 @@ export const TEMPOS = {
 } as const
 
 export const PAGINACAO = { porPagina: 50, maximo: 100 } as const
+
+/** Minutos sem interacção até bloquear o ecrã (guia 4.4); configurável por escola mais tarde. */
+export const INACTIVIDADE_MINUTOS = 15

@@ -70,6 +70,9 @@ export default defineConfig([
             '^[A-Z0-9_:./-]+$',
             // fusos horários IANA
             '^[A-Z][a-z]+/[A-Za-z_]+$',
+            // teclas de atalho (mod+k, g t, Esc)
+            '^(mod\\+|shift\\+)*[a-z?/]+( [a-z])?$',
+            '^(Esc|Enter|Ctrl\\+)$',
             // directivas do React Compiler
             '^use (no )?memo$',
           ],
@@ -104,6 +107,8 @@ export default defineConfig([
             'autoComplete',
             'target',
             'rel',
+            'teclas',
+            'atalho',
           ],
           ignoreFunctions: [
             'cn',

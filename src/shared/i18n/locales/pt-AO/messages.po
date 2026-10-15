@@ -64,6 +64,10 @@ msgstr "Ainda não há anos lectivos."
 msgid "Ainda não há turmas neste ano."
 msgstr "Ainda não há turmas neste ano."
 
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Ajuda"
+msgstr "Ajuda"
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Algo correu mal do nosso lado. Tente de novo dentro de momentos."
 msgstr "Algo correu mal do nosso lado. Tente de novo dentro de momentos."
@@ -88,6 +92,10 @@ msgstr "anos lectivos"
 msgid "Anterior"
 msgstr "Anterior"
 
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Atalhos de teclado"
+msgstr "Atalhos de teclado"
+
 #: src/entities/turma/ui/barra-ocupacao.tsx
 msgid "cheia"
 msgstr "cheia"
@@ -100,6 +108,10 @@ msgstr "ciclo"
 msgid "ciclos"
 msgstr "ciclos"
 
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Claro"
+msgstr "Claro"
+
 #: src/shared/config/glossario.ts
 msgid "classe"
 msgstr "classe"
@@ -111,6 +123,18 @@ msgstr "Classe"
 #: src/shared/config/glossario.ts
 msgid "classes"
 msgstr "classes"
+
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Compacta"
+msgstr "Compacta"
+
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Confortável"
+msgstr "Confortável"
+
+#: src/shared/ui/aviso-ao-sair.tsx
+msgid "Continuar a editar"
+msgstr "Continuar a editar"
 
 #: src/routes/turmas/index.tsx
 msgid "Crie a primeira ou duplique as do ano anterior."
@@ -128,13 +152,37 @@ msgstr "Data inválida. Use o formato dd/mm/aaaa."
 msgid "dd/mm/aaaa"
 msgstr "dd/mm/aaaa"
 
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Densidade"
+msgstr "Densidade"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Densidade compacta"
+msgstr "Densidade compacta"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Densidade confortável"
+msgstr "Densidade confortável"
+
+#: src/shared/ui/ecra-bloqueado.tsx
+msgid "Desbloquear"
+msgstr "Desbloquear"
+
 #: src/shared/ui/notificacoes.tsx
 msgid "Desfazer"
 msgstr "Desfazer"
 
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Desfazer a última acção reversível"
+msgstr "Desfazer a última acção reversível"
+
 #: src/shared/ui/aviso.tsx
 msgid "Dispensar"
 msgstr "Dispensar"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Editar o item em foco"
+msgstr "Editar o item em foco"
 
 #: src/entities/ano-lectivo/model/mapeadores.ts
 msgid "Em curso"
@@ -156,6 +204,10 @@ msgstr "Encerradas"
 msgid "Encerrado"
 msgstr "Encerrado"
 
+#: src/shared/ui/ecra-bloqueado.tsx
+msgid "Entrar com outra conta"
+msgstr "Entrar com outra conta"
+
 #: src/shared/ui/selector-data.tsx
 msgid "Escolha o último dia do período."
 msgstr "Escolha o último dia do período."
@@ -171,6 +223,14 @@ msgstr "Escolher ano lectivo"
 #: src/shared/ui/selector-data.tsx
 msgid "Escolher período"
 msgstr "Escolher período"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Escreva um comando ou o nome de um ecrã"
+msgstr "Escreva um comando ou o nome de um ecrã"
+
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Escuro"
+msgstr "Escuro"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
@@ -204,7 +264,32 @@ msgstr "estudantes"
 msgid "Fechar"
 msgstr "Fechar"
 
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Fechar folha, menu ou diálogo"
+msgstr "Fechar folha, menu ou diálogo"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Foco na pesquisa da lista"
+msgstr "Foco na pesquisa da lista"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Guardar ou confirmar"
+msgstr "Guardar ou confirmar"
+
+#: src/shared/ui/aviso-ao-sair.tsx
+msgid "Guardar rascunho e sair"
+msgstr "Guardar rascunho e sair"
+
+#: src/shared/ui/aviso-ao-sair.tsx
+msgid "Há alterações por guardar"
+msgstr "Há alterações por guardar"
+
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Igual ao sistema"
+msgstr "Igual ao sistema"
+
 #: src/routes/__root.tsx
+#: src/routes/-casca/paleta-comandos.tsx
 #: src/routes/index.tsx
 msgid "Início"
 msgstr "Início"
@@ -220,6 +305,14 @@ msgstr "inscrição"
 #: src/shared/config/glossario.ts
 msgid "inscrições"
 msgstr "inscrições"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Ir para Início"
+msgstr "Ir para Início"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Ir para Turmas"
+msgstr "Ir para Turmas"
 
 #: src/shared/ui/tabela-dados.tsx
 msgid "Limpar selecção"
@@ -249,6 +342,11 @@ msgstr "Mês anterior"
 msgid "Mês seguinte"
 msgstr "Mês seguinte"
 
+#: src/routes/-casca/ajuda-atalhos.tsx
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Mostrar todos os atalhos"
+msgstr "Mostrar todos os atalhos"
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
 msgstr "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
@@ -273,9 +371,25 @@ msgstr "Não foi possível guardar. A sua alteração continua aqui."
 msgid "Não tem permissão para esta acção."
 msgstr "Não tem permissão para esta acção."
 
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Navegar"
+msgstr "Navegar"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Nenhum comando encontrado."
+msgstr "Nenhum comando encontrado."
+
 #: src/entities/turma/model/mapeadores.ts
 msgid "Noite"
 msgstr "Noite"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Novo (no contexto do ecrã)"
+msgstr "Novo (no contexto do ecrã)"
+
+#: src/routes/__root.tsx
+msgid "O ano lectivo {designacao} está encerrado. Só é possível consultar."
+msgstr "O ano lectivo {designacao} está encerrado. Só é possível consultar."
 
 #: src/routes/index.tsx
 msgid "O painel com indicadores e pendências do dia chega aqui."
@@ -301,6 +415,18 @@ msgstr "Página {pagina} de {totalPaginas}"
 msgid "Paginação"
 msgstr "Paginação"
 
+#: src/shared/ui/ecra-bloqueado.tsx
+msgid "Palavra-passe"
+msgstr "Palavra-passe"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Paleta de comandos"
+msgstr "Paleta de comandos"
+
+#: src/routes/-casca/ajuda-atalhos.tsx
+msgid "Paleta de comandos: navegar, pesquisar, agir"
+msgstr "Paleta de comandos: navegar, pesquisar, agir"
+
 #: src/shared/ui/selector.tsx
 msgid "Pesquisar"
 msgstr "Pesquisar"
@@ -313,9 +439,25 @@ msgstr "Planeado"
 msgid "Pode já existir um processo para este estudante. Confirme antes de continuar."
 msgstr "Pode já existir um processo para este estudante. Confirme antes de continuar."
 
+#: src/shared/ui/ecra-bloqueado.tsx
+msgid "Por inactividade. O que estava a fazer continua guardado, {nome}."
+msgstr "Por inactividade. O que estava a fazer continua guardado, {nome}."
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Preferências"
+msgstr "Preferências"
+
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Preferências de apresentação"
+msgstr "Preferências de apresentação"
+
 #: src/routes/__root.tsx
 msgid "Principal"
 msgstr "Principal"
+
+#: src/routes/__root.tsx
+msgid "Procurar ou agir"
+msgstr "Procurar ou agir"
 
 #: src/shared/config/glossario.ts
 msgid "professor"
@@ -329,6 +471,10 @@ msgstr "professores"
 msgid "Reveja os campos assinalados."
 msgstr "Reveja os campos assinalados."
 
+#: src/shared/ui/aviso-ao-sair.tsx
+msgid "Sair sem guardar"
+msgstr "Sair sem guardar"
+
 #: src/routes/turmas/index.tsx
 msgid "Sala"
 msgstr "Sala"
@@ -336,6 +482,10 @@ msgstr "Sala"
 #: src/routes/__root.tsx
 msgid "Saltar para o conteúdo"
 msgstr "Saltar para o conteúdo"
+
+#: src/shared/ui/aviso-ao-sair.tsx
+msgid "Se sair agora, o que escreveu neste ecrã perde-se."
+msgstr "Se sair agora, o que escreveu neste ecrã perde-se."
 
 #: src/routes/__root.tsx
 msgid "Secretaria"
@@ -345,6 +495,10 @@ msgstr "Secretaria"
 msgid "Seguinte"
 msgstr "Seguinte"
 
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Seguir o tema do sistema"
+msgstr "Seguir o tema do sistema"
+
 #: src/shared/ui/tabela-dados.tsx
 msgid "Seleccionar linha"
 msgstr "Seleccionar linha"
@@ -353,13 +507,25 @@ msgstr "Seleccionar linha"
 msgid "Seleccionar todas"
 msgstr "Seleccionar todas"
 
+#: src/routes/-casca/casca.tsx
+msgid "Sem ligação. Pode continuar a consultar; as alterações são enviadas quando a ligação voltar."
+msgstr "Sem ligação. Pode continuar a consultar; as alterações são enviadas quando a ligação voltar."
+
 #: src/shared/ui/selector.tsx
 msgid "Sem resultados."
 msgstr "Sem resultados."
 
+#: src/shared/ui/ecra-bloqueado.tsx
+msgid "Sessão bloqueada"
+msgstr "Sessão bloqueada"
+
 #: src/entities/turma/model/mapeadores.ts
 msgid "Tarde"
 msgstr "Tarde"
+
+#: src/routes/-casca/menu-preferencias.tsx
+msgid "Tema"
+msgstr "Tema"
 
 #: src/shared/ui/erro-de-rota.tsx
 #: src/shared/ui/notificacoes.tsx
@@ -380,6 +546,7 @@ msgid "turmas"
 msgstr "turmas"
 
 #: src/routes/__root.tsx
+#: src/routes/-casca/paleta-comandos.tsx
 #: src/routes/turmas/index.tsx
 msgid "Turmas"
 msgstr "Turmas"
@@ -387,6 +554,14 @@ msgstr "Turmas"
 #: src/routes/turmas/index.tsx
 msgid "Turno"
 msgstr "Turno"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Usar tema claro"
+msgstr "Usar tema claro"
+
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Usar tema escuro"
+msgstr "Usar tema escuro"
 
 #: src/routes/index.tsx
 msgid "Ver turmas"

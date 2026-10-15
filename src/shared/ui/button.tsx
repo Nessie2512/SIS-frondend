@@ -54,8 +54,14 @@ export function Button({
       aria-busy={aCarregar || undefined}
       {...props}
     >
-      {aCarregar && <LoaderCircle className="animate-spin" aria-hidden />}
-      {children}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {aCarregar && <LoaderCircle className="animate-spin" aria-hidden />}
+          {children}
+        </>
+      )}
     </Comp>
   )
 }
