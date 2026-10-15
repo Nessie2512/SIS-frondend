@@ -81,8 +81,7 @@ describe('Assistente de matrícula', () => {
     await preencherDados(utilizador, existente.nome)
 
     const cartao = await screen.findByRole('region', { name: 'Pode ser o mesmo estudante' })
-    // O avatar pode repetir o nome para leitores de ecrã enquanto a imagem não chega
-    expect((await within(cartao).findAllByText(existente.nome))[0]).toBeInTheDocument()
+    expect(await within(cartao).findByText(existente.nome)).toBeInTheDocument()
     expect(within(cartao).getByRole('link', { name: 'Abrir processo' })).toBeInTheDocument()
 
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))

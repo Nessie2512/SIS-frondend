@@ -7,6 +7,11 @@ interface Props {
   /** Miniatura; nunca a fotografia em tamanho real (guia 5.6) */
   fotografia?: string | null
   tamanho?: 'pequeno' | 'normal' | 'grande'
+  /**
+   * Por omissão o avatar é decorativo: o nome está sempre escrito ao lado e os leitores de ecrã
+   * leriam-no duas vezes. Usar só quando o avatar aparece sozinho.
+   */
+  anunciarNome?: boolean
   className?: string
 }
 
@@ -28,9 +33,10 @@ function iniciais(nome: string) {
 }
 
 /** Avatar (guia 6.2): fotografia ou iniciais, com dimensões fixas para não saltar ao carregar. */
-export function Avatar({ nome, fotografia, tamanho = 'normal', className }: Props) {
+export function Avatar({ nome, fotografia, tamanho = 'normal', anunciarNome, className }: Props) {
   return (
     <AvatarRadix.Root
+      aria-hidden={anunciarNome ? undefined : true}
       className={cn(
         'inline-flex shrink-0 overflow-hidden rounded-full bg-linha align-middle',
         classesTamanho({ tamanho }),
@@ -40,7 +46,7 @@ export function Avatar({ nome, fotografia, tamanho = 'normal', className }: Prop
       {fotografia && (
         <AvatarRadix.Image
           src={fotografia}
-          alt={nome}
+          alt={anunciarNome ? nome : ''}
           loading="lazy"
           className="size-full object-cover"
         />
@@ -50,7 +56,7 @@ export function Avatar({ nome, fotografia, tamanho = 'normal', className }: Prop
         className="flex size-full items-center justify-center font-semibold text-texto-2"
       >
         <span aria-hidden>{iniciais(nome)}</span>
-        <span className="sr-only">{nome}</span>
+        {anunciarNome && <span className="sr-only">{nome}</span>}
       </AvatarRadix.Fallback>
     </AvatarRadix.Root>
   )

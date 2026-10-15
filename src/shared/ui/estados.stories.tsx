@@ -88,9 +88,9 @@ export const Progresso: Historia = {
 export const Avatares: Historia = {
   render: () => (
     <div className="flex items-center gap-3">
-      <Avatar nome="Maria Santos" tamanho="pequeno" />
-      <Avatar nome="Maria Santos" />
-      <Avatar nome="João Mateus" tamanho="grande" />
+      <Avatar nome="Maria Santos" tamanho="pequeno" anunciarNome />
+      <Avatar nome="Maria Santos" anunciarNome />
+      <Avatar nome="João Mateus" tamanho="grande" anunciarNome />
       <Avatar nome="Ana Domingos" fotografia="/fonts/sem-imagem.jpg" />
     </div>
   ),
