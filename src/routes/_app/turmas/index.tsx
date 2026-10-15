@@ -13,6 +13,7 @@ import {
 } from '@/entities/turma'
 import { BotaoGerarListaNominal } from '@/features/gerar-lista-nominal'
 import { TEMPOS } from '@/shared/config/constantes'
+import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
 import {
   Button,
@@ -39,9 +40,14 @@ const pesquisaTurmas = z.object({
 
 export const Route = createFileRoute('/_app/turmas/')({
   validateSearch: pesquisaTurmas,
-  loaderDeps: ({ search: { turma: _, ...filtros } }) => filtros,
-  loader: ({ context: { queryClient, anoLectivoId }, deps }) =>
-    anoLectivoId ? queryClient.ensureQueryData(turmasQuery({ anoLectivoId, ...deps })) : null,
+  // Sem loaderDeps: mudar filtro ou página mantém o ecrã e os resultados anteriores
+  loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
+    const { turma: _, ...filtros } = pesquisaTurmas.parse(location.search)
+    return esperarSoAoEntrar(
+      cause,
+      anoLectivoId ? queryClient.ensureQueryData(turmasQuery({ anoLectivoId, ...filtros })) : null,
+    )
+  },
   pendingComponent: TurmasEsqueleto,
   pendingMs: TEMPOS.esqueletoAtraso,
   pendingMinMs: TEMPOS.esqueletoMinimo,

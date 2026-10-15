@@ -2,7 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { Command } from 'cmdk'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { Popover } from 'radix-ui'
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { TEMPOS } from '@/shared/config/constantes'
 import { cn } from '@/shared/lib/cn'
 import { IndicadorPontual } from './progresso'
@@ -45,7 +45,10 @@ export function Selector(props: Props) {
   const { id, opcoes, placeholder, desactivado, aCarregar, aoPesquisar } = props
   const [aberto, setAberto] = useState(false)
   const [pesquisa, setPesquisa] = useState('')
-  const [espera, setEspera] = useState<ReturnType<typeof setTimeout>>()
+  // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
+  // deixava temporizadores antigos por cancelar
+  const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useEffect(() => () => clearTimeout(espera.current), [])
 
   const seleccionados = props.multiplo ? props.valor : props.valor ? [props.valor] : []
   const rotulos = opcoes.filter((o) => seleccionados.includes(o.valor)).map((o) => o.rotulo)
@@ -72,8 +75,8 @@ export function Selector(props: Props) {
   function aoEscrever(texto: string) {
     setPesquisa(texto)
     if (!aoPesquisar) return
-    clearTimeout(espera)
-    setEspera(setTimeout(() => aoPesquisar(texto), TEMPOS.pesquisaEspera))
+    clearTimeout(espera.current)
+    espera.current = setTimeout(() => aoPesquisar(texto), TEMPOS.pesquisaEspera)
   }
 
   return (

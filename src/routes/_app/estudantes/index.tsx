@@ -2,7 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Plus, Search } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
 import {
@@ -14,6 +14,7 @@ import {
 } from '@/entities/estudante'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
+import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import {
@@ -46,14 +47,19 @@ const pesquisaEstudantes = z.object({
 
 export const Route = createFileRoute('/_app/estudantes/')({
   validateSearch: pesquisaEstudantes,
-  loaderDeps: ({ search: { estudante: _, ...filtros } }) => filtros,
-  loader: ({ context: { queryClient, anoLectivoId }, deps: { q, ...resto } }) =>
-    anoLectivoId
-      ? Promise.all([
-          queryClient.ensureQueryData(estudantesQuery({ anoLectivoId, pesquisa: q, ...resto })),
-          queryClient.ensureQueryData(classesQuery()),
-        ])
-      : null,
+  // Sem loaderDeps: pesquisar ou filtrar não cria uma nova correspondência de rota nem esqueleto
+  loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
+    const { q, estudante: _, ...resto } = pesquisaEstudantes.parse(location.search)
+    return esperarSoAoEntrar(
+      cause,
+      anoLectivoId
+        ? Promise.all([
+            queryClient.ensureQueryData(estudantesQuery({ anoLectivoId, pesquisa: q, ...resto })),
+            queryClient.ensureQueryData(classesQuery()),
+          ])
+        : null,
+    )
+  },
   pendingComponent: EstudantesEsqueleto,
   pendingMs: TEMPOS.esqueletoAtraso,
   pendingMinMs: TEMPOS.esqueletoMinimo,
@@ -117,7 +123,10 @@ function EcraEstudantes() {
   const { estudante: aberto, q, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const [texto, setTexto] = useState(q ?? '')
-  const [espera, setEspera] = useState<ReturnType<typeof setTimeout>>()
+  // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
+  // deixava temporizadores antigos por cancelar e o URL ficava com texto truncado
+  const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
+  useEffect(() => () => clearTimeout(espera.current), [])
   const { data: classes = [] } = useQuery(classesQuery())
   const { data, isPlaceholderData, isError, refetch } = useQuery({
     ...estudantesQuery({ anoLectivoId: anoLectivoId ?? '', pesquisa: q, ...filtros }),
@@ -132,16 +141,14 @@ function EcraEstudantes() {
   // Pesquisa à medida que se escreve: espera 120 ms e o URL acompanha (guia 5.6, 7.1)
   function pesquisar(valor: string) {
     setTexto(valor)
-    clearTimeout(espera)
-    setEspera(
-      setTimeout(
-        () =>
-          void navigate({
-            search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
-            replace: true,
-          }),
-        TEMPOS.pesquisaEspera,
-      ),
+    clearTimeout(espera.current)
+    espera.current = setTimeout(
+      () =>
+        void navigate({
+          search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
+          replace: true,
+        }),
+      TEMPOS.pesquisaEspera,
     )
   }
 

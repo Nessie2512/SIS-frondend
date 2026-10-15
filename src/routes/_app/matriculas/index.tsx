@@ -8,6 +8,7 @@ import { classesQuery } from '@/entities/classe'
 import { matriculasQuery, type Matricula } from '@/entities/matricula'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
+import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
 import { formatarInstante } from '@/shared/lib/datas'
 import {
@@ -36,9 +37,16 @@ const pesquisaMatriculas = z.object({
 
 export const Route = createFileRoute('/_app/matriculas/')({
   validateSearch: pesquisaMatriculas,
-  loaderDeps: ({ search }) => search,
-  loader: ({ context: { queryClient, anoLectivoId }, deps }) =>
-    anoLectivoId ? queryClient.ensureQueryData(matriculasQuery({ anoLectivoId, ...deps })) : null,
+  // Sem loaderDeps: mudar filtro ou página mantém o ecrã e os resultados anteriores
+  loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
+    const filtros = pesquisaMatriculas.parse(location.search)
+    return esperarSoAoEntrar(
+      cause,
+      anoLectivoId
+        ? queryClient.ensureQueryData(matriculasQuery({ anoLectivoId, ...filtros }))
+        : null,
+    )
+  },
   pendingComponent: () => <Esqueleto className="h-96 w-full" />,
   pendingMs: TEMPOS.esqueletoAtraso,
   pendingMinMs: TEMPOS.esqueletoMinimo,
