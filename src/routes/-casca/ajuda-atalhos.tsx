@@ -20,6 +20,8 @@ export function AjudaAtalhos({
     ['mod+z', t`Desfazer a última acção reversível`],
     ['Esc', t`Fechar folha, menu ou diálogo`],
     ['g i', t`Ir para Início`],
+    ['g e', t`Ir para Estudantes`],
+    ['g m', t`Ir para Matrículas`],
     ['g t', t`Ir para Turmas`],
     ['?', t`Mostrar todos os atalhos`],
   ]

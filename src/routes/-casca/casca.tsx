@@ -36,6 +36,14 @@ export function Casca() {
         accao: (e) => (e.target as HTMLElement | null)?.closest('form')?.requestSubmit(),
       },
       { teclas: 'g i', accao: () => void router.navigate({ to: '/' }) },
+      {
+        teclas: 'g e',
+        accao: () => void router.navigate({ to: '/estudantes', search: { page: 1 } }),
+      },
+      {
+        teclas: 'g m',
+        accao: () => void router.navigate({ to: '/matriculas', search: { page: 1 } }),
+      },
       { teclas: 'g t', accao: () => void router.navigate({ to: '/turmas' }) },
       { teclas: 'shift+?', accao: () => setAjuda(true) },
     ],

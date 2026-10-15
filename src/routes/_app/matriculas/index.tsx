@@ -1,0 +1,247 @@
+import { Trans, useLingui } from '@lingui/react/macro'
+import { useQuery } from '@tanstack/react-query'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Plus } from 'lucide-react'
+import { useMemo } from 'react'
+import * as z from 'zod/mini'
+import { classesQuery } from '@/entities/classe'
+import { matriculasQuery, type Matricula } from '@/entities/matricula'
+import { TEMPOS } from '@/shared/config/constantes'
+import { Can } from '@/shared/lib/can'
+import { cn } from '@/shared/lib/cn'
+import { formatarInstante } from '@/shared/lib/datas'
+import {
+  Button,
+  Campo,
+  colunasDe,
+  ControloSegmentado,
+  ErroDeRota,
+  Esqueleto,
+  EstadoVazio,
+  EtiquetaEstado,
+  Selector,
+  TabelaDados,
+  type ColunaTabela,
+} from '@/shared/ui'
+
+const ESTADOS = ['PENDENTE', 'CONFIRMADA', 'CONCLUIDA'] as const
+
+// Filtros no URL: cada vista é uma ligação que se guarda ou partilha (guia 7.1)
+const pesquisaMatriculas = z.object({
+  classeId: z.catch(z.optional(z.string()), undefined),
+  estado: z.catch(z.optional(z.enum(ESTADOS)), undefined),
+  semTurma: z.catch(z.optional(z.boolean()), undefined),
+  page: z.catch(z._default(z.int().check(z.minimum(1)), 1), 1),
+})
+
+export const Route = createFileRoute('/_app/matriculas/')({
+  validateSearch: pesquisaMatriculas,
+  loaderDeps: ({ search }) => search,
+  loader: ({ context: { queryClient, anoLectivoId }, deps }) =>
+    anoLectivoId ? queryClient.ensureQueryData(matriculasQuery({ anoLectivoId, ...deps })) : null,
+  pendingComponent: () => <Esqueleto className="h-96 w-full" />,
+  pendingMs: TEMPOS.esqueletoAtraso,
+  pendingMinMs: TEMPOS.esqueletoMinimo,
+  errorComponent: ErroDeRota,
+  component: EcraMatriculas,
+})
+
+function useColunas(): ColunaTabela<Matricula>[] {
+  const { t } = useLingui()
+  return useMemo(() => {
+    const c = colunasDe<Matricula>()
+    return [
+      c.accessor('estudanteNome', {
+        header: t`Estudante`,
+        cell: (info) => (
+          <Link
+            to="/estudantes/$estudanteId"
+            params={{ estudanteId: info.row.original.estudanteId }}
+            search={{ separador: 'resumo' }}
+            className="font-medium hover:text-acento"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {info.getValue()}
+          </Link>
+        ),
+      }),
+      c.accessor('numeroProcesso', {
+        header: t`Processo`,
+        cell: (info) => <span className="tabular text-texto-2">{info.getValue()}</span>,
+      }),
+      c.accessor('classe', {
+        header: t`Classe`,
+        cell: (info) => <span className="text-texto-2">{info.getValue()}</span>,
+      }),
+      c.accessor('turma', {
+        header: t`Turma`,
+        cell: (info) => (
+          <span className={cn('text-texto-2', !info.getValue() && 'text-aviso')}>
+            {info.getValue() ?? t`Sem turma`}
+          </span>
+        ),
+      }),
+      c.accessor('documentosEmFalta', {
+        header: t`Documentos`,
+        cell: (info) => {
+          const n = info.getValue()
+          return n ? (
+            <EtiquetaEstado tom="aviso">{t`${n} em falta`}</EtiquetaEstado>
+          ) : (
+            <span className="text-texto-3">{t`Completos`}</span>
+          )
+        },
+      }),
+      c.accessor('estadoRotulo', {
+        header: t`Estado`,
+        cell: (info) => (
+          <EtiquetaEstado tom={info.row.original.estadoTom}>{info.getValue()}</EtiquetaEstado>
+        ),
+      }),
+      c.accessor('criadaEm', {
+        header: t`Registada`,
+        cell: (info) => (
+          <span className="tabular text-secundario text-texto-3">
+            {formatarInstante(info.getValue())}
+          </span>
+        ),
+      }),
+    ]
+  }, [t])
+}
+
+/** Matrículas por ano, classe e estado (guia 2.5). */
+function EcraMatriculas() {
+  const { t } = useLingui()
+  const { anoLectivoId, soLeitura } = Route.useRouteContext()
+  const filtros = Route.useSearch()
+  const navigate = useNavigate({ from: Route.fullPath })
+  const { data: classes = [] } = useQuery(classesQuery())
+  const { data, isPlaceholderData, isError, refetch } = useQuery({
+    ...matriculasQuery({ anoLectivoId: anoLectivoId ?? '', ...filtros }),
+    enabled: Boolean(anoLectivoId),
+  })
+  const colunas = useColunas()
+  const total = data?.total ?? 0
+  const pagina = data?.page ?? filtros.page
+  const totalPaginas = data?.totalPaginas ?? 1
+
+  return (
+    <section className="flex flex-col gap-6">
+      <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-titulo-pagina">
+            <Trans>Matrículas</Trans>
+          </h1>
+          <p className="tabular text-secundario text-texto-2" aria-live="polite">
+            {t`${total} matrículas`}
+          </p>
+        </div>
+        <Can permissao="matriculas:escrever">
+          {!soLeitura && (
+            <Button asChild variante="primario">
+              <Link to="/matriculas/nova" data-atalho="novo">
+                <Plus aria-hidden />
+                <Trans>Matricular estudante</Trans>
+              </Link>
+            </Button>
+          )}
+        </Can>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3">
+        <Campo rotulo={t`Classe`} className="w-56">
+          {(c) => (
+            <Selector
+              {...c}
+              placeholder={t`Todas`}
+              opcoes={classes.map((x) => ({ valor: x.id, rotulo: x.designacao }))}
+              valor={filtros.classeId ?? null}
+              aoMudar={(classeId) =>
+                void navigate({
+                  search: (s) => ({ ...s, classeId: classeId ?? undefined, page: 1 }),
+                })
+              }
+            />
+          )}
+        </Campo>
+        <ControloSegmentado
+          rotulo={t`Estado da matrícula`}
+          valor={filtros.semTurma ? 'SEM_TURMA' : (filtros.estado ?? 'TODAS')}
+          aoMudar={(v) =>
+            void navigate({
+              search: (s) => ({
+                ...s,
+                page: 1,
+                semTurma: v === 'SEM_TURMA' ? true : undefined,
+                estado: v === 'PENDENTE' || v === 'CONFIRMADA' ? v : undefined,
+              }),
+            })
+          }
+          opcoes={[
+            { valor: 'TODAS', rotulo: t`Todas` },
+            { valor: 'PENDENTE', rotulo: t`A confirmar` },
+            { valor: 'CONFIRMADA', rotulo: t`Confirmadas` },
+            { valor: 'SEM_TURMA', rotulo: t`Sem turma` },
+          ]}
+        />
+      </div>
+
+      <div
+        className={cn(
+          'transition-opacity duration-(--duracao-padrao)',
+          isPlaceholderData && 'opacity-60',
+        )}
+      >
+        <TabelaDados
+          rotulo={t`Matrículas`}
+          semOrdenacao
+          colunas={colunas}
+          dados={data?.matriculas}
+          idDaLinha={(m) => m.id}
+          aCarregar={!data}
+          erro={isError && !data}
+          aoTentarDeNovo={() => void refetch()}
+          vazio={
+            <EstadoVazio
+              variante={
+                filtros.classeId || filtros.estado || filtros.semTurma
+                  ? 'sem-resultados'
+                  : 'primeira-utilizacao'
+              }
+              titulo={t`Nenhuma matrícula com estes filtros.`}
+              descricao={t`Retire um filtro ou matricule um estudante.`}
+            />
+          }
+        />
+      </div>
+
+      {totalPaginas > 1 && (
+        <nav
+          aria-label={t`Paginação`}
+          className="flex items-center justify-end gap-3 text-secundario"
+        >
+          <span className="tabular text-texto-2">
+            <Trans>
+              Página {pagina} de {totalPaginas}
+            </Trans>
+          </span>
+          <Button
+            tamanho="compacto"
+            disabled={pagina <= 1}
+            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina - 1 }) })}
+          >
+            <Trans>Anterior</Trans>
+          </Button>
+          <Button
+            tamanho="compacto"
+            disabled={pagina >= totalPaginas}
+            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina + 1 }) })}
+          >
+            <Trans>Seguinte</Trans>
+          </Button>
+        </nav>
+      )}
+    </section>
+  )
+}

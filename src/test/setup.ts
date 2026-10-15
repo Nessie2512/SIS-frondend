@@ -13,6 +13,16 @@ configure({ asyncUtilTimeout: 5000 })
 // jsdom não implementa scrollTo (usado pela restauração de scroll do router)
 window.scrollTo = () => {}
 
+// jsdom não implementa ResizeObserver (usado pelos primitivos Radix)
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
+
+// jsdom não implementa scrollIntoView (usado pelo cmdk)
+Element.prototype.scrollIntoView ??= function () {}
+
 // jsdom não implementa matchMedia; os testes controlam o tema do sistema por aqui
 let sistemaEscuro = false
 export function simularSistemaEscuro(valor: boolean) {

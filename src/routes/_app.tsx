@@ -98,6 +98,9 @@ function LayoutApp() {
             <Link to="/estudantes" search={{ page: 1 }} className={classesLigacao}>
               <Trans>Estudantes</Trans>
             </Link>
+            <Link to="/matriculas" search={{ page: 1 }} className={classesLigacao}>
+              <Trans>Matrículas</Trans>
+            </Link>
             <Link to="/turmas" className={classesLigacao}>
               <Trans>Turmas</Trans>
             </Link>

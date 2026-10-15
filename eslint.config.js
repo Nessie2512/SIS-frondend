@@ -39,6 +39,8 @@ export default defineConfig([
         'error',
         { name: 'fetch', message: 'Usa o cliente `api` de @/shared/api.' },
       ],
+      // Cartões de escolha têm o texto em elementos aninhados
+      'jsx-a11y/label-has-associated-control': ['error', { depth: 4 }],
       'no-restricted-imports': [
         'error',
         {

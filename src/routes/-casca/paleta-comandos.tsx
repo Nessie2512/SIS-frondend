@@ -1,7 +1,19 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useRouter } from '@tanstack/react-router'
 import { Command } from 'cmdk'
-import { Contrast, Home, Keyboard, Moon, Rows3, Rows4, Sun, Users } from 'lucide-react'
+import {
+  ClipboardList,
+  Contrast,
+  GraduationCap,
+  Home,
+  Keyboard,
+  Moon,
+  Rows3,
+  Rows4,
+  Sun,
+  UserPlus,
+  Users,
+} from 'lucide-react'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
 import { usePreferencias } from '@/shared/lib/preferencias'
 import type { ReactNode } from 'react'
@@ -53,11 +65,37 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             <Trans>Início</Trans>
           </Item>
           <Item
+            icone={<GraduationCap />}
+            atalho="g e"
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/estudantes', search: { page: 1 } }))
+            }
+          >
+            <Trans>Estudantes</Trans>
+          </Item>
+          <Item
+            icone={<ClipboardList />}
+            atalho="g m"
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/matriculas', search: { page: 1 } }))
+            }
+          >
+            <Trans>Matrículas</Trans>
+          </Item>
+          <Item
             icone={<Users />}
             atalho="g t"
             aoEscolher={() => executar(() => void router.navigate({ to: '/turmas' }))}
           >
             <Trans>Turmas</Trans>
+          </Item>
+        </Grupo>
+        <Grupo titulo={t`Agir`}>
+          <Item
+            icone={<UserPlus />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/matriculas/nova' }))}
+          >
+            <Trans>Matricular estudante novo</Trans>
           </Item>
         </Grupo>
         <Grupo titulo={t`Preferências`}>

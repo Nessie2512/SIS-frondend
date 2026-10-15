@@ -230,7 +230,10 @@ export const handlers = [
         .filter((e) => {
           const n = normalizar(e.nome)
           const coincidencias = partes.filter((p) => n.includes(p)).length
-          return coincidencias >= Math.min(2, partes.length) && (!data || e.dataNascimento === data)
+          // Nome igual basta; nome parecido só conta com a mesma data de nascimento
+          const mesmoNome = n === nome
+          const parecido = coincidencias >= Math.min(2, partes.length)
+          return mesmoNome || (parecido && (!data || e.dataNascimento === data))
         })
         .slice(0, 3)
         .map((e) => paraEstudanteResumo(e))

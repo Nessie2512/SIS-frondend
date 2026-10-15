@@ -152,6 +152,8 @@ export default defineConfig({
           setupFiles: ['./src/test/setup.ts'],
           include: ['src/**/*.test.{ts,tsx}'],
           css: false,
+          // Fluxos completos (assistente) passam de 5 s em máquinas mais lentas
+          testTimeout: 20_000,
         },
       },
       {

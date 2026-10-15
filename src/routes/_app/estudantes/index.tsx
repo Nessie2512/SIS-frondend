@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Search } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
@@ -13,6 +13,7 @@ import {
   type EstudanteResumo,
 } from '@/entities/estudante'
 import { TEMPOS } from '@/shared/config/constantes'
+import { Can } from '@/shared/lib/can'
 import { cn } from '@/shared/lib/cn'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import {
@@ -146,13 +147,23 @@ function EcraEstudantes() {
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-titulo-pagina">
-          <Trans>Estudantes</Trans>
-        </h1>
-        <p className="tabular text-secundario text-texto-2" aria-live="polite">
-          {t`${total} estudantes`}
-        </p>
+      <div className="flex items-end justify-between gap-4">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-titulo-pagina">
+            <Trans>Estudantes</Trans>
+          </h1>
+          <p className="tabular text-secundario text-texto-2" aria-live="polite">
+            {t`${total} estudantes`}
+          </p>
+        </div>
+        <Can permissao="matriculas:escrever">
+          <Button asChild variante="primario">
+            <Link to="/matriculas/nova" data-atalho="novo">
+              <Plus aria-hidden />
+              <Trans>Matricular estudante</Trans>
+            </Link>
+          </Button>
+        </Can>
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_14rem_12rem]">
