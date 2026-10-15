@@ -1,7 +1,9 @@
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
-import { afterAll, afterEach, beforeAll } from 'vitest'
+import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest'
+import { reporBaseDeDados } from '@/mocks/db'
 import { server } from '@/mocks/node'
+import { sessao } from '@/shared/api'
 import '@/shared/i18n'
 
 // Máquinas mais lentas (ou o primeiro teste, a frio) passam de 1 s a montar o router e as queries
@@ -26,6 +28,12 @@ window.matchMedia = (query: string) =>
     removeListener: () => {},
     dispatchEvent: () => false,
   }) as MediaQueryList
+
+// Cada teste começa com dados iniciais e com a secretária autenticada
+beforeEach(() => {
+  reporBaseDeDados()
+  sessao.definirToken('tk-u1')
+})
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))
 afterEach(() => {
