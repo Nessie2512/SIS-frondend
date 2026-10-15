@@ -4,6 +4,7 @@ import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest'
 import { reporBaseDeDados } from '@/mocks/db'
 import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
+import { usePermissoesStore } from '@/shared/lib/permissoes'
 import '@/shared/i18n'
 
 // Máquinas mais lentas (ou o primeiro teste, a frio) passam de 1 s a montar o router e as queries
@@ -33,6 +34,7 @@ window.matchMedia = (query: string) =>
 beforeEach(() => {
   reporBaseDeDados()
   sessao.definirToken('tk-u1')
+  usePermissoesStore.getState().limpar()
 })
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))

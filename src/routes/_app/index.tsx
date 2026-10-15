@@ -2,7 +2,7 @@ import { Trans } from '@lingui/react/macro'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { Button } from '@/shared/ui'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_app/')({
   component: Inicio,
 })
 

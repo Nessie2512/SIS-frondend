@@ -2,7 +2,7 @@
 import createClient, { type Middleware } from 'openapi-fetch'
 import { ApiError } from './api-error'
 import type { paths } from './schema'
-import { sessao } from './sessao'
+import { eventosApi, sessao } from './sessao'
 
 /** Absoluto para funcionar também nos testes (jsdom); em produção é a mesma origem. */
 export const BASE_URL = new URL('/api/v1', window.location.origin).href
@@ -31,7 +31,11 @@ const comContexto: Middleware = {
 
     if (response.ok) return response
 
-    if (response.status === 401 && !request.headers.has('X-Repeticao')) {
+    if (response.status === 403) eventosApi.emitirPermissaoNegada()
+
+    // A entrada e a renovação tratam o seu próprio 401
+    const pedidoDeSessao = new URL(request.url).pathname.startsWith('/api/v1/auth/')
+    if (response.status === 401 && !pedidoDeSessao && !request.headers.has('X-Repeticao')) {
       const renovado = await sessao.renovarUmaVez()
       if (renovado) {
         const repeticao = new Request(request, { headers: new Headers(request.headers) })
@@ -39,7 +43,7 @@ const comContexto: Middleware = {
         repeticao.headers.set('Authorization', `Bearer ${sessao.tokenAcesso()}`)
         return fetch(repeticao).then((r) => (r.ok ? r : lancarApiError(r)))
       }
-      sessao.terminar()
+      sessao.terminar('expirada')
     }
     return lancarApiError(response)
   },

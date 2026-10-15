@@ -32,13 +32,17 @@ msgstr "A carregar"
 msgid "A carregar opções"
 msgstr "A carregar opções"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "A carregar turmas"
 msgstr "A carregar turmas"
 
 #: src/shared/ui/selector-data.tsx
 msgid "A data está fora do ano lectivo ({de} a {ate})."
 msgstr "A data está fora do ano lectivo ({de} a {ate})."
+
+#: src/routes/-casca/proteccao-sessao.tsx
+msgid "A sessão terminou"
+msgstr "A sessão terminou"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "A sessão terminou. Entre de novo para continuar."
@@ -52,11 +56,11 @@ msgstr "Abrir calendário"
 msgid "Acções em lote"
 msgstr "Acções em lote"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Activa"
 msgstr "Activa"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Activas"
 msgstr "Activas"
 
@@ -64,11 +68,11 @@ msgstr "Activas"
 msgid "Actualizar"
 msgstr "Actualizar"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há anos lectivos."
 msgstr "Ainda não há anos lectivos."
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há turmas neste ano."
 msgstr "Ainda não há turmas neste ano."
 
@@ -96,7 +100,7 @@ msgstr "Ano lectivo {designacao}, {estado}. Mudar de ano"
 msgid "anos lectivos"
 msgstr "anos lectivos"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Anterior"
 msgstr "Anterior"
 
@@ -124,7 +128,7 @@ msgstr "Claro"
 msgid "classe"
 msgstr "classe"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Classe"
 msgstr "Classe"
 
@@ -140,15 +144,23 @@ msgstr "Compacta"
 msgid "Confortável"
 msgstr "Confortável"
 
+#: src/routes/-casca/menu-utilizador.tsx
+msgid "Conta de {nome}"
+msgstr "Conta de {nome}"
+
+#: src/routes/-casca/proteccao-sessao.tsx
+msgid "Continuar"
+msgstr "Continuar"
+
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Continuar a editar"
 msgstr "Continuar a editar"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Crie a primeira ou duplique as do ano anterior."
 msgstr "Crie a primeira ou duplique as do ano anterior."
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Crie o primeiro ano lectivo para começar."
 msgstr "Crie o primeiro ano lectivo para começar."
 
@@ -196,6 +208,10 @@ msgstr "Editar o item em foco"
 msgid "Em curso"
 msgstr "Em curso"
 
+#: src/features/autenticar/ui/formulario-entrada.tsx
+msgid "Email"
+msgstr "Email"
+
 #: src/shared/config/glossario.ts
 msgid "encarregado"
 msgstr "encarregado"
@@ -204,11 +220,11 @@ msgstr "encarregado"
 msgid "encarregados"
 msgstr "encarregados"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Encerrada"
 msgstr "Encerrada"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Encerradas"
 msgstr "Encerradas"
 
@@ -216,9 +232,21 @@ msgstr "Encerradas"
 msgid "Encerrado"
 msgstr "Encerrado"
 
+#: src/features/autenticar/ui/formulario-entrada.tsx
+msgid "Entrar"
+msgstr "Entrar"
+
 #: src/shared/ui/ecra-bloqueado.tsx
 msgid "Entrar com outra conta"
 msgstr "Entrar com outra conta"
+
+#: src/routes/entrar.tsx
+msgid "Entre com a sua conta da escola."
+msgstr "Entre com a sua conta da escola."
+
+#: src/routes/-casca/proteccao-sessao.tsx
+msgid "Entre de novo para continuar. O que estava a fazer continua neste ecrã."
+msgstr "Entre de novo para continuar. O que estava a fazer continua neste ecrã."
 
 #: src/shared/ui/selector-data.tsx
 msgid "Escolha o último dia do período."
@@ -236,9 +264,17 @@ msgstr "Escolher ano lectivo"
 msgid "Escolher período"
 msgstr "Escolher período"
 
+#: src/features/autenticar/model/esquema.ts
+msgid "Escreva a palavra-passe."
+msgstr "Escreva a palavra-passe."
+
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Escreva um comando ou o nome de um ecrã"
 msgstr "Escreva um comando ou o nome de um ecrã"
+
+#: src/features/autenticar/model/esquema.ts
+msgid "Escreva um email válido."
+msgstr "Escreva um email válido."
 
 #: src/routes/-casca/menu-preferencias.tsx
 msgid "Escuro"
@@ -248,17 +284,25 @@ msgstr "Escuro"
 msgid "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
 msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Estado"
 msgstr "Estado"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Estado das turmas"
 msgstr "Estado das turmas"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Este ano lectivo está encerrado. Só é possível consultar."
 msgstr "Este ano lectivo está encerrado. Só é possível consultar."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Este documento é obrigatório e não pode ser dispensado."
+msgstr "Este documento é obrigatório e não pode ser dispensado."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Este estudante já está numa turma. Use Mover para mudar de turma."
+msgstr "Este estudante já está numa turma. Use Mover para mudar de turma."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Este estudante já tem matrícula neste ano lectivo. Abrimos a matrícula existente."
@@ -308,9 +352,9 @@ msgstr "Há uma nova versão da Secretaria."
 msgid "Igual ao sistema"
 msgstr "Igual ao sistema"
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
+#: src/routes/_app/index.tsx
 #: src/routes/-casca/paleta-comandos.tsx
-#: src/routes/index.tsx
 msgid "Início"
 msgstr "Início"
 
@@ -407,15 +451,20 @@ msgstr "Noite"
 msgid "Novo (no contexto do ecrã)"
 msgstr "Novo (no contexto do ecrã)"
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
 msgid "O ano lectivo {designacao} está encerrado. Só é possível consultar."
 msgstr "O ano lectivo {designacao} está encerrado. Só é possível consultar."
 
-#: src/routes/index.tsx
+#: src/features/autenticar/ui/formulario-entrada.tsx
+#: src/shared/lib/erros-dominio.ts
+msgid "O email ou a palavra-passe não estão correctos."
+msgstr "O email ou a palavra-passe não estão correctos."
+
+#: src/routes/_app/index.tsx
 msgid "O painel com indicadores e pendências do dia chega aqui."
 msgstr "O painel com indicadores e pendências do dia chega aqui."
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Ocupação"
 msgstr "Ocupação"
 
@@ -427,14 +476,15 @@ msgstr "Ocupação da turma"
 msgid "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
 msgstr "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Página {pagina} de {totalPaginas}"
 msgstr "Página {pagina} de {totalPaginas}"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Paginação"
 msgstr "Paginação"
 
+#: src/features/autenticar/ui/formulario-entrada.tsx
 #: src/shared/ui/ecra-bloqueado.tsx
 msgid "Palavra-passe"
 msgstr "Palavra-passe"
@@ -471,11 +521,11 @@ msgstr "Preferências"
 msgid "Preferências de apresentação"
 msgstr "Preferências de apresentação"
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
 msgid "Principal"
 msgstr "Principal"
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
 msgid "Procurar ou agir"
 msgstr "Procurar ou agir"
 
@@ -495,11 +545,11 @@ msgstr "Reveja os campos assinalados."
 msgid "Sair sem guardar"
 msgstr "Sair sem guardar"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Sala"
 msgstr "Sala"
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
 msgid "Saltar para o conteúdo"
 msgstr "Saltar para o conteúdo"
 
@@ -507,11 +557,12 @@ msgstr "Saltar para o conteúdo"
 msgid "Se sair agora, o que escreveu neste ecrã perde-se."
 msgstr "Se sair agora, o que escreveu neste ecrã perde-se."
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
+#: src/routes/entrar.tsx
 msgid "Secretaria"
 msgstr "Secretaria"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Seguinte"
 msgstr "Seguinte"
 
@@ -553,11 +604,15 @@ msgstr "Tema"
 msgid "Tentar de novo"
 msgstr "Tentar de novo"
 
+#: src/routes/-casca/menu-utilizador.tsx
+msgid "Terminar sessão"
+msgstr "Terminar sessão"
+
 #: src/shared/config/glossario.ts
 msgid "turma"
 msgstr "turma"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Turma"
 msgstr "Turma"
 
@@ -565,13 +620,13 @@ msgstr "Turma"
 msgid "turmas"
 msgstr "turmas"
 
-#: src/routes/__root.tsx
+#: src/routes/_app.tsx
+#: src/routes/_app/turmas/index.tsx
 #: src/routes/-casca/paleta-comandos.tsx
-#: src/routes/turmas/index.tsx
 msgid "Turmas"
 msgstr "Turmas"
 
-#: src/routes/turmas/index.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "Turno"
 msgstr "Turno"
 
@@ -583,7 +638,7 @@ msgstr "Usar tema claro"
 msgid "Usar tema escuro"
 msgstr "Usar tema escuro"
 
-#: src/routes/index.tsx
+#: src/routes/_app/index.tsx
 msgid "Ver turmas"
 msgstr "Ver turmas"
 

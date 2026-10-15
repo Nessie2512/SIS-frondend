@@ -36,7 +36,7 @@ const pesquisaTurmas = z.object({
   turma: z.catch(z.optional(z.string()), undefined),
 })
 
-export const Route = createFileRoute('/turmas/')({
+export const Route = createFileRoute('/_app/turmas/')({
   validateSearch: pesquisaTurmas,
   loaderDeps: ({ search: { turma: _, ...filtros } }) => filtros,
   loader: ({ context: { queryClient, anoLectivoId }, deps }) =>

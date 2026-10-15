@@ -17,6 +17,9 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   CLASSE_EM_USO: msg`Não é possível eliminar porque está em uso. Pode inactivar em vez disso.`,
   VERSAO_DESACTUALIZADA: msg`Outra pessoa alterou este registo entretanto. Mostramos a versão actual.`,
   PERMISSAO_NEGADA: msg`Não tem permissão para esta acção.`,
+  INSCRICAO_EXISTENTE: msg`Este estudante já está numa turma. Use Mover para mudar de turma.`,
+  DOCUMENTO_OBRIGATORIO: msg`Este documento é obrigatório e não pode ser dispensado.`,
+  CREDENCIAIS_INVALIDAS: msg`O email ou a palavra-passe não estão correctos.`,
 }
 
 const SESSAO_EXPIRADA = msg`A sessão terminou. Entre de novo para continuar.`

@@ -47,8 +47,7 @@ function problema(
 // ---------------------------------------------------------------------------
 function utilizadorDo(request: Request) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
-  // Provisório: sem ecrã de entrada, pedidos sem token contam como a secretária
-  const id = token?.startsWith('tk-') ? token.slice(3) : 'u1'
+  const id = token?.startsWith('tk-') ? token.slice(3) : undefined
   return UTILIZADORES.find((u) => u.id === id)
 }
 
