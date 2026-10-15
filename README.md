@@ -19,6 +19,7 @@ pnpm dev        # API real em http://localhost:3000 via proxy /api
 | `pnpm build`                  | Verificação de tipos e build de produção (inclui o service worker)                                  |
 | `pnpm check`                  | Tipos + lint + testes + fronteiras de arquitectura + contraste                                      |
 | `pnpm test` / `pnpm test:run` | Testes unitários e de componentes (jsdom)                                                           |
+| `pnpm e2e` / `pnpm e2e:ui`    | Fluxos críticos no navegador, contra o MSW, com axe (arranca o servidor sozinho)                    |
 | `pnpm storybook`              | Catálogo de componentes em http://localhost:6006                                                    |
 | `pnpm test:storybook`         | Cada história como teste no navegador, com axe (precisa de `pnpm exec playwright install chromium`) |
 | `pnpm tamanho`                | Orçamento de JavaScript inicial (correr depois de `pnpm build`)                                     |
@@ -28,6 +29,13 @@ pnpm dev        # API real em http://localhost:3000 via proxy /api
 | `pnpm api:gen`                | Gera `src/shared/api/schema.d.ts` a partir de `./openapi.json`                                      |
 | `pnpm format`                 | Prettier (ordena também as classes Tailwind)                                                        |
 | `pnpm fontes`                 | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
+
+## Contas de teste (modo simulado)
+
+| Email                  | Palavra-passe | Perfil                             |
+| ---------------------- | ------------- | ---------------------------------- |
+| `secretaria@escola.ao` | `secretaria`  | Todas as permissões                |
+| `consulta@escola.ao`   | `consulta`    | Só leitura (sem acções de escrita) |
 
 ## Estrutura (guia 4.1)
 

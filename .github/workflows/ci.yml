@@ -1,4 +1,4 @@
-# Integração contínua (guia 3.2, 4.1, 4.3, 6.4, 9.2)
+# Integração contínua (guia 3.2, 4.1, 4.3, 6.4, 8.1, 9.2)
 name: CI
 
 on:
@@ -57,3 +57,23 @@ jobs:
       - run: pnpm exec playwright install --with-deps chromium
       - name: Histórias como testes, com axe
         run: pnpm test:storybook
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Fluxos críticos ponta a ponta, com axe (guia 6.4, 8.1)
+        run: pnpm e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: relatorio-e2e
+          path: playwright-report
+          retention-days: 7
