@@ -9,6 +9,13 @@ const semTurmaDa7 = () =>
   db.matriculas.find((m) => m.classeId === 'c7' && !m.turmaId && m.anoLectivoId === 'ano-2026')!
 const nomeDe = (estudanteId: string) => db.estudantes.find((e) => e.id === estudanteId)!.nome
 
+/** O quadro é o ecrã mais pesado (uma coluna por turma, um cartão por estudante): esperar que monte. */
+async function abrirQuadro() {
+  const resultado = renderizarEm('/turmas/quadro?classeId=c7')
+  await screen.findByRole('region', { name: 'Sem turma' }, { timeout: 20_000 })
+  return resultado
+}
+
 async function abrirMenu(utilizador: ReturnType<typeof userEvent.setup>, nome: string) {
   await utilizador.click(await screen.findByRole('button', { name: `Mover ${nome} para…` }))
 }
@@ -17,7 +24,7 @@ describe('Quadro da turma', () => {
   it('inscreve um estudante sem turma pelo menu "Mover para…", de forma optimista, e permite desfazer', async () => {
     const m = semTurmaDa7()
     const nome = nomeDe(m.estudanteId)
-    renderizarEm('/turmas/quadro?classeId=c7')
+    await abrirQuadro()
     const utilizador = userEvent.setup()
     await abrirMenu(utilizador, nome)
     await utilizador.click(await screen.findByRole('menuitem', { name: /^7\.ª C/ }))
@@ -36,7 +43,7 @@ describe('Quadro da turma', () => {
   it('mudar entre turmas pede o motivo e regista-o no percurso', async () => {
     const m = db.matriculas.find((x) => x.turmaId === 'ano-2026-c7-C')!
     const nome = nomeDe(m.estudanteId)
-    renderizarEm('/turmas/quadro?classeId=c7')
+    await abrirQuadro()
     const utilizador = userEvent.setup()
     await abrirMenu(utilizador, nome)
     await utilizador.click(await screen.findByRole('menuitem', { name: /^7\.ª A/ }))
@@ -62,7 +69,7 @@ describe('Quadro da turma', () => {
     expect(contarInscritos('ano-2026-c7-B')).toBe(40)
     const m = db.matriculas.find((x) => x.turmaId === 'ano-2026-c7-C')!
     const nome = nomeDe(m.estudanteId)
-    renderizarEm('/turmas/quadro?classeId=c7')
+    await abrirQuadro()
     const utilizador = userEvent.setup()
     await abrirMenu(utilizador, nome)
     const opcao = await screen.findByRole('menuitem', { name: /^7\.ª B/ })

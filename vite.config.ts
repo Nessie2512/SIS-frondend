@@ -152,6 +152,9 @@ export default defineConfig({
     },
   },
   test: {
+    // Um jsdom por ficheiro é pesado: com um worker por núcleo, máquinas Windows mais lentas
+    // ficam sem CPU e os workers não chegam a arrancar. Metade dos núcleos chega e é estável.
+    maxWorkers: '50%',
     projects: [
       {
         extends: true,
@@ -161,8 +164,8 @@ export default defineConfig({
           setupFiles: ['./src/test/setup.ts'],
           include: ['src/**/*.test.{ts,tsx}'],
           css: false,
-          // Fluxos completos (assistente) passam de 5 s em máquinas mais lentas
-          testTimeout: 20_000,
+          // Fluxos completos (assistente, quadro) passam de 5 s em máquinas mais lentas
+          testTimeout: 30_000,
         },
       },
       {

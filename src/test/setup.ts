@@ -8,8 +8,8 @@ import { sessao } from '@/shared/api'
 import { usePermissoesStore } from '@/shared/lib/permissoes'
 import '@/shared/i18n'
 
-// Máquinas mais lentas (ou o primeiro teste, a frio) passam de 1 s a montar o router e as queries
-configure({ asyncUtilTimeout: 5000 })
+// Máquinas mais lentas (ou o primeiro teste, a frio) levam vários segundos a montar o router e as queries
+configure({ asyncUtilTimeout: 10_000 })
 
 // jsdom não implementa scrollTo (usado pela restauração de scroll do router)
 window.scrollTo = () => {}
