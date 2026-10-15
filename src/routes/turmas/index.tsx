@@ -1,23 +1,43 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useMemo } from 'react'
 import { z } from 'zod'
-import { BarraOcupacao, turmasQuery, type FiltrosTurma } from '@/entities/turma'
+import {
+  BarraOcupacao,
+  turmaQuery,
+  turmasQuery,
+  type FiltrosTurma,
+  type Turma,
+} from '@/entities/turma'
 import { TEMPOS } from '@/shared/config/constantes'
 import { cn } from '@/shared/lib/cn'
-import { Button, Esqueleto, EstadoVazio, ErroDeRota } from '@/shared/ui'
+import {
+  Button,
+  colunasDe,
+  ControloSegmentado,
+  Esqueleto,
+  EstadoVazio,
+  ErroDeRota,
+  EtiquetaEstado,
+  Folha,
+  TabelaDados,
+  type ColunaTabela,
+} from '@/shared/ui'
 
-// Filtros vivem no URL; valores inválidos regressam ao padrão em vez de rebentar (guia 4.6)
+// Filtros, página e turma aberta vivem no URL; valores inválidos regressam ao padrão (guia 4.6, 7.1)
 const pesquisaTurmas = z.object({
   classeId: z.string().optional().catch(undefined),
   turno: z.enum(['MANHA', 'TARDE', 'NOITE']).optional().catch(undefined),
   estado: z.enum(['ACTIVA', 'ENCERRADA']).default('ACTIVA').catch('ACTIVA'),
   page: z.number().int().min(1).default(1).catch(1),
+  /** Turma aberta no painel lateral */
+  turma: z.string().optional().catch(undefined),
 })
 
 export const Route = createFileRoute('/turmas/')({
   validateSearch: pesquisaTurmas,
-  loaderDeps: ({ search }) => search,
+  loaderDeps: ({ search: { turma: _, ...filtros } }) => filtros,
   loader: ({ context: { queryClient, anoLectivoId }, deps }) =>
     anoLectivoId ? queryClient.ensureQueryData(turmasQuery({ anoLectivoId, ...deps })) : null,
   pendingComponent: TurmasEsqueleto,
@@ -41,14 +61,46 @@ function EcraTurmas() {
   return <ListaTurmas anoLectivoId={anoLectivoId} />
 }
 
+const c = colunasDe<Turma>()
+
+function useColunas(): ColunaTabela<Turma>[] {
+  const { t } = useLingui()
+  return useMemo(
+    () => [
+      c.accessor('designacao', {
+        header: t`Turma`,
+        cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+      }),
+      c.accessor('classe', {
+        header: t`Classe`,
+        cell: (info) => <span className="text-texto-2">{info.getValue()}</span>,
+      }),
+      c.accessor('turnoRotulo', {
+        header: t`Turno`,
+        cell: (info) => <span className="text-texto-2">{info.getValue()}</span>,
+      }),
+      c.accessor('sala', {
+        header: t`Sala`,
+        cell: (info) => <span className="text-texto-2">{info.getValue() ?? '—'}</span>,
+      }),
+      c.accessor('ocupacao', {
+        header: t`Ocupação`,
+        cell: (info) => <BarraOcupacao turma={info.row.original} />,
+      }),
+    ],
+    [t],
+  )
+}
+
 function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
   const { t } = useLingui()
-  const search = Route.useSearch()
+  const { turma: turmaAberta, ...search } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const filtros: FiltrosTurma = { anoLectivoId, ...search }
-  const { data, isPlaceholderData } = useQuery(turmasQuery(filtros))
-  if (!data) return <TurmasEsqueleto />
-  const { page: pagina, totalPaginas } = data
+  const { data, isPlaceholderData, isError, refetch } = useQuery(turmasQuery(filtros))
+  const colunas = useColunas()
+  const pagina = data?.page ?? search.page
+  const totalPaginas = data?.totalPaginas ?? 1
 
   return (
     <section className="flex flex-col gap-6">
@@ -56,81 +108,47 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
         <h1 className="text-titulo-pagina">
           <Trans>Turmas</Trans>
         </h1>
-        <div
-          role="group"
-          aria-label={t`Estado`}
-          className="flex rounded-controlo bg-linha p-0.5 text-secundario"
-        >
-          {(['ACTIVA', 'ENCERRADA'] as const).map((estado) => (
-            <Link
-              key={estado}
-              from={Route.fullPath}
-              search={(s) => ({ ...s, estado, page: 1 })}
-              aria-current={search.estado === estado ? 'page' : undefined}
-              className={cn(
-                'rounded-[6px] px-3 py-1 text-texto-2',
-                search.estado === estado && 'bg-superficie text-texto-1 shadow-elevado',
-              )}
-            >
-              {estado === 'ACTIVA' ? <Trans>Activas</Trans> : <Trans>Encerradas</Trans>}
-            </Link>
-          ))}
-        </div>
+        <ControloSegmentado
+          rotulo={t`Estado das turmas`}
+          valor={search.estado}
+          aoMudar={(estado) =>
+            void navigate({
+              search: (s) => ({ ...s, estado: estado as 'ACTIVA' | 'ENCERRADA', page: 1 }),
+            })
+          }
+          opcoes={[
+            { valor: 'ACTIVA', rotulo: t`Activas` },
+            { valor: 'ENCERRADA', rotulo: t`Encerradas` },
+          ]}
+        />
       </div>
 
-      {data.turmas.length === 0 ? (
-        <EstadoVazio
-          titulo={t`Ainda não há turmas neste ano.`}
-          descricao={t`Crie a primeira ou duplique as do ano anterior.`}
+      <div
+        className={cn(
+          'transition-opacity duration-(--duracao-padrao)',
+          isPlaceholderData && 'opacity-60',
+        )}
+      >
+        <TabelaDados
+          rotulo={t`Turmas`}
+          colunas={colunas}
+          dados={data?.turmas}
+          idDaLinha={(turma) => turma.id}
+          aCarregar={!data}
+          erro={isError && !data}
+          aoTentarDeNovo={() => void refetch()}
+          idActiva={turmaAberta}
+          aoAbrir={(turma) => void navigate({ search: (s) => ({ ...s, turma: turma.id }) })}
+          vazio={
+            <EstadoVazio
+              titulo={t`Ainda não há turmas neste ano.`}
+              descricao={t`Crie a primeira ou duplique as do ano anterior.`}
+            />
+          }
         />
-      ) : (
-        <div
-          className={cn(
-            'overflow-hidden rounded-cartao bg-superficie ring-1 ring-linha transition-opacity duration-(--duracao-padrao)',
-            isPlaceholderData && 'opacity-60',
-          )}
-        >
-          <table className="w-full text-left">
-            <thead className="text-legenda text-texto-3">
-              <tr className="border-b border-linha">
-                <th scope="col" className="px-4 py-3">
-                  <Trans>Turma</Trans>
-                </th>
-                <th scope="col" className="px-4 py-3">
-                  <Trans>Classe</Trans>
-                </th>
-                <th scope="col" className="px-4 py-3">
-                  <Trans>Turno</Trans>
-                </th>
-                <th scope="col" className="px-4 py-3">
-                  <Trans>Sala</Trans>
-                </th>
-                <th scope="col" className="px-4 py-3">
-                  <Trans>Ocupação</Trans>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.turmas.map((turma) => (
-                <tr
-                  key={turma.id}
-                  className="h-linha border-b border-linha last:border-0 hover:bg-fundo"
-                >
-                  <td className="px-4 font-medium">{turma.designacao}</td>
-                  <td className="px-4 text-texto-2">{turma.classe}</td>
-                  <td className="px-4 text-texto-2">{turma.turnoRotulo}</td>
-                  <td className="px-4 text-texto-2">{turma.sala ?? '—'}</td>
-                  <td className="px-4">
-                    <BarraOcupacao turma={turma} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      </div>
 
-      {data.totalPaginas > 1 && (
+      {totalPaginas > 1 && (
         <nav
           aria-label={t`Paginação`}
           className="flex items-center justify-end gap-3 text-secundario"
@@ -149,14 +167,70 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
           </Button>
           <Button
             tamanho="compacto"
-            disabled={search.page >= data.totalPaginas}
+            disabled={search.page >= totalPaginas}
             onClick={() => void navigate({ search: (s) => ({ ...s, page: s.page + 1 }) })}
           >
             <Trans>Seguinte</Trans>
           </Button>
         </nav>
       )}
+
+      <PainelTurma
+        id={turmaAberta}
+        aoFechar={() => void navigate({ search: (s) => ({ ...s, turma: undefined }) })}
+      />
     </section>
+  )
+}
+
+/** Painel lateral de resumo (guia 6.3): abre a partir da linha; o URL regista a turma aberta; Esc fecha. */
+function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () => void }) {
+  const { t } = useLingui()
+  const { data: turma } = useQuery({ ...turmaQuery(id ?? ''), enabled: Boolean(id) })
+  const titulo = turma?.designacao ?? t`Turma`
+
+  return (
+    <Folha
+      aberta={Boolean(id)}
+      aoMudar={(aberta) => !aberta && aoFechar()}
+      titulo={titulo}
+      descricao={turma?.classe}
+    >
+      {turma ? (
+        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-corpo">
+          <dt className="text-texto-2">
+            <Trans>Estado</Trans>
+          </dt>
+          <dd>
+            {turma.encerrada ? (
+              <EtiquetaEstado tom="neutra">{t`Encerrada`}</EtiquetaEstado>
+            ) : (
+              <EtiquetaEstado tom="sucesso">{t`Activa`}</EtiquetaEstado>
+            )}
+          </dd>
+          <dt className="text-texto-2">
+            <Trans>Turno</Trans>
+          </dt>
+          <dd>{turma.turnoRotulo}</dd>
+          <dt className="text-texto-2">
+            <Trans>Sala</Trans>
+          </dt>
+          <dd>{turma.sala ?? '—'}</dd>
+          <dt className="text-texto-2">
+            <Trans>Ocupação</Trans>
+          </dt>
+          <dd>
+            <BarraOcupacao turma={turma} />
+          </dd>
+        </dl>
+      ) : (
+        <div className="flex flex-col gap-3" aria-hidden>
+          <Esqueleto className="h-5 w-40" />
+          <Esqueleto className="h-5 w-32" />
+          <Esqueleto className="h-5 w-48" />
+        </div>
+      )}
+    </Folha>
   )
 }
 

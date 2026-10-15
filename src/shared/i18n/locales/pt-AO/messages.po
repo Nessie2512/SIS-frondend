@@ -53,6 +53,10 @@ msgid "Acções em lote"
 msgstr "Acções em lote"
 
 #: src/routes/turmas/index.tsx
+msgid "Activa"
+msgstr "Activa"
+
+#: src/routes/turmas/index.tsx
 msgid "Activas"
 msgstr "Activas"
 
@@ -197,6 +201,10 @@ msgid "encarregados"
 msgstr "encarregados"
 
 #: src/routes/turmas/index.tsx
+msgid "Encerrada"
+msgstr "Encerrada"
+
+#: src/routes/turmas/index.tsx
 msgid "Encerradas"
 msgstr "Encerradas"
 
@@ -239,6 +247,10 @@ msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção.
 #: src/routes/turmas/index.tsx
 msgid "Estado"
 msgstr "Estado"
+
+#: src/routes/turmas/index.tsx
+msgid "Estado das turmas"
+msgstr "Estado das turmas"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Este ano lectivo está encerrado. Só é possível consultar."
