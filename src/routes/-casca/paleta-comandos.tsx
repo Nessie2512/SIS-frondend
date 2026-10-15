@@ -12,8 +12,11 @@ import {
   Rows4,
   Sun,
   UserPlus,
+  UserRound,
   Users,
 } from 'lucide-react'
+import { useState } from 'react'
+import { usePesquisa } from '@/features/pesquisar'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
 import { usePreferencias } from '@/shared/lib/preferencias'
 import type { ReactNode } from 'react'
@@ -25,37 +28,99 @@ interface Props {
 }
 
 /**
- * Paleta de comandos (guia 1.1, 6.2, 7.5): ⌘K / Ctrl+K para navegar e agir sem largar o teclado.
- * A pesquisa de estudantes e turmas entra quando a API estiver disponível.
+ * Paleta de comandos (guia 1.1, 6.2, 7.5): ⌘K / Ctrl+K para navegar, agir e encontrar
+ * estudantes (nome ou n.º de processo) e turmas sem largar o teclado.
  */
 export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
   const { t } = useLingui()
   const router = useRouter()
   const definirTema = usePreferencias((e) => e.definirTema)
   const definirDensidade = usePreferencias((e) => e.definirDensidade)
+  const [procura, setProcura] = useState('')
+  const pesquisa = usePesquisa(procura)
+
+  function mudar(aberta: boolean) {
+    if (!aberta) setProcura('')
+    aoMudar(aberta)
+  }
 
   function executar(accao: () => void) {
-    aoMudar(false)
+    mudar(false)
     accao()
   }
 
   return (
     <Command.Dialog
       open={aberta}
-      onOpenChange={aoMudar}
+      onOpenChange={mudar}
       label={t`Paleta de comandos`}
       loop
       overlayClassName="fixed inset-0 z-40 bg-black/30 data-[state=open]:animate-desvanecer-entrar"
       contentClassName="fixed top-[15vh] left-1/2 z-50 w-[calc(100%-2rem)] max-w-xl -translate-x-1/2 overflow-hidden rounded-folha bg-superficie/95 shadow-flutuante ring-1 ring-linha backdrop-blur-xl data-[state=open]:animate-desvanecer-entrar"
     >
       <Command.Input
-        placeholder={t`Escreva um comando ou o nome de um ecrã`}
+        value={procura}
+        onValueChange={setProcura}
+        placeholder={t`Procurar estudante, turma ou comando`}
         className="h-12 w-full border-b border-linha bg-transparent px-4 text-corpo outline-none placeholder:text-texto-3"
       />
       <Command.List className="max-h-[50vh] overflow-y-auto p-2">
+        {pesquisa.aProcurar && (
+          <Command.Loading className="px-3 py-2 text-secundario text-texto-3">
+            <Trans>A procurar…</Trans>
+          </Command.Loading>
+        )}
         <Command.Empty className="px-3 py-6 text-center text-secundario text-texto-3">
-          <Trans>Nenhum comando encontrado.</Trans>
+          {pesquisa.activa && pesquisa.aProcurar ? (
+            <Trans>A procurar…</Trans>
+          ) : (
+            <Trans>Nada encontrado. Experimente o número de processo.</Trans>
+          )}
         </Command.Empty>
+        {pesquisa.estudantes.length > 0 && (
+          <Grupo titulo={t`Estudantes`}>
+            {pesquisa.estudantes.map((e) => (
+              <Item
+                key={e.id}
+                valor={`estudante ${e.id} ${e.nome} ${e.numeroProcesso}`}
+                palavras={[procura]}
+                icone={<UserRound />}
+                detalhe={[e.numeroProcesso, e.matricula].filter(Boolean).join(' · ')}
+                aoEscolher={() =>
+                  executar(
+                    () =>
+                      void router.navigate({
+                        to: '/estudantes/$estudanteId',
+                        params: { estudanteId: e.id },
+                      }),
+                  )
+                }
+              >
+                {e.nome}
+              </Item>
+            ))}
+          </Grupo>
+        )}
+        {pesquisa.turmas.length > 0 && (
+          <Grupo titulo={t`Turmas`}>
+            {pesquisa.turmas.map((turma) => (
+              <Item
+                key={turma.id}
+                valor={`turma ${turma.id} ${turma.designacao}`}
+                palavras={[procura]}
+                icone={<Users />}
+                detalhe={turma.classe}
+                aoEscolher={() =>
+                  executar(
+                    () => void router.navigate({ to: '/turmas', search: { turma: turma.id } }),
+                  )
+                }
+              >
+                {turma.designacao}
+              </Item>
+            ))}
+          </Grupo>
+        )}
         <Grupo titulo={t`Navegar`}>
           <Item
             icone={<Home />}
@@ -142,21 +207,34 @@ function Grupo({ titulo, children }: { titulo: string; children: ReactNode }) {
 function Item({
   icone,
   atalho,
+  valor,
+  palavras,
+  detalhe,
   aoEscolher,
   children,
 }: {
   icone: ReactNode
   atalho?: string
+  /** Valor único para resultados do servidor (nomes podem repetir-se) */
+  valor?: string
+  /** Resultados do servidor já vêm filtrados: o termo entra como palavra-chave para ficarem */
+  palavras?: string[]
+  detalhe?: string | null
   aoEscolher: () => void
   children: ReactNode
 }) {
   return (
     <Command.Item
+      value={valor}
+      keywords={palavras}
       onSelect={aoEscolher}
       className="flex h-10 cursor-default items-center gap-3 rounded-controlo px-3 text-corpo data-[selected=true]:bg-fundo [&_svg]:size-4 [&_svg]:stroke-[1.5] [&_svg]:text-texto-2"
     >
       {icone}
-      <span className="flex-1">{children}</span>
+      <span className="flex min-w-0 flex-1 items-baseline gap-2">
+        <span className="truncate">{children}</span>
+        {detalhe && <span className="truncate text-legenda text-texto-3">{detalhe}</span>}
+      </span>
       {atalho && <kbd className="tabular text-legenda text-texto-3">{mostrarAtalho(atalho)}</kbd>}
     </Command.Item>
   )
