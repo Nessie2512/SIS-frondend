@@ -43,6 +43,8 @@ interface Props<T extends RowData> {
   /** Altura do contentor com scroll (necessária para virtualizar) */
   alturaMaxima?: number
   linhasEsqueleto?: number
+  /** Listas paginadas no servidor: ordenar só a página actual engana, por isso desliga-se */
+  semOrdenacao?: boolean
 }
 
 /**
@@ -95,6 +97,7 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
     onRowSelectionChange: setSeleccao,
     enableRowSelection: Boolean(seleccionavel),
     enableSortingRemoval: true,
+    enableSorting: !props.semOrdenacao,
   })
 
   const linhas = tabela.getRowModel().rows

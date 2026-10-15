@@ -95,6 +95,9 @@ function LayoutApp() {
             <Link to="/" className={classesLigacao} activeOptions={{ exact: true }}>
               <Trans>Início</Trans>
             </Link>
+            <Link to="/estudantes" search={{ page: 1 }} className={classesLigacao}>
+              <Trans>Estudantes</Trans>
+            </Link>
             <Link to="/turmas" className={classesLigacao}>
               <Trans>Turmas</Trans>
             </Link>

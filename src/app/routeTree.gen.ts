@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './../routes/__root'
 import { Route as AppRouteImport } from './../routes/_app'
 import { Route as EntrarRouteImport } from './../routes/entrar'
 import { Route as AppIndexRouteImport } from './../routes/_app/index'
+import { Route as AppEstudantesIndexRouteImport } from './../routes/_app/estudantes/index'
+import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/estudantes/$estudanteId'
 import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/index'
 
 const AppRoute = AppRouteImport.update({
@@ -28,6 +30,17 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppEstudantesIndexRoute = AppEstudantesIndexRouteImport.update({
+  id: '/estudantes/',
+  path: '/estudantes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEstudantesEstudanteIdRoute =
+  AppEstudantesEstudanteIdRouteImport.update({
+    id: '/estudantes/$estudanteId',
+    path: '/estudantes/$estudanteId',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppTurmasIndexRoute = AppTurmasIndexRouteImport.update({
   id: '/turmas/',
   path: '/turmas/',
@@ -37,11 +50,15 @@ const AppTurmasIndexRoute = AppTurmasIndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/entrar': typeof EntrarRoute
+  '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/estudantes/': typeof AppEstudantesIndexRoute
   '/turmas/': typeof AppTurmasIndexRoute
 }
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/': typeof AppIndexRoute
+  '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/estudantes': typeof AppEstudantesIndexRoute
   '/turmas': typeof AppTurmasIndexRoute
 }
 export interface FileRoutesById {
@@ -49,14 +66,24 @@ export interface FileRoutesById {
   '/_app': typeof AppRouteWithChildren
   '/entrar': typeof EntrarRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/_app/estudantes/': typeof AppEstudantesIndexRoute
   '/_app/turmas/': typeof AppTurmasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/entrar' | '/turmas/'
+  fullPaths:
+    '/' | '/entrar' | '/estudantes/$estudanteId' | '/estudantes/' | '/turmas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/entrar' | '/' | '/turmas'
-  id: '__root__' | '/_app' | '/entrar' | '/_app/' | '/_app/turmas/'
+  to: '/entrar' | '/' | '/estudantes/$estudanteId' | '/estudantes' | '/turmas'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/entrar'
+    | '/_app/'
+    | '/_app/estudantes/$estudanteId'
+    | '/_app/estudantes/'
+    | '/_app/turmas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -87,6 +114,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/estudantes/': {
+      id: '/_app/estudantes/'
+      path: '/estudantes'
+      fullPath: '/estudantes/'
+      preLoaderRoute: typeof AppEstudantesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/estudantes/$estudanteId': {
+      id: '/_app/estudantes/$estudanteId'
+      path: '/estudantes/$estudanteId'
+      fullPath: '/estudantes/$estudanteId'
+      preLoaderRoute: typeof AppEstudantesEstudanteIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/turmas/': {
       id: '/_app/turmas/'
       path: '/turmas'
@@ -99,11 +140,15 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppIndexRoute: typeof AppIndexRoute
+  AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
+  AppEstudantesIndexRoute: typeof AppEstudantesIndexRoute
   AppTurmasIndexRoute: typeof AppTurmasIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppIndexRoute: AppIndexRoute,
+  AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
+  AppEstudantesIndexRoute: AppEstudantesIndexRoute,
   AppTurmasIndexRoute: AppTurmasIndexRoute,
 }
 
