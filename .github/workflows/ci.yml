@@ -1,0 +1,59 @@
+# Integração contínua (guia 3.2, 4.1, 4.3, 6.4, 9.2)
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      - name: Formatação
+        run: pnpm format:check
+      - name: Tipos
+        run: pnpm typecheck
+      - name: Lint (inclui textos fora do catálogo e acessibilidade JSX)
+        run: pnpm lint
+      - name: Testes unitários e de componentes
+        run: pnpm test:run
+      - name: Fronteiras de arquitectura
+        run: pnpm deps:check
+      - name: Contraste dos tokens
+        run: pnpm contraste && git diff --exit-code docs/contraste.md
+      - name: Catálogo de mensagens actualizado
+        run: pnpm i18n:extrair && git diff --exit-code src/shared/i18n
+      # Desvio de contrato com a API (guia 4.3): activar quando o backend publicar o OpenAPI
+      # - name: Contrato da API
+      #   run: pnpm api:gen && git diff --exit-code src/shared/api/schema.d.ts
+      - name: Build
+        run: pnpm build
+      - name: Orçamento de peso
+        run: pnpm tamanho
+
+  storybook:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - name: Histórias como testes, com axe
+        run: pnpm test:storybook
