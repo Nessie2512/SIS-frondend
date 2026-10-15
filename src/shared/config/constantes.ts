@@ -18,6 +18,9 @@ export const TEMPOS = {
   dica: 400,
 } as const
 
+/** Consulta de tarefas longas (guia 5.7): intervalo crescente, com tecto, e pausa em segundo plano. */
+export const SONDAGEM_TAREFAS = { inicial: 1_000, factor: 1.5, maximo: 10_000 } as const
+
 export const PAGINACAO = { porPagina: 50, maximo: 100 } as const
 
 /** Minutos sem interacção até bloquear o ecrã (guia 4.4); configurável por escola mais tarde. */

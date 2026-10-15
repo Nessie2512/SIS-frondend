@@ -11,6 +11,7 @@ import {
   type FiltrosTurma,
   type Turma,
 } from '@/entities/turma'
+import { BotaoGerarListaNominal } from '@/features/gerar-lista-nominal'
 import { TEMPOS } from '@/shared/config/constantes'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -201,6 +202,18 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
       aoMudar={(aberta) => !aberta && aoFechar()}
       titulo={titulo}
       descricao={turma?.classe}
+      rodape={
+        turma && (
+          <>
+            <Button asChild>
+              <Link to="/turmas/quadro" search={{ classeId: turma.classeId }}>
+                <Trans>Abrir no quadro</Trans>
+              </Link>
+            </Button>
+            <BotaoGerarListaNominal turmaId={turma.id} />
+          </>
+        )
+      }
     >
       {turma ? (
         <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 text-corpo">

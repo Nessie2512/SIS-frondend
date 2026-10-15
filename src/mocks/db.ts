@@ -161,6 +161,7 @@ type Documento = S['DocumentoEstudanteDto'] & {
 }
 interface Tarefa {
   id: string
+  turmaId: string
   titulo: string
   inicio: number
   duracao: number
@@ -457,14 +458,14 @@ export function paraEncarregadoDto(
 
 export function paraTarefaDto(t: Tarefa): S['TarefaDto'] {
   const decorrido = Date.now() - t.inicio
-  const progresso = Math.min(100, Math.round((decorrido / t.duracao) * 100))
+  const progresso = t.duracao <= 0 ? 100 : Math.min(100, Math.round((decorrido / t.duracao) * 100))
   const terminou = progresso >= 100
   return {
     id: t.id,
     titulo: t.titulo,
     estado: terminou ? (t.falha ? 'FALHADA' : 'CONCLUIDA') : 'EM_CURSO',
     progresso: t.falha && terminou ? 70 : progresso,
-    resultadoUrl: terminou && !t.falha ? '/lista-nominal-exemplo.pdf' : null,
+    resultadoUrl: terminou && !t.falha ? `/api/v1/tarefas/${t.id}/resultado` : null,
     erros:
       t.falha && terminou ? [{ linha: 12, mensagem: 'Estudante sem número de processo.' }] : [],
   }

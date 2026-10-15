@@ -617,6 +617,7 @@ export const handlers = [
         if (!turma) return problema(404, 'Turma não encontrada')
         const tarefa = {
           id: novoId('t'),
+          turmaId: turma.id,
           titulo: `Lista nominal da ${turma.designacao}`,
           inicio: Date.now(),
           duracao: import.meta.env.MODE === 'test' ? 0 : 6000,
@@ -637,6 +638,25 @@ export const handlers = [
       return HttpResponse.json(paraTarefaDto(tarefa))
     }),
   ),
+
+  // O resultado chega por um URL de curta duração, como uma ligação assinada: não leva o token
+  http.get(`${API}/tarefas/:id/resultado`, ({ params }) => {
+    const tarefa = db.tarefas.find((t) => t.id === params.id)
+    const turma = tarefa && turmaPorId(tarefa.turmaId)
+    if (!tarefa || !turma) return problema(404, 'Resultado não encontrado')
+    const linhas = db.matriculas
+      .filter((m) => m.turmaId === turma.id)
+      .map((m) => db.estudantes.find((e) => e.id === m.estudanteId)!)
+      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
+      .map((e, i) => `${i + 1};${e.numeroProcesso};${e.nome}`)
+    const nome = `lista-nominal-${turma.designacao.replace(/\W+/g, '')}.csv`
+    return new HttpResponse(['N.º;Processo;Nome', ...linhas].join('\n'), {
+      headers: {
+        'Content-Type': 'text/csv; charset=utf-8',
+        'Content-Disposition': `attachment; filename="${nome}"`,
+      },
+    })
+  }),
 ]
 
 /** Regras ao colocar uma matrícula numa turma: ano aberto, mesma classe, lotação (guia 2.4). */

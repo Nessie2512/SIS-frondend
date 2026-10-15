@@ -1,3 +1,4 @@
+import { useTarefasAcompanhadas } from '@/entities/tarefa'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest'
@@ -45,6 +46,7 @@ beforeEach(() => {
   reporBaseDeDados()
   sessao.definirToken('tk-u1')
   usePermissoesStore.getState().limpar()
+  useTarefasAcompanhadas.getState().limpar()
 })
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))

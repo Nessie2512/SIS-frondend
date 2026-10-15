@@ -4,6 +4,7 @@ import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/re
 import { Search } from 'lucide-react'
 import { useEffect } from 'react'
 import { anosLectivosQuery, SelectorAno, useContextoAno } from '@/entities/ano-lectivo'
+import { QuadroTarefas, useTarefasAcompanhadas } from '@/entities/tarefa'
 import { garantirSessao, meQuery, utilizadorKeys } from '@/entities/utilizador'
 import { eventosApi, sessao } from '@/shared/api'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
@@ -73,6 +74,7 @@ function LayoutApp() {
         if (motivo !== 'saida') return
         queryClient.clear()
         usePermissoesStore.getState().limpar()
+        useTarefasAcompanhadas.getState().limpar()
         void router.navigate({ to: '/entrar' })
       }),
     [queryClient, router],
@@ -130,6 +132,7 @@ function LayoutApp() {
       <main id="conteudo" className="mx-auto max-w-6xl px-6 py-8 print:max-w-none print:p-0">
         <Outlet />
       </main>
+      <QuadroTarefas />
       <Casca />
       <ProteccaoSessao />
     </div>
