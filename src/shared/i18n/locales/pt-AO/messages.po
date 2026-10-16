@@ -7,6 +7,14 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 "Language: pt-AO\n"
 
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "«{titulo}» acrescentado ao calendário."
+msgstr "«{titulo}» acrescentado ao calendário."
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "«{titulo}» apagado do calendário."
+msgstr "«{titulo}» apagado do calendário."
+
 #. placeholder {0}: idsSeleccionados.length
 #: src/shared/ui/tabela-dados.tsx
 msgid "{0, plural, one {# seleccionado} other {# seleccionados}}"
@@ -102,6 +110,10 @@ msgstr "{nome} sobre {destino}."
 msgid "{nome}: {rotulo}."
 msgstr "{nome}: {rotulo}."
 
+#: src/entities/calendario/model/mapeadores.ts
+msgid "{numero}.º trimestre"
+msgstr "{numero}.º trimestre"
+
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "{progresso}% · pode continuar a trabalhar"
 msgstr "{progresso}% · pode continuar a trabalhar"
@@ -113,6 +125,10 @@ msgstr "{quantos} seleccionados"
 #: src/shared/ui/selector-data.tsx
 msgid "{textoInicio} – escolha o fim"
 msgstr "{textoInicio} – escolha o fim"
+
+#: src/entities/calendario/ui/grelha-ano.tsx
+msgid "{tipo}: {titulo}"
+msgstr "{tipo}: {titulo}"
 
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "{titulo} está pronta para descarregar."
@@ -185,6 +201,10 @@ msgstr "A carregar a ficha"
 #: src/routes/_app/estudantes/index.tsx
 msgid "A carregar estudantes"
 msgstr "A carregar estudantes"
+
+#: src/routes/_app/calendario.tsx
+msgid "A carregar o calendário"
+msgstr "A carregar o calendário"
 
 #: src/routes/_app/index.tsx
 msgid "A carregar o início"
@@ -294,6 +314,10 @@ msgstr "Acções rápidas"
 msgid "Acrescentar"
 msgstr "Acrescentar"
 
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Acrescentar ao calendário"
+msgstr "Acrescentar ao calendário"
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Acrescentar disciplina ao plano"
 msgstr "Acrescentar disciplina ao plano"
@@ -343,6 +367,7 @@ msgstr "Aguardam documentos obrigatórios"
 msgid "Ainda não foram emitidos documentos oficiais."
 msgstr "Ainda não foram emitidos documentos oficiais."
 
+#: src/routes/_app/calendario.tsx
 #: src/routes/_app/index.tsx
 #: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há anos lectivos."
@@ -426,6 +451,10 @@ msgstr "Anulada"
 msgid "Anulado"
 msgstr "Anulado"
 
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Apagar «{titulo}»"
+msgstr "Apagar «{titulo}»"
+
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Apagar a vista «{nome}»"
 msgstr "Apagar a vista «{nome}»"
@@ -489,6 +518,15 @@ msgstr "Boa tarde, {nome}"
 #: src/routes/_app/index.tsx
 msgid "Bom dia, {nome}"
 msgstr "Bom dia, {nome}"
+
+#: src/routes/_app.tsx
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Calendário"
+msgstr "Calendário"
+
+#: src/routes/_app/calendario.tsx
+msgid "Calendário {designacao}"
+msgstr "Calendário {designacao}"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Cancelado."
@@ -638,6 +676,10 @@ msgstr "Crie as turmas antes de distribuir os estudantes."
 msgid "Crie o primeiro ano lectivo para começar."
 msgstr "Crie o primeiro ano lectivo para começar."
 
+#: src/routes/_app/calendario.tsx
+msgid "Crie o primeiro ano lectivo para ver o calendário."
+msgstr "Crie o primeiro ano lectivo para ver o calendário."
+
 #: src/routes/_app.tsx
 #: src/routes/_app/curriculo.tsx
 #: src/routes/-casca/paleta-comandos.tsx
@@ -657,6 +699,12 @@ msgstr "Data de nascimento"
 #: src/shared/ui/selector-data.tsx
 msgid "Data inválida. Use o formato dd/mm/aaaa."
 msgstr "Data inválida. Use o formato dd/mm/aaaa."
+
+#: src/entities/calendario/model/mapeadores.ts
+#: src/entities/calendario/ui/grelha-ano.tsx
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Data-chave"
+msgstr "Data-chave"
 
 #: src/shared/ui/selector-data.tsx
 msgid "dd/mm/aaaa"
@@ -728,6 +776,10 @@ msgstr "Desistente"
 #: src/routes/_app/professores/index.tsx
 msgid "Desligado"
 msgstr "Desligado"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Dia"
+msgstr "Dia"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
@@ -950,6 +1002,14 @@ msgstr "Escolha o sexo."
 msgid "Escolha o último dia do período."
 msgstr "Escolha o último dia do período."
 
+#: src/routes/_app/calendario.tsx
+msgid "Escolha um dia para ver o que acontece e acrescentar um evento."
+msgstr "Escolha um dia para ver o que acontece e acrescentar um evento."
+
+#: src/routes/_app/calendario.tsx
+msgid "Escolha um dia para ver o que acontece."
+msgstr "Escolha um dia para ver o que acontece."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Escolha uma disciplina."
 msgstr "Escolha uma disciplina."
@@ -979,6 +1039,10 @@ msgstr "Escreva o nome completo."
 #: src/features/gerir-disciplinas/model/esquema.ts
 msgid "Escreva o nome da disciplina."
 msgstr "Escreva o nome da disciplina."
+
+#: src/features/gerir-eventos/model/esquema.ts
+msgid "Escreva o nome do evento."
+msgstr "Escreva o nome do evento."
 
 #: src/features/autenticar/model/esquema.ts
 #: src/features/matricular-estudante/model/esquema.ts
@@ -1086,6 +1150,12 @@ msgstr "Estudantes"
 msgid "Estudantes sem turma"
 msgstr "Estudantes sem turma"
 
+#: src/entities/calendario/model/mapeadores.ts
+#: src/entities/calendario/ui/grelha-ano.tsx
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Evento"
+msgstr "Evento"
+
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Ex.: 7.ª classe sem turma"
 msgstr "Ex.: 7.ª classe sem turma"
@@ -1101,6 +1171,10 @@ msgstr "Ex.: Mãe, Pai, Tia"
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Ex.: pedido do encarregado"
 msgstr "Ex.: pedido do encarregado"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Ex.: Reunião de pais da 7.ª classe"
+msgstr "Ex.: Reunião de pais da 7.ª classe"
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Explique em poucas palavras porque não é o mesmo estudante."
@@ -1127,6 +1201,19 @@ msgstr "Fechar folha, menu ou diálogo"
 msgid "Feminino"
 msgstr "Feminino"
 
+#: src/entities/calendario/model/mapeadores.ts
+#: src/entities/calendario/ui/grelha-ano.tsx
+msgid "Feriado"
+msgstr "Feriado"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Feriado nacional: não se apaga"
+msgstr "Feriado nacional: não se apaga"
+
+#: src/routes/_app/calendario.tsx
+msgid "Feriados, datas-chave e interrupções"
+msgstr "Feriados, datas-chave e interrupções"
+
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 msgid "Fica na lista de estudantes sem turma, no quadro da distribuição."
 msgstr "Fica na lista de estudantes sem turma, no quadro da distribuição."
@@ -1142,6 +1229,10 @@ msgstr "Ficha do professor"
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Foco na pesquisa da lista"
 msgstr "Foco na pesquisa da lista"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Fora dos trimestres"
+msgstr "Fora dos trimestres"
 
 #: src/features/gerar-lista-nominal/ui/botao-gerar-lista-nominal.tsx
 msgid "Gerar lista nominal"
@@ -1183,10 +1274,18 @@ msgstr "Há uma nova versão da Secretaria."
 msgid "Habilitação"
 msgstr "Habilitação"
 
+#: src/entities/calendario/ui/grelha-ano.tsx
+msgid "hoje"
+msgstr "hoje"
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Horas por semana"
 msgstr "Horas por semana"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Igual ao primeiro num evento de um só dia."
+msgstr "Igual ao primeiro num evento de um só dia."
 
 #: src/routes/-casca/menu-preferencias.tsx
 msgid "Igual ao sistema"
@@ -1215,6 +1314,10 @@ msgstr "Indique entre 1 e 10 horas por semana."
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Indique o parentesco."
 msgstr "Indique o parentesco."
+
+#: src/features/gerir-eventos/model/esquema.ts
+msgid "Indique o último dia."
+msgstr "Indique o último dia."
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Indique pelo menos um encarregado."
@@ -1252,6 +1355,15 @@ msgstr "Inscrição na turma"
 #: src/shared/config/glossario.ts
 msgid "inscrições"
 msgstr "inscrições"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Interrupção"
+msgstr "Interrupção"
+
+#: src/entities/calendario/model/mapeadores.ts
+#: src/entities/calendario/ui/grelha-ano.tsx
+msgid "Interrupção lectiva"
+msgstr "Interrupção lectiva"
 
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Ir para Estudantes"
@@ -1293,6 +1405,10 @@ msgstr "Já tem uma vista com este nome. Escolha outro."
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Justificação"
 msgstr "Justificação"
+
+#: src/entities/calendario/ui/grelha-ano.tsx
+msgid "Legenda"
+msgstr "Legenda"
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -1517,11 +1633,16 @@ msgstr "Nenhum professor corresponde à pesquisa."
 msgid "Nenhuma matrícula com estes filtros."
 msgstr "Nenhuma matrícula com estes filtros."
 
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Neste dia"
+msgstr "Neste dia"
+
 #: src/entities/turma/model/mapeadores.ts
 msgid "Noite"
 msgstr "Noite"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
+#: src/features/gerir-eventos/ui/folha-dia.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -1558,6 +1679,10 @@ msgstr "Novas atribuições"
 msgid "Novo (no contexto do ecrã)"
 msgstr "Novo (no contexto do ecrã)"
 
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Novo evento a partir deste dia"
+msgstr "Novo evento a partir deste dia"
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Número de processo"
 msgstr "Número de processo"
@@ -1569,6 +1694,10 @@ msgstr "O ano lectivo {designacao} está encerrado. Só é possível consultar."
 #: src/routes/_app/matriculas/nova.tsx
 msgid "O ano lectivo está encerrado. Escolha o ano em curso no cabeçalho para matricular."
 msgstr "O ano lectivo está encerrado. Escolha o ano em curso no cabeçalho para matricular."
+
+#: src/routes/_app/calendario.tsx
+msgid "O ano lectivo está encerrado. O calendário fica só para consulta."
+msgstr "O ano lectivo está encerrado. O calendário fica só para consulta."
 
 #: src/routes/_app/turmas/quadro.tsx
 msgid "O ano lectivo está encerrado. O quadro está só de leitura."
@@ -1583,6 +1712,10 @@ msgstr "O ano lectivo está encerrado. Só é possível consultar."
 #: src/shared/lib/erros-dominio.ts
 msgid "O email ou a palavra-passe não estão correctos."
 msgstr "O email ou a palavra-passe não estão correctos."
+
+#: src/features/gerir-eventos/model/esquema.ts
+msgid "O evento tem de terminar dentro do ano lectivo."
+msgstr "O evento tem de terminar dentro do ano lectivo."
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "O motivo fica no percurso do estudante."
@@ -1609,6 +1742,10 @@ msgstr "O seu valor"
 msgid "O telefone tem 9 dígitos e começa por 9."
 msgstr "O telefone tem 9 dígitos e começa por 9."
 
+#: src/features/gerir-eventos/model/esquema.ts
+msgid "O último dia não pode ser antes do primeiro."
+msgstr "O último dia não pode ser antes do primeiro."
+
 #: src/routes/_app/index.tsx
 msgid "Obrigatórios ainda não entregues"
 msgstr "Obrigatórios ainda não entregues"
@@ -1629,6 +1766,10 @@ msgstr "Ocupação da turma"
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "opcional"
 msgstr "opcional"
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Os feriados nacionais vêm da lei e não se apagam."
+msgstr "Os feriados nacionais vêm da lei e não se apagam."
 
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Os filtros actuais ficam guardados com este nome, só para si."
@@ -1925,9 +2066,17 @@ msgstr "Seleccionar todas"
 msgid "Sem atribuições neste ano lectivo."
 msgstr "Sem atribuições neste ano lectivo."
 
+#: src/routes/_app/calendario.tsx
+msgid "Sem datas marcadas."
+msgstr "Sem datas marcadas."
+
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Sem encarregados registados."
 msgstr "Sem encarregados registados."
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Sem eventos."
+msgstr "Sem eventos."
 
 #: src/routes/-casca/casca.tsx
 msgid "Sem ligação. Pode continuar a consultar; as alterações são enviadas quando a ligação voltar."
@@ -2038,6 +2187,14 @@ msgstr "Tia"
 msgid "Tio"
 msgstr "Tio"
 
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Tipo"
+msgstr "Tipo"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Tipo de evento"
+msgstr "Tipo de evento"
+
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -2106,6 +2263,10 @@ msgstr "Turmas cheias"
 #: src/routes/_app/turmas/index.tsx
 msgid "Turno"
 msgstr "Turno"
+
+#: src/features/gerir-eventos/ui/folha-dia.tsx
+msgid "Último dia"
+msgstr "Último dia"
 
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Usar tema claro"

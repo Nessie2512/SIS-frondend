@@ -213,6 +213,22 @@ export interface paths {
     }>
   }
 
+  // Calendário do ano lectivo
+  '/anos-lectivos/{id}/calendario': {
+    get: Op<{ path: { id: string }; ok: S['CalendarioDto']; erros: 404 }>
+  }
+  '/anos-lectivos/{id}/eventos': {
+    post: Op<{
+      path: { id: string }
+      body: S['NovoEventoDto']
+      ok: S['EventoDto']
+      erros: 403 | 409 | 422
+    }>
+  }
+  '/eventos/{id}': {
+    delete: Op<{ path: { id: string }; ok: S['VazioDto']; erros: 403 | 404 | 409 }>
+  }
+
   // Vistas guardadas por utilizador (guia 7.1)
   '/vistas': {
     get: Op<{ query: { ecra: S['EcraVista'] }; ok: S['VistaDto'][] }>
@@ -476,6 +492,40 @@ export interface components {
       revisao: string
     }
     LinhaPlanoAlteracaoDto: { horasSemanais: number }
+
+    // Calendário
+    TipoEvento: 'FERIADO' | 'DATA_CHAVE' | 'INTERRUPCAO' | 'EVENTO'
+    TrimestreDto: {
+      numero: number
+      /** Formato: date */
+      inicio: string
+      /** Formato: date */
+      fim: string
+    }
+    EventoDto: {
+      id: string
+      titulo: string
+      tipo: components['schemas']['TipoEvento']
+      /** Formato: date */
+      inicio: string
+      /** Formato: date; igual ao início num evento de um dia */
+      fim: string
+      /** Feriados nacionais: vêm da lei e não se apagam */
+      fixo: boolean
+    }
+    CalendarioDto: {
+      anoLectivoId: string
+      trimestres: components['schemas']['TrimestreDto'][]
+      eventos: components['schemas']['EventoDto'][]
+    }
+    NovoEventoDto: {
+      titulo: string
+      tipo: Exclude<components['schemas']['TipoEvento'], 'FERIADO'>
+      /** Formato: date */
+      inicio: string
+      /** Formato: date */
+      fim: string
+    }
 
     // Vistas guardadas
     EcraVista: 'estudantes' | 'matriculas' | 'professores'

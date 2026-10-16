@@ -3,6 +3,7 @@ import { useRouter } from '@tanstack/react-router'
 import { Command } from 'cmdk'
 import {
   BookOpen,
+  CalendarDays,
   ClipboardList,
   Contrast,
   GraduationCap,
@@ -172,6 +173,12 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             }
           >
             <Trans>Currículo</Trans>
+          </Item>
+          <Item
+            icone={<CalendarDays />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/calendario' }))}
+          >
+            <Trans>Calendário</Trans>
           </Item>
         </Grupo>
         <Grupo titulo={t`Agir`}>

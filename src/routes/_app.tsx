@@ -41,7 +41,7 @@ export const Route = createFileRoute('/_app')({
 })
 
 const classesLigacao =
-  'rounded-controlo px-3 py-1.5 text-texto-2 transition-colors duration-(--duracao-micro) hover:text-texto-1 data-[status=active]:bg-fundo data-[status=active]:text-texto-1'
+  'rounded-controlo px-2.5 py-1.5 whitespace-nowrap text-texto-2 transition-colors duration-(--duracao-micro) hover:text-texto-1 data-[status=active]:bg-fundo data-[status=active]:text-texto-1'
 
 function LayoutApp() {
   const { t } = useLingui()
@@ -89,11 +89,14 @@ function LayoutApp() {
         <Trans>Saltar para o conteúdo</Trans>
       </a>
       <header className="sticky top-0 z-20 border-b border-linha bg-superficie/80 backdrop-blur-md print:hidden">
-        <div className="mx-auto flex h-14 max-w-6xl items-center gap-6 px-6">
+        <div className="mx-auto flex h-14 max-w-6xl items-center gap-5 px-6">
           <span className="text-subtitulo">
             <Trans>Secretaria</Trans>
           </span>
-          <nav aria-label={t`Principal`} className="flex items-center gap-1 text-corpo">
+          <nav
+            aria-label={t`Principal`}
+            className="flex min-w-0 items-center gap-1 overflow-x-auto text-corpo"
+          >
             <Link to="/" className={classesLigacao} activeOptions={{ exact: true }}>
               <Trans>Início</Trans>
             </Link>
@@ -132,6 +135,13 @@ function LayoutApp() {
             >
               <Trans>Currículo</Trans>
             </Link>
+            <Link
+              to="/calendario"
+              activeOptions={{ includeSearch: false }}
+              className={classesLigacao}
+            >
+              <Trans>Calendário</Trans>
+            </Link>
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <button
@@ -141,8 +151,8 @@ function LayoutApp() {
               className="hidden h-8 items-center gap-2 rounded-full px-3 text-secundario whitespace-nowrap text-texto-3 ring-1 ring-linha hover:text-texto-1 sm:flex"
             >
               <Search aria-hidden className="size-4 stroke-[1.5]" />
-              {/* Com o menu completo, o texto só cabe em ecrãs largos; o atalho fica sempre */}
-              <span aria-hidden className="hidden xl:inline">
+              {/* Com o menu completo, o texto só cabe em ecrãs muito largos; o atalho fica sempre */}
+              <span aria-hidden className="hidden 2xl:inline">
                 <Trans>Procurar ou agir</Trans>
               </span>
               <kbd className="tabular text-legenda">{mostrarAtalho('mod+k')}</kbd>

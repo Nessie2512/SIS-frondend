@@ -1,3 +1,4 @@
+import { useContextoAno } from '@/entities/ano-lectivo'
 import { useTarefasAcompanhadas } from '@/entities/tarefa'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
@@ -47,6 +48,8 @@ beforeEach(() => {
   sessao.definirToken('tk-u1')
   usePermissoesStore.getState().limpar()
   useTarefasAcompanhadas.getState().limpar()
+  // Ano em contexto volta ao ano em curso (a guarda escolhe-o quando não há nenhum)
+  useContextoAno.setState({ anoLectivoId: null })
 })
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))

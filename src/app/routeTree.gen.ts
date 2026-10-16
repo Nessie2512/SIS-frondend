@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './../routes/__root'
 import { Route as AppRouteImport } from './../routes/_app'
 import { Route as EntrarRouteImport } from './../routes/entrar'
 import { Route as AppIndexRouteImport } from './../routes/_app/index'
+import { Route as AppCalendarioRouteImport } from './../routes/_app/calendario'
 import { Route as AppCurriculoRouteImport } from './../routes/_app/curriculo'
 import { Route as AppCurriculoIndexRouteImport } from './../routes/_app/curriculo/index'
 import { Route as AppCurriculoDisciplinasRouteImport } from './../routes/_app/curriculo/disciplinas'
@@ -36,6 +37,11 @@ const EntrarRoute = EntrarRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCalendarioRoute = AppCalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
   getParentRoute: () => AppRoute,
 } as any)
 const AppCurriculoRoute = AppCurriculoRouteImport.update({
@@ -99,6 +105,7 @@ const AppTurmasQuadroRoute = AppTurmasQuadroRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/entrar': typeof EntrarRoute
+  '/calendario': typeof AppCalendarioRoute
   '/curriculo': typeof AppCurriculoRouteWithChildren
   '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
@@ -113,6 +120,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
+  '/calendario': typeof AppCalendarioRoute
   '/': typeof AppIndexRoute
   '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
@@ -129,6 +137,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/_app/calendario': typeof AppCalendarioRoute
   '/_app/curriculo': typeof AppCurriculoRouteWithChildren
   '/_app/': typeof AppIndexRoute
   '/_app/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/entrar'
+    | '/calendario'
     | '/curriculo'
     | '/curriculo/disciplinas'
     | '/estudantes/$estudanteId'
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/entrar'
+    | '/calendario'
     | '/'
     | '/curriculo/disciplinas'
     | '/estudantes/$estudanteId'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/entrar'
+    | '/_app/calendario'
     | '/_app/curriculo'
     | '/_app/'
     | '/_app/curriculo/disciplinas'
@@ -216,6 +228,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/calendario': {
+      id: '/_app/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof AppCalendarioRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/curriculo': {
@@ -313,6 +332,7 @@ const AppCurriculoRouteWithChildren = AppCurriculoRoute._addFileChildren(
 )
 
 interface AppRouteChildren {
+  AppCalendarioRoute: typeof AppCalendarioRoute
   AppCurriculoRoute: typeof AppCurriculoRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
@@ -326,6 +346,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppCalendarioRoute: AppCalendarioRoute,
   AppCurriculoRoute: AppCurriculoRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,

@@ -6,6 +6,7 @@ import {
   type Plano,
   type Professor,
 } from './academico'
+import { criarCalendario, type Evento, type Trimestre } from './calendario'
 import { APELIDOS, gerador, NOMES_F, NOMES_M } from './nomes'
 
 /**
@@ -140,6 +141,8 @@ interface Estado {
   planos: Plano[]
   professores: Professor[]
   atribuicoes: Atribuicao[]
+  trimestres: Trimestre[]
+  eventos: Evento[]
   idempotencia: Map<string, unknown>
   sequencia: number
 }
@@ -313,6 +316,7 @@ function criar(): Estado {
       },
     ],
     ...criarAcademico(classes, turmas, anosLectivos),
+    ...criarCalendario(anosLectivos),
     idempotencia: new Map(),
     sequencia: n,
   }

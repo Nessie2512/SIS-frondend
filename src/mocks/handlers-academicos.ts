@@ -1,7 +1,7 @@
 import { http, HttpResponse } from 'msw'
 import { TIPOS_DOCUMENTO_PROFESSOR, type Plano, type Professor } from './academico'
-import { API, etag, paginar, problema, protegido, type S } from './apoio'
-import { db, normalizar, novoId } from './db'
+import { anoEncerrado, API, etag, paginar, problema, protegido, type S } from './apoio'
+import { anosLectivos, db, normalizar, novoId } from './db'
 
 // ---------------------------------------------------------------------------
 // Projecções para DTO
@@ -370,6 +370,80 @@ export const handlersAcademicos = [
       plano.publicadoEm = new Date().toISOString().slice(0, 10)
       plano.revisao++
       return respostaPlano(plano)
+    }),
+  ),
+  // ---------------------------------------------------------------- calendário
+  http.get(
+    `${API}/anos-lectivos/:id/calendario`,
+    protegido('calendario:ler', ({ params }) => {
+      const id = String(params.id)
+      if (!anosLectivos.some((a) => a.id === id)) return problema(404, 'Ano lectivo não encontrado')
+      return HttpResponse.json({
+        anoLectivoId: id,
+        trimestres: db.trimestres
+          .filter((t) => t.anoLectivoId === id)
+          .map(({ anoLectivoId: _, ...t }) => t),
+        eventos: db.eventos
+          .filter((e) => e.anoLectivoId === id)
+          .sort((a, b) => a.inicio.localeCompare(b.inicio))
+          .map(({ anoLectivoId: _, ...e }) => e),
+      } satisfies S['CalendarioDto'])
+    }),
+  ),
+
+  http.post(
+    `${API}/anos-lectivos/:id/eventos`,
+    protegido('calendario:escrever', async ({ request, params }) => {
+      const ano = anosLectivos.find((a) => a.id === params.id)
+      if (!ano) return problema(404, 'Ano lectivo não encontrado')
+      if (anoEncerrado(ano.id)) return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      const corpo = (await request.json()) as S['NovoEventoDto']
+      const titulo = corpo.titulo?.trim() ?? ''
+      const erros = [
+        ...(titulo.length < 3 ? [{ campo: 'titulo', mensagem: 'Escreva o nome do evento.' }] : []),
+        ...(!['DATA_CHAVE', 'INTERRUPCAO', 'EVENTO'].includes(corpo.tipo)
+          ? [{ campo: 'tipo', mensagem: 'Escolha o tipo de evento.' }]
+          : []),
+        ...(corpo.inicio < ano.dataInicio || corpo.inicio > ano.dataFim
+          ? [{ campo: 'inicio', mensagem: 'A data tem de estar dentro do ano lectivo.' }]
+          : []),
+        ...(corpo.fim < corpo.inicio || corpo.fim > ano.dataFim
+          ? [
+              {
+                campo: 'fim',
+                mensagem: 'O fim tem de ser depois do início e dentro do ano lectivo.',
+              },
+            ]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const evento = {
+        id: novoId('ev-'),
+        anoLectivoId: ano.id,
+        titulo,
+        tipo: corpo.tipo,
+        inicio: corpo.inicio,
+        fim: corpo.fim,
+        fixo: false,
+      }
+      db.eventos.push(evento)
+      const { anoLectivoId: _, ...dto } = evento
+      return HttpResponse.json(dto satisfies S['EventoDto'], { status: 201 })
+    }),
+  ),
+
+  http.delete(
+    `${API}/eventos/:id`,
+    protegido('calendario:escrever', ({ params }) => {
+      const indice = db.eventos.findIndex((e) => e.id === params.id)
+      if (indice < 0) return problema(404, 'Evento não encontrado')
+      const evento = db.eventos[indice]!
+      if (evento.fixo) return problema(409, 'Evento fixo', { code: 'EVENTO_FIXO' })
+      if (anoEncerrado(evento.anoLectivoId)) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      db.eventos.splice(indice, 1)
+      return HttpResponse.json({})
     }),
   ),
 ]

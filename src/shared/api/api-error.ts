@@ -20,6 +20,7 @@ export type CodigoErroDominio =
   | 'RASCUNHO_EXISTENTE'
   | 'DISCIPLINA_REPETIDA'
   | 'DISCIPLINA_EM_USO'
+  | 'EVENTO_FIXO'
 
 export interface ErroDeCampo {
   campo: string
