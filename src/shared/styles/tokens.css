@@ -55,6 +55,9 @@
   --animate-dialogo-entrar: dialogo-entrar var(--duracao-padrao) var(--ease-padrao);
   --animate-desvanecer-entrar: desvanecer-entrar var(--duracao-padrao) var(--ease-padrao);
   --animate-desvanecer-sair: desvanecer-sair var(--duracao-padrao) var(--ease-padrao);
+  /* Gaveta do menu no telemóvel: entra pela esquerda */
+  --animate-gaveta-entrar: gaveta-entrar var(--duracao-painel) var(--ease-padrao);
+  --animate-gaveta-sair: gaveta-sair var(--duracao-padrao) var(--ease-padrao);
 
   @keyframes indeterminado {
     from {
@@ -78,6 +81,16 @@
     from {
       opacity: 0;
       transform: translate(-50%, -48%) scale(0.97);
+    }
+  }
+  @keyframes gaveta-entrar {
+    from {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes gaveta-sair {
+    to {
+      transform: translateX(-100%);
     }
   }
   @keyframes desvanecer-entrar {

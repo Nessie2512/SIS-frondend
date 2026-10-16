@@ -29,7 +29,7 @@ export function CargaLectiva({
           style={{ width: `${professor.ocupacao * 100}%` }}
         />
       </div>
-      <span className="tabular text-secundario text-texto-2">
+      <span className="tabular text-secundario whitespace-nowrap text-texto-2">
         <Trans>
           {cargaLectiva} de {cargaMaxima} h
         </Trans>

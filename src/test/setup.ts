@@ -7,6 +7,7 @@ import { reporBaseDeDados } from '@/mocks/db'
 import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
 import { usePermissoesStore } from '@/shared/lib/permissoes'
+import { usePreferencias } from '@/shared/lib/preferencias'
 import '@/shared/i18n'
 
 // Máquinas mais lentas (ou o primeiro teste, a frio) levam vários segundos a montar o router e as queries
@@ -50,6 +51,7 @@ beforeEach(() => {
   useTarefasAcompanhadas.getState().limpar()
   // Ano em contexto volta ao ano em curso (a guarda escolhe-o quando não há nenhum)
   useContextoAno.setState({ anoLectivoId: null })
+  usePreferencias.setState({ menuRecolhido: false, tema: 'sistema', densidade: 'confortavel' })
 })
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))

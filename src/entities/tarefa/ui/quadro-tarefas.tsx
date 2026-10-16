@@ -26,7 +26,7 @@ export function QuadroTarefas() {
       // Fica utilizável mesmo com um painel modal aberto, como as notificações
       aria-label={t`Tarefas em segundo plano`}
       style={{ pointerEvents: 'auto' }}
-      className="fixed bottom-4 left-4 z-30 w-80 overflow-hidden rounded-cartao bg-superficie shadow-flutuante ring-1 ring-linha print:hidden"
+      className="fixed bottom-4 left-[calc(var(--largura-menu,0px)+1rem)] z-30 w-80 overflow-hidden rounded-cartao bg-superficie shadow-flutuante ring-1 ring-linha transition-[left] duration-(--duracao-padrao) ease-padrao print:hidden"
     >
       <header className="flex h-10 items-center justify-between border-b border-linha pr-1 pl-4">
         <h2 className="text-secundario font-medium">

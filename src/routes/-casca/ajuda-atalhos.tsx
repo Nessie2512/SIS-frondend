@@ -13,6 +13,7 @@ export function AjudaAtalhos({
   const { t } = useLingui()
   const atalhos: [string, string][] = [
     ['mod+k', t`Paleta de comandos: navegar, pesquisar, agir`],
+    ['mod+b', t`Recolher ou expandir o menu lateral`],
     ['/', t`Foco na pesquisa da lista`],
     ['n', t`Novo (no contexto do ecrã)`],
     ['e', t`Editar o item em foco`],

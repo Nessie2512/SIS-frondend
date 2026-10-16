@@ -10,9 +10,11 @@ import {
   Home,
   Keyboard,
   Moon,
+  PanelLeft,
   Presentation,
   Rows3,
   Rows4,
+  Settings,
   Sun,
   UserPlus,
   UserRound,
@@ -39,6 +41,8 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
   const router = useRouter()
   const definirTema = usePreferencias((e) => e.definirTema)
   const definirDensidade = usePreferencias((e) => e.definirDensidade)
+  const menuRecolhido = usePreferencias((e) => e.menuRecolhido)
+  const definirMenuRecolhido = usePreferencias((e) => e.definirMenuRecolhido)
   const [procura, setProcura] = useState('')
   const pesquisa = usePesquisa(procura)
 
@@ -190,6 +194,23 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
           </Item>
         </Grupo>
         <Grupo titulo={t`Preferências`}>
+          <Item
+            icone={<Settings />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/definicoes' }))}
+          >
+            <Trans>Abrir as definições</Trans>
+          </Item>
+          <Item
+            icone={<PanelLeft />}
+            atalho="mod+b"
+            aoEscolher={() => executar(() => definirMenuRecolhido(!menuRecolhido))}
+          >
+            {menuRecolhido ? (
+              <Trans>Expandir o menu lateral</Trans>
+            ) : (
+              <Trans>Recolher o menu lateral</Trans>
+            )}
+          </Item>
           <Item icone={<Sun />} aoEscolher={() => executar(() => definirTema('claro'))}>
             <Trans>Usar tema claro</Trans>
           </Item>
