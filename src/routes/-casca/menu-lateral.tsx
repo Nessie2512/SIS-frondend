@@ -4,6 +4,7 @@ import {
   BookOpen,
   CalendarDays,
   ClipboardList,
+  FileSpreadsheet,
   GraduationCap,
   Home,
   Menu,
@@ -63,6 +64,7 @@ function useEntradas(): { principais: Entrada[]; definicoes: Entrada } {
         rotulo: t`Currículo`,
       },
       { ligacao: { to: '/calendario' }, icone: <CalendarDays />, rotulo: t`Calendário` },
+      { ligacao: { to: '/relatorios' }, icone: <FileSpreadsheet />, rotulo: t`Relatórios` },
     ],
     definicoes: { ligacao: { to: '/definicoes' }, icone: <Settings />, rotulo: t`Definições` },
   }

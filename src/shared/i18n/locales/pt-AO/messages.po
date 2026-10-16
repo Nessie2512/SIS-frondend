@@ -170,6 +170,10 @@ msgstr "{titulo} falhou."
 msgid "{titulo} falhou. Veja o relatório no quadro de tarefas."
 msgstr "{titulo} falhou. Veja o relatório no quadro de tarefas."
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "{titulo}: a gerar. Acompanhe no quadro de tarefas."
+msgstr "{titulo}: a gerar. Acompanhe no quadro de tarefas."
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "{total} estudantes"
 msgstr "{total} estudantes"
@@ -418,6 +422,7 @@ msgstr "Ainda não foram emitidos documentos oficiais."
 
 #: src/routes/_app/calendario.tsx
 #: src/routes/_app/index.tsx
+#: src/routes/_app/relatorios.tsx
 #: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há anos lectivos."
 msgstr "Ainda não há anos lectivos."
@@ -437,6 +442,10 @@ msgstr "Ainda não há registos no percurso."
 #: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há turmas neste ano."
 msgstr "Ainda não há turmas neste ano."
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Ainda não pediu nenhum relatório neste ano."
+msgstr "Ainda não pediu nenhum relatório neste ano."
 
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Ajuda"
@@ -612,6 +621,10 @@ msgstr "Carga lectiva semanal"
 msgid "cartão arrastável"
 msgstr "cartão arrastável"
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Catálogo"
+msgstr "Catálogo"
+
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Certidão de nascimento"
 msgstr "Certidão de nascimento"
@@ -641,6 +654,7 @@ msgstr "Claro"
 msgid "classe"
 msgstr "classe"
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
@@ -850,8 +864,13 @@ msgid "Desbloquear"
 msgstr "Desbloquear"
 
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Descarregar"
 msgstr "Descarregar"
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Descarregar: {titulo}"
+msgstr "Descarregar: {titulo}"
 
 #: src/features/registar-ocorrencia/model/esquema.ts
 msgid "Descreva o que aconteceu (pelo menos 10 caracteres)."
@@ -1010,6 +1029,7 @@ msgid "Eliminar disciplina"
 msgstr "Eliminar disciplina"
 
 #: src/entities/ano-lectivo/model/mapeadores.ts
+#: src/entities/relatorio/api/queries.ts
 msgid "Em curso"
 msgstr "Em curso"
 
@@ -1104,9 +1124,14 @@ msgstr "Entre de novo para continuar. O que estava a fazer continua neste ecrã.
 msgid "Entregue"
 msgstr "Entregue"
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha a classe."
 msgstr "Escolha a classe."
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Escolha a turma."
+msgstr "Escolha a turma."
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha o sexo."
@@ -1129,6 +1154,7 @@ msgid "Escolha uma disciplina."
 msgstr "Escolha uma disciplina."
 
 #: src/features/editar-plano/ui/editor-plano.tsx
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/shared/ui/selector.tsx
 msgid "Escolher"
 msgstr "Escolher"
@@ -1195,6 +1221,7 @@ msgstr "Esta tarefa já não está disponível."
 msgid "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
 msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
@@ -1322,6 +1349,14 @@ msgstr "Explique em poucas palavras porque não é o mesmo estudante."
 msgid "Explique o motivo (pelo menos 10 caracteres)."
 msgstr "Explique o motivo (pelo menos 10 caracteres)."
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Exportações recentes"
+msgstr "Exportações recentes"
+
+#: src/entities/relatorio/api/queries.ts
+msgid "Falhou"
+msgstr "Falhou"
+
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Falta 1 documento obrigatório."
 msgstr "Falta 1 documento obrigatório."
@@ -1409,9 +1444,17 @@ msgstr "Foco na pesquisa da lista"
 msgid "Fora dos trimestres"
 msgstr "Fora dos trimestres"
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Gerar"
+msgstr "Gerar"
+
 #: src/features/gerar-lista-nominal/ui/botao-gerar-lista-nominal.tsx
 msgid "Gerar lista nominal"
 msgstr "Gerar lista nominal"
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Gerar: {titulo}"
+msgstr "Gerar: {titulo}"
 
 #: src/shared/ui/edicao-no-sitio.tsx
 msgid "Guardado"
@@ -1998,6 +2041,14 @@ msgstr "Os filtros actuais ficam guardados com este nome, só para si."
 msgid "Os professores aparecem aqui quando forem admitidos."
 msgstr "Os professores aparecem aqui quando forem admitidos."
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Os relatórios que pedir ficam aqui para descarregar."
+msgstr "Os relatórios que pedir ficam aqui para descarregar."
+
+#: src/routes/_app/relatorios.tsx
+msgid "Os relatórios são gerados em segundo plano: pode continuar a trabalhar e descarregar quando estiverem prontos."
+msgstr "Os relatórios são gerados em segundo plano: pode continuar a trabalhar e descarregar quando estiverem prontos."
+
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Outra"
 msgstr "Outra"
@@ -2060,6 +2111,10 @@ msgstr "Passos da matrícula"
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Pedagógica"
 msgstr "Pedagógica"
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Pedido em"
+msgstr "Pedido em"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Pedir excepção"
@@ -2176,6 +2231,10 @@ msgstr "professores"
 msgid "Professores"
 msgstr "Professores"
 
+#: src/entities/relatorio/api/queries.ts
+msgid "Pronto"
+msgstr "Pronto"
+
 #: src/features/editar-plano/ui/accoes-plano.tsx
 msgid "Publicar"
 msgstr "Publicar"
@@ -2288,6 +2347,24 @@ msgstr "Registo imutável"
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Registo original: «{original}»"
 msgstr "Registo original: «{original}»"
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Relatório"
+msgstr "Relatório"
+
+#: src/routes/_app/relatorios.tsx
+#: src/routes/-casca/menu-lateral.tsx
+#: src/routes/-casca/paleta-comandos.tsx
+msgid "Relatórios"
+msgstr "Relatórios"
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Relatórios disponíveis"
+msgstr "Relatórios disponíveis"
+
+#: src/features/gerar-relatorio/ui/relatorios.tsx
+msgid "Resultado"
+msgstr "Resultado"
 
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Resultado final"
@@ -2519,6 +2596,7 @@ msgstr "Tipo de evento"
 msgid "Tipo de ocorrência"
 msgstr "Tipo de ocorrência"
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -2548,6 +2626,7 @@ msgstr "Transferido"
 msgid "turma"
 msgstr "turma"
 
+#: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/matriculas/index.tsx

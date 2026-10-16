@@ -19,6 +19,7 @@ import {
   TIPOS_DOCUMENTO_OBRIGATORIOS,
   turmaPorId,
   UTILIZADORES,
+  type Tarefa,
 } from './db'
 
 import {
@@ -34,6 +35,7 @@ import {
   type S,
 } from './apoio'
 import { handlersAcademicos } from './handlers-academicos'
+import { gerarCsv, handlersRelatorios } from './relatorios'
 
 /** Os mesmos handlers servem desenvolvimento, testes e Storybook (guia 3.2). */
 export const handlers = [
@@ -644,10 +646,12 @@ export const handlers = [
       idempotente(request, () => {
         const turma = turmaPorId(String(params.id))
         if (!turma) return problema(404, 'Turma não encontrada')
-        const tarefa = {
+        const tarefa: Tarefa = {
           id: novoId('t'),
-          turmaId: turma.id,
+          tipo: 'LISTA_NOMINAL',
+          parametros: { anoLectivoId: turma.anoLectivoId, turmaId: turma.id },
           titulo: `Lista nominal da ${turma.designacao}`,
+          utilizadorId: utilizadorDo(request)?.id ?? null,
           inicio: Date.now(),
           duracao: import.meta.env.MODE === 'test' ? 0 : 6000,
           // A turma C simula uma falha, para mostrar o relatório de erros por linha
@@ -768,15 +772,9 @@ export const handlers = [
   // O resultado chega por um URL de curta duração, como uma ligação assinada: não leva o token
   http.get(`${API}/tarefas/:id/resultado`, ({ params }) => {
     const tarefa = db.tarefas.find((t) => t.id === params.id)
-    const turma = tarefa && turmaPorId(tarefa.turmaId)
-    if (!tarefa || !turma) return problema(404, 'Resultado não encontrado')
-    const linhas = db.matriculas
-      .filter((m) => m.turmaId === turma.id)
-      .map((m) => db.estudantes.find((e) => e.id === m.estudanteId)!)
-      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
-      .map((e, i) => `${i + 1};${e.numeroProcesso};${e.nome}`)
-    const nome = `lista-nominal-${turma.designacao.replace(/\W+/g, '')}.csv`
-    return new HttpResponse(['N.º;Processo;Nome', ...linhas].join('\n'), {
+    if (!tarefa) return problema(404, 'Resultado não encontrado')
+    const { nome, linhas } = gerarCsv(tarefa)
+    return new HttpResponse(linhas.join('\n'), {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'Content-Disposition': `attachment; filename="${nome}"`,
@@ -784,6 +782,7 @@ export const handlers = [
     })
   }),
 
+  ...handlersRelatorios,
   ...handlersAcademicos,
 ]
 

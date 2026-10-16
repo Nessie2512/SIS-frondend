@@ -260,6 +260,21 @@ export interface paths {
     delete: Op<{ path: { id: string }; ok: S['VazioDto']; erros: 403 | 404 | 409 }>
   }
 
+  // Relatórios (guia 2.5: catálogo e exportações; correm como tarefas longas)
+  '/relatorios': { get: Op<{ ok: S['RelatorioDto'][] }> }
+  '/relatorios/exportacoes': {
+    get: Op<{ query: { anoLectivoId: string }; ok: S['ExportacaoDto'][] }>
+  }
+  '/relatorios/{tipo}': {
+    post: Op<{
+      path: { tipo: S['TipoRelatorio'] }
+      header: { 'Idempotency-Key': string }
+      body: S['PedidoRelatorioDto']
+      ok: S['TarefaDto']
+      erros: 404 | 422
+    }>
+  }
+
   // Vistas guardadas por utilizador (guia 7.1)
   '/vistas': {
     get: Op<{ query: { ecra: S['EcraVista'] }; ok: S['VistaDto'][] }>
@@ -581,6 +596,36 @@ export interface components {
       inicio: string
       /** Formato: date */
       fim: string
+    }
+
+    // Relatórios
+    TipoRelatorio:
+      | 'LISTA_NOMINAL'
+      | 'MATRICULAS_POR_CLASSE'
+      | 'DOCUMENTOS_EM_FALTA'
+      | 'SEM_TURMA'
+      | 'OCUPACAO_TURMAS'
+      | 'CARGA_LECTIVA'
+    RelatorioDto: {
+      tipo: components['schemas']['TipoRelatorio']
+      titulo: string
+      descricao: string
+      /** Parâmetro a escolher antes de gerar */
+      parametro: 'TURMA' | 'CLASSE' | null
+      parametroObrigatorio: boolean
+      formato: 'CSV'
+    }
+    PedidoRelatorioDto: { anoLectivoId: string; turmaId?: string; classeId?: string }
+    ExportacaoDto: {
+      /** Id da tarefa */
+      id: string
+      tipo: components['schemas']['TipoRelatorio']
+      titulo: string
+      /** Formato: date-time */
+      pedidoEm: string
+      estado: components['schemas']['TarefaDto']['estado']
+      progresso: number
+      resultadoUrl: string | null
     }
 
     // Vistas guardadas

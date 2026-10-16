@@ -5,6 +5,7 @@ import {
   BookOpen,
   CalendarDays,
   ClipboardList,
+  FileSpreadsheet,
   Contrast,
   GraduationCap,
   Home,
@@ -183,6 +184,12 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             aoEscolher={() => executar(() => void router.navigate({ to: '/calendario' }))}
           >
             <Trans>Calendário</Trans>
+          </Item>
+          <Item
+            icone={<FileSpreadsheet />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/relatorios' }))}
+          >
+            <Trans>Relatórios</Trans>
           </Item>
         </Grupo>
         <Grupo titulo={t`Agir`}>

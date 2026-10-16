@@ -119,10 +119,12 @@ interface Encarregado extends Omit<S['EncarregadoDto'], 'principal' | 'outrosEdu
 type Documento = S['DocumentoEstudanteDto'] & {
   estudanteId: string
 }
-interface Tarefa {
+export interface Tarefa {
   id: string
-  turmaId: string
+  tipo: S['TipoRelatorio']
+  parametros: { anoLectivoId: string; turmaId?: string; classeId?: string }
   titulo: string
+  utilizadorId: string | null
   inicio: number
   duracao: number
   falha: boolean
