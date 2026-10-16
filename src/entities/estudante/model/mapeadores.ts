@@ -9,8 +9,10 @@ import type {
   Estudante,
   EstudanteResumo,
   EventoPercurso,
+  Ocorrencia,
   PaginaEstudantes,
   TipoEventoPercurso,
+  TipoOcorrencia,
   TomEstado,
 } from './tipos'
 
@@ -100,3 +102,14 @@ export function paraEncarregado(dto: Dto<'EncarregadoDto'>): Encarregado {
 /** Telefone angolano para mostrar: 923 456 789 */
 // Partilhado com professores e encarregados
 export { formatarTelefone } from '@/shared/lib/formatar'
+
+export const TIPOS_OCORRENCIA = {
+  DISCIPLINAR: msg`Disciplinar`,
+  SAUDE: msg`Saúde`,
+  PEDAGOGICA: msg`Pedagógica`,
+  OUTRA: msg`Outra`,
+} satisfies Record<TipoOcorrencia, unknown>
+
+export function paraOcorrencia(dto: Dto<'OcorrenciaDto'>): Ocorrencia {
+  return { ...dto, tipoRotulo: i18n._(TIPOS_OCORRENCIA[dto.tipo]) }
+}

@@ -75,6 +75,15 @@ export interface paths {
     }>
   }
   '/estudantes/{id}/encarregados': { get: Op<{ path: { id: string }; ok: S['EncarregadoDto'][] }> }
+  '/estudantes/{id}/ocorrencias': {
+    get: Op<{ path: { id: string }; ok: S['OcorrenciaDto'][] }>
+    post: Op<{
+      path: { id: string }
+      body: S['NovaOcorrenciaDto']
+      ok: S['OcorrenciaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
 
   // Matrículas
   '/matriculas': {
@@ -350,6 +359,23 @@ export interface components {
       motivo: string | null
     }
     RectificacaoDto: { descricao: string; motivo: string }
+    TipoOcorrencia: 'DISCIPLINAR' | 'SAUDE' | 'PEDAGOGICA' | 'OUTRA'
+    OcorrenciaDto: {
+      id: string
+      /** Formato: date — quando aconteceu */
+      data: string
+      tipo: components['schemas']['TipoOcorrencia']
+      descricao: string
+      autor: string
+      /** Formato: date-time — quando foi registada */
+      registadaEm: string
+    }
+    NovaOcorrenciaDto: {
+      /** Formato: date */
+      data: string
+      tipo: components['schemas']['TipoOcorrencia']
+      descricao: string
+    }
     EstadoDocumentoEstudante: 'ENTREGUE' | 'EM_FALTA' | 'DISPENSADO'
     DocumentoEstudanteDto: {
       id: string

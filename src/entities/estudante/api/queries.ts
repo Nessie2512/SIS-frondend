@@ -7,6 +7,7 @@ import {
   paraEstudante,
   paraEstudanteResumo,
   paraEventoPercurso,
+  paraOcorrencia,
   paraPaginaEstudantes,
 } from '../model/mapeadores'
 import type { FiltrosEstudantes } from '../model/tipos'
@@ -18,6 +19,7 @@ export const estudanteKeys = {
   percurso: (id: string) => [...estudanteKeys.detalhe(id), 'percurso'] as const,
   documentos: (id: string) => [...estudanteKeys.detalhe(id), 'documentos'] as const,
   encarregados: (id: string) => [...estudanteKeys.detalhe(id), 'encarregados'] as const,
+  ocorrencias: (id: string) => [...estudanteKeys.detalhe(id), 'ocorrencias'] as const,
   duplicados: (nome: string, dataNascimento?: string) =>
     [...estudanteKeys.todos, 'duplicados', nome, dataNascimento ?? ''] as const,
 }
@@ -104,5 +106,19 @@ export function duplicadosQuery(nome: string, dataNascimento?: string) {
     },
     enabled: nome.trim().length >= 5,
     staleTime: FRESCURA.pesquisa,
+  })
+}
+
+export function ocorrenciasQuery(id: string) {
+  return queryOptions({
+    queryKey: estudanteKeys.ocorrencias(id),
+    queryFn: async ({ signal }) => {
+      const { data } = await api.GET('/estudantes/{id}/ocorrencias', {
+        params: { path: { id } },
+        signal,
+      })
+      return data!.map(paraOcorrencia)
+    },
+    staleTime: FRESCURA.lista,
   })
 }

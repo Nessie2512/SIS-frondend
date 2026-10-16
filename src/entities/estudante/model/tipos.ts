@@ -78,3 +78,15 @@ export interface PaginaEstudantes {
   page: number
   totalPaginas: number
 }
+
+export type TipoOcorrencia = 'DISCIPLINAR' | 'SAUDE' | 'PEDAGOGICA' | 'OUTRA'
+
+export interface Ocorrencia {
+  id: string
+  data: string
+  tipo: TipoOcorrencia
+  tipoRotulo: string
+  descricao: string
+  autor: string
+  registadaEm: string
+}

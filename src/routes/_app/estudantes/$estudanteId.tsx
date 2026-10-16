@@ -13,6 +13,7 @@ import {
 import { CartaoMatricula } from '@/features/confirmar-matricula'
 import { DadosEstudante } from '@/features/editar-estudante'
 import { PercursoEstudante } from '@/features/rectificar-percurso'
+import { OcorrenciasEstudante } from '@/features/registar-ocorrencia'
 import { ListaDocumentos } from '@/features/marcar-documento'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
@@ -65,7 +66,7 @@ function FichaEstudante() {
   const { estudanteId } = Route.useParams()
   const { separador } = Route.useSearch()
   const { soLeitura } = Route.useRouteContext()
-  const podeRectificar = useCan('estudantes:escrever')
+  const podeRectificar = useCan('estudantes:escrever') // também registar ocorrências
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: e } = useQuery(estudanteQuery(estudanteId))
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
@@ -157,9 +158,10 @@ function FichaEstudante() {
           <Encarregados estudanteId={estudanteId} />
         </PainelSeparador>
         <PainelSeparador value="ocorrencias" className="pt-6">
-          <EstadoVazio
-            titulo={t`Sem ocorrências registadas.`}
-            descricao={t`O registo de ocorrências chega numa próxima versão.`}
+          <OcorrenciasEstudante
+            estudanteId={estudanteId}
+            nome={e.nome}
+            podeRegistar={podeRectificar && !soLeitura}
           />
         </PainelSeparador>
         <PainelSeparador value="oficiais" className="pt-6">

@@ -5,10 +5,18 @@ export type {
   Estudante,
   EstudanteResumo,
   EventoPercurso,
+  Ocorrencia,
+  TipoOcorrencia,
   FiltrosEstudantes,
   PaginaEstudantes,
 } from './model/tipos'
-export { formatarTelefone, paraEstudante, paraEstudanteResumo } from './model/mapeadores'
+export {
+  formatarTelefone,
+  paraEstudante,
+  paraEstudanteResumo,
+  paraOcorrencia,
+  TIPOS_OCORRENCIA,
+} from './model/mapeadores'
 export {
   documentosQuery,
   duplicadosQuery,
@@ -16,6 +24,7 @@ export {
   estudanteKeys,
   estudanteQuery,
   estudantesQuery,
+  ocorrenciasQuery,
   percursoQuery,
 } from './api/queries'
 export { EtiquetaEstadoEstudante } from './ui/etiqueta-estado-estudante'

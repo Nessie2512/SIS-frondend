@@ -137,6 +137,7 @@ interface Estado {
   percurso: (S['EventoPercursoDto'] & { estudanteId: string })[]
   tarefas: Tarefa[]
   vistas: (S['VistaDto'] & { utilizadorId: string })[]
+  ocorrencias: (S['OcorrenciaDto'] & { estudanteId: string })[]
   disciplinas: Disciplina[]
   planos: Plano[]
   professores: Professor[]
@@ -317,6 +318,35 @@ function criar(): Estado {
         filtros: { classeId: 'c7', semTurma: true },
       },
     ],
+    // Algumas ocorrências de exemplo, para a ficha não aparecer sempre vazia
+    ocorrencias: estudantes
+      .filter((_, i) => i % 23 === 4)
+      .flatMap((e, i) => [
+        {
+          id: `oc${i * 2 + 1}`,
+          estudanteId: e.id,
+          data: '2026-09-22',
+          tipo: 'PEDAGOGICA' as const,
+          descricao:
+            'Faltou à prova de diagnóstico de Matemática; marcada nova data com o professor.',
+          autor: 'Maria Secretária',
+          registadaEm: '2026-09-22T10:15:00Z',
+        },
+        ...(i % 2
+          ? [
+              {
+                id: `oc${i * 2 + 2}`,
+                estudanteId: e.id,
+                data: '2026-10-05',
+                tipo: 'SAUDE' as const,
+                descricao:
+                  'Sentiu-se mal durante a aula de Educação Física; o encarregado foi avisado.',
+                autor: 'Maria Secretária',
+                registadaEm: '2026-10-05T11:40:00Z',
+              },
+            ]
+          : []),
+      ]),
     ...criarAcademico(classes, turmas, anosLectivos),
     ...criarCalendario(anosLectivos),
     idempotencia: new Map(),

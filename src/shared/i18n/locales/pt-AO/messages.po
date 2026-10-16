@@ -264,6 +264,10 @@ msgstr "A confirmar"
 msgid "A data está fora do ano lectivo ({de} a {ate})."
 msgstr "A data está fora do ano lectivo ({de} a {ate})."
 
+#: src/features/registar-ocorrencia/model/esquema.ts
+msgid "A data não pode ser no futuro."
+msgstr "A data não pode ser no futuro."
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "A disciplina sai da lista. Não está em nenhum plano nem habilitação, por isso nada mais muda."
 msgstr "A disciplina sai da lista. Não está em nenhum plano nem habilitação, por isso nada mais muda."
@@ -591,6 +595,7 @@ msgstr "Cancelado."
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Cancelar"
 msgstr "Cancelar"
 
@@ -779,6 +784,10 @@ msgstr "Currículo"
 msgid "Dados pessoais"
 msgstr "Dados pessoais"
 
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Data"
+msgstr "Data"
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Data de nascimento"
@@ -844,6 +853,10 @@ msgstr "Desbloquear"
 msgid "Descarregar"
 msgstr "Descarregar"
 
+#: src/features/registar-ocorrencia/model/esquema.ts
+msgid "Descreva o que aconteceu (pelo menos 10 caracteres)."
+msgstr "Descreva o que aconteceu (pelo menos 10 caracteres)."
+
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Desde"
 msgstr "Desde"
@@ -888,6 +901,10 @@ msgstr "Disciplina {nome} criada."
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Disciplina {nome} eliminada."
 msgstr "Disciplina {nome} eliminada."
+
+#: src/entities/estudante/model/mapeadores.ts
+msgid "Disciplinar"
+msgstr "Disciplinar"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/curriculo.tsx
@@ -1325,6 +1342,10 @@ msgstr "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quan
 msgid "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
 msgstr "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
 
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Faltas a provas, questões de saúde ou de disciplina ficam aqui, com data."
+msgstr "Faltas a provas, questões de saúde ou de disciplina ficam aqui, com data."
+
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 #: src/shared/ui/folha.tsx
 msgid "Fechar"
@@ -1460,6 +1481,10 @@ msgstr "Inactivar {nome}"
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Indique a data de nascimento."
 msgstr "Indique a data de nascimento."
+
+#: src/features/registar-ocorrencia/model/esquema.ts
+msgid "Indique a data."
+msgstr "Indique a data."
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Indique entre 1 e 10 horas por semana."
@@ -1914,9 +1939,9 @@ msgstr "O plano diz que disciplinas a classe tem e com que carga semanal."
 msgid "O plano não tem disciplinas. Acrescente pelo menos uma antes de publicar."
 msgstr "O plano não tem disciplinas. Acrescente pelo menos uma antes de publicar."
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
-msgid "O registo de ocorrências chega numa próxima versão."
-msgstr "O registo de ocorrências chega numa próxima versão."
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "O que aconteceu"
+msgstr "O que aconteceu"
 
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "O registo original fica no percurso, marcado como rectificado. A rectificação entra como um registo novo, com o motivo, e não se apaga."
@@ -1939,6 +1964,11 @@ msgstr "O último dia não pode ser antes do primeiro."
 msgid "Obrigatórios ainda não entregues"
 msgstr "Obrigatórios ainda não entregues"
 
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Ocorrência registada."
+msgstr "Ocorrência registada."
+
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Ocorrências"
 msgstr "Ocorrências"
@@ -1967,6 +1997,10 @@ msgstr "Os filtros actuais ficam guardados com este nome, só para si."
 #: src/routes/_app/professores/index.tsx
 msgid "Os professores aparecem aqui quando forem admitidos."
 msgstr "Os professores aparecem aqui quando forem admitidos."
+
+#: src/entities/estudante/model/mapeadores.ts
+msgid "Outra"
+msgstr "Outra"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Outra pessoa alterou este dado"
@@ -2022,6 +2056,10 @@ msgstr "Passo {numero} de 5: {nome}"
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Passos da matrícula"
 msgstr "Passos da matrícula"
+
+#: src/entities/estudante/model/mapeadores.ts
+msgid "Pedagógica"
+msgstr "Pedagógica"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Pedir excepção"
@@ -2223,6 +2261,18 @@ msgstr "Rectificar: {descricao}"
 msgid "Registada"
 msgstr "Registada"
 
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Registada por {autor}"
+msgstr "Registada por {autor}"
+
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Registar"
+msgstr "Registar"
+
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Registar ocorrência"
+msgstr "Registar ocorrência"
+
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Registar rectificação"
 msgstr "Registar rectificação"
@@ -2288,6 +2338,10 @@ msgstr "Sala"
 msgid "Saltar para o conteúdo"
 msgstr "Saltar para o conteúdo"
 
+#: src/entities/estudante/model/mapeadores.ts
+msgid "Saúde"
+msgstr "Saúde"
+
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Se sair agora, o que escreveu neste ecrã perde-se."
 msgstr "Se sair agora, o que escreveu neste ecrã perde-se."
@@ -2347,7 +2401,7 @@ msgstr "Sem ligação. Pode continuar a consultar; as alterações são enviadas
 msgid "Sem matrícula neste ano"
 msgstr "Sem matrícula neste ano"
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Sem ocorrências registadas."
 msgstr "Sem ocorrências registadas."
 
@@ -2453,12 +2507,17 @@ msgid "Tio"
 msgstr "Tio"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Tipo"
 msgstr "Tipo"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Tipo de evento"
 msgstr "Tipo de evento"
+
+#: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+msgid "Tipo de ocorrência"
+msgstr "Tipo de ocorrência"
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx

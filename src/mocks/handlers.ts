@@ -300,6 +300,60 @@ export const handlers = [
   ),
 
   http.get(
+    `${API}/estudantes/:id/ocorrencias`,
+    protegido('estudantes:ler', ({ params }) =>
+      HttpResponse.json(
+        db.ocorrencias
+          .filter((o) => o.estudanteId === params.id)
+          .sort(
+            (a, b) => b.data.localeCompare(a.data) || b.registadaEm.localeCompare(a.registadaEm),
+          )
+          .map(({ estudanteId: _, ...o }) => o) satisfies S['OcorrenciaDto'][],
+      ),
+    ),
+  ),
+
+  http.post(
+    `${API}/estudantes/:id/ocorrencias`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      if (!e) return problema(404, 'Estudante não encontrado')
+      const corpo = (await request.json()) as S['NovaOcorrenciaDto']
+      const descricao = corpo.descricao?.trim() ?? ''
+      const hoje = new Date().toISOString().slice(0, 10)
+      const erros = [
+        ...(descricao.length < 10
+          ? [
+              {
+                campo: 'descricao',
+                mensagem: 'Descreva o que aconteceu (pelo menos 10 caracteres).',
+              },
+            ]
+          : []),
+        ...(!corpo.data || corpo.data > hoje
+          ? [{ campo: 'data', mensagem: 'A data não pode ser no futuro.' }]
+          : []),
+        ...(!['DISCIPLINAR', 'SAUDE', 'PEDAGOGICA', 'OUTRA'].includes(corpo.tipo)
+          ? [{ campo: 'tipo', mensagem: 'Escolha o tipo.' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const ocorrencia = {
+        id: novoId('oc'),
+        estudanteId: e.id,
+        data: corpo.data,
+        tipo: corpo.tipo,
+        descricao,
+        autor: utilizadorDo(request)!.nome,
+        registadaEm: new Date().toISOString(),
+      }
+      db.ocorrencias.push(ocorrencia)
+      const { estudanteId: _, ...dto } = ocorrencia
+      return HttpResponse.json(dto satisfies S['OcorrenciaDto'], { status: 201 })
+    }),
+  ),
+
+  http.get(
     `${API}/estudantes/:id/encarregados`,
     protegido('estudantes:ler', ({ params }) => {
       const e = db.estudantes.find((x) => x.id === params.id)
