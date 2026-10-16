@@ -35,6 +35,7 @@ import {
   type S,
 } from './apoio'
 import { handlersAcademicos } from './handlers-academicos'
+import { administracao, auditar, handlersAdministracao } from './administracao'
 import { gerarCsv, handlersRelatorios } from './relatorios'
 
 /** Os mesmos handlers servem desenvolvimento, testes e Storybook (guia 3.2). */
@@ -48,7 +49,14 @@ export const handlers = [
     )
     if (!utilizador)
       return problema(401, 'Credenciais inválidas', { code: 'CREDENCIAIS_INVALIDAS' })
+    const conta = administracao.utilizadores.find((u) => u.id === utilizador.id)
+    if (conta?.estado === 'INACTIVO') {
+      return problema(403, 'Conta inactiva', {
+        detail: 'Esta conta foi desactivada. Fale com a administração da escola.',
+      })
+    }
     const { palavraPasse: _, ...me } = utilizador
+    auditar(me.nome, 'ENTRAR', 'Sessão', 'Entrada na aplicação')
     return HttpResponse.json(
       { accessToken: `tk-${utilizador.id}`, utilizador: me },
       { headers: { 'Set-Cookie': `sessao=${utilizador.id}; Path=/` } },
@@ -265,6 +273,7 @@ export const handlers = [
         motivo,
       }
       db.percurso.push(rectificacao)
+      auditar(rectificacao.autor, 'RECTIFICAR', 'Percurso', `${original.descricao} → ${descricao}`)
       const { estudanteId: _, ...dto } = rectificacao
       return HttpResponse.json(dto, { status: 201 })
     }),
@@ -350,6 +359,7 @@ export const handlers = [
         registadaEm: new Date().toISOString(),
       }
       db.ocorrencias.push(ocorrencia)
+      auditar(ocorrencia.autor, 'CRIAR', 'Ocorrência', `${e.nome}: ${descricao.slice(0, 60)}`)
       const { estudanteId: _, ...dto } = ocorrencia
       return HttpResponse.json(dto satisfies S['OcorrenciaDto'], { status: 201 })
     }),
@@ -681,11 +691,12 @@ export const handlers = [
           errors: [{ campo: 'ids', mensagem: 'Escolha pelo menos uma matrícula.' }],
         })
       }
+      const quem = utilizadorDo(request)!.nome
       return idempotente(request, () => {
         const confirmadas: S['MatriculaDto'][] = []
         const recusadas: S['ResultadoLoteDto']['recusadas'] = []
         for (const id of ids) {
-          const { erro, matricula } = confirmarMatricula(id)
+          const { erro, matricula } = confirmarMatricula(id, quem)
           if (matricula) confirmadas.push(paraMatriculaDto(matricula))
           else {
             const m = db.matriculas.find((x) => x.id === id)
@@ -707,8 +718,8 @@ export const handlers = [
 
   http.post(
     `${API}/matriculas/:id/confirmar`,
-    protegido('matriculas:escrever', ({ params }) => {
-      const { erro, matricula } = confirmarMatricula(String(params.id))
+    protegido('matriculas:escrever', ({ request, params }) => {
+      const { erro, matricula } = confirmarMatricula(String(params.id), utilizadorDo(request)!.nome)
       return erro ?? HttpResponse.json(paraMatriculaDto(matricula!))
     }),
   ),
@@ -783,11 +794,12 @@ export const handlers = [
   }),
 
   ...handlersRelatorios,
+  ...handlersAdministracao,
   ...handlersAcademicos,
 ]
 
 /** Confirmar: ano aberto, matrícula pendente e documentos obrigatórios entregues (guia 2.4). */
-function confirmarMatricula(id: string) {
+function confirmarMatricula(id: string, quem: string) {
   const matricula = db.matriculas.find((m) => m.id === id)
   if (!matricula) return { erro: problema(404, 'Matrícula não encontrada') }
   if (anoEncerrado(matricula.anoLectivoId)) {
@@ -808,6 +820,8 @@ function confirmarMatricula(id: string) {
   }
   matricula.estado = 'CONFIRMADA'
   registarPercurso(matricula.estudanteId, 'MATRICULA', 'Matrícula confirmada')
+  const nome = db.estudantes.find((e) => e.id === matricula.estudanteId)?.nome ?? ''
+  auditar(quem, 'CONFIRMAR', 'Matrícula', `${nome}: documentos completos; matrícula confirmada`)
   return { matricula }
 }
 

@@ -15,9 +15,13 @@ msgstr "«{titulo}» acrescentado ao calendário."
 msgid "«{titulo}» apagado do calendário."
 msgstr "«{titulo}» apagado do calendário."
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "«Igual ao sistema» segue o modo claro ou escuro do computador."
 msgstr "«Igual ao sistema» segue o modo claro ou escuro do computador."
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "(a sua conta)"
+msgstr "(a sua conta)"
 
 #. placeholder {0}: idsSeleccionados.length
 #: src/shared/ui/tabela-dados.tsx
@@ -82,6 +86,10 @@ msgstr "{inscritos} de {lotacaoMaxima}"
 msgid "{jaConfirmadas} já estavam confirmadas e não mudam."
 msgstr "{jaConfirmadas} já estavam confirmadas e não mudam."
 
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "{n, plural, one {# utilizador} other {# utilizadores}}"
+msgstr "{n, plural, one {# utilizador} other {# utilizadores}}"
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "{n} em falta"
 msgstr "{n} em falta"
@@ -106,6 +114,10 @@ msgstr "{nome} fora das turmas."
 msgid "{nome} inactivada. Continua nos planos e no histórico, mas não se acrescenta a novos planos."
 msgstr "{nome} inactivada. Continua nos planos e no histórico, mas não se acrescenta a novos planos."
 
+#: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
+msgid "{nome} já não pode entrar."
+msgstr "{nome} já não pode entrar."
+
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "{nome} largado em {destino}."
 msgstr "{nome} largado em {destino}."
@@ -113,6 +125,10 @@ msgstr "{nome} largado em {destino}."
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "{nome} passou a «{rotulo}»."
 msgstr "{nome} passou a «{rotulo}»."
+
+#: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
+msgid "{nome} pode voltar a entrar."
+msgstr "{nome} pode voltar a entrar."
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "{nome} reactivada."
@@ -189,6 +205,14 @@ msgstr "{total} matrículas"
 #: src/routes/_app/professores/index.tsx
 msgid "{total} professores"
 msgstr "{total} professores"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "{total} registos"
+msgstr "{total} registos"
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "{total} utilizadores"
+msgstr "{total} utilizadores"
 
 #: src/routes/_app/professores/$professorId.tsx
 msgid "{turmas} turmas"
@@ -346,7 +370,12 @@ msgstr "Abrir o menu"
 msgid "Abrir processo"
 msgstr "Abrir processo"
 
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Acção"
+msgstr "Acção"
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
+#: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Acções"
 msgstr "Acções"
 
@@ -357,6 +386,10 @@ msgstr "Acções em lote"
 #: src/routes/_app/index.tsx
 msgid "Acções rápidas"
 msgstr "Acções rápidas"
+
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Acesso"
+msgstr "Acesso"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/shared/ui/edicao-no-sitio.tsx
@@ -380,10 +413,19 @@ msgstr "Acrescentar encarregado"
 msgid "Activa"
 msgstr "Activa"
 
+#: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
+msgid "Activar"
+msgstr "Activar"
+
+#: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
+msgid "Activar {nome}"
+msgstr "Activar {nome}"
+
 #: src/routes/_app/turmas/index.tsx
 msgid "Activas"
 msgstr "Activas"
 
+#: src/entities/administracao/model/mapeadores.ts
 #: src/entities/estudante/model/mapeadores.ts
 #: src/entities/professor/model/mapeadores.ts
 #: src/routes/_app/estudantes/index.tsx
@@ -395,7 +437,7 @@ msgstr "Activo"
 msgid "Actualizar"
 msgstr "Actualizar"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/perfis.tsx
 msgid "Administração"
 msgstr "Administração"
 
@@ -439,9 +481,17 @@ msgstr "Ainda não há professores registados."
 msgid "Ainda não há registos no percurso."
 msgstr "Ainda não há registos no percurso."
 
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Ainda não há registos."
+msgstr "Ainda não há registos."
+
 #: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há turmas neste ano."
 msgstr "Ainda não há turmas neste ano."
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Ainda não há utilizadores."
+msgstr "Ainda não há utilizadores."
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Ainda não pediu nenhum relatório neste ano."
@@ -463,6 +513,10 @@ msgstr "Alteração guardada."
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "Alterar estado"
 msgstr "Alterar estado"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Alterou"
+msgstr "Alterou"
 
 #: src/shared/config/glossario.ts
 msgid "ano lectivo"
@@ -493,6 +547,7 @@ msgid "anos lectivos"
 msgstr "anos lectivos"
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -517,9 +572,13 @@ msgstr "Apagar «{titulo}»"
 msgid "Apagar a vista «{nome}»"
 msgstr "Apagar a vista «{nome}»"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Apresentação"
 msgstr "Apresentação"
+
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Área"
+msgstr "Área"
 
 #: src/entities/plano/model/mapeadores.ts
 msgid "Arquivado"
@@ -537,7 +596,7 @@ msgstr "Arraste os estudantes entre turmas, ou use o menu de cada cartão. Mudar
 msgid "As atribuições fazem-se por turma e disciplina."
 msgstr "As atribuições fazem-se por turma e disciplina."
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "As preferências de apresentação ficam guardadas neste navegador."
 msgstr "As preferências de apresentação ficam guardadas neste navegador."
 
@@ -556,6 +615,11 @@ msgstr "Atribuições"
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Atribuições no ano lectivo"
 msgstr "Atribuições no ano lectivo"
+
+#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Auditoria"
+msgstr "Auditoria"
 
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "Ausência temporária. Mantém as atribuições, mas não recebe novas."
@@ -585,6 +649,11 @@ msgstr "Boa tarde, {nome}"
 msgid "Bom dia, {nome}"
 msgstr "Bom dia, {nome}"
 
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Cada utilizador tem um perfil. Os perfis são definidos pela escola e mudam-se no servidor."
+msgstr "Cada utilizador tem um perfil. Os perfis são definidos pela escola e mudam-se no servidor."
+
+#: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/-casca/menu-lateral.tsx
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Calendário"
@@ -646,7 +715,7 @@ msgstr "ciclo"
 msgid "ciclos"
 msgstr "ciclos"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Claro"
 msgstr "Claro"
 
@@ -678,11 +747,11 @@ msgstr "classes"
 msgid "Comece por matricular o primeiro."
 msgstr "Comece por matricular o primeiro."
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Compacta"
 msgstr "Compacta"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Compacta mostra mais linhas por ecrã nas listas."
 msgstr "Compacta mostra mais linhas por ecrã nas listas."
 
@@ -738,11 +807,19 @@ msgstr "Confirmar…"
 msgid "Confirme se é o mesmo estudante antes de continuar."
 msgstr "Confirme se é o mesmo estudante antes de continuar."
 
-#: src/routes/_app/definicoes.tsx
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Confirmou"
+msgstr "Confirmou"
+
+#: src/routes/_app/definicoes/index.tsx
 msgid "Confortável"
 msgstr "Confortável"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Consultar e alterar"
+msgstr "Consultar e alterar"
+
+#: src/routes/_app/definicoes/index.tsx
 msgid "Conta"
 msgstr "Conta"
 
@@ -787,7 +864,12 @@ msgstr "Crie o primeiro ano lectivo para começar."
 msgid "Crie o primeiro ano lectivo para ver o calendário."
 msgstr "Crie o primeiro ano lectivo para ver o calendário."
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Criou"
+msgstr "Criou"
+
 #: src/routes/_app/curriculo.tsx
+#: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/-casca/menu-lateral.tsx
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Currículo"
@@ -843,7 +925,7 @@ msgstr "Definições"
 msgid "Deixou a escola. O histórico mantém-se."
 msgstr "Deixou a escola. O histórico mantém-se."
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Densidade"
 msgstr "Densidade"
 
@@ -858,6 +940,14 @@ msgstr "Densidade confortável"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
 msgstr "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
+
+#: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
+msgid "Desactivar"
+msgstr "Desactivar"
+
+#: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
+msgid "Desactivar {nome}"
+msgstr "Desactivar {nome}"
 
 #: src/shared/ui/ecra-bloqueado.tsx
 msgid "Desbloquear"
@@ -901,6 +991,10 @@ msgstr "Desistente"
 #: src/routes/_app/professores/index.tsx
 msgid "Desligado"
 msgstr "Desligado"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Detalhe"
+msgstr "Detalhe"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Dia"
@@ -1061,6 +1155,10 @@ msgstr "Em vigor desde {data}."
 msgid "Email"
 msgstr "Email"
 
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Emitir documentos oficiais"
+msgstr "Emitir documentos oficiais"
+
 #: src/shared/config/glossario.ts
 msgid "encarregado"
 msgstr "encarregado"
@@ -1123,6 +1221,10 @@ msgstr "Entre de novo para continuar. O que estava a fazer continua neste ecrã.
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Entregue"
 msgstr "Entregue"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Entrou"
+msgstr "Entrou"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/model/esquema.ts
@@ -1193,7 +1295,7 @@ msgstr "Escreva o registo correcto."
 msgid "Escreva um email válido."
 msgstr "Escreva um email válido."
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Escuro"
 msgstr "Escuro"
 
@@ -1223,6 +1325,7 @@ msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção.
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
+#: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -1284,6 +1387,7 @@ msgstr "Estudante"
 msgid "estudantes"
 msgstr "estudantes"
 
+#: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/-casca/menu-lateral.tsx
@@ -1325,7 +1429,7 @@ msgstr "Ex.: Reunião de pais da 7.ª classe"
 msgid "Ex.: turma registada por engano"
 msgstr "Ex.: turma registada por engano"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Expandido"
 msgstr "Expandido"
 
@@ -1505,7 +1609,7 @@ msgstr "Horas por semana"
 msgid "Igual ao primeiro num evento de um só dia."
 msgstr "Igual ao primeiro num evento de um só dia."
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Igual ao sistema"
 msgstr "Igual ao sistema"
 
@@ -1520,6 +1624,10 @@ msgstr "Inactivar"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Inactivar {nome}"
 msgstr "Inactivar {nome}"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Inactivo"
+msgstr "Inactivo"
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Indique a data de nascimento."
@@ -1553,6 +1661,10 @@ msgstr "Indisponível enquanto não estiver activo"
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Início"
 msgstr "Início"
+
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Inscrever acima da lotação"
+msgstr "Inscrever acima da lotação"
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Inscrever mais tarde"
@@ -1725,6 +1837,7 @@ msgstr "Matricular outro estudante"
 msgid "matrículas"
 msgstr "matrículas"
 
+#: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/matriculas/nova.tsx
 #: src/routes/-casca/menu-lateral.tsx
@@ -1740,7 +1853,7 @@ msgstr "Matrículas a confirmar"
 msgid "Menu"
 msgstr "Menu"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Menu lateral"
 msgstr "Menu lateral"
 
@@ -1832,6 +1945,10 @@ msgstr "Não foi possível concluir. Corrija estas linhas e tente de novo:"
 msgid "Não foi possível guardar. A sua alteração continua aqui."
 msgstr "Não foi possível guardar. A sua alteração continua aqui."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Não pode desactivar a sua própria conta."
+msgstr "Não pode desactivar a sua própria conta."
+
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "Não recebe novas atribuições até ser reactivado."
 msgstr "Não recebe novas atribuições até ser reactivado."
@@ -1874,6 +1991,14 @@ msgstr "Nenhum estudante corresponde à pesquisa."
 msgid "Nenhum professor corresponde à pesquisa."
 msgstr "Nenhum professor corresponde à pesquisa."
 
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Nenhum registo corresponde à pesquisa."
+msgstr "Nenhum registo corresponde à pesquisa."
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Nenhum utilizador corresponde à pesquisa."
+msgstr "Nenhum utilizador corresponde à pesquisa."
+
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Nenhuma das matrículas escolhidas pode ser confirmada agora."
 msgstr "Nenhuma das matrículas escolhidas pode ser confirmada agora."
@@ -1893,6 +2018,7 @@ msgstr "Noite"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Nome"
@@ -1907,6 +2033,10 @@ msgstr "Nome completo"
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Nome da vista"
 msgstr "Nome da vista"
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Nome ou email"
+msgstr "Nome ou email"
 
 #: src/routes/_app/professores/index.tsx
 msgid "Nome ou número de agente"
@@ -1935,6 +2065,10 @@ msgstr "Novo evento a partir deste dia"
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Número de processo"
 msgstr "Número de processo"
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Nunca"
+msgstr "Nunca"
 
 #: src/routes/_app.tsx
 msgid "O ano lectivo {designacao} está encerrado. Só é possível consultar."
@@ -2061,6 +2195,7 @@ msgstr "Outra pessoa alterou este dado"
 msgid "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
 msgstr "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
 
+#: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -2068,6 +2203,7 @@ msgstr "Outra pessoa alterou este registo entretanto. Mostramos a versão actual
 msgid "Página {pagina} de {totalPaginas}"
 msgstr "Página {pagina} de {totalPaginas}"
 
+#: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -2128,16 +2264,37 @@ msgstr "Pedir excepção de lotação"
 msgid "Percurso"
 msgstr "Percurso"
 
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Perfil"
+msgstr "Perfil"
+
+#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Perfis de acesso"
+msgstr "Perfis de acesso"
+
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Permissões do perfil {nome}"
+msgstr "Permissões do perfil {nome}"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+#: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Pesquisa"
 msgstr "Pesquisa"
 
+#: src/routes/_app/definicoes/auditoria.tsx
+#: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/shared/ui/selector.tsx
 msgid "Pesquisar"
 msgstr "Pesquisar"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Pessoa, recurso ou detalhe"
+msgstr "Pessoa, recurso ou detalhe"
 
 #: src/entities/ano-lectivo/model/mapeadores.ts
 msgid "Planeado"
@@ -2171,6 +2328,7 @@ msgstr "Por inactividade. O que estava a fazer continua guardado, {nome}."
 msgid "Porque não é o mesmo estudante?"
 msgstr "Porque não é o mesmo estudante?"
 
+#: src/routes/_app/definicoes.tsx
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Preferências"
 msgstr "Preferências"
@@ -2224,6 +2382,7 @@ msgstr "Professor"
 msgid "professores"
 msgstr "professores"
 
+#: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/routes/-casca/menu-lateral.tsx
@@ -2246,6 +2405,18 @@ msgstr "Publicar a versão {versao} do plano da {classe}?"
 #: src/features/editar-plano/ui/accoes-plano.tsx
 msgid "Publicar versão {versao}"
 msgstr "Publicar versão {versao}"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Publicou"
+msgstr "Publicou"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Quando"
+msgstr "Quando"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Quem"
+msgstr "Quem"
 
 #: src/entities/plano/model/mapeadores.ts
 msgid "Rascunho"
@@ -2279,11 +2450,11 @@ msgstr "Recolher ou expandir o menu lateral"
 msgid "Recolher tarefas"
 msgstr "Recolher tarefas"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Recolhido"
 msgstr "Recolhido"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Recolhido mostra só os ícones; o nome aparece ao passar o rato ou com o teclado."
 msgstr "Recolhido mostra só os ícones; o nome aparece ao passar o rato ou com o teclado."
 
@@ -2316,6 +2487,10 @@ msgstr "Rectificar o registo"
 msgid "Rectificar: {descricao}"
 msgstr "Rectificar: {descricao}"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Rectificou"
+msgstr "Rectificou"
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "Registada"
 msgstr "Registada"
@@ -2339,6 +2514,10 @@ msgstr "Registar rectificação"
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Registo correcto"
 msgstr "Registo correcto"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Registo de auditoria"
+msgstr "Registo de auditoria"
 
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Registo imutável"
@@ -2395,6 +2574,10 @@ msgstr "Retirar o filtro {nome}: {valor}"
 msgid "Retire um filtro ou matricule um estudante."
 msgstr "Retire um filtro ou matricule um estudante."
 
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Retire um filtro ou pesquise por outra palavra."
+msgstr "Retire um filtro ou pesquise por outra palavra."
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Reveja os campos assinalados."
 msgstr "Reveja os campos assinalados."
@@ -2423,6 +2606,10 @@ msgstr "Saúde"
 msgid "Se sair agora, o que escreveu neste ecrã perde-se."
 msgstr "Se sair agora, o que escreveu neste ecrã perde-se."
 
+#: src/routes/_app/definicoes.tsx
+msgid "Secções das definições"
+msgstr "Secções das definições"
+
 #: src/routes/_app.tsx
 #: src/routes/-casca/menu-lateral.tsx
 #: src/routes/entrar.tsx
@@ -2430,6 +2617,7 @@ msgid "Secretaria"
 msgstr "Secretaria"
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -2452,6 +2640,10 @@ msgstr "Seleccionar linha"
 #: src/shared/ui/tabela-dados.tsx
 msgid "Seleccionar todas"
 msgstr "Seleccionar todas"
+
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Sem acesso"
+msgstr "Sem acesso"
 
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Sem atribuições neste ano lectivo."
@@ -2521,6 +2713,10 @@ msgstr "Sigla"
 msgid "Situação"
 msgstr "Situação"
 
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Só consultar"
+msgstr "Só consultar"
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."
 msgstr "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."
@@ -2528,6 +2724,10 @@ msgstr "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova vers
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Só professores activos recebem novas atribuições."
 msgstr "Só professores activos recebem novas atribuições."
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "Sobre"
+msgstr "Sobre"
 
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 msgid "Sugerida"
@@ -2537,6 +2737,10 @@ msgstr "Sugerida"
 #: src/routes/_app/professores/index.tsx
 msgid "Suspenso"
 msgstr "Suspenso"
+
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Também pode:"
+msgstr "Também pode:"
 
 #: src/entities/turma/model/mapeadores.ts
 msgid "Tarde"
@@ -2560,7 +2764,7 @@ msgstr "Tarefas em segundo plano"
 msgid "Telefone"
 msgstr "Telefone"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 msgid "Tema"
 msgstr "Tema"
 
@@ -2570,7 +2774,7 @@ msgstr "Tema"
 msgid "Tentar de novo"
 msgstr "Tentar de novo"
 
-#: src/routes/_app/definicoes.tsx
+#: src/routes/_app/definicoes/index.tsx
 #: src/routes/-casca/menu-utilizador.tsx
 msgid "Terminar sessão"
 msgstr "Terminar sessão"
@@ -2597,12 +2801,14 @@ msgid "Tipo de ocorrência"
 msgstr "Tipo de ocorrência"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
+#: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Todas"
 msgstr "Todas"
 
+#: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Todos"
@@ -2651,6 +2857,7 @@ msgstr "Turma cheia: não aceita mais estudantes."
 msgid "turmas"
 msgstr "turmas"
 
+#: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/routes/_app/turmas/index.tsx
 #: src/routes/_app/turmas/quadro.tsx
@@ -2666,6 +2873,10 @@ msgstr "Turmas cheias"
 #: src/routes/_app/turmas/index.tsx
 msgid "Turno"
 msgstr "Turno"
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Último acesso"
+msgstr "Último acesso"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Último dia"
@@ -2684,8 +2895,9 @@ msgid "Utilização"
 msgstr "Utilização"
 
 #: src/routes/_app/definicoes.tsx
-msgid "Utilizadores, perfis de acesso e auditoria ficam aqui quando o servidor os disponibilizar."
-msgstr "Utilizadores, perfis de acesso e auditoria ficam aqui quando o servidor os disponibilizar."
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "Utilizadores"
+msgstr "Utilizadores"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Valor actual"
@@ -2695,10 +2907,15 @@ msgstr "Valor actual"
 msgid "Ver a rectificação"
 msgstr "Ver a rectificação"
 
+#: src/routes/_app/definicoes/perfis.tsx
+msgid "Ver os utilizadores com o perfil {nome}"
+msgstr "Ver os utilizadores com o perfil {nome}"
+
 #: src/shared/ui/erro-de-rota.tsx
 msgid "Verifique a ligação e tente de novo."
 msgstr "Verifique a ligação e tente de novo."
 
+#: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Verifique o nome ou retire um filtro."

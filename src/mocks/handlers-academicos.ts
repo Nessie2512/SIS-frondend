@@ -1,7 +1,24 @@
 import { http, HttpResponse } from 'msw'
 import { TIPOS_DOCUMENTO_PROFESSOR, type Plano, type Professor } from './academico'
-import { anoEncerrado, API, etag, paginar, problema, protegido, type S } from './apoio'
+import { auditar } from './administracao'
+import {
+  anoEncerrado,
+  API,
+  etag,
+  paginar,
+  problema,
+  protegido,
+  utilizadorDo,
+  type S,
+} from './apoio'
 import { anosLectivos, db, normalizar, novoId } from './db'
+
+const ESTADO_TEXTO: Record<S['EstadoProfessor'], string> = {
+  ACTIVO: 'activo',
+  LICENCA: 'de licença',
+  SUSPENSO: 'suspenso',
+  DESLIGADO: 'desligado',
+}
 
 // ---------------------------------------------------------------------------
 // Projecções para DTO
@@ -178,6 +195,12 @@ export const handlersAcademicos = [
         })
       }
       professor.estado = corpo.estado
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Professor',
+        `${professor.nome}: ${ESTADO_TEXTO[corpo.estado]}`,
+      )
       return HttpResponse.json({ id: professor.id, estado: professor.estado })
     }),
   ),
@@ -301,6 +324,7 @@ export const handlersAcademicos = [
       if (!horasValidas(horasSemanais)) return erroHoras()
       linha.horasSemanais = horasSemanais
       plano.revisao++
+      auditar(utilizadorDo(request)!.nome, 'PUBLICAR', 'Plano curricular', `Versão ${plano.versao}`)
       return respostaPlano(plano)
     }),
   ),
@@ -312,6 +336,7 @@ export const handlersAcademicos = [
       if (erro) return erro
       plano.linhas = plano.linhas.filter((l) => l.disciplinaId !== params.disciplinaId)
       plano.revisao++
+      auditar(utilizadorDo(request)!.nome, 'PUBLICAR', 'Plano curricular', `Versão ${plano.versao}`)
       return respostaPlano(plano)
     }),
   ),
@@ -369,6 +394,7 @@ export const handlersAcademicos = [
       plano.estado = 'VIGENTE'
       plano.publicadoEm = new Date().toISOString().slice(0, 10)
       plano.revisao++
+      auditar(utilizadorDo(request)!.nome, 'PUBLICAR', 'Plano curricular', `Versão ${plano.versao}`)
       return respostaPlano(plano)
     }),
   ),

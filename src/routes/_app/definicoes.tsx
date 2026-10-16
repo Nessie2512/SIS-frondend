@@ -1,139 +1,57 @@
 import { Trans, useLingui } from '@lingui/react/macro'
-import { useQuery } from '@tanstack/react-query'
-import { createFileRoute } from '@tanstack/react-router'
-import { LogOut } from 'lucide-react'
-import { meQuery, sair } from '@/entities/utilizador'
-import { usePreferencias, type Densidade, type PreferenciaTema } from '@/shared/lib/preferencias'
-import { Avatar, Button, ControloSegmentado, ErroDeRota } from '@/shared/ui'
-import type { ReactNode } from 'react'
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import { useCan } from '@/shared/lib/permissoes'
+import { ErroDeRota } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/definicoes')({
   errorComponent: ErroDeRota,
-  component: Definicoes,
+  component: LayoutDefinicoes,
 })
 
+const classesSeparador =
+  '-mb-px border-b-2 border-transparent px-1 pb-2.5 text-corpo whitespace-nowrap text-texto-2 outline-none hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento data-[status=active]:border-acento data-[status=active]:font-medium data-[status=active]:text-texto-1'
+
 /**
- * Definições (guia 2.5, 6.1): preferências de apresentação deste navegador e a conta.
- * Utilizadores, perfis e auditoria entram aqui quando o backend os disponibilizar.
+ * Definições (guia 2.5): preferências de cada um e, para quem administra, utilizadores,
+ * perfis de acesso e auditoria (tabelas com filtros). Cada secção tem o seu endereço.
  */
-function Definicoes() {
+function LayoutDefinicoes() {
   const { t } = useLingui()
-  const { tema, densidade, menuRecolhido, definirTema, definirDensidade, definirMenuRecolhido } =
-    usePreferencias()
-  const { data: eu } = useQuery(meQuery())
-
+  const administra = useCan('administracao:ler')
   return (
-    <section className="flex max-w-3xl flex-col gap-10">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-titulo-pagina">
-          <Trans>Definições</Trans>
-        </h1>
-        <p className="text-secundario text-texto-2">
-          <Trans>As preferências de apresentação ficam guardadas neste navegador.</Trans>
-        </p>
-      </div>
-
-      <Grupo titulo={t`Apresentação`}>
-        <Linha
-          rotulo={t`Tema`}
-          descricao={t`«Igual ao sistema» segue o modo claro ou escuro do computador.`}
-        >
-          <ControloSegmentado
-            rotulo={t`Tema`}
-            valor={tema}
-            aoMudar={(v) => definirTema(v as PreferenciaTema)}
-            opcoes={[
-              { valor: 'sistema', rotulo: t`Igual ao sistema` },
-              { valor: 'claro', rotulo: t`Claro` },
-              { valor: 'escuro', rotulo: t`Escuro` },
-            ]}
-          />
-        </Linha>
-        <Linha
-          rotulo={t`Densidade`}
-          descricao={t`Compacta mostra mais linhas por ecrã nas listas.`}
-        >
-          <ControloSegmentado
-            rotulo={t`Densidade`}
-            valor={densidade}
-            aoMudar={(v) => definirDensidade(v as Densidade)}
-            opcoes={[
-              { valor: 'confortavel', rotulo: t`Confortável` },
-              { valor: 'compacta', rotulo: t`Compacta` },
-            ]}
-          />
-        </Linha>
-        <Linha
-          rotulo={t`Menu lateral`}
-          descricao={t`Recolhido mostra só os ícones; o nome aparece ao passar o rato ou com o teclado.`}
-        >
-          <ControloSegmentado
-            rotulo={t`Menu lateral`}
-            valor={menuRecolhido ? 'recolhido' : 'expandido'}
-            aoMudar={(v) => definirMenuRecolhido(v === 'recolhido')}
-            opcoes={[
-              { valor: 'expandido', rotulo: t`Expandido` },
-              { valor: 'recolhido', rotulo: t`Recolhido` },
-            ]}
-          />
-        </Linha>
-      </Grupo>
-
-      {eu && (
-        <Grupo titulo={t`Conta`}>
-          <div className="flex flex-wrap items-center gap-4 py-4">
-            <Avatar nome={eu.nome} tamanho="grande" />
-            <div className="flex min-w-0 flex-1 flex-col">
-              <span className="font-medium">{eu.nome}</span>
-              <span className="text-secundario text-texto-2">{eu.email}</span>
-            </div>
-            <Button onClick={() => void sair()}>
-              <LogOut aria-hidden className="size-4 stroke-[1.5]" />
-              <Trans>Terminar sessão</Trans>
-            </Button>
-          </div>
-        </Grupo>
-      )}
-
-      <Grupo titulo={t`Administração`}>
-        <p className="py-4 text-secundario text-texto-2">
-          <Trans>
-            Utilizadores, perfis de acesso e auditoria ficam aqui quando o servidor os
-            disponibilizar.
-          </Trans>
-        </p>
-      </Grupo>
+    <section className="flex flex-col gap-6">
+      <h1 className="text-titulo-pagina">
+        <Trans>Definições</Trans>
+      </h1>
+      <nav aria-label={t`Secções das definições`} className="border-b border-linha">
+        <ul className="flex gap-6 overflow-x-auto">
+          <li>
+            <Link to="/definicoes" activeOptions={{ exact: true }} className={classesSeparador}>
+              <Trans>Preferências</Trans>
+            </Link>
+          </li>
+          {administra && (
+            <>
+              <li>
+                <Link to="/definicoes/utilizadores" className={classesSeparador}>
+                  <Trans>Utilizadores</Trans>
+                </Link>
+              </li>
+              <li>
+                <Link to="/definicoes/perfis" className={classesSeparador}>
+                  <Trans>Perfis de acesso</Trans>
+                </Link>
+              </li>
+              <li>
+                <Link to="/definicoes/auditoria" className={classesSeparador}>
+                  <Trans>Auditoria</Trans>
+                </Link>
+              </li>
+            </>
+          )}
+        </ul>
+      </nav>
+      <Outlet />
     </section>
-  )
-}
-
-function Grupo({ titulo, children }: { titulo: string; children: ReactNode }) {
-  return (
-    <section aria-label={titulo} className="flex flex-col">
-      <h2 className="mb-2 text-titulo-seccao">{titulo}</h2>
-      <div className="flex flex-col divide-y divide-linha rounded-cartao bg-superficie px-4 ring-1 ring-linha">
-        {children}
-      </div>
-    </section>
-  )
-}
-
-function Linha({
-  rotulo,
-  descricao,
-  children,
-}: {
-  rotulo: string
-  descricao: string
-  children: ReactNode
-}) {
-  return (
-    <div className="flex flex-wrap items-center justify-between gap-4 py-4">
-      <div className="flex min-w-56 flex-1 flex-col gap-0.5">
-        <span className="font-medium">{rotulo}</span>
-        <span className="text-secundario text-texto-2">{descricao}</span>
-      </div>
-      {children}
-    </div>
   )
 }

@@ -37,6 +37,8 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
       'curriculo:escrever',
       'calendario:ler',
       'calendario:escrever',
+      'administracao:ler',
+      'administracao:escrever',
     ],
   },
   {

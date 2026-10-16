@@ -275,6 +275,34 @@ export interface paths {
     }>
   }
 
+  // Administração (guia 2.5: utilizadores, perfis, auditoria)
+  '/utilizadores': {
+    get: Op<{
+      query: { pesquisa?: string; perfilId?: string; estado?: S['EstadoUtilizador'] }
+      ok: S['UtilizadorDto'][]
+    }>
+  }
+  '/utilizadores/{id}/estado': {
+    post: Op<{
+      path: { id: string }
+      body: { estado: S['EstadoUtilizador'] }
+      ok: S['UtilizadorDto']
+      erros: 403 | 404 | 409
+    }>
+  }
+  '/perfis': { get: Op<{ ok: S['PerfilDto'][] }> }
+  '/auditoria': {
+    get: Op<{
+      query: {
+        pesquisa?: string
+        accao?: S['AccaoAuditoria']
+        page?: number
+        pageSize?: number
+      }
+      ok: S['PaginaAuditoriaDto']
+    }>
+  }
+
   // Vistas guardadas por utilizador (guia 7.1)
   '/vistas': {
     get: Op<{ query: { ecra: S['EcraVista'] }; ok: S['VistaDto'][] }>
@@ -627,6 +655,37 @@ export interface components {
       progresso: number
       resultadoUrl: string | null
     }
+
+    // Administração
+    EstadoUtilizador: 'ACTIVO' | 'INACTIVO'
+    UtilizadorDto: {
+      id: string
+      nome: string
+      email: string
+      perfilId: string
+      perfil: string
+      estado: components['schemas']['EstadoUtilizador']
+      /** Formato: date-time */
+      ultimoAcesso: string | null
+    }
+    PerfilDto: {
+      id: string
+      nome: string
+      descricao: string
+      permissoes: string[]
+      utilizadores: number
+    }
+    AccaoAuditoria: 'CRIAR' | 'ALTERAR' | 'CONFIRMAR' | 'PUBLICAR' | 'RECTIFICAR' | 'ENTRAR'
+    EntradaAuditoriaDto: {
+      id: string
+      /** Formato: date-time */
+      quando: string
+      utilizador: string
+      accao: components['schemas']['AccaoAuditoria']
+      recurso: string
+      detalhe: string
+    }
+    PaginaAuditoriaDto: Pagina<components['schemas']['EntradaAuditoriaDto']>
 
     // Vistas guardadas
     EcraVista: 'estudantes' | 'matriculas' | 'professores'
