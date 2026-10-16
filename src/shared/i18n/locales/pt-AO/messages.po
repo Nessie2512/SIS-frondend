@@ -648,6 +648,10 @@ msgstr "Completos"
 msgid "Concluída"
 msgstr "Concluída"
 
+#: src/routes/_app/matriculas/index.tsx
+msgid "Concluídas"
+msgstr "Concluídas"
+
 #: src/entities/estudante/model/mapeadores.ts
 #: src/routes/_app/estudantes/index.tsx
 msgid "Concluído"
@@ -1318,6 +1322,10 @@ msgstr "Ficha do estudante"
 msgid "Ficha do professor"
 msgstr "Ficha do professor"
 
+#: src/shared/ui/etiquetas-filtro.tsx
+msgid "Filtros aplicados"
+msgstr "Filtros aplicados"
+
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Foco na pesquisa da lista"
 msgstr "Foco na pesquisa da lista"
@@ -1504,6 +1512,7 @@ msgstr "Legenda"
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
+#: src/shared/ui/etiquetas-filtro.tsx
 msgid "Limpar filtros"
 msgstr "Limpar filtros"
 
@@ -1970,6 +1979,11 @@ msgstr "Percurso"
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
+msgid "Pesquisa"
+msgstr "Pesquisa"
+
+#: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/professores/index.tsx
 #: src/shared/ui/selector.tsx
 msgid "Pesquisar"
 msgstr "Pesquisar"
@@ -2188,6 +2202,10 @@ msgstr "Retirar {nome} do plano"
 msgid "Retirar encarregado {numero}"
 msgstr "Retirar encarregado {numero}"
 
+#: src/shared/ui/etiquetas-filtro.tsx
+msgid "Retirar o filtro {nome}: {valor}"
+msgstr "Retirar o filtro {nome}: {valor}"
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "Retire um filtro ou matricule um estudante."
 msgstr "Retire um filtro ou matricule um estudante."
@@ -2305,6 +2323,10 @@ msgstr "Sexo"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Sigla"
 msgstr "Sigla"
+
+#: src/routes/_app/matriculas/index.tsx
+msgid "Situação"
+msgstr "Situação"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."

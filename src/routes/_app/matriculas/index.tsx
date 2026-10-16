@@ -21,9 +21,11 @@ import {
   Esqueleto,
   EstadoVazio,
   EtiquetaEstado,
+  EtiquetasFiltro,
   Selector,
   TabelaDados,
   type ColunaTabela,
+  type EtiquetaFiltro,
 } from '@/shared/ui'
 
 const ESTADOS = ['PENDENTE', 'CONFIRMADA', 'CONCLUIDA'] as const
@@ -135,6 +137,28 @@ function EcraMatriculas() {
   const pagina = data?.page ?? filtros.page
   const totalPaginas = data?.totalPaginas ?? 1
 
+  // Filtros aplicados como etiquetas removíveis (guia 7.1)
+  const SITUACOES: Record<string, string> = {
+    PENDENTE: t`A confirmar`,
+    CONFIRMADA: t`Confirmadas`,
+    CONCLUIDA: t`Concluídas`,
+  }
+  const etiquetas: EtiquetaFiltro[] = [
+    ...(filtros.classeId
+      ? [
+          {
+            chave: 'classeId',
+            nome: t`Classe`,
+            valor: classes.find((c) => c.id === filtros.classeId)?.designacao ?? filtros.classeId,
+          },
+        ]
+      : []),
+    ...(filtros.estado
+      ? [{ chave: 'estado', nome: t`Situação`, valor: SITUACOES[filtros.estado] ?? filtros.estado }]
+      : []),
+    ...(filtros.semTurma ? [{ chave: 'semTurma', nome: t`Turma`, valor: t`Sem turma` }] : []),
+  ]
+
   return (
     <section className="flex flex-col gap-6">
       <div className="flex items-end justify-between gap-4">
@@ -195,6 +219,15 @@ function EcraMatriculas() {
           ]}
         />
       </div>
+
+      <EtiquetasFiltro
+        etiquetas={etiquetas}
+        aoRemover={(chave) =>
+          void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+        }
+        aoLimpar={() => void navigate({ search: { page: 1 } })}
+        className="-mt-3"
+      />
 
       <VistasGuardadas
         ecra="matriculas"

@@ -27,10 +27,12 @@ import {
   Esqueleto,
   EstadoVazio,
   EtiquetaEstado,
+  EtiquetasFiltro,
   Folha,
   Selector,
   TabelaDados,
   type ColunaTabela,
+  type EtiquetaFiltro,
 } from '@/shared/ui'
 
 const ESTADOS = ['ACTIVO', 'LICENCA', 'SUSPENSO', 'DESLIGADO'] as const
@@ -126,6 +128,45 @@ function EcraProfessores() {
   const totalPaginas = data?.totalPaginas ?? 1
   const temFiltros = Boolean(q || filtros.disciplinaId || filtros.estado)
 
+  const opcoesEstado = [
+    { valor: 'ACTIVO', rotulo: t`Activo` },
+    { valor: 'LICENCA', rotulo: t`De licença` },
+    { valor: 'SUSPENSO', rotulo: t`Suspenso` },
+    { valor: 'DESLIGADO', rotulo: t`Desligado` },
+  ]
+
+  // Filtros aplicados como etiquetas removíveis (guia 7.1)
+  const etiquetas: EtiquetaFiltro[] = [
+    ...(q ? [{ chave: 'q', nome: t`Pesquisa`, valor: q }] : []),
+    ...(filtros.disciplinaId
+      ? [
+          {
+            chave: 'disciplinaId',
+            nome: t`Disciplina`,
+            valor:
+              disciplinas.find((d) => d.id === filtros.disciplinaId)?.nome ?? filtros.disciplinaId,
+          },
+        ]
+      : []),
+    ...(filtros.estado
+      ? [
+          {
+            chave: 'estado',
+            nome: t`Estado`,
+            valor: opcoesEstado.find((o) => o.valor === filtros.estado)?.rotulo ?? filtros.estado,
+          },
+        ]
+      : []),
+  ]
+
+  function retirarFiltro(chave: string) {
+    if (chave === 'q') {
+      clearTimeout(espera.current)
+      setTexto('')
+    }
+    void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+  }
+
   // Pesquisa à medida que se escreve: espera 120 ms e o URL acompanha (guia 5.6, 7.1)
   function pesquisar(valor: string) {
     setTexto(valor)
@@ -187,12 +228,7 @@ function EcraProfessores() {
             <Selector
               {...c}
               placeholder={t`Todos`}
-              opcoes={[
-                { valor: 'ACTIVO', rotulo: t`Activo` },
-                { valor: 'LICENCA', rotulo: t`De licença` },
-                { valor: 'SUSPENSO', rotulo: t`Suspenso` },
-                { valor: 'DESLIGADO', rotulo: t`Desligado` },
-              ]}
+              opcoes={opcoesEstado}
               valor={filtros.estado ?? null}
               aoMudar={(estado) =>
                 void navigate({
@@ -207,6 +243,17 @@ function EcraProfessores() {
           )}
         </Campo>
       </div>
+
+      <EtiquetasFiltro
+        etiquetas={etiquetas}
+        aoRemover={retirarFiltro}
+        aoLimpar={() => {
+          clearTimeout(espera.current)
+          setTexto('')
+          void navigate({ search: { page: 1 } })
+        }}
+        className="-mt-3"
+      />
 
       <VistasGuardadas
         ecra="professores"
