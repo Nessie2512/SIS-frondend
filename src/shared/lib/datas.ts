@@ -3,6 +3,7 @@
  * - Instantes (timestamps) mostram-se no fuso Africa/Luanda.
  * - Datas civis (AAAA-MM-DD: nascimento, início do ano) NUNCA passam por conversão de fuso.
  */
+import { format } from 'date-fns'
 import { LOCALE, FUSO_HORARIO } from '@/shared/config/constantes'
 
 const formatoData = new Intl.DateTimeFormat(LOCALE, {
@@ -36,3 +37,13 @@ export function formatarInstante(iso: string | Date): string {
 export function formatarNumero(valor: number): string {
   return formatoNumero.format(valor)
 }
+
+/** Data civil "AAAA-MM-DD" → Date local, sem conversão de fuso (para calendários). */
+export function deDataCivil(iso: string | null | undefined): Date | null {
+  if (!iso) return null
+  const [a, m, d] = iso.split('-').map(Number)
+  return a && m && d ? new Date(a, m - 1, d) : null
+}
+
+/** Date local → data civil "AAAA-MM-DD". */
+export const paraDataCivil = (data: Date) => format(data, 'yyyy-MM-dd')

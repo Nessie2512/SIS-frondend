@@ -1,7 +1,7 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
-import { paraPaginaTurmas, paraTurma } from '../model/mapeadores'
+import { paraInscrito, paraPaginaTurmas, paraTurma } from '../model/mapeadores'
 import type { FiltrosTurma } from '../model/tipos'
 
 // Chaves organizadas e previsíveis (guia 4.6)
@@ -33,6 +33,20 @@ export function turmaQuery(id: string) {
     queryFn: async ({ signal }) => {
       const { data } = await api.GET('/turmas/{id}', { params: { path: { id } }, signal })
       return paraTurma(data!)
+    },
+    staleTime: FRESCURA.lista,
+  })
+}
+
+export function inscritosQuery(turmaId: string) {
+  return queryOptions({
+    queryKey: turmaKeys.inscritos(turmaId),
+    queryFn: async ({ signal }) => {
+      const { data } = await api.GET('/turmas/{id}/inscritos', {
+        params: { path: { id: turmaId } },
+        signal,
+      })
+      return data!.map(paraInscrito)
     },
     staleTime: FRESCURA.lista,
   })

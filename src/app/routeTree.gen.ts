@@ -9,68 +9,226 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './../routes/__root'
-import { Route as IndexRouteImport } from './../routes/index'
-import { Route as TurmasIndexRouteImport } from './../routes/turmas/index'
+import { Route as AppRouteImport } from './../routes/_app'
+import { Route as EntrarRouteImport } from './../routes/entrar'
+import { Route as AppIndexRouteImport } from './../routes/_app/index'
+import { Route as AppEstudantesIndexRouteImport } from './../routes/_app/estudantes/index'
+import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/estudantes/$estudanteId'
+import { Route as AppMatriculasIndexRouteImport } from './../routes/_app/matriculas/index'
+import { Route as AppMatriculasNovaRouteImport } from './../routes/_app/matriculas/nova'
+import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/index'
+import { Route as AppTurmasQuadroRouteImport } from './../routes/_app/turmas/quadro'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AppRoute = AppRouteImport.update({
+  id: '/_app',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TurmasIndexRoute = TurmasIndexRouteImport.update({
+const EntrarRoute = EntrarRouteImport.update({
+  id: '/entrar',
+  path: '/entrar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppIndexRoute = AppIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEstudantesIndexRoute = AppEstudantesIndexRouteImport.update({
+  id: '/estudantes/',
+  path: '/estudantes/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppEstudantesEstudanteIdRoute =
+  AppEstudantesEstudanteIdRouteImport.update({
+    id: '/estudantes/$estudanteId',
+    path: '/estudantes/$estudanteId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppMatriculasIndexRoute = AppMatriculasIndexRouteImport.update({
+  id: '/matriculas/',
+  path: '/matriculas/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMatriculasNovaRoute = AppMatriculasNovaRouteImport.update({
+  id: '/matriculas/nova',
+  path: '/matriculas/nova',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTurmasIndexRoute = AppTurmasIndexRouteImport.update({
   id: '/turmas/',
   path: '/turmas/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTurmasQuadroRoute = AppTurmasQuadroRouteImport.update({
+  id: '/turmas/quadro',
+  path: '/turmas/quadro',
+  getParentRoute: () => AppRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '/turmas/': typeof TurmasIndexRoute
+  '/': typeof AppIndexRoute
+  '/entrar': typeof EntrarRoute
+  '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/estudantes/': typeof AppEstudantesIndexRoute
+  '/matriculas/': typeof AppMatriculasIndexRoute
+  '/turmas/': typeof AppTurmasIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '/turmas': typeof TurmasIndexRoute
+  '/entrar': typeof EntrarRoute
+  '/': typeof AppIndexRoute
+  '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/estudantes': typeof AppEstudantesIndexRoute
+  '/matriculas': typeof AppMatriculasIndexRoute
+  '/turmas': typeof AppTurmasIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
-  '/turmas/': typeof TurmasIndexRoute
+  '/_app': typeof AppRouteWithChildren
+  '/entrar': typeof EntrarRoute
+  '/_app/': typeof AppIndexRoute
+  '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/_app/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/_app/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/_app/estudantes/': typeof AppEstudantesIndexRoute
+  '/_app/matriculas/': typeof AppMatriculasIndexRoute
+  '/_app/turmas/': typeof AppTurmasIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/turmas/'
+  fullPaths:
+    | '/'
+    | '/entrar'
+    | '/estudantes/$estudanteId'
+    | '/matriculas/nova'
+    | '/turmas/quadro'
+    | '/estudantes/'
+    | '/matriculas/'
+    | '/turmas/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/turmas'
-  id: '__root__' | '/' | '/turmas/'
+  to:
+    | '/entrar'
+    | '/'
+    | '/estudantes/$estudanteId'
+    | '/matriculas/nova'
+    | '/turmas/quadro'
+    | '/estudantes'
+    | '/matriculas'
+    | '/turmas'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/entrar'
+    | '/_app/'
+    | '/_app/estudantes/$estudanteId'
+    | '/_app/matriculas/nova'
+    | '/_app/turmas/quadro'
+    | '/_app/estudantes/'
+    | '/_app/matriculas/'
+    | '/_app/turmas/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  TurmasIndexRoute: typeof TurmasIndexRoute
+  AppRoute: typeof AppRouteWithChildren
+  EntrarRoute: typeof EntrarRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
+    '/_app': {
+      id: '/_app'
+      path: ''
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+      preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/turmas/': {
-      id: '/turmas/'
+    '/entrar': {
+      id: '/entrar'
+      path: '/entrar'
+      fullPath: '/entrar'
+      preLoaderRoute: typeof EntrarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_app/': {
+      id: '/_app/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/estudantes/': {
+      id: '/_app/estudantes/'
+      path: '/estudantes'
+      fullPath: '/estudantes/'
+      preLoaderRoute: typeof AppEstudantesIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/estudantes/$estudanteId': {
+      id: '/_app/estudantes/$estudanteId'
+      path: '/estudantes/$estudanteId'
+      fullPath: '/estudantes/$estudanteId'
+      preLoaderRoute: typeof AppEstudantesEstudanteIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/matriculas/': {
+      id: '/_app/matriculas/'
+      path: '/matriculas'
+      fullPath: '/matriculas/'
+      preLoaderRoute: typeof AppMatriculasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/matriculas/nova': {
+      id: '/_app/matriculas/nova'
+      path: '/matriculas/nova'
+      fullPath: '/matriculas/nova'
+      preLoaderRoute: typeof AppMatriculasNovaRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/turmas/': {
+      id: '/_app/turmas/'
       path: '/turmas'
       fullPath: '/turmas/'
-      preLoaderRoute: typeof TurmasIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof AppTurmasIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/turmas/quadro': {
+      id: '/_app/turmas/quadro'
+      path: '/turmas/quadro'
+      fullPath: '/turmas/quadro'
+      preLoaderRoute: typeof AppTurmasQuadroRouteImport
+      parentRoute: typeof AppRoute
     }
   }
 }
 
+interface AppRouteChildren {
+  AppIndexRoute: typeof AppIndexRoute
+  AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
+  AppMatriculasNovaRoute: typeof AppMatriculasNovaRoute
+  AppTurmasQuadroRoute: typeof AppTurmasQuadroRoute
+  AppEstudantesIndexRoute: typeof AppEstudantesIndexRoute
+  AppMatriculasIndexRoute: typeof AppMatriculasIndexRoute
+  AppTurmasIndexRoute: typeof AppTurmasIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppIndexRoute: AppIndexRoute,
+  AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
+  AppMatriculasNovaRoute: AppMatriculasNovaRoute,
+  AppTurmasQuadroRoute: AppTurmasQuadroRoute,
+  AppEstudantesIndexRoute: AppEstudantesIndexRoute,
+  AppMatriculasIndexRoute: AppMatriculasIndexRoute,
+  AppTurmasIndexRoute: AppTurmasIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  TurmasIndexRoute: TurmasIndexRoute,
+  AppRoute: AppRouteWithChildren,
+  EntrarRoute: EntrarRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

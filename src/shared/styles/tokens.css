@@ -1,6 +1,19 @@
 /* shared/styles/tokens.css: única fonte de valores visuais (Tailwind v4, CSS-first). Guia 6.1 */
 @import 'tailwindcss';
 
+/* Inter variável auto-alojada (só latim), alternativa à fonte do sistema da Apple (guia 1.3, 5.6).
+   Pré-carregada em index.html; o ficheiro vem de @fontsource-variable/inter (pnpm fontes). */
+@font-face {
+  font-family: 'Inter Variable';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+    U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Classes dark: seguem o atributo data-tema, não só a preferência do sistema */
 @custom-variant dark (&:where([data-tema='escuro'], [data-tema='escuro'] *));
 
@@ -14,7 +27,11 @@
   --color-texto-2: #55555b;
   --color-texto-3: #6b6b73;
   --color-linha: rgb(0 0 0 / 0.08);
+  /* Contorno de campos e controlos: ≥ 3:1 (guia 8.1); a linha é só separador */
+  --color-contorno: #86868b;
   --color-acento: #0a63e8;
+  /* Texto sobre acento e perigo (botões primário e destrutivo) */
+  --color-sobre-acento: #ffffff;
   --color-perigo: #d70015;
   --color-sucesso: #1e7b34;
   --color-aviso: #8a5a00;
@@ -30,6 +47,52 @@
   --duracao-micro: 120ms;
   --duracao-padrao: 200ms;
   --duracao-painel: 320ms;
+
+  /* Movimento de camadas (guia 1.1 Profundidade): painéis a 320 ms, diálogos a 200 ms */
+  --animate-indeterminado: indeterminado 1.2s var(--ease-padrao) infinite;
+  --animate-folha-entrar: folha-entrar var(--duracao-painel) var(--ease-padrao);
+  --animate-folha-sair: folha-sair var(--duracao-padrao) var(--ease-padrao);
+  --animate-dialogo-entrar: dialogo-entrar var(--duracao-padrao) var(--ease-padrao);
+  --animate-desvanecer-entrar: desvanecer-entrar var(--duracao-padrao) var(--ease-padrao);
+  --animate-desvanecer-sair: desvanecer-sair var(--duracao-padrao) var(--ease-padrao);
+
+  @keyframes indeterminado {
+    from {
+      left: -33%;
+    }
+    to {
+      left: 100%;
+    }
+  }
+  @keyframes folha-entrar {
+    from {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes folha-sair {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @keyframes dialogo-entrar {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -48%) scale(0.97);
+    }
+  }
+  @keyframes desvanecer-entrar {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes desvanecer-sair {
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Densidade (guia 6.1): confortável 44 px, compacta 36 px; ver [data-densidade] */
+  --spacing-linha: 44px;
 
   /* Escala tipográfica: seis níveis fixos (guia 6.1) */
   --text-titulo-pagina: 28px;
@@ -59,7 +122,17 @@
   --color-texto-2: #a1a1a6;
   --color-texto-3: #8e8e93;
   --color-linha: rgb(255 255 255 / 0.1);
+  --color-contorno: #6e6e73;
   --color-acento: #4c9aff;
+  /* Branco sobre #4c9aff fica em 2,85:1; texto escuro cumpre (ver docs/contraste.md) */
+  --color-sobre-acento: #0b0b0d;
+  --color-perigo: #ff453a;
+  --color-sucesso: #30d158;
+  --color-aviso: #ffd60a;
+}
+
+:root[data-densidade='compacta'] {
+  --spacing-linha: 36px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -88,5 +161,41 @@
   /* Números tabulares em processos, datas e contagens (guia 6.1) */
   .tabular {
     font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Impressão (guia 7.6): listas nominais e fichas imprimem-se limpas, sem casca nem cor de fundo */
+@page {
+  margin: 15mm;
+}
+
+@media print {
+  :root {
+    color-scheme: light;
+    --color-fundo: #ffffff;
+    --color-superficie: #ffffff;
+    --color-texto-1: #000000;
+    --color-texto-2: #333333;
+    --color-texto-3: #555555;
+    --color-linha: #cccccc;
+  }
+  body {
+    font-size: 11pt;
+  }
+  /* Tabelas: cabeçalho repetido em cada página, linhas sem cortes */
+  thead {
+    display: table-header-group;
+  }
+  tr {
+    break-inside: avoid;
+  }
+  [role='toolbar'],
+  [data-sonner-toaster],
+  .nao-imprimir {
+    display: none !important;
+  }
+  * {
+    box-shadow: none !important;
+    backdrop-filter: none !important;
   }
 }

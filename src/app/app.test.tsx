@@ -1,24 +1,6 @@
-import { QueryClientProvider } from '@tanstack/react-query'
-import { createMemoryHistory, createRouter, RouterProvider } from '@tanstack/react-router'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, screen } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
-import { criarQueryClient } from './query-client'
-import { routeTree } from './routeTree.gen'
-
-function renderizarEm(url: string) {
-  const queryClient = criarQueryClient()
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    history: createMemoryHistory({ initialEntries: [url] }),
-  })
-  render(
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
-  )
-  return router
-}
+import { renderizarEm } from '@/test/renderizar'
 
 describe('Turmas (com API simulada)', () => {
   it('lista as turmas activas do ano em curso', async () => {
@@ -28,8 +10,17 @@ describe('Turmas (com API simulada)', () => {
     expect(screen.getAllByRole('meter').length).toBeGreaterThan(0)
   })
 
+  it('Enter abre o painel lateral da turma e o URL regista-o', async () => {
+    const { router } = renderizarEm('/turmas')
+    const linha = (await screen.findByText('7.ª A')).closest('tr')!
+    linha.focus()
+    fireEvent.keyDown(linha, { key: 'Enter' })
+    expect(await screen.findByRole('dialog', { name: '7.ª A' })).toBeInTheDocument()
+    expect(router.state.location.search).toMatchObject({ turma: 'ano-2026-c7-A' })
+  })
+
   it('volta ao padrão quando o URL traz um filtro inválido', async () => {
-    const router = renderizarEm('/turmas?estado=XPTO&page=-3')
+    const { router } = renderizarEm('/turmas?estado=XPTO&page=-3')
     expect(await screen.findByText('7.ª A')).toBeInTheDocument()
     expect(router.state.location.search).toMatchObject({ estado: 'ACTIVA', page: 1 })
   })

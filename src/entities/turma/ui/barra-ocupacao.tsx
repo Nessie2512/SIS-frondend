@@ -1,3 +1,4 @@
+import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/shared/lib/cn'
 import type { Turma } from '../model/tipos'
 
@@ -7,11 +8,13 @@ export function BarraOcupacao({
 }: {
   turma: Pick<Turma, 'inscritos' | 'lotacaoMaxima' | 'ocupacao' | 'turmaCheia'>
 }) {
+  const { t } = useLingui()
+  const { inscritos, lotacaoMaxima } = turma
   return (
     <div className="flex items-center gap-3">
       <div
         role="meter"
-        aria-label="Ocupação da turma"
+        aria-label={t`Ocupação da turma`}
         aria-valuemin={0}
         aria-valuemax={turma.lotacaoMaxima}
         aria-valuenow={turma.inscritos}
@@ -23,8 +26,14 @@ export function BarraOcupacao({
         />
       </div>
       <span className="tabular text-secundario text-texto-2">
-        {turma.inscritos} de {turma.lotacaoMaxima}
-        {turma.turmaCheia && <span className="ml-1 text-perigo">· cheia</span>}
+        <Trans>
+          {inscritos} de {lotacaoMaxima}
+        </Trans>
+        {turma.turmaCheia && (
+          <span className="ml-1 text-perigo">
+            · <Trans>cheia</Trans>
+          </span>
+        )}
       </span>
     </div>
   )

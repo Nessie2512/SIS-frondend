@@ -2,10 +2,33 @@
 <html lang="pt-AO">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/icones/icone.svg" />
+    <link rel="apple-touch-icon" href="/icones/apple-touch-icon.png" />
+    <meta name="theme-color" content="#ffffff" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="light dark" />
+    <link
+      rel="preload"
+      href="/fonts/inter-latin-wght-normal.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin
+    />
     <title>Secretaria</title>
+    <script>
+      // Aplica tema e densidade antes da primeira pintura (evita o clarão). Ver shared/lib/preferencias.ts
+      ;(function () {
+        var p = {}
+        try {
+          p = (JSON.parse(localStorage.getItem('secretaria:preferencias')) || {}).state || {}
+        } catch (e) {}
+        var t = p.tema || 'sistema'
+        if (t === 'sistema')
+          t = matchMedia('(prefers-color-scheme: dark)').matches ? 'escuro' : 'claro'
+        document.documentElement.dataset.tema = t
+        document.documentElement.dataset.densidade = p.densidade || 'confortavel'
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

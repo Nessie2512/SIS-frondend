@@ -18,4 +18,13 @@ export const TEMPOS = {
   dica: 400,
 } as const
 
+/** Consulta de tarefas longas (guia 5.7): intervalo crescente, com tecto, e pausa em segundo plano. */
+export const SONDAGEM_TAREFAS = { inicial: 1_000, factor: 1.5, maximo: 10_000 } as const
+
 export const PAGINACAO = { porPagina: 50, maximo: 100 } as const
+
+/** Minutos sem interacção até bloquear o ecrã (guia 4.4); configurável por escola mais tarde. */
+export const INACTIVIDADE_MINUTOS = 15
+
+/** Curva padrão de movimento, igual a --ease-padrao nos tokens (para APIs em JavaScript) */
+export const CURVA_PADRAO = 'cubic-bezier(0.2, 0, 0, 1)'

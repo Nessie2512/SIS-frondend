@@ -15,10 +15,10 @@ const variantes = cva(
   {
     variants: {
       variante: {
-        primario: 'bg-acento text-white hover:bg-acento/90',
-        secundario: 'bg-superficie text-texto-1 ring-1 ring-linha hover:bg-fundo',
+        primario: 'bg-acento text-sobre-acento hover:bg-acento/90',
+        secundario: 'bg-superficie text-texto-1 ring-1 ring-contorno hover:bg-fundo',
         discreto: 'text-acento hover:bg-acento/10',
-        destrutivo: 'bg-perigo text-white hover:bg-perigo/90',
+        destrutivo: 'bg-perigo text-sobre-acento hover:bg-perigo/90',
       },
       tamanho: {
         normal: 'h-9 px-4',
@@ -54,8 +54,14 @@ export function Button({
       aria-busy={aCarregar || undefined}
       {...props}
     >
-      {aCarregar && <LoaderCircle className="animate-spin" aria-hidden />}
-      {children}
+      {asChild ? (
+        children
+      ) : (
+        <>
+          {aCarregar && <LoaderCircle className="animate-spin" aria-hidden />}
+          {children}
+        </>
+      )}
     </Comp>
   )
 }
