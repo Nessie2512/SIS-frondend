@@ -5,6 +5,7 @@ import { Plus, Search } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
+import { VistasGuardadas } from '@/features/guardar-vista'
 import {
   estudanteQuery,
   estudantesQuery,
@@ -228,6 +229,18 @@ function EcraEstudantes() {
           )}
         </Campo>
       </div>
+
+      <VistasGuardadas
+        ecra="estudantes"
+        pesquisa={{ q, ...filtros }}
+        aoAplicar={(guardados) => {
+          const nova = pesquisaEstudantes.parse({ ...guardados, page: 1 })
+          clearTimeout(espera.current)
+          setTexto(nova.q ?? '')
+          void navigate({ search: nova })
+        }}
+        className="-mt-3"
+      />
 
       <div
         className={cn(

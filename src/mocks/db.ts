@@ -176,6 +176,7 @@ interface Estado {
   documentos: Documento[]
   percurso: (S['EventoPercursoDto'] & { estudanteId: string })[]
   tarefas: Tarefa[]
+  vistas: (S['VistaDto'] & { utilizadorId: string })[]
   idempotencia: Map<string, unknown>
   sequencia: number
 }
@@ -338,6 +339,16 @@ function criar(): Estado {
     documentos,
     percurso,
     tarefas: [],
+    // Exemplo do guia 7.1, para a secretária ver logo como funcionam
+    vistas: [
+      {
+        id: 'v1',
+        utilizadorId: 'u1',
+        ecra: 'matriculas',
+        nome: '7.ª classe sem turma',
+        filtros: { classeId: 'c7', semTurma: true },
+      },
+    ],
     idempotencia: new Map(),
     sequencia: n,
   }

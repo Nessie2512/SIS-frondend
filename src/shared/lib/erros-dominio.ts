@@ -20,6 +20,7 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   INSCRICAO_EXISTENTE: msg`Este estudante já está numa turma. Use Mover para mudar de turma.`,
   DOCUMENTO_OBRIGATORIO: msg`Este documento é obrigatório e não pode ser dispensado.`,
   CREDENCIAIS_INVALIDAS: msg`O email ou a palavra-passe não estão correctos.`,
+  VISTA_REPETIDA: msg`Já tem uma vista com este nome. Escolha outro.`,
 }
 
 const SESSAO_EXPIRADA = msg`A sessão terminou. Entre de novo para continuar.`

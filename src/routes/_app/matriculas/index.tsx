@@ -6,6 +6,7 @@ import { useMemo } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
 import { matriculasQuery, type Matricula } from '@/entities/matricula'
+import { VistasGuardadas } from '@/features/guardar-vista'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
@@ -194,6 +195,15 @@ function EcraMatriculas() {
           ]}
         />
       </div>
+
+      <VistasGuardadas
+        ecra="matriculas"
+        pesquisa={filtros}
+        aoAplicar={(guardados) =>
+          void navigate({ search: pesquisaMatriculas.parse({ ...guardados, page: 1 }) })
+        }
+        className="-mt-3"
+      />
 
       <div
         className={cn(

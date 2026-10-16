@@ -125,6 +125,13 @@ export interface paths {
 
   // Tarefas assíncronas
   '/tarefas/{id}': { get: Op<{ path: { id: string }; ok: S['TarefaDto']; erros: 404 }> }
+
+  // Vistas guardadas por utilizador (guia 7.1)
+  '/vistas': {
+    get: Op<{ query: { ecra: S['EcraVista'] }; ok: S['VistaDto'][] }>
+    post: Op<{ body: S['NovaVistaDto']; ok: S['VistaDto']; erros: 409 | 422 }>
+  }
+  '/vistas/{id}': { delete: Op<{ path: { id: string }; ok: S['VazioDto']; erros: 404 }> }
 }
 
 export interface components {
@@ -298,6 +305,22 @@ export interface components {
     PesquisaDto: {
       estudantes: components['schemas']['EstudanteResumoDto'][]
       turmas: components['schemas']['TurmaDto'][]
+    }
+
+    // Vistas guardadas
+    EcraVista: 'estudantes' | 'matriculas' | 'professores'
+    /** Filtros da lista, tal como vivem no URL (sem página nem selecção) */
+    FiltrosVistaDto: { [chave: string]: string | number | boolean }
+    VistaDto: {
+      id: string
+      ecra: components['schemas']['EcraVista']
+      nome: string
+      filtros: components['schemas']['FiltrosVistaDto']
+    }
+    NovaVistaDto: {
+      ecra: components['schemas']['EcraVista']
+      nome: string
+      filtros: components['schemas']['FiltrosVistaDto']
     }
 
     /** application/problem+json (RFC 9457) com extensões do domínio */

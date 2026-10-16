@@ -305,6 +305,10 @@ msgstr "Anulada"
 msgid "Anulado"
 msgstr "Anulado"
 
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Apagar a vista «{nome}»"
+msgstr "Apagar a vista «{nome}»"
+
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Arrastar {nome}"
 msgstr "Arrastar {nome}"
@@ -349,6 +353,7 @@ msgstr "Bom dia, {nome}"
 msgid "Cancelado."
 msgstr "Cancelado."
 
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Cancelar"
 msgstr "Cancelar"
@@ -488,6 +493,10 @@ msgstr "Data inválida. Use o formato dd/mm/aaaa."
 #: src/shared/ui/selector-data.tsx
 msgid "dd/mm/aaaa"
 msgstr "dd/mm/aaaa"
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Dê um nome à vista."
+msgstr "Dê um nome à vista."
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Declaração da escola anterior"
@@ -789,6 +798,10 @@ msgstr "Estudantes"
 msgid "Estudantes sem turma"
 msgstr "Estudantes sem turma"
 
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Ex.: 7.ª classe sem turma"
+msgstr "Ex.: 7.ª classe sem turma"
+
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Ex.: Mãe, Pai, Tia"
 msgstr "Ex.: Mãe, Pai, Tia"
@@ -842,6 +855,10 @@ msgstr "Gerar lista nominal"
 msgid "Guardado"
 msgstr "Guardado"
 
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Guardar"
+msgstr "Guardar"
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Guardar o meu"
 msgstr "Guardar o meu"
@@ -853,6 +870,10 @@ msgstr "Guardar ou confirmar"
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Guardar rascunho e sair"
 msgstr "Guardar rascunho e sair"
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Guardar vista"
+msgstr "Guardar vista"
 
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Há alterações por guardar"
@@ -930,6 +951,10 @@ msgstr "Irmã"
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Irmão"
 msgstr "Irmão"
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Já tem uma vista com este nome. Escolha outro."
+msgstr "Já tem uma vista com este nome. Escolha outro."
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Justificação"
@@ -1155,6 +1180,10 @@ msgstr "Nome"
 msgid "Nome completo"
 msgstr "Nome completo"
 
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Nome da vista"
+msgstr "Nome da vista"
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nome ou número de processo"
 msgstr "Nome ou número de processo"
@@ -1226,6 +1255,10 @@ msgstr "Ocupação da turma"
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "opcional"
 msgstr "opcional"
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Os filtros actuais ficam guardados com este nome, só para si."
+msgstr "Os filtros actuais ficam guardados com este nome, só para si."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Outra pessoa alterou este dado"
@@ -1615,6 +1648,22 @@ msgstr "Verifique a ligação e tente de novo."
 #: src/routes/_app/estudantes/index.tsx
 msgid "Verifique o nome ou retire um filtro."
 msgstr "Verifique o nome ou retire um filtro."
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Vista «{nome}» apagada."
+msgstr "Vista «{nome}» apagada."
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Vista «{nome}» aplicada."
+msgstr "Vista «{nome}» aplicada."
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Vista «{nome}» guardada."
+msgstr "Vista «{nome}» guardada."
+
+#: src/features/guardar-vista/ui/vistas-guardadas.tsx
+msgid "Vistas guardadas"
+msgstr "Vistas guardadas"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Voltar aos estudantes"

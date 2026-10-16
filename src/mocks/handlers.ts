@@ -639,6 +639,62 @@ export const handlers = [
     }),
   ),
 
+  // ---------------------------------------------------------------- vistas guardadas
+  http.get(
+    `${API}/vistas`,
+    protegido(null, ({ request }) => {
+      const utilizador = utilizadorDo(request)!
+      const ecra = new URL(request.url).searchParams.get('ecra')
+      return HttpResponse.json(
+        db.vistas
+          .filter((v) => v.utilizadorId === utilizador.id && v.ecra === ecra)
+          .map(({ utilizadorId: _, ...v }) => v) satisfies S['VistaDto'][],
+      )
+    }),
+  ),
+
+  http.post(
+    `${API}/vistas`,
+    protegido(null, async ({ request }) => {
+      const utilizador = utilizadorDo(request)!
+      const corpo = (await request.json()) as S['NovaVistaDto']
+      const nome = corpo.nome?.trim() ?? ''
+      if (nome.length < 2) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'nome', mensagem: 'Dê um nome à vista.' }],
+        })
+      }
+      const repetida = db.vistas.some(
+        (v) =>
+          v.utilizadorId === utilizador.id &&
+          v.ecra === corpo.ecra &&
+          normalizar(v.nome) === normalizar(nome),
+      )
+      if (repetida) {
+        return problema(409, 'Vista repetida', {
+          code: 'VISTA_REPETIDA',
+          errors: [{ campo: 'nome', mensagem: 'Já tem uma vista com este nome.' }],
+        })
+      }
+      const vista = { id: novoId('v'), ecra: corpo.ecra, nome, filtros: corpo.filtros }
+      db.vistas.push({ ...vista, utilizadorId: utilizador.id })
+      return HttpResponse.json(vista satisfies S['VistaDto'], { status: 201 })
+    }),
+  ),
+
+  http.delete(
+    `${API}/vistas/:id`,
+    protegido(null, ({ request, params }) => {
+      const utilizador = utilizadorDo(request)!
+      const indice = db.vistas.findIndex(
+        (v) => v.id === params.id && v.utilizadorId === utilizador.id,
+      )
+      if (indice < 0) return problema(404, 'Vista não encontrada')
+      db.vistas.splice(indice, 1)
+      return HttpResponse.json({})
+    }),
+  ),
+
   // O resultado chega por um URL de curta duração, como uma ligação assinada: não leva o token
   http.get(`${API}/tarefas/:id/resultado`, ({ params }) => {
     const tarefa = db.tarefas.find((t) => t.id === params.id)

@@ -15,6 +15,7 @@ export type CodigoErroDominio =
   | 'INSCRICAO_EXISTENTE'
   | 'DOCUMENTO_OBRIGATORIO'
   | 'CREDENCIAIS_INVALIDAS'
+  | 'VISTA_REPETIDA'
 
 export interface ErroDeCampo {
   campo: string
