@@ -398,7 +398,7 @@ msgstr "Ainda não há estudantes neste ano."
 msgid "Ainda não há professores registados."
 msgstr "Ainda não há professores registados."
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Ainda não há registos no percurso."
 msgstr "Ainda não há registos no percurso."
 
@@ -561,6 +561,7 @@ msgstr "Cancelado."
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Cancelar"
 msgstr "Cancelar"
 
@@ -1091,6 +1092,10 @@ msgstr "Escreva o nome da disciplina."
 msgid "Escreva o nome do evento."
 msgstr "Escreva o nome do evento."
 
+#: src/features/rectificar-percurso/model/esquema.ts
+msgid "Escreva o registo correcto."
+msgstr "Escreva o registo correcto."
+
 #: src/features/autenticar/model/esquema.ts
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escreva um email válido."
@@ -1223,6 +1228,10 @@ msgstr "Ex.: pedido do encarregado"
 msgid "Ex.: Reunião de pais da 7.ª classe"
 msgstr "Ex.: Reunião de pais da 7.ª classe"
 
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Ex.: turma registada por engano"
+msgstr "Ex.: turma registada por engano"
+
 #: src/routes/_app/definicoes.tsx
 msgid "Expandido"
 msgstr "Expandido"
@@ -1242,6 +1251,10 @@ msgstr "Expandir o menu lateral"
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Explique em poucas palavras porque não é o mesmo estudante."
 msgstr "Explique em poucas palavras porque não é o mesmo estudante."
+
+#: src/features/rectificar-percurso/model/esquema.ts
+msgid "Explique o motivo (pelo menos 10 caracteres)."
+msgstr "Explique o motivo (pelo menos 10 caracteres)."
 
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Falta 1 documento obrigatório."
@@ -1623,8 +1636,13 @@ msgid "Mostrar todos os atalhos"
 msgstr "Mostrar todos os atalhos"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Motivo"
 msgstr "Motivo"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Motivo: {motivo}"
+msgstr "Motivo: {motivo}"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Mover {nome} para…"
@@ -1832,6 +1850,10 @@ msgstr "O plano não tem disciplinas. Acrescente pelo menos uma antes de publica
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "O registo de ocorrências chega numa próxima versão."
 msgstr "O registo de ocorrências chega numa próxima versão."
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "O registo original fica no percurso, marcado como rectificado. A rectificação entra como um registo novo, com o motivo, e não se apaga."
+msgstr "O registo original fica no percurso, marcado como rectificado. A rectificação entra como um registo novo, com o motivo, e não se apaga."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "O seu valor"
@@ -2096,17 +2118,54 @@ msgstr "Recolhido"
 msgid "Recolhido mostra só os ícones; o nome aparece ao passar o rato ou com o teclado."
 msgstr "Recolhido mostra só os ícones; o nome aparece ao passar o rato ou com o teclado."
 
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Rectifica o registo de {dataOriginal}"
+msgstr "Rectifica o registo de {dataOriginal}"
+
 #: src/entities/estudante/model/mapeadores.ts
+#: src/features/rectificar-percurso/model/use-rectificar.ts
 msgid "Rectificação"
 msgstr "Rectificação"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Rectificação registada no percurso."
+msgstr "Rectificação registada no percurso."
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Rectificada"
+msgstr "Rectificada"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Rectificar"
+msgstr "Rectificar"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Rectificar o registo"
+msgstr "Rectificar o registo"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Rectificar: {descricao}"
+msgstr "Rectificar: {descricao}"
 
 #: src/routes/_app/matriculas/index.tsx
 msgid "Registada"
 msgstr "Registada"
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Registar rectificação"
+msgstr "Registar rectificação"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Registo correcto"
+msgstr "Registo correcto"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Registo imutável"
 msgstr "Registo imutável"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Registo original: «{original}»"
+msgstr "Registo original: «{original}»"
 
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Resultado final"
@@ -2409,6 +2468,10 @@ msgstr "Utilizadores, perfis de acesso e auditoria ficam aqui quando o servidor 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Valor actual"
 msgstr "Valor actual"
+
+#: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+msgid "Ver a rectificação"
+msgstr "Ver a rectificação"
 
 #: src/shared/ui/erro-de-rota.tsx
 msgid "Verifique a ligação e tente de novo."

@@ -41,6 +41,7 @@ export interface EventoPercurso {
   descricao: string
   autor: string
   rectificaId: string | null
+  motivo: string | null
 }
 
 export type EstadoDocumento = 'ENTREGUE' | 'EM_FALTA' | 'DISPENSADO'

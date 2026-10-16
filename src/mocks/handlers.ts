@@ -227,6 +227,47 @@ export const handlers = [
     ),
   ),
 
+  http.post(
+    `${API}/estudantes/:id/percurso/:eventoId/rectificar`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const original = db.percurso.find(
+        (p) => p.estudanteId === params.id && p.id === params.eventoId,
+      )
+      if (!original) return problema(404, 'Registo não encontrado')
+      if (original.tipo === 'RECTIFICACAO') {
+        return problema(409, 'Rectificação', {
+          detail: 'Uma rectificação não se rectifica; rectifique a entrada original.',
+        })
+      }
+      const corpo = (await request.json()) as S['RectificacaoDto']
+      const descricao = corpo.descricao?.trim() ?? ''
+      const motivo = corpo.motivo?.trim() ?? ''
+      const erros = [
+        ...(descricao.length < 3
+          ? [{ campo: 'descricao', mensagem: 'Escreva o registo correcto.' }]
+          : []),
+        ...(motivo.length < 10
+          ? [{ campo: 'motivo', mensagem: 'Explique o motivo (pelo menos 10 caracteres).' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const rectificacao = {
+        id: novoId('p'),
+        estudanteId: original.estudanteId,
+        data: new Date().toISOString(),
+        anoLectivo: original.anoLectivo,
+        tipo: 'RECTIFICACAO' as const,
+        descricao,
+        autor: utilizadorDo(request)!.nome,
+        rectificaId: original.id,
+        motivo,
+      }
+      db.percurso.push(rectificacao)
+      const { estudanteId: _, ...dto } = rectificacao
+      return HttpResponse.json(dto, { status: 201 })
+    }),
+  ),
+
   http.get(
     `${API}/estudantes/:id/documentos`,
     protegido('estudantes:ler', ({ params }) =>
@@ -428,6 +469,7 @@ export const handlers = [
           descricao: `Matriculado na ${classePorId(dados.classeId).designacao}`,
           autor: 'Maria Secretária',
           rectificaId: null,
+          motivo: null,
         })
         return HttpResponse.json(paraMatriculaDto(matricula), { status: 201 })
       })
@@ -714,5 +756,6 @@ function registarPercurso(estudanteId: string, tipo: S['TipoEventoPercurso'], de
     descricao,
     autor: 'Maria Secretária',
     rectificaId: null,
+    motivo: null,
   })
 }

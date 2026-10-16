@@ -56,6 +56,15 @@ export interface paths {
     }>
   }
   '/estudantes/{id}/percurso': { get: Op<{ path: { id: string }; ok: S['EventoPercursoDto'][] }> }
+  /** A entrada original nunca muda: a rectificação é uma entrada nova ligada a ela (guia 2.4) */
+  '/estudantes/{id}/percurso/{eventoId}/rectificar': {
+    post: Op<{
+      path: { id: string; eventoId: string }
+      body: S['RectificacaoDto']
+      ok: S['EventoPercursoDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
   '/estudantes/{id}/documentos': { get: Op<{ path: { id: string }; ok: S['DocumentoEstudanteDto'][] }> }
   '/estudantes/{id}/documentos/{documentoId}': {
     patch: Op<{
@@ -326,8 +335,12 @@ export interface components {
       tipo: components['schemas']['TipoEventoPercurso']
       descricao: string
       autor: string
+      /** Numa rectificação: a entrada original (que se mantém) */
       rectificaId: string | null
+      /** Numa rectificação: porque se rectificou */
+      motivo: string | null
     }
+    RectificacaoDto: { descricao: string; motivo: string }
     EstadoDocumentoEstudante: 'ENTREGUE' | 'EM_FALTA' | 'DISPENSADO'
     DocumentoEstudanteDto: {
       id: string

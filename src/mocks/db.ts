@@ -278,6 +278,7 @@ function criar(): Estado {
           descricao: `Matriculado na ${turma.classeDesignacao}`,
           autor: 'Maria Secretária',
           rectificaId: null,
+          motivo: null,
         },
         ...(semTurma
           ? []
@@ -291,6 +292,7 @@ function criar(): Estado {
                 descricao: `Inscrito na turma ${turma.designacao}`,
                 autor: 'Maria Secretária',
                 rectificaId: null,
+                motivo: null,
               },
             ]),
       )
