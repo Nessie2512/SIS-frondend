@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import { Providers } from '../src/app/providers'
 import { criarQueryClient } from '../src/app/query-client'
 import '../src/shared/styles/tokens.css'
+import { iniciarSimulacao } from './simulacao'
 
 const queryClient = criarQueryClient()
 
@@ -42,6 +43,8 @@ const comProviders: Decorator = (Story) => (
 
 const preview: Preview = {
   decorators: [comTema, comProviders],
+  // API simulada (MSW) para as histórias de componentes que pedem dados
+  loaders: [iniciarSimulacao],
   globalTypes: {
     tema: {
       description: 'Tema',

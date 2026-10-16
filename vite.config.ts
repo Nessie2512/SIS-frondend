@@ -181,6 +181,8 @@ export default defineConfig({
               launchOptions: { executablePath: process.env.CHROMIUM_PATH || undefined },
             }),
             instances: [{ browser: 'chromium' }],
+            // Ecrã de secretária: o menu lateral e as tabelas aparecem como na aplicação
+            viewport: { width: 1280, height: 800 },
           },
           setupFiles: ['.storybook/vitest.setup.ts'],
         },

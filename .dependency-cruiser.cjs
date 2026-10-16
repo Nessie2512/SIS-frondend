@@ -45,9 +45,13 @@ module.exports = {
     },
     {
       name: 'mocks-so-no-arranque-e-testes',
-      comment: 'Os dados simulados nunca entram no código de produto.',
+      comment:
+        'Os dados simulados nunca entram no código de produto (testes e histórias podem semeá-los).',
       severity: 'error',
-      from: { path: '^src/(routes|features|entities|shared)/', pathNot: '\\.test\\.tsx?$' },
+      from: {
+        path: '^src/(routes|features|entities|shared)/',
+        pathNot: '\\.(test|stories)\\.tsx?$',
+      },
       to: { path: '^src/mocks/' },
     },
     {
