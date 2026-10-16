@@ -6,13 +6,17 @@ import { renderizarEm } from '@/test/renderizar'
 
 /** Uma matrícula pendente do ano em curso e os documentos obrigatórios em falta. */
 function pendente() {
+  const emFaltaDe = (estudanteId: string) =>
+    db.documentos.filter(
+      (d) => d.estudanteId === estudanteId && d.obrigatorio && d.estado === 'EM_FALTA',
+    )
   const matricula = db.matriculas.find(
-    (m) => m.anoLectivoId === 'ano-2026' && m.estado === 'PENDENTE',
+    (m) =>
+      m.anoLectivoId === 'ano-2026' &&
+      m.estado === 'PENDENTE' &&
+      emFaltaDe(m.estudanteId).length > 0,
   )!
-  const emFalta = db.documentos.filter(
-    (d) => d.estudanteId === matricula.estudanteId && d.obrigatorio && d.estado === 'EM_FALTA',
-  )
-  return { matricula, emFalta }
+  return { matricula, emFalta: emFaltaDe(matricula.estudanteId) }
 }
 
 describe('Confirmar matrícula', () => {

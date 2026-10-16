@@ -54,6 +54,18 @@ msgstr "{emFalta} em falta"
 msgid "{emFalta} obrigatórios em falta"
 msgstr "{emFalta} obrigatórios em falta"
 
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{falta} em falta"
+msgstr "{falta} em falta"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{feitas} matrículas confirmadas; {falhadas} ficaram por confirmar."
+msgstr "{feitas} matrículas confirmadas; {falhadas} ficaram por confirmar."
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{feitas} matrículas confirmadas."
+msgstr "{feitas} matrículas confirmadas."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{horas} h por semana"
 msgstr "{horas} h por semana"
@@ -66,9 +78,17 @@ msgstr "{idade} anos"
 msgid "{inscritos} de {lotacaoMaxima}"
 msgstr "{inscritos} de {lotacaoMaxima}"
 
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{jaConfirmadas} já estavam confirmadas e não mudam."
+msgstr "{jaConfirmadas} já estavam confirmadas e não mudam."
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "{n} em falta"
 msgstr "{n} em falta"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{n} matrículas ficam confirmadas."
+msgstr "{n} matrículas ficam confirmadas."
 
 #: src/features/editar-plano/model/use-editar-plano.ts
 msgid "{nome} acrescentada ao plano."
@@ -173,6 +193,14 @@ msgstr "{turmas} turmas"
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{v} h por semana"
 msgstr "{v} h por semana"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "1 já estava confirmada e não muda."
+msgstr "1 já estava confirmada e não muda."
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "1 matrícula fica confirmada."
+msgstr "1 matrícula fica confirmada."
 
 #: src/routes/_app/professores/$professorId.tsx
 msgid "1 turma"
@@ -557,6 +585,7 @@ msgstr "Calendário {designacao}"
 msgid "Cancelado."
 msgstr "Cancelado."
 
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 #: src/features/editar-plano/ui/accoes-plano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
@@ -666,9 +695,25 @@ msgstr "Confirmada"
 msgid "Confirmadas"
 msgstr "Confirmadas"
 
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Confirmar {n} matrículas"
+msgstr "Confirmar {n} matrículas"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Confirmar 1 matrícula"
+msgstr "Confirmar 1 matrícula"
+
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Confirmar matrícula"
 msgstr "Confirmar matrícula"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Confirmar matrículas"
+msgstr "Confirmar matrículas"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Confirmar…"
+msgstr "Confirmar…"
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Confirme se é o mesmo estudante antes de continuar."
@@ -1280,6 +1325,7 @@ msgstr "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quan
 msgid "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
 msgstr "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
 
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 #: src/shared/ui/folha.tsx
 msgid "Fechar"
 msgstr "Fechar"
@@ -1313,6 +1359,14 @@ msgstr "Feriados, datas-chave e interrupções"
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 msgid "Fica na lista de estudantes sem turma, no quadro da distribuição."
 msgstr "Fica na lista de estudantes sem turma, no quadro da distribuição."
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Ficam por confirmar"
+msgstr "Ficam por confirmar"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Ficam por confirmar (faltam documentos):"
+msgstr "Ficam por confirmar (faltam documentos):"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Ficha do estudante"
@@ -1751,6 +1805,10 @@ msgstr "Nenhum estudante corresponde à pesquisa."
 #: src/routes/_app/professores/index.tsx
 msgid "Nenhum professor corresponde à pesquisa."
 msgstr "Nenhum professor corresponde à pesquisa."
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "Nenhuma das matrículas escolhidas pode ser confirmada agora."
+msgstr "Nenhuma das matrículas escolhidas pode ser confirmada agora."
 
 #: src/routes/_app/matriculas/index.tsx
 msgid "Nenhuma matrícula com estes filtros."
@@ -2251,6 +2309,10 @@ msgstr "Seguinte"
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Seguir o tema do sistema"
 msgstr "Seguir o tema do sistema"
+
+#: src/shared/ui/tabela-dados.tsx
+msgid "Seleccionar {nome}"
+msgstr "Seleccionar {nome}"
 
 #: src/shared/ui/tabela-dados.tsx
 msgid "Seleccionar linha"

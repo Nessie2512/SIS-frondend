@@ -25,3 +25,30 @@ export function useConfirmarMatricula() {
       ]),
   })
 }
+
+/**
+ * Confirmar em lote (guia 7.1): o servidor confirma as que pode e diz porque recusou as outras.
+ * A mesma Idempotency-Key é reutilizada se o mesmo gesto se repetir (guia 4.5).
+ */
+export function useConfirmarLote() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationKey: ['matriculas', 'confirmar-lote'],
+    mutationFn: async ({ ids, chave }: { ids: string[]; chave: string }) => {
+      const { data } = await api.POST('/matriculas/confirmar', {
+        params: { header: { 'Idempotency-Key': chave } },
+        body: { ids },
+      })
+      return {
+        confirmadas: data!.confirmadas.map(paraMatricula),
+        recusadas: data!.recusadas.map((r) => ({ ...r })),
+      }
+    },
+    onSettled: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: estudanteKeys.todos }),
+        qc.invalidateQueries({ queryKey: matriculaKeys.todas }),
+        qc.invalidateQueries({ queryKey: ['painel'] }),
+      ]),
+  })
+}

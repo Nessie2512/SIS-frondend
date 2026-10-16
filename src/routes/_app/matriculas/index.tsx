@@ -6,11 +6,13 @@ import { useMemo } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
 import { matriculasQuery, type Matricula } from '@/entities/matricula'
+import { ConfirmarLote } from '@/features/confirmar-matricula'
 import { VistasGuardadas } from '@/features/guardar-vista'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { useCan } from '@/shared/lib/permissoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import {
   Button,
@@ -56,6 +58,9 @@ export const Route = createFileRoute('/_app/matriculas/')({
   errorComponent: ErroDeRota,
   component: EcraMatriculas,
 })
+
+/** Fora do componente: a tabela memoriza as colunas e precisa de funções estáveis */
+const nomeDaMatricula = (m: Matricula) => m.estudanteNome
 
 function useColunas(): ColunaTabela<Matricula>[] {
   const { t } = useLingui()
@@ -133,6 +138,7 @@ function EcraMatriculas() {
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
+  const podeConfirmar = useCan('matriculas:escrever') && !soLeitura
   const total = data?.total ?? 0
   const pagina = data?.page ?? filtros.page
   const totalPaginas = data?.totalPaginas ?? 1
@@ -253,6 +259,15 @@ function EcraMatriculas() {
           aCarregar={!data}
           erro={isError && !data}
           aoTentarDeNovo={() => void refetch()}
+          // Acções em lote (guia 7.1): seleccionar com Espaço ou com a caixa da linha
+          seleccionavel={podeConfirmar}
+          nomeDaLinha={nomeDaMatricula}
+          accoesLote={(ids, limpar) => (
+            <ConfirmarLote
+              seleccionadas={(data?.matriculas ?? []).filter((m) => ids.includes(m.id))}
+              aoTerminar={limpar}
+            />
+          )}
           vazio={
             <EstadoVazio
               variante={

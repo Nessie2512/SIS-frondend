@@ -615,6 +615,39 @@ export const handlers = [
   ),
 
   http.post(
+    `${API}/matriculas/confirmar`,
+    protegido('matriculas:escrever', async ({ request }) => {
+      const { ids } = (await request.json()) as { ids: string[] }
+      if (!Array.isArray(ids) || !ids.length) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'ids', mensagem: 'Escolha pelo menos uma matrícula.' }],
+        })
+      }
+      return idempotente(request, () => {
+        const confirmadas: S['MatriculaDto'][] = []
+        const recusadas: S['ResultadoLoteDto']['recusadas'] = []
+        for (const id of ids) {
+          const { erro, matricula } = confirmarMatricula(id)
+          if (matricula) confirmadas.push(paraMatriculaDto(matricula))
+          else {
+            const m = db.matriculas.find((x) => x.id === id)
+            const nome = m ? db.estudantes.find((e) => e.id === m.estudanteId)!.nome : id
+            recusadas.push({
+              id,
+              estudanteNome: nome,
+              motivo:
+                erro?.status === 409
+                  ? 'Faltam documentos obrigatórios.'
+                  : 'Matrícula não encontrada.',
+            })
+          }
+        }
+        return HttpResponse.json({ confirmadas, recusadas } satisfies S['ResultadoLoteDto'])
+      })
+    }),
+  ),
+
+  http.post(
     `${API}/matriculas/:id/confirmar`,
     protegido('matriculas:escrever', ({ params }) => {
       const { erro, matricula } = confirmarMatricula(String(params.id))

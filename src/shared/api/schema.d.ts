@@ -95,7 +95,16 @@ export interface paths {
       ok: S['MatriculaDto']
       erros: 403 | 409 | 422
     }>
-  }  /** Confirmar exige os documentos obrigatórios entregues (guia 2.4) */
+  }  /** Confirmar em lote: confirma as que podem e diz porque recusou as outras */
+  '/matriculas/confirmar': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: { ids: string[] }
+      ok: S['ResultadoLoteDto']
+      erros: 403 | 409 | 422
+    }>
+  }
+  /** Confirmar exige os documentos obrigatórios entregues (guia 2.4) */
   '/matriculas/{id}/confirmar': {
     post: Op<{ path: { id: string }; ok: S['MatriculaDto']; erros: 403 | 404 | 409 }>
   }
@@ -378,6 +387,10 @@ export interface components {
       criadaEm: string
     }
     PaginaMatriculaDto: Pagina<components['schemas']['MatriculaDto']>
+    ResultadoLoteDto: {
+      confirmadas: components['schemas']['MatriculaDto'][]
+      recusadas: { id: string; estudanteNome: string; motivo: string }[]
+    }
     NovoEstudanteDto: {
       nome: string
       /** Formato: date */

@@ -11,7 +11,15 @@ import {
 } from '@tanstack/react-table'
 import { useVirtualizer } from '@tanstack/react-virtual'
 import { ArrowDown, ArrowUp, ArrowUpDown } from 'lucide-react'
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from 'react'
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type ReactNode,
+} from 'react'
 import { cn } from '@/shared/lib/cn'
 import { Button } from './button'
 import { Esqueleto } from './esqueleto'
@@ -40,6 +48,8 @@ interface Props<T extends RowData> {
   /** Selecção múltipla com barra de acções em lote */
   seleccionavel?: boolean
   accoesLote?: (ids: string[], limpar: () => void) => ReactNode
+  /** Nome da linha para a caixa de selecção (ex.: o nome do estudante); sem ele, «Seleccionar linha» */
+  nomeDaLinha?: (linha: T) => string
   /** Altura do contentor com scroll (necessária para virtualizar) */
   alturaMaxima?: number
   linhasEsqueleto?: number
@@ -64,6 +74,7 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
     idActiva,
     seleccionavel,
     accoesLote,
+    nomeDaLinha,
   } = props
   const [ordenacaoInterna, setOrdenacaoInterna] = useState<SortingState>([])
   const [seleccao, setSeleccao] = useState<RowSelectionState>({})
@@ -73,7 +84,13 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
 
   const ordenacao = props.ordenacao ?? ordenacaoInterna
   const rotuloTodas = t`Seleccionar todas`
-  const rotuloLinha = t`Seleccionar linha`
+  const rotuloLinha = useCallback(
+    (linha: T) => {
+      const nome = nomeDaLinha?.(linha)
+      return nome ? t`Seleccionar ${nome}` : t`Seleccionar linha`
+    },
+    [nomeDaLinha, t],
+  )
   // Colunas estáveis: recriá-las a cada render remonta as células (e perde cliques a meio)
   const colunas = useMemo(
     () =>
@@ -292,7 +309,7 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
         <div
           role="toolbar"
           aria-label={t`Acções em lote`}
-          className="fixed bottom-6 left-1/2 z-30 flex -translate-x-1/2 items-center gap-3 rounded-full bg-superficie/90 py-2 pr-2 pl-4 shadow-flutuante ring-1 ring-linha backdrop-blur-xl data-[state=open]:animate-desvanecer-entrar"
+          className="fixed bottom-6 left-[calc(50%+var(--largura-menu,0px)/2)] z-30 flex -translate-x-1/2 items-center gap-3 rounded-full bg-superficie/90 py-2 pr-2 pl-4 shadow-flutuante ring-1 ring-linha backdrop-blur-xl data-[state=open]:animate-desvanecer-entrar"
         >
           <span className="tabular text-corpo font-medium">
             {plural(idsSeleccionados.length, { one: '# seleccionado', other: '# seleccionados' })}
@@ -311,7 +328,7 @@ const SEM_DADOS: never[] = []
 
 function colunaSeleccao<T extends RowData>(
   rotuloTodas: string,
-  rotuloLinha: string,
+  rotuloLinha: (linha: T) => string,
 ): ColunaTabela<T> {
   return {
     id: '_seleccao',
@@ -326,7 +343,7 @@ function colunaSeleccao<T extends RowData>(
     ),
     cell: ({ row }) => (
       <CaixaSeleccao
-        aria-label={rotuloLinha}
+        aria-label={rotuloLinha(row.original)}
         checked={row.getIsSelected()}
         readOnly
         onClick={(e) => {
