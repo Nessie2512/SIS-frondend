@@ -50,22 +50,33 @@ const saltarEntreColunas: KeyboardCoordinateGetter = (evento, { context }) => {
   const direita = evento.code === 'ArrowRight'
   if (!direita && evento.code !== 'ArrowLeft') return undefined
   evento.preventDefault()
-  const { collisionRect, droppableRects, droppableContainers } = context
+  const { collisionRect, droppableContainers } = context
   if (!collisionRect) return undefined
   const centro = collisionRect.left + collisionRect.width / 2
+  // Medidas frescas: o quadro pode ter deslizado desde o início do arrasto
   const alvo = droppableContainers
     .getEnabled()
-    .map((c) => droppableRects.get(c.id))
-    .filter((r) => r !== undefined)
-    .filter((r) => (direita ? r.left > centro : r.left + r.width < centro))
-    .sort((a, b) => (direita ? a.left - b.left : b.left - a.left))[0]
+    .map((c) => c.node.current)
+    .filter((no) => no !== null)
+    .map((no) => ({ no, r: no.getBoundingClientRect() }))
+    .filter(({ r }) => (direita ? r.left > centro : r.right < centro))
+    .sort((a, b) => (direita ? a.r.left - b.r.left : b.r.left - a.r.left))[0]
   if (!alvo) return undefined
+
+  // Se a coluna está fora de vista, desliza o quadro primeiro (sem animação). Caso contrário,
+  // o sensor de teclado desliza o quadro em vez de mover o cartão, e o cartão cai na coluna errada.
+  const rolagem = alvo.no.closest<HTMLElement>('[data-quadro-rolagem]')
+  if (rolagem) {
+    const area = rolagem.getBoundingClientRect()
+    const margem = 16
+    if (alvo.r.right > area.right - margem) rolagem.scrollLeft += alvo.r.right - area.right + margem
+    else if (alvo.r.left < area.left + margem)
+      rolagem.scrollLeft -= area.left + margem - alvo.r.left
+  }
+  const r = alvo.no.getBoundingClientRect()
   return {
-    x: alvo.left + (alvo.width - collisionRect.width) / 2,
-    y: Math.max(
-      alvo.top + 8,
-      Math.min(collisionRect.top, alvo.top + alvo.height - collisionRect.height - 8),
-    ),
+    x: r.left + (r.width - collisionRect.width) / 2,
+    y: Math.max(r.top + 8, Math.min(collisionRect.top, r.bottom - collisionRect.height - 8)),
   }
 }
 
@@ -168,8 +179,9 @@ export function QuadroTurmas({ anoLectivoId, classeId, soLeitura }: Props) {
       onDragCancel={() => setArrastado(null)}
       onDragEnd={aoLargar}
     >
-      <div className="-mx-6 overflow-x-auto px-6 pb-4">
-        <div className="flex min-w-max gap-4">
+      <div data-quadro-rolagem className="-mx-6 overflow-x-auto px-6 pb-4">
+        {/* As colunas repartem a largura (mínimo 14rem); só deslizam quando há muitas turmas */}
+        <div className="flex gap-4">
           {colunas.map((id) => (
             <Coluna
               key={id}
@@ -253,7 +265,7 @@ function Coluna({
       ref={setNodeRef}
       aria-label={titulo}
       className={cn(
-        'flex w-72 flex-col rounded-cartao bg-superficie ring-1 ring-linha transition-shadow duration-(--duracao-micro)',
+        'flex min-w-56 flex-1 basis-0 flex-col rounded-cartao bg-superficie ring-1 ring-linha transition-shadow duration-(--duracao-micro)',
         id === SEM_TURMA && 'ring-dashed bg-fundo ring-contorno',
         arrastando && !cheia && 'ring-acento/40',
         isOver && 'ring-2 ring-acento',
