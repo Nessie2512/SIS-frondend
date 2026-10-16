@@ -71,7 +71,7 @@ describe('Ficha do estudante', () => {
     const alvo = primeiro()
     renderizarEm(`/estudantes/${alvo.id}`)
     const utilizador = userEvent.setup()
-    await utilizador.click(await screen.findByRole('button', { name: 'Editar Telefone' }))
+    await utilizador.click(await screen.findByRole('button', { name: /^Editar Telefone:/ }))
     const campo = screen.getByLabelText('Telefone')
     await utilizador.clear(campo)
     await utilizador.type(campo, '923456789{Enter}')
@@ -83,7 +83,7 @@ describe('Ficha do estudante', () => {
     const alvo = primeiro()
     renderizarEm(`/estudantes/${alvo.id}`)
     const utilizador = userEvent.setup()
-    await utilizador.click(await screen.findByRole('button', { name: 'Editar Morada' }))
+    await utilizador.click(await screen.findByRole('button', { name: /^Editar Morada:/ }))
     // Alteração feita por outra pessoa depois de abrirmos a ficha
     alvo.morada = 'Rua da outra pessoa'
     alvo.versao++

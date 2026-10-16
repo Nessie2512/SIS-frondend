@@ -21,7 +21,7 @@ describe('Currículo: planos', () => {
     )
     const antes = plano('p-c7-3').linhas.reduce((s, l) => s + l.horasSemanais, 0)
 
-    await utilizador.click(screen.getByRole('button', { name: 'Editar Matemática' }))
+    await utilizador.click(screen.getByRole('button', { name: /^Editar Matemática:/ }))
     const campo = screen.getByLabelText('Matemática')
     await utilizador.clear(campo)
     await utilizador.type(campo, '6{Enter}')
@@ -39,7 +39,7 @@ describe('Currículo: planos', () => {
     await waitFor(() => expect(horas('p-c7-3', 'd-inf')).toBeUndefined())
     expect(desfazerUltima()).toBe(true)
     await waitFor(() => expect(horas('p-c7-3', 'd-inf')).toBe(1))
-    expect(await screen.findByRole('button', { name: 'Editar Informática' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /^Editar Informática:/ })).toBeInTheDocument()
   })
 
   it('o vigente não se edita; publicar o rascunho arquiva o vigente', async () => {
@@ -67,13 +67,13 @@ describe('Currículo: planos', () => {
     await utilizador.click(await screen.findByRole('button', { name: 'Criar nova versão' }))
     await waitFor(() => expect(router.state.location.search).toMatchObject({ plano: 'p-c8-3' }))
     expect(plano('p-c8-3').estado).toBe('RASCUNHO')
-    expect(await screen.findByRole('button', { name: 'Editar Matemática' })).toBeInTheDocument()
+    expect(await screen.findByRole('button', { name: /^Editar Matemática:/ })).toBeInTheDocument()
   })
 
   it('se outra pessoa alterou o plano (412), mostra a versão actual e explica', async () => {
     renderizarEm('/curriculo?classeId=c7')
     const utilizador = userEvent.setup()
-    await utilizador.click(await screen.findByRole('button', { name: 'Editar Física' }))
+    await utilizador.click(await screen.findByRole('button', { name: /^Editar Física:/ }))
     // Outra pessoa guarda entretanto
     plano('p-c7-3').linhas.find((l) => l.disciplinaId === 'd-mat')!.horasSemanais = 7
     plano('p-c7-3').revisao++

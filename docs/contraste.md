@@ -21,6 +21,10 @@ Não editar à mão: alterar os tokens e voltar a correr o comando.
 | Claro | Contorno de campos e controlos | `contorno` #86868b | `superficie` #ffffff | 3.62:1 | 3:1 | Cumpre |
 | Claro | Contorno de campos sobre o fundo | `contorno` #86868b | `fundo` #f6f6f8 | 3.36:1 | 3:1 | Cumpre |
 | Claro | Anel de foco | `acento` #0a63e8 | `superficie` #ffffff | 5.30:1 | 3:1 | Cumpre |
+| Claro | Dia na faixa de trimestre | `texto-1` #1d1d1f | `fundo+acento@10` #dee7f6 | 13.52:1 | 4.5:1 | Cumpre |
+| Claro | Fim de semana na faixa de trimestre | `texto-2` #55555b | `fundo+acento@10` #dee7f6 | 5.95:1 | 4.5:1 | Cumpre |
+| Claro | Marca de feriado no calendário (gráfico) | `perigo` #d70015 | `fundo+acento@10` #dee7f6 | 4.32:1 | 3:1 | Cumpre |
+| Claro | Marca de data-chave no calendário (gráfico) | `acento` #0a63e8 | `fundo+acento@10` #dee7f6 | 4.26:1 | 3:1 | Cumpre |
 | Escuro | Texto principal | `texto-1` #f5f5f7 | `fundo` #0b0b0d | 18.06:1 | 4.5:1 | Cumpre |
 | Escuro | Texto principal em cartões | `texto-1` #f5f5f7 | `superficie` #1c1c1e | 15.63:1 | 4.5:1 | Cumpre |
 | Escuro | Texto secundário | `texto-2` #a1a1a6 | `fundo` #0b0b0d | 7.64:1 | 4.5:1 | Cumpre |
@@ -37,6 +41,10 @@ Não editar à mão: alterar os tokens e voltar a correr o comando.
 | Escuro | Contorno de campos e controlos | `contorno` #6e6e73 | `superficie` #1c1c1e | 3.36:1 | 3:1 | Cumpre |
 | Escuro | Contorno de campos sobre o fundo | `contorno` #6e6e73 | `fundo` #0b0b0d | 3.88:1 | 3:1 | Cumpre |
 | Escuro | Anel de foco | `acento` #4c9aff | `superficie` #1c1c1e | 5.97:1 | 3:1 | Cumpre |
+| Escuro | Dia na faixa de trimestre | `texto-1` #f5f5f7 | `fundo+acento@10` #121925 | 16.19:1 | 4.5:1 | Cumpre |
+| Escuro | Fim de semana na faixa de trimestre | `texto-2` #a1a1a6 | `fundo+acento@10` #121925 | 6.85:1 | 4.5:1 | Cumpre |
+| Escuro | Marca de feriado no calendário (gráfico) | `perigo` #ff453a | `fundo+acento@10` #121925 | 5.17:1 | 3:1 | Cumpre |
+| Escuro | Marca de data-chave no calendário (gráfico) | `acento` #4c9aff | `fundo+acento@10` #121925 | 6.19:1 | 3:1 | Cumpre |
 
 `--color-linha` é um separador decorativo (o espaço separa antes da linha, guia 6.1) e não entra na verificação;
 campos e controlos usam `--color-contorno`.

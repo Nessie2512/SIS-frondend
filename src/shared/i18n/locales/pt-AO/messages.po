@@ -872,8 +872,8 @@ msgid "Duas fotografias tipo passe"
 msgstr "Duas fotografias tipo passe"
 
 #: src/shared/ui/edicao-no-sitio.tsx
-msgid "Editar {rotulo}"
-msgstr "Editar {rotulo}"
+msgid "Editar {rotulo}: {visivel}"
+msgstr "Editar {rotulo}: {visivel}"
 
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Editar o item em foco"

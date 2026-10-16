@@ -27,8 +27,11 @@ interface Props {
   aoEscolherDia: (dia: string) => void
 }
 
-/** Fundo por trimestre: alterna para as faixas se distinguirem; a cor só reforça o texto. */
-const classesTrimestre = ['', 'bg-acento/8', 'bg-acento/16', 'bg-acento/8']
+/**
+ * Fundo por trimestre: alterna para as faixas se distinguirem; a cor só reforça o texto.
+ * Os pares de contraste destas faixas estão em scripts/contraste.mjs (fundo+acento@10).
+ */
+const classesTrimestre = ['', 'bg-acento/5', 'bg-acento/10', 'bg-acento/5']
 
 const lista = new Intl.ListFormat(LOCALE, { style: 'long', type: 'unit' })
 
@@ -151,14 +154,21 @@ export function GrelhaAno({ calendario, inicio, fim, seleccionado, aoEscolherDia
                             className={cn(
                               'tabular relative mx-auto flex size-8 flex-col items-center justify-center rounded-full text-secundario outline-none',
                               'hover:bg-superficie focus-visible:ring-2 focus-visible:ring-acento',
-                              fimDeSemana && 'text-texto-3',
-                              feriado && 'font-semibold text-perigo',
-                              interrupcao && 'text-texto-3 line-through decoration-texto-3/40',
+                              fimDeSemana && 'text-texto-2',
+                              feriado && 'font-semibold text-texto-1',
+                              interrupcao && 'text-texto-2 line-through decoration-texto-2/50',
                               dia === hoje && 'ring-1 ring-texto-1',
                               dia === seleccionado && 'bg-acento text-sobre-acento hover:bg-acento',
                             )}
                           >
                             {Number(dia.slice(8))}
+                            {/* Feriado: traço vermelho por cima do número (gráfico, 3:1); o ponto de baixo é das marcas */}
+                            {feriado && dia !== seleccionado && (
+                              <span
+                                aria-hidden
+                                className="absolute top-1 right-1.5 left-1.5 h-0.5 rounded-full bg-perigo"
+                              />
+                            )}
                             {marcas.length > 0 && (
                               <span
                                 aria-hidden
@@ -202,7 +212,8 @@ export function LegendaCalendario({ calendario }: { calendario: Calendario }) {
         </li>
       ))}
       <li className="flex items-center gap-2">
-        <span aria-hidden className="text-legenda font-semibold text-perigo">
+        <span aria-hidden className="relative px-0.5 text-legenda font-semibold">
+          <span className="absolute -top-0.5 right-0 left-0 h-0.5 rounded-full bg-perigo" />
           11
         </span>
         {t`Feriado`}
@@ -216,7 +227,7 @@ export function LegendaCalendario({ calendario }: { calendario: Calendario }) {
         {t`Evento`}
       </li>
       <li className="flex items-center gap-2">
-        <span aria-hidden className="text-legenda text-texto-3 line-through">
+        <span aria-hidden className="text-legenda text-texto-2 line-through">
           11
         </span>
         {t`Interrupção lectiva`}

@@ -22,6 +22,23 @@ function luminancia(hex) {
   const canal = (c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4)
   return 0.2126 * canal(r) + 0.7152 * canal(g) + 0.0722 * canal(b)
 }
+/** «fundo+acento@10» = acento a 10% sobre o fundo (cores com opacidade, como bg-acento/10). */
+function cor(nome, cores) {
+  const mistura = /^([\w-]+)\+([\w-]+)@(\d+)$/.exec(nome)
+  if (!mistura) return cores[nome]
+  const [, base, por, pct] = mistura
+  if (!cores[base] || !cores[por]) return undefined
+  const t = Number(pct) / 100
+  const canal = (hex, i) => parseInt(hex.slice(i, i + 2), 16)
+  return (
+    '#' +
+    [1, 3, 5]
+      .map((i) => Math.round(canal(cores[base], i) * (1 - t) + canal(cores[por], i) * t))
+      .map((v) => v.toString(16).padStart(2, '0'))
+      .join('')
+  )
+}
+
 function razao(a, b) {
   const [l1, l2] = [luminancia(a), luminancia(b)].sort((x, y) => y - x)
   return (l1 + 0.05) / (l2 + 0.05)
@@ -45,6 +62,11 @@ const PARES = [
   ['contorno', 'superficie', 3, 'Contorno de campos e controlos'],
   ['contorno', 'fundo', 3, 'Contorno de campos sobre o fundo'],
   ['acento', 'superficie', 3, 'Anel de foco'],
+  // Calendário: faixas de trimestre são o acento a 5% e 10% sobre o fundo
+  ['texto-1', 'fundo+acento@10', 4.5, 'Dia na faixa de trimestre'],
+  ['texto-2', 'fundo+acento@10', 4.5, 'Fim de semana na faixa de trimestre'],
+  ['perigo', 'fundo+acento@10', 3, 'Marca de feriado no calendário (gráfico)'],
+  ['acento', 'fundo+acento@10', 3, 'Marca de data-chave no calendário (gráfico)'],
 ]
 
 const linhas = []
@@ -54,12 +76,13 @@ for (const [tema, cores] of [
   ['Escuro', escuro],
 ]) {
   for (const [fg, bg, minimo, uso] of PARES) {
-    if (!cores[fg] || !cores[bg]) throw new Error(`Token em falta no tema ${tema}: ${fg} ou ${bg}`)
-    const r = razao(cores[fg], cores[bg])
+    const [cf, cb] = [cor(fg, cores), cor(bg, cores)]
+    if (!cf || !cb) throw new Error(`Token em falta no tema ${tema}: ${fg} ou ${bg}`)
+    const r = razao(cf, cb)
     const ok = r >= minimo
     if (!ok) falhas++
     linhas.push(
-      `| ${tema} | ${uso} | \`${fg}\` ${cores[fg]} | \`${bg}\` ${cores[bg]} | ${r.toFixed(2)}:1 | ${minimo}:1 | ${ok ? 'Cumpre' : '**Falha**'} |`,
+      `| ${tema} | ${uso} | \`${fg}\` ${cf} | \`${bg}\` ${cb} | ${r.toFixed(2)}:1 | ${minimo}:1 | ${ok ? 'Cumpre' : '**Falha**'} |`,
     )
   }
 }
