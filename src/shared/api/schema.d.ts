@@ -86,7 +86,11 @@ export interface paths {
       ok: S['MatriculaDto']
       erros: 403 | 409 | 422
     }>
+  }  /** Confirmar exige os documentos obrigatórios entregues (guia 2.4) */
+  '/matriculas/{id}/confirmar': {
+    post: Op<{ path: { id: string }; ok: S['MatriculaDto']; erros: 403 | 404 | 409 }>
   }
+
 
   // Turmas e inscrições
   '/turmas': {

@@ -24,6 +24,7 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   PLANO_NAO_EDITAVEL: msg`Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão.`,
   RASCUNHO_EXISTENTE: msg`Esta classe já tem um rascunho em preparação. Abrimos o rascunho existente.`,
   DISCIPLINA_REPETIDA: msg`Já existe uma disciplina com este nome ou sigla.`,
+  DOCUMENTOS_EM_FALTA: msg`Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar.`,
   EVENTO_FIXO: msg`Os feriados nacionais vêm da lei e não se apagam.`,
   DISCIPLINA_EM_USO: msg`Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la.`,
 }

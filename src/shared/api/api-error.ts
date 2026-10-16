@@ -21,6 +21,7 @@ export type CodigoErroDominio =
   | 'DISCIPLINA_REPETIDA'
   | 'DISCIPLINA_EM_USO'
   | 'EVENTO_FIXO'
+  | 'DOCUMENTOS_EM_FALTA'
 
 export interface ErroDeCampo {
   campo: string

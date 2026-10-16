@@ -227,6 +227,7 @@ msgid "A carregar turmas"
 msgstr "A carregar turmas"
 
 #: src/entities/matricula/model/mapeadores.ts
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "A confirmar"
 msgstr "A confirmar"
@@ -652,12 +653,17 @@ msgid "Concluído"
 msgstr "Concluído"
 
 #: src/entities/matricula/model/mapeadores.ts
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Confirmada"
 msgstr "Confirmada"
 
 #: src/routes/_app/matriculas/index.tsx
 msgid "Confirmadas"
 msgstr "Confirmadas"
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "Confirmar matrícula"
+msgstr "Confirmar matrícula"
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Confirme se é o mesmo estudante antes de continuar."
@@ -899,6 +905,10 @@ msgstr "Documentos entregues"
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "Documentos obrigatórios completos: a matrícula fica confirmada."
 msgstr "Documentos obrigatórios completos: a matrícula fica confirmada."
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "Documentos obrigatórios: {entregues} de {total} entregues"
+msgstr "Documentos obrigatórios: {entregues} de {total} entregues"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Documentos oficiais"
@@ -1233,6 +1243,14 @@ msgstr "Expandir o menu lateral"
 msgid "Explique em poucas palavras porque não é o mesmo estudante."
 msgstr "Explique em poucas palavras porque não é o mesmo estudante."
 
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "Falta 1 documento obrigatório."
+msgstr "Falta 1 documento obrigatório."
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "Faltam {emFalta} documentos obrigatórios."
+msgstr "Faltam {emFalta} documentos obrigatórios."
+
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "Faltam {emFalta} documentos obrigatórios. A matrícula fica a confirmar até serem entregues."
 msgstr "Faltam {emFalta} documentos obrigatórios. A matrícula fica a confirmar até serem entregues."
@@ -1240,6 +1258,10 @@ msgstr "Faltam {emFalta} documentos obrigatórios. A matrícula fica a confirmar
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quando forem entregues."
 msgstr "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quando forem entregues."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
+msgstr "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
 
 #: src/shared/ui/folha.tsx
 msgid "Fechar"
@@ -1510,6 +1532,7 @@ msgid "matrícula"
 msgstr "matrícula"
 
 #: src/entities/estudante/model/mapeadores.ts
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 #: src/routes/_app/estudantes/index.tsx
 msgid "Matrícula"
 msgstr "Matrícula"
@@ -1517,6 +1540,10 @@ msgstr "Matrícula"
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Matrícula a confirmar"
 msgstr "Matrícula a confirmar"
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "Matrícula de {nome} confirmada."
+msgstr "Matrícula de {nome} confirmada."
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Matrícula de {nome} registada"
@@ -1759,6 +1786,10 @@ msgstr "Número de processo"
 #: src/routes/_app.tsx
 msgid "O ano lectivo {designacao} está encerrado. Só é possível consultar."
 msgstr "O ano lectivo {designacao} está encerrado. Só é possível consultar."
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "O ano lectivo está encerrado."
+msgstr "O ano lectivo está encerrado."
 
 #: src/routes/_app/matriculas/nova.tsx
 msgid "O ano lectivo está encerrado. Escolha o ano em curso no cabeçalho para matricular."

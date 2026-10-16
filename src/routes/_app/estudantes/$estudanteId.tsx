@@ -11,6 +11,7 @@ import {
   formatarTelefone,
   percursoQuery,
 } from '@/entities/estudante'
+import { CartaoMatricula } from '@/features/confirmar-matricula'
 import { DadosEstudante } from '@/features/editar-estudante'
 import { ListaDocumentos } from '@/features/marcar-documento'
 import { eApiError } from '@/shared/api'
@@ -136,11 +137,14 @@ function FichaEstudante() {
         </PainelSeparador>
         <PainelSeparador value="documentos" className="pt-6">
           {documentos ? (
-            <ListaDocumentos
-              estudanteId={estudanteId}
-              documentos={documentos}
-              soLeitura={soLeitura}
-            />
+            <div className="flex flex-col gap-6">
+              <CartaoMatricula estudante={e} documentos={documentos} soLeitura={soLeitura} />
+              <ListaDocumentos
+                estudanteId={estudanteId}
+                documentos={documentos}
+                soLeitura={soLeitura}
+              />
+            </div>
           ) : (
             <Esqueleto className="h-64 w-full" />
           )}

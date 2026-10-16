@@ -572,6 +572,14 @@ export const handlers = [
     }),
   ),
 
+  http.post(
+    `${API}/matriculas/:id/confirmar`,
+    protegido('matriculas:escrever', ({ params }) => {
+      const { erro, matricula } = confirmarMatricula(String(params.id))
+      return erro ?? HttpResponse.json(paraMatriculaDto(matricula!))
+    }),
+  ),
+
   // ---------------------------------------------------------------- vistas guardadas
   http.get(
     `${API}/vistas`,
@@ -649,6 +657,31 @@ export const handlers = [
 
   ...handlersAcademicos,
 ]
+
+/** Confirmar: ano aberto, matrícula pendente e documentos obrigatórios entregues (guia 2.4). */
+function confirmarMatricula(id: string) {
+  const matricula = db.matriculas.find((m) => m.id === id)
+  if (!matricula) return { erro: problema(404, 'Matrícula não encontrada') }
+  if (anoEncerrado(matricula.anoLectivoId)) {
+    return { erro: problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' }) }
+  }
+  if (matricula.estado === 'CONFIRMADA') return { matricula }
+  const emFalta = db.documentos.filter(
+    (d) => d.estudanteId === matricula.estudanteId && d.obrigatorio && d.estado === 'EM_FALTA',
+  )
+  if (emFalta.length) {
+    return {
+      erro: problema(409, 'Documentos em falta', {
+        code: 'DOCUMENTOS_EM_FALTA',
+        detail: `Faltam ${emFalta.length} documentos obrigatórios.`,
+        emFalta: emFalta.map((d) => d.designacao),
+      }),
+    }
+  }
+  matricula.estado = 'CONFIRMADA'
+  registarPercurso(matricula.estudanteId, 'MATRICULA', 'Matrícula confirmada')
+  return { matricula }
+}
 
 /** Regras ao colocar uma matrícula numa turma: ano aberto, mesma classe, lotação (guia 2.4). */
 function validarDestino(request: Request, turmaId: string, classeId: string, excepcao?: string) {

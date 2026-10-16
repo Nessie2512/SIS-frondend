@@ -15,6 +15,8 @@ export interface EstudanteResumo {
   /** Ex.: "7.ª classe · 7.ª A" ou "7.ª classe · sem turma" */
   matricula: string | null
   semTurma: boolean
+  /** Matrícula no ano em contexto */
+  matriculaId: string | null
   matriculaPendente: boolean
   documentosEmFalta: number
 }
