@@ -158,7 +158,60 @@ export interface paths {
   }
 
   // Currículo
-  '/disciplinas': { get: Op<{ ok: S['DisciplinaDto'][] }> }
+  '/disciplinas': {
+    get: Op<{ ok: S['DisciplinaDto'][] }>
+    post: Op<{ body: S['NovaDisciplinaDto']; ok: S['DisciplinaDto']; erros: 403 | 409 | 422 }>
+  }
+  '/disciplinas/{id}': {
+    delete: Op<{ path: { id: string }; ok: S['VazioDto']; erros: 403 | 404 | 409 }>
+  }
+  '/disciplinas/{id}/estado': {
+    post: Op<{
+      path: { id: string }
+      body: { estado: S['EstadoDisciplina'] }
+      ok: S['DisciplinaDto']
+      erros: 403 | 404
+    }>
+  }
+  '/planos': { get: Op<{ query: { classeId: string }; ok: S['PlanoResumoDto'][] }> }
+  '/planos/{id}': { get: Op<{ path: { id: string }; ok: S['PlanoDto']; erros: 404 }> }
+  '/planos/{id}/linhas': {
+    post: Op<{
+      path: { id: string }
+      header: { 'If-Match': string }
+      body: S['LinhaPlanoAlteracaoDto'] & { disciplinaId: string }
+      ok: S['PlanoDto']
+      erros: 403 | 409 | 412 | 422
+    }>
+  }
+  '/planos/{id}/linhas/{disciplinaId}': {
+    patch: Op<{
+      path: { id: string; disciplinaId: string }
+      header: { 'If-Match': string }
+      body: S['LinhaPlanoAlteracaoDto']
+      ok: S['PlanoDto']
+      erros: 403 | 409 | 412 | 422
+    }>
+    delete: Op<{
+      path: { id: string; disciplinaId: string }
+      header: { 'If-Match': string }
+      ok: S['PlanoDto']
+      erros: 403 | 409 | 412
+    }>
+  }
+  /** Copia o plano para um rascunho novo (só a partir do vigente) */
+  '/planos/{id}/nova-versao': {
+    post: Op<{ path: { id: string }; ok: S['PlanoDto']; erros: 403 | 409 }>
+  }
+  /** Publicar é irreversível: o rascunho passa a vigente e o vigente anterior fica arquivado */
+  '/planos/{id}/publicar': {
+    post: Op<{
+      path: { id: string }
+      header: { 'If-Match': string }
+      ok: S['PlanoDto']
+      erros: 403 | 409 | 412 | 422
+    }>
+  }
 
   // Vistas guardadas por utilizador (guia 7.1)
   '/vistas': {
@@ -396,9 +449,33 @@ export interface components {
       nome: string
       sigla: string
       estado: components['schemas']['EstadoDisciplina']
-      /** Em algum plano vigente: não se elimina, só se inactiva */
+      /** Usada num plano ou numa habilitação: não se elimina, só se inactiva */
       emUso: boolean
     }
+
+    NovaDisciplinaDto: { nome: string; sigla: string }
+    EstadoPlano: 'RASCUNHO' | 'VIGENTE' | 'ARQUIVADO'
+    PlanoResumoDto: {
+      id: string
+      classeId: string
+      versao: number
+      estado: components['schemas']['EstadoPlano']
+      /** Formato: date */
+      publicadoEm: string | null
+      totalHoras: number
+    }
+    LinhaPlanoDto: {
+      disciplinaId: string
+      disciplina: string
+      sigla: string
+      horasSemanais: number
+    }
+    PlanoDto: components['schemas']['PlanoResumoDto'] & {
+      linhas: components['schemas']['LinhaPlanoDto'][]
+      /** Versão para If-Match (ETag) */
+      revisao: string
+    }
+    LinhaPlanoAlteracaoDto: { horasSemanais: number }
 
     // Vistas guardadas
     EcraVista: 'estudantes' | 'matriculas' | 'professores'

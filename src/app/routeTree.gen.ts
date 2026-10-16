@@ -12,6 +12,9 @@ import { Route as rootRouteImport } from './../routes/__root'
 import { Route as AppRouteImport } from './../routes/_app'
 import { Route as EntrarRouteImport } from './../routes/entrar'
 import { Route as AppIndexRouteImport } from './../routes/_app/index'
+import { Route as AppCurriculoRouteImport } from './../routes/_app/curriculo'
+import { Route as AppCurriculoIndexRouteImport } from './../routes/_app/curriculo/index'
+import { Route as AppCurriculoDisciplinasRouteImport } from './../routes/_app/curriculo/disciplinas'
 import { Route as AppEstudantesIndexRouteImport } from './../routes/_app/estudantes/index'
 import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/estudantes/$estudanteId'
 import { Route as AppMatriculasIndexRouteImport } from './../routes/_app/matriculas/index'
@@ -34,6 +37,21 @@ const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
+} as any)
+const AppCurriculoRoute = AppCurriculoRouteImport.update({
+  id: '/curriculo',
+  path: '/curriculo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCurriculoIndexRoute = AppCurriculoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCurriculoRoute,
+} as any)
+const AppCurriculoDisciplinasRoute = AppCurriculoDisciplinasRouteImport.update({
+  id: '/disciplinas',
+  path: '/disciplinas',
+  getParentRoute: () => AppCurriculoRoute,
 } as any)
 const AppEstudantesIndexRoute = AppEstudantesIndexRouteImport.update({
   id: '/estudantes/',
@@ -81,10 +99,13 @@ const AppTurmasQuadroRoute = AppTurmasQuadroRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/entrar': typeof EntrarRoute
+  '/curriculo': typeof AppCurriculoRouteWithChildren
+  '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
   '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/curriculo/': typeof AppCurriculoIndexRoute
   '/estudantes/': typeof AppEstudantesIndexRoute
   '/matriculas/': typeof AppMatriculasIndexRoute
   '/professores/': typeof AppProfessoresIndexRoute
@@ -93,10 +114,12 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/': typeof AppIndexRoute
+  '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
   '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/curriculo': typeof AppCurriculoIndexRoute
   '/estudantes': typeof AppEstudantesIndexRoute
   '/matriculas': typeof AppMatriculasIndexRoute
   '/professores': typeof AppProfessoresIndexRoute
@@ -106,11 +129,14 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/_app/curriculo': typeof AppCurriculoRouteWithChildren
   '/_app/': typeof AppIndexRoute
+  '/_app/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/_app/matriculas/nova': typeof AppMatriculasNovaRoute
   '/_app/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/_app/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/_app/curriculo/': typeof AppCurriculoIndexRoute
   '/_app/estudantes/': typeof AppEstudantesIndexRoute
   '/_app/matriculas/': typeof AppMatriculasIndexRoute
   '/_app/professores/': typeof AppProfessoresIndexRoute
@@ -121,10 +147,13 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/entrar'
+    | '/curriculo'
+    | '/curriculo/disciplinas'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
     | '/professores/$professorId'
     | '/turmas/quadro'
+    | '/curriculo/'
     | '/estudantes/'
     | '/matriculas/'
     | '/professores/'
@@ -133,10 +162,12 @@ export interface FileRouteTypes {
   to:
     | '/entrar'
     | '/'
+    | '/curriculo/disciplinas'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
     | '/professores/$professorId'
     | '/turmas/quadro'
+    | '/curriculo'
     | '/estudantes'
     | '/matriculas'
     | '/professores'
@@ -145,11 +176,14 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/entrar'
+    | '/_app/curriculo'
     | '/_app/'
+    | '/_app/curriculo/disciplinas'
     | '/_app/estudantes/$estudanteId'
     | '/_app/matriculas/nova'
     | '/_app/professores/$professorId'
     | '/_app/turmas/quadro'
+    | '/_app/curriculo/'
     | '/_app/estudantes/'
     | '/_app/matriculas/'
     | '/_app/professores/'
@@ -183,6 +217,27 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/_app/curriculo': {
+      id: '/_app/curriculo'
+      path: '/curriculo'
+      fullPath: '/curriculo'
+      preLoaderRoute: typeof AppCurriculoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/curriculo/': {
+      id: '/_app/curriculo/'
+      path: '/'
+      fullPath: '/curriculo/'
+      preLoaderRoute: typeof AppCurriculoIndexRouteImport
+      parentRoute: typeof AppCurriculoRoute
+    }
+    '/_app/curriculo/disciplinas': {
+      id: '/_app/curriculo/disciplinas'
+      path: '/disciplinas'
+      fullPath: '/curriculo/disciplinas'
+      preLoaderRoute: typeof AppCurriculoDisciplinasRouteImport
+      parentRoute: typeof AppCurriculoRoute
     }
     '/_app/estudantes/': {
       id: '/_app/estudantes/'
@@ -243,7 +298,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AppCurriculoRouteChildren {
+  AppCurriculoDisciplinasRoute: typeof AppCurriculoDisciplinasRoute
+  AppCurriculoIndexRoute: typeof AppCurriculoIndexRoute
+}
+
+const AppCurriculoRouteChildren: AppCurriculoRouteChildren = {
+  AppCurriculoDisciplinasRoute: AppCurriculoDisciplinasRoute,
+  AppCurriculoIndexRoute: AppCurriculoIndexRoute,
+}
+
+const AppCurriculoRouteWithChildren = AppCurriculoRoute._addFileChildren(
+  AppCurriculoRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppCurriculoRoute: typeof AppCurriculoRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
   AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
   AppMatriculasNovaRoute: typeof AppMatriculasNovaRoute
@@ -256,6 +326,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppCurriculoRoute: AppCurriculoRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
   AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
   AppMatriculasNovaRoute: AppMatriculasNovaRoute,

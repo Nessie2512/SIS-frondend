@@ -2,6 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useRouter } from '@tanstack/react-router'
 import { Command } from 'cmdk'
 import {
+  BookOpen,
   ClipboardList,
   Contrast,
   GraduationCap,
@@ -163,6 +164,14 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             }
           >
             <Trans>Professores</Trans>
+          </Item>
+          <Item
+            icone={<BookOpen />}
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/curriculo', search: { classeId: 'c7' } }))
+            }
+          >
+            <Trans>Currículo</Trans>
           </Item>
         </Grupo>
         <Grupo titulo={t`Agir`}>

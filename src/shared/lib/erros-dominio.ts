@@ -21,6 +21,10 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   DOCUMENTO_OBRIGATORIO: msg`Este documento é obrigatório e não pode ser dispensado.`,
   CREDENCIAIS_INVALIDAS: msg`O email ou a palavra-passe não estão correctos.`,
   VISTA_REPETIDA: msg`Já tem uma vista com este nome. Escolha outro.`,
+  PLANO_NAO_EDITAVEL: msg`Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão.`,
+  RASCUNHO_EXISTENTE: msg`Esta classe já tem um rascunho em preparação. Abrimos o rascunho existente.`,
+  DISCIPLINA_REPETIDA: msg`Já existe uma disciplina com este nome ou sigla.`,
+  DISCIPLINA_EM_USO: msg`Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la.`,
 }
 
 const SESSAO_EXPIRADA = msg`A sessão terminou. Entre de novo para continuar.`

@@ -9,7 +9,7 @@ interface PropsBase {
   aoMudar: (aberta: boolean) => void
   titulo: string
   descricao?: string
-  children: ReactNode
+  children?: ReactNode
   /** Botões no rodapé; o primário fica à direita */
   rodape?: ReactNode
   /** Estado pendente: impede fechar a meio de uma acção */

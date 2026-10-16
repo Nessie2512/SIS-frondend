@@ -124,15 +124,27 @@ function LayoutApp() {
             >
               <Trans>Professores</Trans>
             </Link>
+            <Link
+              to="/curriculo"
+              search={{ classeId: 'c7' }}
+              activeOptions={{ includeSearch: false }}
+              className={classesLigacao}
+            >
+              <Trans>Currículo</Trans>
+            </Link>
           </nav>
           <div className="ml-auto flex items-center gap-2">
             <button
               type="button"
               onClick={abrirPaleta}
-              className="hidden h-8 items-center gap-2 rounded-full px-3 text-secundario text-texto-3 ring-1 ring-linha hover:text-texto-1 sm:flex"
+              aria-label={t`Procurar ou agir`}
+              className="hidden h-8 items-center gap-2 rounded-full px-3 text-secundario whitespace-nowrap text-texto-3 ring-1 ring-linha hover:text-texto-1 sm:flex"
             >
               <Search aria-hidden className="size-4 stroke-[1.5]" />
-              <Trans>Procurar ou agir</Trans>
+              {/* Com o menu completo, o texto só cabe em ecrãs largos; o atalho fica sempre */}
+              <span aria-hidden className="hidden xl:inline">
+                <Trans>Procurar ou agir</Trans>
+              </span>
               <kbd className="tabular text-legenda">{mostrarAtalho('mod+k')}</kbd>
             </button>
             <SelectorAno />
