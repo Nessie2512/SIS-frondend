@@ -1,6 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Printer } from 'lucide-react'
 import { useMemo } from 'react'
 // zod/mini nas rotas: os esquemas de pesquisa vão no JavaScript inicial e o mini pesa uma fracção
 import * as z from 'zod/mini'
@@ -214,6 +215,12 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
             <Button asChild>
               <Link to="/turmas/quadro" search={{ classeId: turma.classeId }}>
                 <Trans>Abrir no quadro</Trans>
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link to="/imprimir/turma/$turmaId" params={{ turmaId: turma.id }}>
+                <Printer aria-hidden className="size-4 stroke-[1.5]" />
+                <Trans>Imprimir lista</Trans>
               </Link>
             </Button>
             <BotaoGerarListaNominal turmaId={turma.id} />

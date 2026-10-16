@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Printer } from 'lucide-react'
 import * as z from 'zod/mini'
 import {
   documentosQuery,
@@ -20,6 +20,7 @@ import { TEMPOS } from '@/shared/config/constantes'
 import { useCan } from '@/shared/lib/permissoes'
 import {
   Avatar,
+  Button,
   ErroDeRota,
   Esqueleto,
   EstadoVazio,
@@ -99,6 +100,12 @@ function FichaEstudante() {
             )}
           </p>
         </div>
+        <Button asChild className="shrink-0">
+          <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
+            <Printer aria-hidden className="size-4 stroke-[1.5]" />
+            <Trans>Imprimir ficha</Trans>
+          </Link>
+        </Button>
       </header>
 
       <Separadores

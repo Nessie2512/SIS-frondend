@@ -30,6 +30,8 @@ import { Route as AppProfessoresIndexRouteImport } from './../routes/_app/profes
 import { Route as AppProfessoresProfessorIdRouteImport } from './../routes/_app/professores/$professorId'
 import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/index'
 import { Route as AppTurmasQuadroRouteImport } from './../routes/_app/turmas/quadro'
+import { Route as AppImprimirEstudanteEstudanteIdRouteImport } from './../routes/_app/imprimir/estudante.$estudanteId'
+import { Route as AppImprimirTurmaTurmaIdRouteImport } from './../routes/_app/imprimir/turma.$turmaId'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -138,6 +140,17 @@ const AppTurmasQuadroRoute = AppTurmasQuadroRouteImport.update({
   path: '/turmas/quadro',
   getParentRoute: () => AppRoute,
 } as any)
+const AppImprimirEstudanteEstudanteIdRoute =
+  AppImprimirEstudanteEstudanteIdRouteImport.update({
+    id: '/imprimir/estudante/$estudanteId',
+    path: '/imprimir/estudante/$estudanteId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppImprimirTurmaTurmaIdRoute = AppImprimirTurmaTurmaIdRouteImport.update({
+  id: '/imprimir/turma/$turmaId',
+  path: '/imprimir/turma/$turmaId',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -160,6 +173,8 @@ export interface FileRoutesByFullPath {
   '/matriculas/': typeof AppMatriculasIndexRoute
   '/professores/': typeof AppProfessoresIndexRoute
   '/turmas/': typeof AppTurmasIndexRoute
+  '/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
+  '/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
 }
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
@@ -180,6 +195,8 @@ export interface FileRoutesByTo {
   '/matriculas': typeof AppMatriculasIndexRoute
   '/professores': typeof AppProfessoresIndexRoute
   '/turmas': typeof AppTurmasIndexRoute
+  '/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
+  '/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -204,6 +221,8 @@ export interface FileRoutesById {
   '/_app/matriculas/': typeof AppMatriculasIndexRoute
   '/_app/professores/': typeof AppProfessoresIndexRoute
   '/_app/turmas/': typeof AppTurmasIndexRoute
+  '/_app/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
+  '/_app/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -228,6 +247,8 @@ export interface FileRouteTypes {
     | '/matriculas/'
     | '/professores/'
     | '/turmas/'
+    | '/imprimir/estudante/$estudanteId'
+    | '/imprimir/turma/$turmaId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/entrar'
@@ -248,6 +269,8 @@ export interface FileRouteTypes {
     | '/matriculas'
     | '/professores'
     | '/turmas'
+    | '/imprimir/estudante/$estudanteId'
+    | '/imprimir/turma/$turmaId'
   id:
     | '__root__'
     | '/_app'
@@ -271,6 +294,8 @@ export interface FileRouteTypes {
     | '/_app/matriculas/'
     | '/_app/professores/'
     | '/_app/turmas/'
+    | '/_app/imprimir/estudante/$estudanteId'
+    | '/_app/imprimir/turma/$turmaId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -427,6 +452,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTurmasQuadroRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/imprimir/estudante/$estudanteId': {
+      id: '/_app/imprimir/estudante/$estudanteId'
+      path: '/imprimir/estudante/$estudanteId'
+      fullPath: '/imprimir/estudante/$estudanteId'
+      preLoaderRoute: typeof AppImprimirEstudanteEstudanteIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/imprimir/turma/$turmaId': {
+      id: '/_app/imprimir/turma/$turmaId'
+      path: '/imprimir/turma/$turmaId'
+      fullPath: '/imprimir/turma/$turmaId'
+      preLoaderRoute: typeof AppImprimirTurmaTurmaIdRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -476,6 +515,8 @@ interface AppRouteChildren {
   AppMatriculasIndexRoute: typeof AppMatriculasIndexRoute
   AppProfessoresIndexRoute: typeof AppProfessoresIndexRoute
   AppTurmasIndexRoute: typeof AppTurmasIndexRoute
+  AppImprimirEstudanteEstudanteIdRoute: typeof AppImprimirEstudanteEstudanteIdRoute
+  AppImprimirTurmaTurmaIdRoute: typeof AppImprimirTurmaTurmaIdRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -492,6 +533,8 @@ const AppRouteChildren: AppRouteChildren = {
   AppMatriculasIndexRoute: AppMatriculasIndexRoute,
   AppProfessoresIndexRoute: AppProfessoresIndexRoute,
   AppTurmasIndexRoute: AppTurmasIndexRoute,
+  AppImprimirEstudanteEstudanteIdRoute: AppImprimirEstudanteEstudanteIdRoute,
+  AppImprimirTurmaTurmaIdRoute: AppImprimirTurmaTurmaIdRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

@@ -191,6 +191,7 @@ msgid "{titulo}: a gerar. Acompanhe no quadro de tarefas."
 msgstr "{titulo}: a gerar. Acompanhe no quadro de tarefas."
 
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "{total} estudantes"
 msgstr "{total} estudantes"
 
@@ -303,6 +304,10 @@ msgstr "A disciplina sai da lista. Não está em nenhum plano nem habilitação,
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "A emissão de declarações e certificados chega numa próxima versão."
 msgstr "A emissão de declarações e certificados chega numa próxima versão."
+
+#: src/shared/ui/pre-visualizacao-impressao.tsx
+msgid "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
+msgstr "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
 
 #: src/shared/ui/edicao-no-sitio.tsx
 msgid "A guardar"
@@ -469,6 +474,10 @@ msgstr "Ainda não foram emitidos documentos oficiais."
 msgid "Ainda não há anos lectivos."
 msgstr "Ainda não há anos lectivos."
 
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Ainda não há estudantes inscritos nesta turma."
+msgstr "Ainda não há estudantes inscritos nesta turma."
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Ainda não há estudantes neste ano."
 msgstr "Ainda não há estudantes neste ano."
@@ -518,6 +527,10 @@ msgstr "Alterar estado"
 msgid "Alterou"
 msgstr "Alterou"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Ano"
+msgstr "Ano"
+
 #: src/shared/config/glossario.ts
 msgid "ano lectivo"
 msgstr "ano lectivo"
@@ -525,6 +538,10 @@ msgstr "ano lectivo"
 #: src/entities/ano-lectivo/ui/selector-ano.tsx
 msgid "Ano lectivo"
 msgstr "Ano lectivo"
+
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Ano lectivo {ano}"
+msgstr "Ano lectivo {ano}"
 
 #: src/routes/_app/matriculas/nova.tsx
 msgid "Ano lectivo {designacao}"
@@ -599,6 +616,10 @@ msgstr "As atribuições fazem-se por turma e disciplina."
 #: src/routes/_app/definicoes/index.tsx
 msgid "As preferências de apresentação ficam guardadas neste navegador."
 msgstr "As preferências de apresentação ficam guardadas neste navegador."
+
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Assinatura: ____________________________"
+msgstr "Assinatura: ____________________________"
 
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Atalhos de teclado"
@@ -877,15 +898,18 @@ msgstr "Currículo"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Dados pessoais"
 msgstr "Dados pessoais"
 
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Data"
 msgstr "Data"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Data de nascimento"
 msgstr "Data de nascimento"
 
@@ -1031,6 +1055,7 @@ msgid "Disciplinas do plano"
 msgstr "Disciplinas do plano"
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Dispensado"
 msgstr "Dispensado"
 
@@ -1055,8 +1080,13 @@ msgstr "Distribuir estudantes"
 msgid "Distribuir por turmas"
 msgstr "Distribuir por turmas"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Documento"
+msgstr "Documento"
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento de identificação"
 msgstr "Documento de identificação"
 
@@ -1064,11 +1094,16 @@ msgstr "Documento de identificação"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Documentos"
 msgstr "Documentos"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Documentos de {nome}"
+msgstr "Documentos de {nome}"
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 msgid "Documentos do estudante"
@@ -1129,6 +1164,7 @@ msgstr "Em curso"
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Em falta"
 msgstr "Em falta"
@@ -1154,6 +1190,11 @@ msgstr "Em vigor desde {data}."
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Email"
 msgstr "Email"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Emitida em {emitida} por {autor}"
+msgstr "Emitida em {emitida} por {autor}"
 
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Emitir documentos oficiais"
@@ -1184,6 +1225,10 @@ msgstr "encarregados"
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Encarregados"
 msgstr "Encarregados"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Encarregados de educação"
+msgstr "Encarregados de educação"
 
 #: src/routes/_app/turmas/index.tsx
 msgid "Encerrada"
@@ -1218,6 +1263,7 @@ msgid "Entre de novo para continuar. O que estava a fazer continua neste ecrã."
 msgstr "Entre de novo para continuar. O que estava a fazer continua neste ecrã."
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Entregue"
 msgstr "Entregue"
@@ -1327,6 +1373,7 @@ msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção.
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/routes/_app/turmas/index.tsx
@@ -1358,6 +1405,7 @@ msgid "Este estudante já tem matrícula neste ano lectivo. Abrimos a matrícula
 msgstr "Este estudante já tem matrícula neste ano lectivo. Abrimos a matrícula existente."
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Este estudante não existe ou foi removido."
 msgstr "Este estudante não existe ou foi removido."
 
@@ -1394,6 +1442,10 @@ msgstr "estudantes"
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Estudantes"
 msgstr "Estudantes"
+
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Estudantes da turma {designacao}"
+msgstr "Estudantes da turma {designacao}"
 
 #: src/routes/_app/index.tsx
 msgid "Estudantes sem turma"
@@ -1500,6 +1552,7 @@ msgstr "Fechar o menu"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Feminino"
 msgstr "Feminino"
 
@@ -1528,7 +1581,12 @@ msgstr "Ficam por confirmar"
 msgid "Ficam por confirmar (faltam documentos):"
 msgstr "Ficam por confirmar (faltam documentos):"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Ficha — {nome}"
+msgstr "Ficha — {nome}"
+
 #: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Ficha do estudante"
 msgstr "Ficha do estudante"
 
@@ -1612,6 +1670,18 @@ msgstr "Igual ao primeiro num evento de um só dia."
 #: src/routes/_app/definicoes/index.tsx
 msgid "Igual ao sistema"
 msgstr "Igual ao sistema"
+
+#: src/shared/ui/pre-visualizacao-impressao.tsx
+msgid "Imprimir"
+msgstr "Imprimir"
+
+#: src/routes/_app/estudantes/$estudanteId.tsx
+msgid "Imprimir ficha"
+msgstr "Imprimir ficha"
+
+#: src/routes/_app/turmas/index.tsx
+msgid "Imprimir lista"
+msgstr "Imprimir lista"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Inactiva"
@@ -1758,6 +1828,14 @@ msgstr "Limpar selecção"
 msgid "Linha {linha}: {mensagem}"
 msgstr "Linha {linha}: {mensagem}"
 
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Lista nominal — {designacao}"
+msgstr "Lista nominal — {designacao}"
+
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Lista nominal da turma {designacao}"
+msgstr "Lista nominal da turma {designacao}"
+
 #: src/routes/_app/index.tsx
 msgid "Lotação máxima atingida"
 msgstr "Lotação máxima atingida"
@@ -1780,6 +1858,7 @@ msgstr "Manter o actual"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Masculino"
 msgstr "Masculino"
 
@@ -1792,6 +1871,10 @@ msgstr "matrícula"
 #: src/routes/_app/estudantes/index.tsx
 msgid "Matrícula"
 msgstr "Matrícula"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "matrícula a confirmar"
+msgstr "matrícula a confirmar"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Matrícula a confirmar"
@@ -1867,6 +1950,7 @@ msgstr "Mês seguinte"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Morada"
 msgstr "Morada"
 
@@ -1911,6 +1995,10 @@ msgstr "Mudar de turma"
 #: src/shared/lib/erros-dominio.ts
 msgid "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
 msgstr "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
+
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "N.º"
+msgstr "N.º"
 
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
@@ -1968,6 +2056,7 @@ msgstr "Nascimento"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Naturalidade"
 msgstr "Naturalidade"
 
@@ -1982,6 +2071,10 @@ msgstr "Navegar"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Nenhum"
 msgstr "Nenhum"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Nenhum encarregado registado."
+msgstr "Nenhum encarregado registado."
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nenhum estudante corresponde à pesquisa."
@@ -2020,6 +2113,7 @@ msgstr "Noite"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Nome"
 msgstr "Nome"
@@ -2137,9 +2231,17 @@ msgstr "O telefone tem 9 dígitos e começa por 9."
 msgid "O último dia não pode ser antes do primeiro."
 msgstr "O último dia não pode ser antes do primeiro."
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "obrigatório"
+msgstr "obrigatório"
+
 #: src/routes/_app/index.tsx
 msgid "Obrigatórios ainda não entregues"
 msgstr "Obrigatórios ainda não entregues"
+
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+msgid "Observações"
+msgstr "Observações"
 
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Ocorrência registada."
@@ -2261,8 +2363,13 @@ msgid "Pedir excepção de lotação"
 msgstr "Pedir excepção de lotação"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Percurso"
 msgstr "Percurso"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Percurso de {nome}"
+msgstr "Percurso de {nome}"
 
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Perfil"
@@ -2328,12 +2435,17 @@ msgstr "Por inactividade. O que estava a fazer continua guardado, {nome}."
 msgid "Porque não é o mesmo estudante?"
 msgstr "Porque não é o mesmo estudante?"
 
+#: src/shared/ui/pre-visualizacao-impressao.tsx
+msgid "Pré-visualização"
+msgstr "Pré-visualização"
+
 #: src/routes/_app/definicoes.tsx
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Preferências"
 msgstr "Preferências"
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "principal"
 msgstr "principal"
 
@@ -2344,6 +2456,7 @@ msgid "Principal"
 msgstr "Principal"
 
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "Processo"
 msgstr "Processo"
@@ -2351,6 +2464,7 @@ msgstr "Processo"
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Processo {processo}"
 msgstr "Processo {processo}"
 
@@ -2511,6 +2625,10 @@ msgstr "Registar ocorrência"
 msgid "Registar rectificação"
 msgstr "Registar rectificação"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Registo"
+msgstr "Registo"
+
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Registo correcto"
 msgstr "Registo correcto"
@@ -2616,6 +2734,10 @@ msgstr "Secções das definições"
 msgid "Secretaria"
 msgstr "Secretaria"
 
+#: src/shared/ui/pre-visualizacao-impressao.tsx
+msgid "Secretaria escolar"
+msgstr "Secretaria escolar"
+
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/estudantes/index.tsx
@@ -2667,6 +2789,7 @@ msgstr "Sem ligação. Pode continuar a consultar; as alterações são enviadas
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Sem matrícula neste ano"
 msgstr "Sem matrícula neste ano"
 
@@ -2702,6 +2825,7 @@ msgstr "Sessão bloqueada"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Sexo"
 msgstr "Sexo"
 
@@ -2759,6 +2883,7 @@ msgstr "Tarefas em segundo plano"
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Telefone"
@@ -2858,6 +2983,7 @@ msgid "turmas"
 msgstr "turmas"
 
 #: src/routes/_app/definicoes/perfis.tsx
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/routes/_app/turmas/index.tsx
 #: src/routes/_app/turmas/quadro.tsx

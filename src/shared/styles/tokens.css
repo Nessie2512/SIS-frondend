@@ -177,6 +177,29 @@
   }
 }
 
+/*
+ * Papel da pré-visualização: uma folha A4 sempre clara, mesmo no tema escuro, para que o ecrã
+ * mostre o que sai da impressora. Os tokens são repostos só dentro da folha.
+ */
+.papel {
+  color-scheme: light;
+  --color-fundo: #ffffff;
+  --color-superficie: #ffffff;
+  --color-texto-1: #1d1d1f;
+  --color-texto-2: #3d3d42;
+  --color-texto-3: #55555b;
+  --color-linha: #d2d2d7;
+  --color-contorno: #86868b;
+  --color-acento: #0a63e8;
+  --color-sobre-acento: #ffffff;
+  --color-perigo: #c00012;
+  --color-sucesso: #1e7b34;
+  --color-aviso: #8a5a00;
+  background: #ffffff;
+  color: var(--color-texto-1);
+  print-color-adjust: exact;
+}
+
 /* Impressão (guia 7.6): listas nominais e fichas imprimem-se limpas, sem casca nem cor de fundo */
 @page {
   margin: 15mm;
@@ -206,6 +229,15 @@
   [data-sonner-toaster],
   .nao-imprimir {
     display: none !important;
+  }
+  /* A folha ocupa a página: sem margens de ecrã, sem moldura */
+  .papel {
+    width: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    outline: none !important;
   }
   * {
     box-shadow: none !important;
