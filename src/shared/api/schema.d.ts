@@ -126,6 +126,40 @@ export interface paths {
   // Tarefas assíncronas
   '/tarefas/{id}': { get: Op<{ path: { id: string }; ok: S['TarefaDto']; erros: 404 }> }
 
+  // Professores
+  '/professores': {
+    get: Op<{
+      query: {
+        anoLectivoId: string
+        pesquisa?: string
+        estado?: S['EstadoProfessor']
+        disciplinaId?: string
+        page?: number
+        pageSize?: number
+      }
+      ok: S['PaginaProfessorDto']
+    }>
+  }
+  '/professores/{id}': {
+    get: Op<{
+      path: { id: string }
+      query: { anoLectivoId: string }
+      ok: S['ProfessorDto']
+      erros: 404
+    }>
+  }
+  '/professores/{id}/estado': {
+    post: Op<{
+      path: { id: string }
+      body: S['AlterarEstadoProfessorDto']
+      ok: S['EstadoProfessorDto']
+      erros: 403 | 404 | 422
+    }>
+  }
+
+  // Currículo
+  '/disciplinas': { get: Op<{ ok: S['DisciplinaDto'][] }> }
+
   // Vistas guardadas por utilizador (guia 7.1)
   '/vistas': {
     get: Op<{ query: { ecra: S['EcraVista'] }; ok: S['VistaDto'][] }>
@@ -305,6 +339,65 @@ export interface components {
     PesquisaDto: {
       estudantes: components['schemas']['EstudanteResumoDto'][]
       turmas: components['schemas']['TurmaDto'][]
+    }
+
+    // Professores
+    EstadoProfessor: 'ACTIVO' | 'LICENCA' | 'SUSPENSO' | 'DESLIGADO'
+    DisciplinaResumoDto: { id: string; nome: string; sigla: string }
+    ProfessorResumoDto: {
+      id: string
+      /** Número de agente: identificador imutável */
+      numeroAgente: string
+      nome: string
+      estado: components['schemas']['EstadoProfessor']
+      /** Disciplinas em que está habilitado */
+      disciplinas: components['schemas']['DisciplinaResumoDto'][]
+      /** Horas semanais atribuídas no ano lectivo pedido */
+      cargaLectiva: number
+      cargaMaxima: number
+      telefone: string | null
+      email: string | null
+      fotografiaUrl: string | null
+    }
+    PaginaProfessorDto: Pagina<components['schemas']['ProfessorResumoDto']>
+    AtribuicaoDto: {
+      id: string
+      turmaId: string
+      turma: string
+      classe: string
+      disciplinaId: string
+      disciplina: string
+      horasSemanais: number
+      /** Formato: date */
+      desde: string
+    }
+    DocumentoProfessorDto: {
+      tipo: string
+      rotulo: string
+      estado: 'ENTREGUE' | 'EM_FALTA'
+    }
+    ProfessorDto: components['schemas']['ProfessorResumoDto'] & {
+      habilitacao: string
+      /** Formato: date */
+      dataAdmissao: string
+      atribuicoes: components['schemas']['AtribuicaoDto'][]
+      documentos: components['schemas']['DocumentoProfessorDto'][]
+    }
+    AlterarEstadoProfessorDto: {
+      estado: components['schemas']['EstadoProfessor']
+      motivo?: string
+    }
+    EstadoProfessorDto: { id: string; estado: components['schemas']['EstadoProfessor'] }
+
+    // Currículo
+    EstadoDisciplina: 'ACTIVA' | 'INACTIVA'
+    DisciplinaDto: {
+      id: string
+      nome: string
+      sigla: string
+      estado: components['schemas']['EstadoDisciplina']
+      /** Em algum plano vigente: não se elimina, só se inactiva */
+      emUso: boolean
     }
 
     // Vistas guardadas

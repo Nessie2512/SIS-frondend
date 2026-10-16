@@ -23,6 +23,7 @@ export function AjudaAtalhos({
     ['g e', t`Ir para Estudantes`],
     ['g m', t`Ir para Matrículas`],
     ['g t', t`Ir para Turmas`],
+    ['g p', t`Ir para Professores`],
     ['?', t`Mostrar todos os atalhos`],
   ]
   return (

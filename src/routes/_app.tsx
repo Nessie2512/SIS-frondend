@@ -97,14 +97,32 @@ function LayoutApp() {
             <Link to="/" className={classesLigacao} activeOptions={{ exact: true }}>
               <Trans>Início</Trans>
             </Link>
-            <Link to="/estudantes" search={{ page: 1 }} className={classesLigacao}>
+            <Link
+              to="/estudantes"
+              search={{ page: 1 }}
+              activeOptions={{ includeSearch: false }}
+              className={classesLigacao}
+            >
               <Trans>Estudantes</Trans>
             </Link>
-            <Link to="/matriculas" search={{ page: 1 }} className={classesLigacao}>
+            <Link
+              to="/matriculas"
+              search={{ page: 1 }}
+              activeOptions={{ includeSearch: false }}
+              className={classesLigacao}
+            >
               <Trans>Matrículas</Trans>
             </Link>
             <Link to="/turmas" className={classesLigacao}>
               <Trans>Turmas</Trans>
+            </Link>
+            <Link
+              to="/professores"
+              search={{ page: 1 }}
+              activeOptions={{ includeSearch: false }}
+              className={classesLigacao}
+            >
+              <Trans>Professores</Trans>
             </Link>
           </nav>
           <div className="ml-auto flex items-center gap-2">

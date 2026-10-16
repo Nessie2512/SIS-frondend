@@ -8,6 +8,7 @@ import {
   Home,
   Keyboard,
   Moon,
+  Presentation,
   Rows3,
   Rows4,
   Sun,
@@ -153,6 +154,15 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             aoEscolher={() => executar(() => void router.navigate({ to: '/turmas' }))}
           >
             <Trans>Turmas</Trans>
+          </Item>
+          <Item
+            icone={<Presentation />}
+            atalho="g p"
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/professores', search: { page: 1 } }))
+            }
+          >
+            <Trans>Professores</Trans>
           </Item>
         </Grupo>
         <Grupo titulo={t`Agir`}>

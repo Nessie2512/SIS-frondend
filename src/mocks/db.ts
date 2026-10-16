@@ -1,4 +1,12 @@
 import type { components } from '@/shared/api'
+import {
+  criarAcademico,
+  type Atribuicao,
+  type Disciplina,
+  type Plano,
+  type Professor,
+} from './academico'
+import { APELIDOS, gerador, NOMES_F, NOMES_M } from './nomes'
 
 /**
  * Base de dados em memória do MSW (só desenvolvimento e testes).
@@ -6,68 +14,6 @@ import type { components } from '@/shared/api'
  * para os ecrãs se comportarem como com o backend real. Manter coerente com schema.d.ts.
  */
 type S = components['schemas']
-
-// ---------------------------------------------------------------------------
-// Gerador determinista (os mesmos dados em cada arranque)
-// ---------------------------------------------------------------------------
-function gerador(semente: number) {
-  let s = semente
-  return () => {
-    s = (s * 1664525 + 1013904223) % 2 ** 32
-    return s / 2 ** 32
-  }
-}
-
-const NOMES_F = [
-  'Maria',
-  'Ana',
-  'Luísa',
-  'Teresa',
-  'Esperança',
-  'Joana',
-  'Isabel',
-  'Rosa',
-  'Helena',
-  'Graça',
-  'Marta',
-  'Domingas',
-  'Celeste',
-  'Paula',
-]
-const NOMES_M = [
-  'João',
-  'Pedro',
-  'Manuel',
-  'António',
-  'Carlos',
-  'Domingos',
-  'Francisco',
-  'Paulo',
-  'José',
-  'Miguel',
-  'Mateus',
-  'Adão',
-  'Bento',
-  'Simão',
-]
-const APELIDOS = [
-  'Santos',
-  'Mateus',
-  'Domingos',
-  'Cassoma',
-  'Neto',
-  'Lopes',
-  'Fernandes',
-  'Kiala',
-  'Mbala',
-  'Tchissola',
-  'Quintas',
-  'Sebastião',
-  'Chipenda',
-  'Bento',
-  'Manuel',
-  'Vunge',
-]
 
 export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
   {
@@ -84,6 +30,12 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
       'turmas:escrever',
       'inscricoes:excepcao',
       'documentos:emitir',
+      'professores:ler',
+      'professores:escrever',
+      'curriculo:ler',
+      'curriculo:escrever',
+      'calendario:ler',
+      'calendario:escrever',
     ],
   },
   {
@@ -91,7 +43,14 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
     nome: 'João Consulta',
     email: 'consulta@escola.ao',
     palavraPasse: 'consulta',
-    permissoes: ['estudantes:ler', 'matriculas:ler', 'turmas:ler'],
+    permissoes: [
+      'estudantes:ler',
+      'matriculas:ler',
+      'turmas:ler',
+      'professores:ler',
+      'curriculo:ler',
+      'calendario:ler',
+    ],
   },
 ]
 
@@ -177,6 +136,10 @@ interface Estado {
   percurso: (S['EventoPercursoDto'] & { estudanteId: string })[]
   tarefas: Tarefa[]
   vistas: (S['VistaDto'] & { utilizadorId: string })[]
+  disciplinas: Disciplina[]
+  planos: Plano[]
+  professores: Professor[]
+  atribuicoes: Atribuicao[]
   idempotencia: Map<string, unknown>
   sequencia: number
 }
@@ -349,6 +312,7 @@ function criar(): Estado {
         filtros: { classeId: 'c7', semTurma: true },
       },
     ],
+    ...criarAcademico(classes, turmas, anosLectivos),
     idempotencia: new Map(),
     sequencia: n,
   }

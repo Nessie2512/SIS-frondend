@@ -45,6 +45,10 @@ export function Casca() {
         accao: () => void router.navigate({ to: '/matriculas', search: { page: 1 } }),
       },
       { teclas: 'g t', accao: () => void router.navigate({ to: '/turmas' }) },
+      {
+        teclas: 'g p',
+        accao: () => void router.navigate({ to: '/professores', search: { page: 1 } }),
+      },
       { teclas: 'shift+?', accao: () => setAjuda(true) },
     ],
     [router],

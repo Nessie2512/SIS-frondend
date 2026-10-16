@@ -97,8 +97,5 @@ export function paraEncarregado(dto: Dto<'EncarregadoDto'>): Encarregado {
 }
 
 /** Telefone angolano para mostrar: 923 456 789 */
-export function formatarTelefone(telefone: string | null) {
-  if (!telefone) return null
-  const digitos = telefone.replace(/\D/g, '')
-  return digitos.length === 9 ? digitos.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : telefone
-}
+// Partilhado com professores e encarregados
+export { formatarTelefone } from '@/shared/lib/formatar'
