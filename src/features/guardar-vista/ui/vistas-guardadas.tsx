@@ -87,7 +87,7 @@ export function VistasGuardadas({ ecra, pesquisa, aoAplicar, className }: Props)
                   type="button"
                   aria-label={t`Apagar a vista «${nome}»`}
                   onClick={() => apagarVista(vista)}
-                  className="mr-1 flex size-5 items-center justify-center rounded-full text-texto-3 outline-none hover:bg-fundo hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento"
+                  className="mr-0.5 flex size-6 items-center justify-center rounded-full text-texto-3 outline-none hover:bg-fundo hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento"
                 >
                   <X aria-hidden className="size-3.5 stroke-[1.5]" />
                 </button>

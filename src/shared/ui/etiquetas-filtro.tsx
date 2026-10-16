@@ -38,7 +38,7 @@ export function EtiquetasFiltro({ etiquetas, aoRemover, aoLimpar, className }: P
               type="button"
               aria-label={t`Retirar o filtro ${nome}: ${valor}`}
               onClick={() => aoRemover(chave)}
-              className="mr-1 flex size-5 items-center justify-center rounded-full text-texto-2 outline-none hover:bg-superficie hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento"
+              className="mr-0.5 flex size-6 items-center justify-center rounded-full text-texto-2 outline-none hover:bg-superficie hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento"
             >
               <X aria-hidden className="size-3.5 stroke-[1.5]" />
             </button>
