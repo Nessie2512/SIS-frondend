@@ -74,6 +74,8 @@ export function gerarCsv(tarefa: Tarefa): { nome: string; linhas: string[] } {
       m.estado !== 'ANULADA' &&
       (!classeId || m.classeId === classeId),
   )
+  if (tarefa.linhas)
+    return { nome: `${tarefa.tipo.toLowerCase()}-${tarefa.id}.csv`, linhas: tarefa.linhas }
   switch (tarefa.tipo) {
     case 'LISTA_NOMINAL': {
       const turma = turmaPorId(turmaId ?? null)
@@ -152,13 +154,14 @@ export function gerarCsv(tarefa: Tarefa): { nome: string; linhas: string[] } {
       }
     }
   }
+  return { nome: `${tarefa.tipo.toLowerCase()}.csv`, linhas: [] }
 }
 
 function paraExportacao(t: Tarefa): S['ExportacaoDto'] {
   const dto = paraTarefaDto(t)
   return {
     id: t.id,
-    tipo: t.tipo,
+    tipo: t.tipo as S['TipoRelatorio'],
     titulo: t.titulo,
     pedidoEm: new Date(t.inicio).toISOString(),
     estado: dto.estado,
@@ -181,7 +184,10 @@ export const handlersRelatorios = [
       return HttpResponse.json(
         db.tarefas
           .filter(
-            (t) => t.utilizadorId === utilizador.id && t.parametros.anoLectivoId === anoLectivoId,
+            (t) =>
+              t.tipo !== 'RENOVACAO' &&
+              t.utilizadorId === utilizador.id &&
+              t.parametros.anoLectivoId === anoLectivoId,
           )
           .sort((a, b) => b.inicio - a.inicio)
           .slice(0, 20)

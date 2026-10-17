@@ -28,6 +28,7 @@ import { Route as AppEstudantesIndexRouteImport } from './../routes/_app/estudan
 import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/estudantes/$estudanteId'
 import { Route as AppMatriculasIndexRouteImport } from './../routes/_app/matriculas/index'
 import { Route as AppMatriculasNovaRouteImport } from './../routes/_app/matriculas/nova'
+import { Route as AppMatriculasRenovarRouteImport } from './../routes/_app/matriculas/renovar'
 import { Route as AppProfessoresIndexRouteImport } from './../routes/_app/professores/index'
 import { Route as AppProfessoresProfessorIdRouteImport } from './../routes/_app/professores/$professorId'
 import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/index'
@@ -132,6 +133,11 @@ const AppMatriculasNovaRoute = AppMatriculasNovaRouteImport.update({
   path: '/matriculas/nova',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMatriculasRenovarRoute = AppMatriculasRenovarRouteImport.update({
+  id: '/matriculas/renovar',
+  path: '/matriculas/renovar',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppProfessoresIndexRoute = AppProfessoresIndexRouteImport.update({
   id: '/professores/',
   path: '/professores/',
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/matriculas/renovar': typeof AppMatriculasRenovarRoute
   '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/turmas/quadro': typeof AppTurmasQuadroRoute
   '/anos-lectivos/': typeof AppAnosLectivosIndexRoute
@@ -210,6 +217,7 @@ export interface FileRoutesByTo {
   '/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/matriculas/renovar': typeof AppMatriculasRenovarRoute
   '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/turmas/quadro': typeof AppTurmasQuadroRoute
   '/anos-lectivos': typeof AppAnosLectivosIndexRoute
@@ -239,6 +247,7 @@ export interface FileRoutesById {
   '/_app/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/_app/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/_app/matriculas/renovar': typeof AppMatriculasRenovarRoute
   '/_app/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/_app/turmas/quadro': typeof AppTurmasQuadroRoute
   '/_app/anos-lectivos/': typeof AppAnosLectivosIndexRoute
@@ -268,6 +277,7 @@ export interface FileRouteTypes {
     | '/definicoes/utilizadores'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
+    | '/matriculas/renovar'
     | '/professores/$professorId'
     | '/turmas/quadro'
     | '/anos-lectivos/'
@@ -293,6 +303,7 @@ export interface FileRouteTypes {
     | '/definicoes/utilizadores'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
+    | '/matriculas/renovar'
     | '/professores/$professorId'
     | '/turmas/quadro'
     | '/anos-lectivos'
@@ -321,6 +332,7 @@ export interface FileRouteTypes {
     | '/_app/definicoes/utilizadores'
     | '/_app/estudantes/$estudanteId'
     | '/_app/matriculas/nova'
+    | '/_app/matriculas/renovar'
     | '/_app/professores/$professorId'
     | '/_app/turmas/quadro'
     | '/_app/anos-lectivos/'
@@ -475,6 +487,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatriculasNovaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/matriculas/renovar': {
+      id: '/_app/matriculas/renovar'
+      path: '/matriculas/renovar'
+      fullPath: '/matriculas/renovar'
+      preLoaderRoute: typeof AppMatriculasRenovarRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/professores/': {
       id: '/_app/professores/'
       path: '/professores'
@@ -568,6 +587,7 @@ interface AppRouteChildren {
   AppAnosLectivosAnoIdRoute: typeof AppAnosLectivosAnoIdRoute
   AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
   AppMatriculasNovaRoute: typeof AppMatriculasNovaRoute
+  AppMatriculasRenovarRoute: typeof AppMatriculasRenovarRoute
   AppProfessoresProfessorIdRoute: typeof AppProfessoresProfessorIdRoute
   AppTurmasQuadroRoute: typeof AppTurmasQuadroRoute
   AppAnosLectivosIndexRoute: typeof AppAnosLectivosIndexRoute
@@ -589,6 +609,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnosLectivosAnoIdRoute: AppAnosLectivosAnoIdRoute,
   AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
   AppMatriculasNovaRoute: AppMatriculasNovaRoute,
+  AppMatriculasRenovarRoute: AppMatriculasRenovarRoute,
   AppProfessoresProfessorIdRoute: AppProfessoresProfessorIdRoute,
   AppTurmasQuadroRoute: AppTurmasQuadroRoute,
   AppAnosLectivosIndexRoute: AppAnosLectivosIndexRoute,

@@ -126,6 +126,10 @@ msgstr "{n} disciplinas sem docente."
 msgid "{n} em falta"
 msgstr "{n} em falta"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{n} estudantes ficam de fora por não terem resultado final registado em {origem}."
+msgstr "{n} estudantes ficam de fora por não terem resultado final registado em {origem}."
+
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "{n} matrículas ficam confirmadas."
 msgstr "{n} matrículas ficam confirmadas."
@@ -201,6 +205,10 @@ msgstr "{nome} sobre {destino}."
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "{nome}: {rotulo}."
 msgstr "{nome}: {rotulo}."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{nRetirados} retirados à mão."
+msgstr "{nRetirados} retirados à mão."
 
 #: src/entities/calendario/model/mapeadores.ts
 msgid "{numero}.º trimestre"
@@ -409,6 +417,18 @@ msgstr "A partir de"
 msgid "A procurar…"
 msgstr "A procurar…"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "A renovação começou. Acompanhe no quadro de tarefas."
+msgstr "A renovação começou. Acompanhe no quadro de tarefas."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "A renovação está a correr em segundo plano. Acompanhe-a no quadro de tarefas; quando terminar, distribua os estudantes pelas turmas."
+msgstr "A renovação está a correr em segundo plano. Acompanhe-a no quadro de tarefas; quando terminar, distribua os estudantes pelas turmas."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma."
+msgstr "A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma."
+
 #: src/routes/-casca/proteccao-sessao.tsx
 msgid "A sessão terminou"
 msgstr "A sessão terminou"
@@ -479,6 +499,7 @@ msgstr "Abrir, activar e encerrar anos lectivos"
 msgid "Abrir: {titulo}"
 msgstr "Abrir: {titulo}"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 #: src/routes/_app/definicoes/auditoria.tsx
 msgid "Acção"
 msgstr "Acção"
@@ -576,6 +597,10 @@ msgstr "Agente n.º {agente}"
 msgid "Agir"
 msgstr "Agir"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Agora"
+msgstr "Agora"
+
 #: src/routes/_app/index.tsx
 msgid "Aguardam documentos obrigatórios"
 msgstr "Aguardam documentos obrigatórios"
@@ -587,6 +612,10 @@ msgstr "Ainda há pendências por resolver. Resolva-as antes de encerrar o ano."
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Ainda não foram emitidos documentos oficiais."
 msgstr "Ainda não foram emitidos documentos oficiais."
+
+#: src/routes/_app/matriculas/renovar.tsx
+msgid "Ainda não há ano seguinte para onde renovar."
+msgstr "Ainda não há ano seguinte para onde renovar."
 
 #: src/routes/_app/calendario.tsx
 #: src/routes/_app/index.tsx
@@ -873,6 +902,7 @@ msgstr "Cancelado."
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Cancelar"
 msgstr "Cancelar"
 
@@ -925,6 +955,7 @@ msgstr "classe"
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/$professorId.tsx
@@ -937,6 +968,10 @@ msgstr "Classe"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Classe e turma"
 msgstr "Classe e turma"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Classe em {destino}"
+msgstr "Classe em {destino}"
 
 #: src/shared/config/glossario.ts
 msgid "classes"
@@ -964,6 +999,10 @@ msgstr "Completos"
 msgid "Concluída"
 msgstr "Concluída"
 
+#: src/entities/tarefa/ui/quadro-tarefas.tsx
+msgid "Concluída com avisos:"
+msgstr "Concluída com avisos:"
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "Concluídas"
 msgstr "Concluídas"
@@ -972,6 +1011,10 @@ msgstr "Concluídas"
 #: src/routes/_app/estudantes/index.tsx
 msgid "Concluído"
 msgstr "Concluído"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Concluiu a última classe da escola"
+msgstr "Concluiu a última classe da escola"
 
 #: src/entities/matricula/model/mapeadores.ts
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
@@ -989,6 +1032,10 @@ msgstr "Confirmar {n} matrículas"
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Confirmar 1 matrícula"
 msgstr "Confirmar 1 matrícula"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Confirmar a renovação de {aRenovar} matrículas"
+msgstr "Confirmar a renovação de {aRenovar} matrículas"
 
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Confirmar matrícula"
@@ -1046,6 +1093,10 @@ msgstr "Continuar a editar"
 msgid "Corrigir"
 msgstr "Corrigir"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Cria {aRenovar} matrículas confirmadas, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma."
+msgstr "Cria {aRenovar} matrículas confirmadas, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma."
+
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 msgid "Criar {designacao}"
 msgstr "Criar {designacao}"
@@ -1086,6 +1137,10 @@ msgstr "Crie o primeiro ano lectivo para começar."
 #: src/routes/_app/calendario.tsx
 msgid "Crie o primeiro ano lectivo para ver o calendário."
 msgstr "Crie o primeiro ano lectivo para ver o calendário."
+
+#: src/routes/_app/matriculas/renovar.tsx
+msgid "Crie primeiro o próximo ano lectivo; a renovação é uma das etapas da abertura."
+msgstr "Crie primeiro o próximo ano lectivo; a renovação é uma das etapas da abertura."
 
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Criou"
@@ -1141,6 +1196,10 @@ msgstr "de {de} a {ate}"
 #: src/routes/_app/anos-lectivos/index.tsx
 msgid "De {de} a {ate}"
 msgstr "De {de} a {ate}"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "De {origem} para {destino}."
+msgstr "De {origem} para {destino}."
 
 #: src/entities/professor/model/mapeadores.ts
 #: src/routes/_app/professores/index.tsx
@@ -1703,6 +1762,7 @@ msgstr "estudante"
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "Estudante"
@@ -1869,6 +1929,10 @@ msgstr "Feriados, datas-chave e interrupções"
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 msgid "Fica na lista de estudantes sem turma, no quadro da distribuição."
 msgstr "Fica na lista de estudantes sem turma, no quadro da distribuição."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Ficam de fora ({n})"
+msgstr "Ficam de fora ({n})"
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Ficam por confirmar"
@@ -2083,6 +2147,10 @@ msgstr "Interrupção"
 msgid "Interrupção lectiva"
 msgstr "Interrupção lectiva"
 
+#: src/routes/_app/matriculas/renovar.tsx
+msgid "Ir para Anos lectivos"
+msgstr "Ir para Anos lectivos"
+
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Ir para Estudantes"
 msgstr "Ir para Estudantes"
@@ -2119,6 +2187,10 @@ msgstr "Já existe uma disciplina com este nome ou sigla."
 #: src/shared/lib/erros-dominio.ts
 msgid "Já há um ano lectivo em curso. Encerre-o primeiro."
 msgstr "Já há um ano lectivo em curso. Encerre-o primeiro."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Já tem matrícula no ano seguinte"
+msgstr "Já tem matrícula no ano seguinte"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Já tem uma vista com este nome. Escolha outro."
@@ -2245,6 +2317,7 @@ msgstr "matrículas"
 #: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/matriculas/nova.tsx
+#: src/routes/_app/matriculas/renovar.tsx
 #: src/routes/-casca/menu-lateral.tsx
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Matrículas"
@@ -2253,6 +2326,10 @@ msgstr "Matrículas"
 #: src/routes/_app/index.tsx
 msgid "Matrículas a confirmar"
 msgstr "Matrículas a confirmar"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Matrículas a renovar"
+msgstr "Matrículas a renovar"
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Matrículas confirmadas sem turma"
@@ -2265,6 +2342,10 @@ msgstr "Matrículas novas e transferências"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Matrículas por confirmar"
 msgstr "Matrículas por confirmar"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Matrículas que não renovam"
+msgstr "Matrículas que não renovam"
 
 #: src/routes/-casca/menu-lateral.tsx
 msgid "Menu"
@@ -2301,6 +2382,7 @@ msgstr "Mostrar todos os atalhos"
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Motivo"
 msgstr "Motivo"
 
@@ -2390,6 +2472,10 @@ msgstr "Não se altera"
 msgid "Não tem permissão para esta acção."
 msgstr "Não tem permissão para esta acção."
 
+#: src/routes/_app/matriculas/renovar.tsx
+msgid "Não tem permissão para renovar matrículas."
+msgstr "Não tem permissão para renovar matrículas."
+
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nascimento"
@@ -2448,6 +2534,14 @@ msgstr "Nenhuma. Está resolvido."
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Neste dia"
 msgstr "Neste dia"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Ninguém fica de fora."
+msgstr "Ninguém fica de fora."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Ninguém renova com os dados actuais."
+msgstr "Ninguém renova com os dados actuais."
 
 #: src/entities/turma/model/mapeadores.ts
 msgid "Noite"
@@ -2714,6 +2808,10 @@ msgstr "Paleta de comandos"
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Paleta de comandos: navegar, pesquisar, agir"
 msgstr "Paleta de comandos: navegar, pesquisar, agir"
+
+#: src/routes/_app/matriculas/renovar.tsx
+msgid "Para {designacao}. Os aprovados passam à classe seguinte; os reprovados repetem."
+msgstr "Para {designacao}. Os aprovados passam à classe seguinte; os reprovados repetem."
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
@@ -3085,9 +3183,53 @@ msgstr "Relatórios"
 msgid "Relatórios disponíveis"
 msgstr "Relatórios disponíveis"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Renova na"
+msgstr "Renova na"
+
+#: src/routes/_app/matriculas/renovar.tsx
+msgid "Renovação de matrículas"
+msgstr "Renovação de matrículas"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Renovação por classe de destino"
+msgstr "Renovação por classe de destino"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Renovam ({n})"
+msgstr "Renovam ({n})"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Renovar {aRenovar}"
+msgstr "Renovar {aRenovar}"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Renovar {aRenovar} matrículas para {designacao}"
+msgstr "Renovar {aRenovar} matrículas para {designacao}"
+
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Renovar as matrículas"
 msgstr "Renovar as matrículas"
+
+#: src/routes/_app/matriculas/index.tsx
+msgid "Renovar em lote"
+msgstr "Renovar em lote"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Repete"
+msgstr "Repete"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Repetem"
+msgstr "Repetem"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Repor"
+msgstr "Repor"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Repor {nome}"
+msgstr "Repor {nome}"
 
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "Reprovado"
@@ -3098,6 +3240,7 @@ msgid "Resolva primeiro as pendências assinaladas ({bloqueantes})."
 msgstr "Resolva primeiro as pendências assinaladas ({bloqueantes})."
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Resultado"
 msgstr "Resultado"
 
@@ -3135,9 +3278,18 @@ msgstr "Resultados registados"
 msgid "Resumo"
 msgstr "Resumo"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Resumo por classe"
+msgstr "Resumo por classe"
+
 #: src/features/editar-plano/ui/editor-plano.tsx
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Retirar"
 msgstr "Retirar"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Retirar {nome}"
+msgstr "Retirar {nome}"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Retirar {nome} do plano"
@@ -3272,6 +3424,10 @@ msgstr "Sem matrícula neste ano"
 msgid "Sem ocorrências registadas."
 msgstr "Sem ocorrências registadas."
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Sem resultado final registado"
+msgstr "Sem resultado final registado"
+
 #: src/shared/ui/selector.tsx
 msgid "Sem resultados."
 msgstr "Sem resultados."
@@ -3308,6 +3464,22 @@ msgstr "Sexo"
 msgid "Sigla"
 msgstr "Sigla"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Simulação pronta: {n} renovam, {fora} ficam de fora."
+msgstr "Simulação pronta: {n} renovam, {fora} ficam de fora."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Simular a renovação"
+msgstr "Simular a renovação"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Simular de novo"
+msgstr "Simular de novo"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Simular não muda nada. Pode simular as vezes que quiser."
+msgstr "Simular não muda nada. Pode simular as vezes que quiser."
+
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Simule, reveja os excluídos e confirme."
 msgstr "Simule, reveja os excluídos e confirme."
@@ -3343,6 +3515,14 @@ msgstr "Só se reabre com justificação, e fica registado na auditoria."
 #: src/routes/_app/anos-lectivos/index.tsx
 msgid "Só um ano está em curso de cada vez. O seguinte prepara-se por etapas."
 msgstr "Só um ano está em curso de cada vez. O seguinte prepara-se por etapas."
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Sobe"
+msgstr "Sobe"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Sobem"
+msgstr "Sobem"
 
 #: src/routes/_app/definicoes/auditoria.tsx
 msgid "Sobre"
@@ -3450,6 +3630,10 @@ msgstr "Todas as matrículas têm turma."
 msgid "Todos"
 msgstr "Todos"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Total"
+msgstr "Total"
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Total semanal"
@@ -3463,6 +3647,10 @@ msgstr "Transferência"
 #: src/routes/_app/estudantes/index.tsx
 msgid "Transferido"
 msgstr "Transferido"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Transferido, desistente ou com processo anulado"
+msgstr "Transferido, desistente ou com processo anulado"
 
 #: src/shared/config/glossario.ts
 msgid "turma"
@@ -3545,6 +3733,10 @@ msgstr "Utilizadores"
 msgid "Valor actual"
 msgstr "Valor actual"
 
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Veja abaixo porque ficam de fora."
+msgstr "Veja abaixo porque ficam de fora."
+
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Ver a rectificação"
 msgstr "Ver a rectificação"
@@ -3552,6 +3744,10 @@ msgstr "Ver a rectificação"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Ver matrículas"
 msgstr "Ver matrículas"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Ver os resultados em falta por turma"
+msgstr "Ver os resultados em falta por turma"
 
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Ver os utilizadores com o perfil {nome}"
@@ -3610,3 +3806,7 @@ msgstr "Vistas guardadas"
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Voltar aos estudantes"
 msgstr "Voltar aos estudantes"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "Voltar às etapas da abertura"
+msgstr "Voltar às etapas da abertura"

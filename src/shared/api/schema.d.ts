@@ -318,6 +318,24 @@ export interface paths {
     }>
   }
 
+  // Renovação de matrículas em lote (guia 2.3: simular, rever, confirmar, acompanhar)
+  '/renovacoes/simular': {
+    post: Op<{
+      body: S['SimularRenovacaoDto']
+      ok: S['SimulacaoRenovacaoDto']
+      erros: 403 | 404 | 409
+    }>
+  }
+  '/renovacoes/{id}/aplicar': {
+    post: Op<{
+      path: { id: string }
+      header: { 'Idempotency-Key': string }
+      body: S['AplicarRenovacaoDto']
+      ok: S['TarefaDto']
+      erros: 403 | 404 | 409
+    }>
+  }
+
   // Docentes da turma (guia 2.3: atribuir e substituir)
   '/turmas/{id}/docentes': {
     get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
@@ -768,6 +786,39 @@ export interface components {
         resultado: components['schemas']['ResultadoFinal'] | null
       }[]
     }
+
+    // Renovação
+    SimularRenovacaoDto: { anoDestinoId: string }
+    MotivoExclusao: 'SEM_RESULTADO' | 'FIM_DE_CICLO' | 'JA_MATRICULADO' | 'ESTUDANTE_INACTIVO'
+    SimulacaoRenovacaoDto: {
+      id: string
+      anoOrigemId: string
+      anoOrigem: string
+      anoDestinoId: string
+      anoDestino: string
+      /** Por classe de destino */
+      resumo: { classeId: string; classe: string; total: number; sobem: number; repetem: number }[]
+      incluidos: {
+        matriculaId: string
+        estudanteId: string
+        nome: string
+        numeroProcesso: string
+        classeActual: string
+        resultado: components['schemas']['ResultadoFinal']
+        classeDestinoId: string
+        classeDestino: string
+      }[]
+      excluidos: {
+        matriculaId: string
+        estudanteId: string
+        nome: string
+        numeroProcesso: string
+        classeActual: string
+        motivo: components['schemas']['MotivoExclusao']
+      }[]
+    }
+    /** Matrículas incluídas na simulação que o utilizador retirou à mão */
+    AplicarRenovacaoDto: { excluir: string[] }
 
     // Docentes da turma
     DocenteTurmaDto: {

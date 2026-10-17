@@ -116,6 +116,20 @@ function LinhaTarefa({ id }: { id: string }) {
           </a>
         </Button>
       )}
+      {tarefa.estado === 'CONCLUIDA' && tarefa.erros.length > 0 && (
+        <div className="flex flex-col gap-1 text-secundario">
+          <p className="text-aviso">
+            <Trans>Concluída com avisos:</Trans>
+          </p>
+          <ul className="flex flex-col gap-0.5 text-texto-2">
+            {tarefa.erros.map((e) => {
+              const linha = e.linha
+              const mensagem = e.mensagem
+              return <li key={`${linha}-${mensagem}`}>{t`Linha ${linha}: ${mensagem}`}</li>
+            })}
+          </ul>
+        </div>
+      )}
       {tarefa.estado === 'FALHADA' && (
         <div className="flex flex-col gap-1 text-secundario">
           <p className="text-perigo">

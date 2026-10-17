@@ -171,6 +171,12 @@ function AccaoEtapa({
       ) : podeGerir ? (
         <BotaoDuplicarTurmas ano={ano} />
       ) : null
+    case 'RENOVACAO':
+      return etapa.estado === 'FEITA' ? null : (
+        <LigacaoNoAno ano={ano} to="/matriculas/renovar" rotulo={rotulo}>
+          <Trans>Abrir</Trans>
+        </LigacaoNoAno>
+      )
     case 'MATRICULAS':
       return (
         <LigacaoNoAno ano={ano} to="/matriculas/nova" rotulo={rotulo}>

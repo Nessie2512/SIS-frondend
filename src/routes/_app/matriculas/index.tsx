@@ -178,12 +178,19 @@ function EcraMatriculas() {
         </div>
         <Can permissao="matriculas:escrever">
           {!soLeitura && (
-            <Button asChild variante="primario">
-              <Link to="/matriculas/nova" data-atalho="novo">
-                <Plus aria-hidden />
-                <Trans>Matricular estudante</Trans>
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild>
+                <Link to="/matriculas/renovar">
+                  <Trans>Renovar em lote</Trans>
+                </Link>
+              </Button>
+              <Button asChild variante="primario">
+                <Link to="/matriculas/nova" data-atalho="novo">
+                  <Plus aria-hidden />
+                  <Trans>Matricular estudante</Trans>
+                </Link>
+              </Button>
+            </div>
           )}
         </Can>
       </div>

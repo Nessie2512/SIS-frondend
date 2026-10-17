@@ -129,13 +129,16 @@ type Documento = S['DocumentoEstudanteDto'] & {
 }
 export interface Tarefa {
   id: string
-  tipo: S['TipoRelatorio']
+  tipo: S['TipoRelatorio'] | 'RENOVACAO'
   parametros: { anoLectivoId: string; turmaId?: string; classeId?: string }
   titulo: string
   utilizadorId: string | null
   inicio: number
   duracao: number
   falha: boolean
+  /** Resultado já calculado (renovação): linhas do CSV e avisos por linha */
+  linhas?: string[]
+  avisos?: { linha: number; mensagem: string }[]
 }
 
 interface Estado {
@@ -165,6 +168,8 @@ export interface Renovacao {
   anoOrigemId: string
   anoDestinoId: string
   aplicada: boolean
+  /** Matrículas que a simulação incluía (para avisar de quem entretanto deixou de poder) */
+  incluidos: string[]
 }
 
 function criar(): Estado {
@@ -499,8 +504,11 @@ export function paraTarefaDto(t: Tarefa): S['TarefaDto'] {
     estado: terminou ? (t.falha ? 'FALHADA' : 'CONCLUIDA') : 'EM_CURSO',
     progresso: t.falha && terminou ? 70 : progresso,
     resultadoUrl: terminou && !t.falha ? `/api/v1/tarefas/${t.id}/resultado` : null,
-    erros:
-      t.falha && terminou ? [{ linha: 12, mensagem: 'Estudante sem número de processo.' }] : [],
+    erros: !terminou
+      ? []
+      : t.falha
+        ? [{ linha: 12, mensagem: 'Estudante sem número de processo.' }]
+        : (t.avisos ?? []),
   }
 }
 

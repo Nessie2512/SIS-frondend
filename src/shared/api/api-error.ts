@@ -26,6 +26,7 @@ export type CodigoErroDominio =
   | 'PENDENCIAS_POR_RESOLVER'
   | 'OUTRO_ANO_EM_CURSO'
   | 'ANO_PLANEADO_EXISTENTE'
+  | 'RENOVACAO_APLICADA'
 
 export interface ErroDeCampo {
   campo: string
