@@ -524,6 +524,7 @@ export const handlers = [
           turmaId: dados.turmaId ?? null,
           estado: completos ? ('CONFIRMADA' as const) : ('PENDENTE' as const),
           criadaEm: new Date().toISOString(),
+          resultado: null,
         }
         db.matriculas.push(matricula)
         db.percurso.push({
@@ -724,6 +725,51 @@ export const handlers = [
     }),
   ),
 
+  // ---------------------------------------------------------------- resultados finais
+  http.get(
+    `${API}/turmas/:id/resultados`,
+    protegido('matriculas:ler', ({ params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      return HttpResponse.json(resultadosDa(turma.id))
+    }),
+  ),
+
+  http.put(
+    `${API}/turmas/:id/resultados`,
+    protegido('matriculas:escrever', async ({ request, params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      if (anoEncerrado(turma.anoLectivoId)) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      const { resultados } = (await request.json()) as S['RegistarResultadosDto']
+      const daTurma = new Map(
+        db.matriculas
+          .filter((m) => m.turmaId === turma.id && m.estado === 'CONFIRMADA')
+          .map((m) => [m.id, m]),
+      )
+      const invalidos = resultados.filter(
+        (r) =>
+          !daTurma.has(r.matriculaId) ||
+          (r.resultado !== null && r.resultado !== 'APROVADO' && r.resultado !== 'REPROVADO'),
+      )
+      if (invalidos.length) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'resultados', mensagem: 'Há matrículas que não são desta turma.' }],
+        })
+      }
+      for (const r of resultados) daTurma.get(r.matriculaId)!.resultado = r.resultado
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Resultados finais',
+        `${turma.designacao}: ${resultados.length} resultados registados`,
+      )
+      return HttpResponse.json(resultadosDa(turma.id))
+    }),
+  ),
+
   // ---------------------------------------------------------------- vistas guardadas
   http.get(
     `${API}/vistas`,
@@ -846,16 +892,39 @@ function validarDestino(request: Request, turmaId: string, classeId: string, exc
   return null
 }
 
-function registarPercurso(estudanteId: string, tipo: S['TipoEventoPercurso'], descricao: string) {
+export function registarPercurso(
+  estudanteId: string,
+  tipo: S['TipoEventoPercurso'],
+  descricao: string,
+  anoLectivo = '2026/2027',
+  autor = 'Maria Secretária',
+) {
   db.percurso.push({
     id: novoId('p'),
     estudanteId,
     data: new Date().toISOString(),
-    anoLectivo: '2026/2027',
+    anoLectivo,
     tipo,
     descricao,
-    autor: 'Maria Secretária',
+    autor,
     rectificaId: null,
     motivo: null,
   })
+}
+
+/** Matrículas confirmadas da turma com o resultado final, por ordem alfabética. */
+function resultadosDa(turmaId: string): S['ResultadoFinalDto'][] {
+  return db.matriculas
+    .filter((m) => m.turmaId === turmaId && (m.estado === 'CONFIRMADA' || m.estado === 'CONCLUIDA'))
+    .map((m) => {
+      const e = db.estudantes.find((x) => x.id === m.estudanteId)!
+      return {
+        matriculaId: m.id,
+        estudanteId: e.id,
+        nome: e.nome,
+        numeroProcesso: e.numeroProcesso,
+        resultado: m.resultado,
+      }
+    })
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
 }

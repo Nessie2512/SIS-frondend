@@ -114,6 +114,8 @@ interface Matricula {
   turmaId: string | null
   estado: S['EstadoMatricula']
   criadaEm: string
+  /** Resultado final do ano (guia 2.3: registado antes de encerrar) */
+  resultado: S['ResultadoFinal'] | null
 }
 interface Encarregado extends Omit<S['EncarregadoDto'], 'principal' | 'outrosEducandos'> {
   educandos: string[]
@@ -233,6 +235,7 @@ function criar(): Estado {
         turmaId: semTurma ? null : turma.id,
         estado: pendente ? 'PENDENTE' : 'CONFIRMADA',
         criadaEm: '2026-08-20T09:30:00Z',
+        resultado: null,
       })
       for (const d of TIPOS_DOCUMENTO) {
         const emFalta = pendente && d.obrigatorio && aleatorio() < 0.5

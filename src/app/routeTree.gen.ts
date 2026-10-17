@@ -32,6 +32,7 @@ import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/inde
 import { Route as AppTurmasQuadroRouteImport } from './../routes/_app/turmas/quadro'
 import { Route as AppImprimirEstudanteEstudanteIdRouteImport } from './../routes/_app/imprimir/estudante.$estudanteId'
 import { Route as AppImprimirTurmaTurmaIdRouteImport } from './../routes/_app/imprimir/turma.$turmaId'
+import { Route as AppTurmasTurmaIdResultadosRouteImport } from './../routes/_app/turmas/$turmaId.resultados'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -151,6 +152,12 @@ const AppImprimirTurmaTurmaIdRoute = AppImprimirTurmaTurmaIdRouteImport.update({
   path: '/imprimir/turma/$turmaId',
   getParentRoute: () => AppRoute,
 } as any)
+const AppTurmasTurmaIdResultadosRoute =
+  AppTurmasTurmaIdResultadosRouteImport.update({
+    id: '/turmas/$turmaId/resultados',
+    path: '/turmas/$turmaId/resultados',
+    getParentRoute: () => AppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
@@ -175,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/turmas/': typeof AppTurmasIndexRoute
   '/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
   '/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
+  '/turmas/$turmaId/resultados': typeof AppTurmasTurmaIdResultadosRoute
 }
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
@@ -197,6 +205,7 @@ export interface FileRoutesByTo {
   '/turmas': typeof AppTurmasIndexRoute
   '/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
   '/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
+  '/turmas/$turmaId/resultados': typeof AppTurmasTurmaIdResultadosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -223,6 +232,7 @@ export interface FileRoutesById {
   '/_app/turmas/': typeof AppTurmasIndexRoute
   '/_app/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
   '/_app/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
+  '/_app/turmas/$turmaId/resultados': typeof AppTurmasTurmaIdResultadosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -249,6 +259,7 @@ export interface FileRouteTypes {
     | '/turmas/'
     | '/imprimir/estudante/$estudanteId'
     | '/imprimir/turma/$turmaId'
+    | '/turmas/$turmaId/resultados'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/entrar'
@@ -271,6 +282,7 @@ export interface FileRouteTypes {
     | '/turmas'
     | '/imprimir/estudante/$estudanteId'
     | '/imprimir/turma/$turmaId'
+    | '/turmas/$turmaId/resultados'
   id:
     | '__root__'
     | '/_app'
@@ -296,6 +308,7 @@ export interface FileRouteTypes {
     | '/_app/turmas/'
     | '/_app/imprimir/estudante/$estudanteId'
     | '/_app/imprimir/turma/$turmaId'
+    | '/_app/turmas/$turmaId/resultados'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -466,6 +479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppImprimirTurmaTurmaIdRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/turmas/$turmaId/resultados': {
+      id: '/_app/turmas/$turmaId/resultados'
+      path: '/turmas/$turmaId/resultados'
+      fullPath: '/turmas/$turmaId/resultados'
+      preLoaderRoute: typeof AppTurmasTurmaIdResultadosRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
@@ -517,6 +537,7 @@ interface AppRouteChildren {
   AppTurmasIndexRoute: typeof AppTurmasIndexRoute
   AppImprimirEstudanteEstudanteIdRoute: typeof AppImprimirEstudanteEstudanteIdRoute
   AppImprimirTurmaTurmaIdRoute: typeof AppImprimirTurmaTurmaIdRoute
+  AppTurmasTurmaIdResultadosRoute: typeof AppTurmasTurmaIdResultadosRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -535,6 +556,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTurmasIndexRoute: AppTurmasIndexRoute,
   AppImprimirEstudanteEstudanteIdRoute: AppImprimirEstudanteEstudanteIdRoute,
   AppImprimirTurmaTurmaIdRoute: AppImprimirTurmaTurmaIdRoute,
+  AppTurmasTurmaIdResultadosRoute: AppTurmasTurmaIdResultadosRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

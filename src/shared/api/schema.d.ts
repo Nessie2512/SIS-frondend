@@ -275,6 +275,17 @@ export interface paths {
     }>
   }
 
+  // Resultados finais (guia 2.3: registar antes de encerrar o ano)
+  '/turmas/{id}/resultados': {
+    get: Op<{ path: { id: string }; ok: S['ResultadoFinalDto'][]; erros: 404 }>
+    put: Op<{
+      path: { id: string }
+      body: S['RegistarResultadosDto']
+      ok: S['ResultadoFinalDto'][]
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+
   // Docentes da turma (guia 2.3: atribuir e substituir)
   '/turmas/{id}/docentes': {
     get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
@@ -665,6 +676,22 @@ export interface components {
       estado: components['schemas']['TarefaDto']['estado']
       progresso: number
       resultadoUrl: string | null
+    }
+
+    // Resultados finais
+    ResultadoFinal: 'APROVADO' | 'REPROVADO'
+    ResultadoFinalDto: {
+      matriculaId: string
+      estudanteId: string
+      nome: string
+      numeroProcesso: string
+      resultado: components['schemas']['ResultadoFinal'] | null
+    }
+    RegistarResultadosDto: {
+      resultados: {
+        matriculaId: string
+        resultado: components['schemas']['ResultadoFinal'] | null
+      }[]
     }
 
     // Docentes da turma

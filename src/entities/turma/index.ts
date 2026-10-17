@@ -7,7 +7,15 @@ export type {
   PaginaTurmas,
   Inscrito,
   DocenteTurma,
+  ResultadoFinal,
 } from './model/tipos'
 export { paraTurma, paraPaginaTurmas, paraInscrito } from './model/mapeadores'
-export { turmaKeys, turmasQuery, turmaQuery, inscritosQuery, docentesQuery } from './api/queries'
+export {
+  turmaKeys,
+  turmasQuery,
+  turmaQuery,
+  inscritosQuery,
+  docentesQuery,
+  resultadosQuery,
+} from './api/queries'
 export { BarraOcupacao } from './ui/barra-ocupacao'

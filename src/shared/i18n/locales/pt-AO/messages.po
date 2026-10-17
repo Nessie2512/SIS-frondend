@@ -44,6 +44,14 @@ msgstr "{cargaLectiva} de {cargaMaxima} h"
 msgid "{cargaLectiva} de {cargaMaxima} horas semanais"
 msgstr "{cargaLectiva} de {cargaMaxima} horas semanais"
 
+#: src/routes/_app/turmas/$turmaId.resultados.tsx
+msgid "{classe}. Os aprovados passam à classe seguinte na renovação; os reprovados repetem."
+msgstr "{classe}. Os aprovados passam à classe seguinte na renovação; os reprovados repetem."
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{designacao}: {n} resultados guardados."
+msgstr "{designacao}: {n} resultados guardados."
+
 #: src/features/marcar-documento/model/use-marcar-documento.ts
 msgid "{designacao}: em falta."
 msgstr "{designacao}: em falta."
@@ -110,6 +118,10 @@ msgstr "{n} em falta"
 msgid "{n} matrículas ficam confirmadas."
 msgstr "{n} matrículas ficam confirmadas."
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{n} resultados guardados."
+msgstr "{n} resultados guardados."
+
 #: src/features/editar-plano/model/use-editar-plano.ts
 msgid "{nome} acrescentada ao plano."
 msgstr "{nome} acrescentada ao plano."
@@ -166,6 +178,10 @@ msgstr "{nome}: {rotulo}."
 msgid "{numero}.º trimestre"
 msgstr "{numero}.º trimestre"
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{porGuardar} por guardar"
+msgstr "{porGuardar} por guardar"
+
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "{progresso}% · pode continuar a trabalhar"
 msgstr "{progresso}% · pode continuar a trabalhar"
@@ -173,6 +189,10 @@ msgstr "{progresso}% · pode continuar a trabalhar"
 #: src/shared/ui/selector.tsx
 msgid "{quantos} seleccionados"
 msgstr "{quantos} seleccionados"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{registados} de {total} registados"
+msgstr "{registados} de {total} registados"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "{semDocente} sem docente"
@@ -624,6 +644,10 @@ msgstr "Apagar a vista «{nome}»"
 #: src/routes/_app/definicoes/index.tsx
 msgid "Apresentação"
 msgstr "Apresentação"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Aprovado"
+msgstr "Aprovado"
 
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Área"
@@ -1496,6 +1520,7 @@ msgid "estudante"
 msgstr "estudante"
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "Estudante"
@@ -1711,6 +1736,10 @@ msgstr "Guardar ou confirmar"
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Guardar rascunho e sair"
 msgstr "Guardar rascunho e sair"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Guardar resultados"
+msgstr "Guardar resultados"
 
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Guardar vista"
@@ -1934,6 +1963,10 @@ msgstr "Manhã"
 msgid "Manter o actual"
 msgstr "Manter o actual"
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Marcar os {emFalta} em falta como aprovados"
+msgstr "Marcar os {emFalta} em falta como aprovados"
+
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -2075,6 +2108,7 @@ msgstr "Mudar de turma"
 msgid "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
 msgstr "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "N.º"
 msgstr "N.º"
@@ -2111,6 +2145,10 @@ msgstr "Não foi possível concluir. Corrija estas linhas e tente de novo:"
 #: src/shared/lib/erros-dominio.ts
 msgid "Não foi possível guardar. A sua alteração continua aqui."
 msgstr "Não foi possível guardar. A sua alteração continua aqui."
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Não há estudantes com matrícula confirmada nesta turma."
+msgstr "Não há estudantes com matrícula confirmada nesta turma."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Não pode desactivar a sua própria conta."
@@ -2267,6 +2305,10 @@ msgstr "O ano lectivo está encerrado. O calendário fica só para consulta."
 msgid "O ano lectivo está encerrado. O quadro está só de leitura."
 msgstr "O ano lectivo está encerrado. O quadro está só de leitura."
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "O ano lectivo está encerrado. Os resultados ficam só para consulta."
+msgstr "O ano lectivo está encerrado. Os resultados ficam só para consulta."
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 msgid "O ano lectivo está encerrado. Só é possível consultar."
@@ -2367,6 +2409,10 @@ msgstr "Os relatórios que pedir ficam aqui para descarregar."
 #: src/routes/_app/relatorios.tsx
 msgid "Os relatórios são gerados em segundo plano: pode continuar a trabalhar e descarregar quando estiverem prontos."
 msgstr "Os relatórios são gerados em segundo plano: pode continuar a trabalhar e descarregar quando estiverem prontos."
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Os resultados registam-se para as matrículas confirmadas."
+msgstr "Os resultados registam-se para as matrículas confirmadas."
 
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Outra"
@@ -2513,6 +2559,10 @@ msgstr "Pode ter sido escrito mal o endereço. Procure na lista de professores."
 #: src/shared/ui/ecra-bloqueado.tsx
 msgid "Por inactividade. O que estava a fazer continua guardado, {nome}."
 msgstr "Por inactividade. O que estava a fazer continua guardado, {nome}."
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Por registar"
+msgstr "Por registar"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Porque não é o mesmo estudante?"
@@ -2742,13 +2792,38 @@ msgstr "Relatórios"
 msgid "Relatórios disponíveis"
 msgstr "Relatórios disponíveis"
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Reprovado"
+msgstr "Reprovado"
+
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Resultado"
 msgstr "Resultado"
 
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Resultado de {nome}"
+msgstr "Resultado de {nome}"
+
 #: src/entities/estudante/model/mapeadores.ts
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "Resultado final"
 msgstr "Resultado final"
+
+#: src/routes/_app/turmas/index.tsx
+msgid "Resultados finais"
+msgstr "Resultados finais"
+
+#: src/routes/_app/turmas/$turmaId.resultados.tsx
+msgid "Resultados finais — {designacao}"
+msgstr "Resultados finais — {designacao}"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Resultados finais da turma {designacao}"
+msgstr "Resultados finais da turma {designacao}"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "Resultados registados"
+msgstr "Resultados registados"
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/professores/$professorId.tsx
@@ -3088,6 +3163,7 @@ msgstr "turmas"
 #: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 #: src/routes/_app/professores/index.tsx
+#: src/routes/_app/turmas/$turmaId.resultados.tsx
 #: src/routes/_app/turmas/index.tsx
 #: src/routes/_app/turmas/quadro.tsx
 #: src/routes/-casca/menu-lateral.tsx

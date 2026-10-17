@@ -48,3 +48,6 @@ export interface Inscrito {
 
 /** Disciplina do plano com o docente em vigor e o histórico de substituições (guia 2.3). */
 export type DocenteTurma = components['schemas']['DocenteTurmaDto']
+
+/** Resultado final de uma matrícula da turma (guia 2.3: registar antes de encerrar o ano). */
+export type ResultadoFinal = components['schemas']['ResultadoFinalDto']

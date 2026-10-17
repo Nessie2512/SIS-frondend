@@ -225,6 +225,11 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
               </Link>
             </Button>
             <Button asChild>
+              <Link to="/turmas/$turmaId/resultados" params={{ turmaId: turma.id }}>
+                <Trans>Resultados finais</Trans>
+              </Link>
+            </Button>
+            <Button asChild>
               <Link to="/imprimir/turma/$turmaId" params={{ turmaId: turma.id }}>
                 <Printer aria-hidden className="size-4 stroke-[1.5]" />
                 <Trans>Imprimir lista</Trans>
