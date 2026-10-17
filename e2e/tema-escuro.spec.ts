@@ -24,6 +24,7 @@ const ECRAS: [string, string | RegExp][] = [
   ['/anos-lectivos/ano-2026', 'Ano lectivo 2026/2027'],
   ['/turmas/ano-2026-c7-A/resultados', 'Resultados finais'],
   ['/matriculas/renovar', 'Renovação de matrículas'],
+  ['/curriculo/classes', 'Ciclos e classes'],
 ]
 
 test.use({ colorScheme: 'dark' })

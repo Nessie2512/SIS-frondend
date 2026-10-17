@@ -155,7 +155,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
                   to="/turmas/$turmaId/resultados"
                   params={{ turmaId: turma.turmaId }}
                   aria-label={t`Registar resultados da turma ${designacao}: faltam ${falta} de ${total}`}
-                  className="tabular text-acento hover:underline"
+                  className="tabular inline-flex min-h-6 items-center text-acento hover:underline"
                 >
                   {t`${designacao} (faltam ${falta})`}
                 </Link>
