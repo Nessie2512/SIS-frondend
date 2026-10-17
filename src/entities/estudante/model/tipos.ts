@@ -17,6 +17,7 @@ export interface EstudanteResumo {
   semTurma: boolean
   /** Matrícula no ano em contexto */
   matriculaId: string | null
+  turmaId: string | null
   matriculaPendente: boolean
   documentosEmFalta: number
 }

@@ -336,6 +336,16 @@ export interface paths {
     }>
   }
 
+  // Transferência de saída (guia 2.3)
+  '/estudantes/{id}/transferir': {
+    post: Op<{
+      path: { id: string }
+      body: S['TransferirEstudanteDto']
+      ok: S['EstudanteDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+
   // Docentes da turma (guia 2.3: atribuir e substituir)
   '/turmas/{id}/docentes': {
     get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
@@ -488,6 +498,7 @@ export interface components {
       matriculaActual: {
         id: string
         classeDesignacao: string
+        turmaId: string | null
         turmaDesignacao: string | null
         estado: components['schemas']['EstadoMatricula']
       } | null
@@ -599,6 +610,14 @@ export interface components {
       documentosEntregues: string[]
       /** Obrigatória quando se ignora um possível duplicado */
       duplicadoIgnoradoJustificacao?: string
+      /** Transferência de entrada: escola de origem e classes lá concluídas (guia 2.3) */
+      transferenciaEntrada?: { escolaOrigem: string; classesConcluidas: string[] }
+    }
+    TransferirEstudanteDto: {
+      escolaDestino: string
+      /** Formato: date */
+      data: string
+      motivo?: string
     }
 
     // Tarefas

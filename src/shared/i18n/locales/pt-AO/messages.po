@@ -162,6 +162,10 @@ msgstr "{nome} acrescentada ao plano."
 msgid "{nome} colocado na {turma}."
 msgstr "{nome} colocado na {turma}."
 
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "{nome} foi transferido para {destino}."
+msgstr "{nome} foi transferido para {destino}."
+
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "{nome} fora das turmas."
 msgstr "{nome} fora das turmas."
@@ -393,6 +397,10 @@ msgstr "A emissão de declarações e certificados chega numa próxima versão."
 msgid "A encerrar o ano {designacao}"
 msgstr "A encerrar o ano {designacao}"
 
+#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
+msgid "A escola de origem e as classes lá concluídas entram no percurso."
+msgstr "A escola de origem e as classes lá concluídas entram no percurso."
+
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
 msgstr "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
@@ -404,6 +412,10 @@ msgstr "A guardar"
 #: src/features/gerar-lista-nominal/ui/botao-gerar-lista-nominal.tsx
 msgid "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 msgstr "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "A matrícula deste ano ({matricula}) fica anulada."
+msgstr "A matrícula deste ano ({matricula}) fica anulada."
 
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "A obter o estado da tarefa"
@@ -903,6 +915,7 @@ msgstr "Cancelado."
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Cancelar"
 msgstr "Cancelar"
 
@@ -976,6 +989,10 @@ msgstr "Classe em {destino}"
 #: src/shared/config/glossario.ts
 msgid "classes"
 msgstr "classes"
+
+#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
+msgid "Classes concluídas nessa escola"
+msgstr "Classes concluídas nessa escola"
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "Comece por matricular o primeiro."
@@ -1164,6 +1181,10 @@ msgstr "Dados pessoais"
 msgid "Data"
 msgstr "Data"
 
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Data da saída"
+msgstr "Data da saída"
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -1238,6 +1259,10 @@ msgstr "Densidade confortável"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
 msgstr "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Depois pode emitir a guia de transferência em Documentos oficiais."
+msgstr "Depois pode emitir a guia de transferência em Documentos oficiais."
 
 #: src/features/alterar-estado-utilizador/ui/botao-estado-utilizador.tsx
 msgid "Desactivar"
@@ -1585,6 +1610,14 @@ msgstr "Entregue"
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Entrou"
 msgstr "Entrou"
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Escola de destino"
+msgstr "Escola de destino"
+
+#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
+msgid "Escola de origem"
+msgstr "Escola de origem"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/model/esquema.ts
@@ -2077,8 +2110,17 @@ msgid "Indique a data de nascimento."
 msgstr "Indique a data de nascimento."
 
 #: src/features/registar-ocorrencia/model/esquema.ts
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Indique a data."
 msgstr "Indique a data."
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Indique a escola de destino."
+msgstr "Indique a escola de destino."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique a escola de origem."
+msgstr "Indique a escola de origem."
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Indique entre 1 e 10 horas por semana."
@@ -2383,6 +2425,7 @@ msgstr "Mostrar todos os atalhos"
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Motivo"
 msgstr "Motivo"
 
@@ -2657,6 +2700,10 @@ msgstr "O ano passa a ser o ano em curso."
 msgid "O email ou a palavra-passe não estão correctos."
 msgstr "O email ou a palavra-passe não estão correctos."
 
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "O estado passa a Transferido e a saída fica no percurso."
+msgstr "O estado passa a Transferido e a saída fica no percurso."
+
 #: src/features/gerir-eventos/model/esquema.ts
 msgid "O evento tem de terminar dentro do ano lectivo."
 msgstr "O evento tem de terminar dentro do ano lectivo."
@@ -2676,6 +2723,10 @@ msgstr "O plano não tem disciplinas. Acrescente pelo menos uma antes de publica
 #: src/shared/lib/erros-dominio.ts
 msgid "O próximo ano lectivo já foi criado. Continue a prepará-lo."
 msgstr "O próximo ano lectivo já foi criado. Continue a prepará-lo."
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "O que acontece"
+msgstr "O que acontece"
 
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "O que aconteceu"
@@ -2735,6 +2786,10 @@ msgstr "Ocupação da turma"
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "opcional"
 msgstr "opcional"
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Opcional. Ex.: mudança de residência."
+msgstr "Opcional. Ex.: mudança de residência."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Os feriados nacionais vêm da lei e não se apagam."
@@ -3323,6 +3378,10 @@ msgstr "Rever trimestres e calendário"
 msgid "Revisão"
 msgstr "Revisão"
 
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Sai da turma {designacao}, que fica com {ficam} de {lotacao}."
+msgstr "Sai da turma {designacao}, que fica com {ficam} de {lotacao}."
+
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Sair sem guardar"
 msgstr "Sair sem guardar"
@@ -3643,6 +3702,10 @@ msgstr "Total semanal"
 msgid "Transferência"
 msgstr "Transferência"
 
+#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
+msgid "Transferência de entrada"
+msgstr "Transferência de entrada"
+
 #: src/entities/estudante/model/mapeadores.ts
 #: src/routes/_app/estudantes/index.tsx
 msgid "Transferido"
@@ -3651,6 +3714,18 @@ msgstr "Transferido"
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Transferido, desistente ou com processo anulado"
 msgstr "Transferido, desistente ou com processo anulado"
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Transferir"
+msgstr "Transferir"
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Transferir {nome}"
+msgstr "Transferir {nome}"
+
+#: src/features/transferir-estudante/ui/transferir-estudante.tsx
+msgid "Transferir para outra escola"
+msgstr "Transferir para outra escola"
 
 #: src/shared/config/glossario.ts
 msgid "turma"
@@ -3736,6 +3811,14 @@ msgstr "Valor actual"
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Veja abaixo porque ficam de fora."
 msgstr "Veja abaixo porque ficam de fora."
+
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
+msgid "Vem de"
+msgstr "Vem de"
+
+#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
+msgid "Vem transferido de outra escola"
+msgstr "Vem transferido de outra escola"
 
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Ver a rectificação"

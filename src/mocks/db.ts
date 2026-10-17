@@ -429,6 +429,7 @@ export function paraEstudanteResumo(
       ? {
           id: m.id,
           classeDesignacao: classePorId(m.classeId).designacao,
+          turmaId: m.turmaId,
           turmaDesignacao: turmaPorId(m.turmaId)?.designacao ?? null,
           estado: m.estado,
         }

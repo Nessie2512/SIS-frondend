@@ -12,6 +12,7 @@ import {
 } from '@/entities/estudante'
 import { CartaoMatricula } from '@/features/confirmar-matricula'
 import { DadosEstudante } from '@/features/editar-estudante'
+import { TransferirEstudante } from '@/features/transferir-estudante'
 import { PercursoEstudante } from '@/features/rectificar-percurso'
 import { OcorrenciasEstudante } from '@/features/registar-ocorrencia'
 import { ListaDocumentos } from '@/features/marcar-documento'
@@ -100,12 +101,17 @@ function FichaEstudante() {
             )}
           </p>
         </div>
-        <Button asChild className="shrink-0">
-          <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
-            <Printer aria-hidden className="size-4 stroke-[1.5]" />
-            <Trans>Imprimir ficha</Trans>
-          </Link>
-        </Button>
+        <div className="flex shrink-0 flex-wrap justify-end gap-2">
+          {podeRectificar && !soLeitura && e.estado === 'ACTIVO' && (
+            <TransferirEstudante estudante={e} />
+          )}
+          <Button asChild>
+            <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
+              <Printer aria-hidden className="size-4 stroke-[1.5]" />
+              <Trans>Imprimir ficha</Trans>
+            </Link>
+          </Button>
+        </div>
       </header>
 
       <Separadores

@@ -56,6 +56,7 @@ export function paraEstudanteResumo(dto: Dto<'EstudanteResumoDto'>): EstudanteRe
     matricula: m ? `${m.classeDesignacao} · ${turma}` : null,
     semTurma: Boolean(m && !m.turmaDesignacao),
     matriculaId: m?.id ?? null,
+    turmaId: m?.turmaId ?? null,
     matriculaPendente: m?.estado === 'PENDENTE',
     documentosEmFalta: dto.documentosEmFalta,
   }

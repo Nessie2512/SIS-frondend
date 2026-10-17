@@ -529,6 +529,37 @@ export const handlers = [
           resultado: null,
         }
         db.matriculas.push(matricula)
+        // Transferência de entrada: a escola de origem e as classes lá concluídas entram no
+        // percurso antes da matrícula, para a cronologia ficar completa (guia 2.3)
+        const entrada = dados.transferenciaEntrada
+        if (entrada?.escolaOrigem.trim()) {
+          const anoLectivo = anosLectivos.find((a) => a.id === dados.anoLectivoId)!.designacao
+          const escola = entrada.escolaOrigem.trim()
+          for (const classeId of entrada.classesConcluidas) {
+            db.percurso.push({
+              id: novoId('p'),
+              estudanteId,
+              data: matricula.criadaEm,
+              anoLectivo: 'Anterior',
+              tipo: 'RESULTADO',
+              descricao: `Concluiu a ${classePorId(classeId).designacao} em ${escola}`,
+              autor: 'Maria Secretária',
+              rectificaId: null,
+              motivo: null,
+            })
+          }
+          db.percurso.push({
+            id: novoId('p'),
+            estudanteId,
+            data: matricula.criadaEm,
+            anoLectivo,
+            tipo: 'TRANSFERENCIA',
+            descricao: `Transferido de ${escola}`,
+            autor: 'Maria Secretária',
+            rectificaId: null,
+            motivo: null,
+          })
+        }
         db.percurso.push({
           id: novoId('p'),
           estudanteId,
@@ -724,6 +755,59 @@ export const handlers = [
     protegido('matriculas:escrever', ({ request, params }) => {
       const { erro, matricula } = confirmarMatricula(String(params.id), utilizadorDo(request)!.nome)
       return erro ?? HttpResponse.json(paraMatriculaDto(matricula!))
+    }),
+  ),
+
+  // ---------------------------------------------------------------- transferência de saída
+  http.post(
+    `${API}/estudantes/:id/transferir`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      if (!e) return problema(404, 'Estudante não encontrado')
+      if (e.estado !== 'ACTIVO') {
+        return problema(409, 'Estado inválido', {
+          detail: 'Só um estudante activo pode ser transferido.',
+        })
+      }
+      const corpo = (await request.json()) as S['TransferirEstudanteDto']
+      const escola = corpo.escolaDestino?.trim() ?? ''
+      const hoje = new Date().toISOString().slice(0, 10)
+      const erros = [
+        ...(escola.length < 3
+          ? [{ campo: 'escolaDestino', mensagem: 'Indique a escola de destino.' }]
+          : []),
+        ...(!corpo.data || corpo.data > hoje
+          ? [{ campo: 'data', mensagem: 'A data não pode ser no futuro.' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const activas = db.matriculas.filter(
+        (m) => m.estudanteId === e.id && (m.estado === 'PENDENTE' || m.estado === 'CONFIRMADA'),
+      )
+      if (activas.some((m) => anoEncerrado(m.anoLectivoId))) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      const quem = utilizadorDo(request)!.nome
+      for (const m of activas) {
+        m.estado = 'ANULADA'
+        m.turmaId = null
+      }
+      e.estado = 'TRANSFERIDO'
+      e.versao++
+      const ano = anosLectivos.find((a) => a.estado === 'EM_CURSO')?.designacao ?? '2026/2027'
+      db.percurso.push({
+        id: novoId('p'),
+        estudanteId: e.id,
+        data: `${corpo.data}T12:00:00Z`,
+        anoLectivo: ano,
+        tipo: 'TRANSFERENCIA',
+        descricao: `Transferido para ${escola}`,
+        autor: quem,
+        rectificaId: null,
+        motivo: corpo.motivo?.trim() || null,
+      })
+      auditar(quem, 'ALTERAR', 'Estudante', `${e.nome}: transferido para ${escola}`)
+      return HttpResponse.json(paraEstudanteDto(e))
     }),
   ),
 
