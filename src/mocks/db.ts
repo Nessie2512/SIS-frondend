@@ -159,8 +159,24 @@ interface Estado {
   eventos: Evento[]
   /** Renovações de matrículas (simuladas e aplicadas) para o ano seguinte */
   renovacoes: Renovacao[]
+  documentosOficiais: DocumentoOficial[]
   idempotencia: Map<string, unknown>
   sequencia: number
+}
+
+/** Documento oficial emitido (número, código e conteúdo gerados no servidor). */
+export interface DocumentoOficial {
+  id: string
+  estudanteId: string
+  tipo: S['TipoDocumentoOficial']
+  numero: string
+  codigo: string
+  emitidoEm: string
+  emitidoPor: string
+  finalidade: string | null
+  estado: 'VALIDO' | 'ANULADO'
+  motivoAnulacao: string | null
+  conteudo: S['ConteudoDocumentoDto']
 }
 
 export interface Renovacao {
@@ -375,6 +391,7 @@ function criar(): Estado {
     ...criarAcademico(classes, turmas, anosLectivos),
     ...criarCalendario(anosLectivos),
     renovacoes: [],
+    documentosOficiais: [],
     idempotencia: new Map(),
     sequencia: n,
   }

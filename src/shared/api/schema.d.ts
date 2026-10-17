@@ -346,6 +346,34 @@ export interface paths {
     }>
   }
 
+  // Documentos oficiais (guia 2.1, 2.3: emitir com pré-visualização; anular com motivo)
+  '/estudantes/{id}/documentos-oficiais': {
+    get: Op<{ path: { id: string }; ok: S['DocumentosOficiaisDto']; erros: 404 }>
+    post: Op<{
+      path: { id: string }
+      header: { 'Idempotency-Key': string }
+      body: S['PedidoDocumentoOficialDto']
+      ok: S['DocumentoOficialDto']
+      erros: 403 | 404 | 422
+    }>
+  }
+  '/estudantes/{id}/documentos-oficiais/pre-visualizar': {
+    post: Op<{
+      path: { id: string }
+      body: S['PedidoDocumentoOficialDto']
+      ok: S['ConteudoDocumentoDto']
+      erros: 403 | 404 | 422
+    }>
+  }
+  '/documentos-oficiais/{id}/anular': {
+    post: Op<{
+      path: { id: string }
+      body: S['AnularDocumentoDto']
+      ok: S['DocumentoOficialDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+
   // Docentes da turma (guia 2.3: atribuir e substituir)
   '/turmas/{id}/docentes': {
     get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
@@ -838,6 +866,45 @@ export interface components {
     }
     /** Matrículas incluídas na simulação que o utilizador retirou à mão */
     AplicarRenovacaoDto: { excluir: string[] }
+
+    // Documentos oficiais
+    TipoDocumentoOficial:
+      | 'DECLARACAO_MATRICULA'
+      | 'DECLARACAO_FREQUENCIA'
+      | 'GUIA_TRANSFERENCIA'
+      | 'CERTIFICADO_HABILITACOES'
+    TipoDisponivelDto: {
+      tipo: components['schemas']['TipoDocumentoOficial']
+      titulo: string
+      disponivel: boolean
+      /** Porque não se pode emitir agora (guia 2.7: desactivar com a razão) */
+      razao: string | null
+    }
+    DocumentoOficialDto: {
+      id: string
+      tipo: components['schemas']['TipoDocumentoOficial']
+      titulo: string
+      numero: string
+      codigoVerificacao: string
+      /** Formato: date-time */
+      emitidoEm: string
+      emitidoPor: string
+      finalidade: string | null
+      estado: 'VALIDO' | 'ANULADO'
+      motivoAnulacao: string | null
+      pdfUrl: string
+    }
+    DocumentosOficiaisDto: {
+      tipos: components['schemas']['TipoDisponivelDto'][]
+      emitidos: components['schemas']['DocumentoOficialDto'][]
+    }
+    PedidoDocumentoOficialDto: {
+      tipo: components['schemas']['TipoDocumentoOficial']
+      /** «Para efeitos de…» (opcional) */
+      finalidade?: string
+    }
+    ConteudoDocumentoDto: { titulo: string; paragrafos: string[] }
+    AnularDocumentoDto: { motivo: string }
 
     // Docentes da turma
     DocenteTurmaDto: {

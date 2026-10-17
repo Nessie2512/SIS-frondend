@@ -16,6 +16,11 @@ interface PropsBase {
   pendente?: boolean
 }
 
+interface PropsFolha extends PropsBase {
+  /** Folha larga (960 px), para formulário e pré-visualização lado a lado (guia 6.3) */
+  larga?: boolean
+}
+
 const classesSobreposicao =
   'fixed inset-0 z-40 bg-black/30 data-[state=closed]:animate-desvanecer-sair data-[state=open]:animate-desvanecer-entrar'
 
@@ -55,7 +60,8 @@ export function Folha({
   children,
   rodape,
   pendente,
-}: PropsBase) {
+  larga,
+}: PropsFolha) {
   return (
     <Dialog.Root open={aberta} onOpenChange={(v) => !pendente && aoMudar(v)}>
       <Dialog.Portal>
@@ -63,7 +69,9 @@ export function Folha({
         <Dialog.Content
           aria-busy={pendente || undefined}
           className={cn(
-            'fixed inset-y-0 right-0 z-50 flex w-full max-w-[480px] flex-col bg-superficie/95 shadow-flutuante backdrop-blur-xl',
+            'fixed inset-y-0 right-0 z-50 flex w-full flex-col',
+            larga ? 'max-w-[960px]' : 'max-w-[480px]',
+            'bg-superficie/95 shadow-flutuante backdrop-blur-xl',
             'rounded-l-folha data-[state=closed]:animate-folha-sair data-[state=open]:animate-folha-entrar',
           )}
         >

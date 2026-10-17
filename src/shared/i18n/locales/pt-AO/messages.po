@@ -246,6 +246,14 @@ msgstr "{textoInicio} – escolha o fim"
 msgid "{tipo}: {titulo}"
 msgstr "{tipo}: {titulo}"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "{titulo} {numero} anulada."
+msgstr "{titulo} {numero} anulada."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "{titulo} emitida. Guarde o número e o código de verificação."
+msgstr "{titulo} emitida. Guarde o número e o código de verificação."
+
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "{titulo} está pronta para descarregar."
 msgstr "{titulo} está pronta para descarregar."
@@ -388,10 +396,6 @@ msgstr "A data não pode ser no futuro."
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "A disciplina sai da lista. Não está em nenhum plano nem habilitação, por isso nada mais muda."
 msgstr "A disciplina sai da lista. Não está em nenhum plano nem habilitação, por isso nada mais muda."
-
-#: src/routes/_app/estudantes/$estudanteId.tsx
-msgid "A emissão de declarações e certificados chega numa próxima versão."
-msgstr "A emissão de declarações e certificados chega numa próxima versão."
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "A encerrar o ano {designacao}"
@@ -621,7 +625,7 @@ msgstr "Aguardam documentos obrigatórios"
 msgid "Ainda há pendências por resolver. Resolva-as antes de encerrar o ano."
 msgstr "Ainda há pendências por resolver. Resolva-as antes de encerrar o ano."
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Ainda não foram emitidos documentos oficiais."
 msgstr "Ainda não foram emitidos documentos oficiais."
 
@@ -755,9 +759,18 @@ msgid "Anulada"
 msgstr "Anulada"
 
 #: src/entities/estudante/model/mapeadores.ts
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/routes/_app/estudantes/index.tsx
 msgid "Anulado"
 msgstr "Anulado"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Anular"
+msgstr "Anular"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Anular {titulo} {numero}"
+msgstr "Anular {titulo} {numero}"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Apagar «{titulo}»"
@@ -905,6 +918,7 @@ msgstr "Cancelado."
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 #: src/features/editar-plano/ui/accoes-plano.tsx
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
@@ -994,6 +1008,18 @@ msgstr "classes"
 msgid "Classes concluídas nessa escola"
 msgstr "Classes concluídas nessa escola"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "código"
+msgstr "código"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Código copiado."
+msgstr "Código copiado."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Código de verificação"
+msgstr "Código de verificação"
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Comece por matricular o primeiro."
 msgstr "Comece por matricular o primeiro."
@@ -1028,6 +1054,10 @@ msgstr "Concluídas"
 #: src/routes/_app/estudantes/index.tsx
 msgid "Concluído"
 msgstr "Concluído"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Concluir"
+msgstr "Concluir"
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Concluiu a última classe da escola"
@@ -1105,6 +1135,14 @@ msgstr "Continuar"
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Continuar a editar"
 msgstr "Continuar a editar"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Copiar o código de verificação"
+msgstr "Copiar o código de verificação"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Copiar o número"
+msgstr "Copiar o número"
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Corrigir"
@@ -1235,6 +1273,10 @@ msgstr "Dê um nome à vista."
 msgid "Declaração da escola anterior"
 msgstr "Declaração da escola anterior"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Declarações, guias e certificados emitidos ficam aqui, com número e código de verificação."
+msgstr "Declarações, guias e certificados emitidos ficam aqui, com número e código de verificação."
+
 #: src/routes/_app/definicoes.tsx
 #: src/routes/-casca/menu-lateral.tsx
 msgid "Definições"
@@ -1280,6 +1322,14 @@ msgstr "Desbloquear"
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Descarregar"
 msgstr "Descarregar"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Descarregar {titulo} {numero}"
+msgstr "Descarregar {titulo} {numero}"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Descarregar PDF"
+msgstr "Descarregar PDF"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Descarregar: {titulo}"
@@ -1405,6 +1455,14 @@ msgstr "Documento"
 msgid "Documento de identificação"
 msgstr "Documento de identificação"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Documento emitido"
+msgstr "Documento emitido"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Documento emitido com o número {numero}."
+msgstr "Documento emitido com o número {numero}."
+
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
@@ -1428,6 +1486,10 @@ msgstr "Documentos do estudante"
 msgid "Documentos em falta"
 msgstr "Documentos em falta"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Documentos emitidos"
+msgstr "Documentos emitidos"
+
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "Documentos entregues"
 msgstr "Documentos entregues"
@@ -1440,6 +1502,7 @@ msgstr "Documentos obrigatórios completos: a matrícula fica confirmada."
 msgid "Documentos obrigatórios: {entregues} de {total} entregues"
 msgstr "Documentos obrigatórios: {entregues} de {total} entregues"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Documentos oficiais"
 msgstr "Documentos oficiais"
@@ -1519,9 +1582,29 @@ msgstr "Email"
 msgid "Emitida em {emitida} por {autor}"
 msgstr "Emitida em {emitida} por {autor}"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Emitido a {quando} por {quem}"
+msgstr "Emitido a {quando} por {quem}"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Emitir certificado"
+msgstr "Emitir certificado"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Emitir declaração"
+msgstr "Emitir declaração"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Emitir documento"
+msgstr "Emitir documento"
+
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Emitir documentos oficiais"
 msgstr "Emitir documentos oficiais"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Emitir guia"
+msgstr "Emitir guia"
 
 #: src/shared/config/glossario.ts
 msgid "encarregado"
@@ -1635,6 +1718,10 @@ msgstr "Escolha o docente."
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha o sexo."
 msgstr "Escolha o sexo."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Escolha o tipo para ver o documento."
+msgstr "Escolha o tipo para ver o documento."
 
 #: src/shared/ui/selector-data.tsx
 msgid "Escolha o último dia do período."
@@ -1882,6 +1969,10 @@ msgstr "Explique em poucas palavras porque não é o mesmo estudante."
 #: src/features/rectificar-percurso/model/esquema.ts
 msgid "Explique o motivo (pelo menos 10 caracteres)."
 msgstr "Explique o motivo (pelo menos 10 caracteres)."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Explique porque anula (pelo menos 10 caracteres)."
+msgstr "Explique porque anula (pelo menos 10 caracteres)."
 
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 msgid "Explique porque reabre (pelo menos 10 caracteres)."
@@ -2421,6 +2512,7 @@ msgid "Mostrar todos os atalhos"
 msgstr "Mostrar todos os atalhos"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
@@ -2428,6 +2520,10 @@ msgstr "Mostrar todos os atalhos"
 #: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Motivo"
 msgstr "Motivo"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Motivo da anulação: {motivo}"
+msgstr "Motivo da anulação: {motivo}"
 
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Motivo: {motivo}"
@@ -2466,6 +2562,10 @@ msgstr "N.º"
 #: src/routes/_app/professores/index.tsx
 msgid "N.º de agente"
 msgstr "N.º de agente"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "N.º e código de verificação atribuídos ao emitir"
+msgstr "N.º e código de verificação atribuídos ao emitir"
 
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Nada encontrado. Experimente o número de processo."
@@ -2642,6 +2742,14 @@ msgstr "Novo docente"
 msgid "Novo evento a partir deste dia"
 msgstr "Novo evento a partir deste dia"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Número"
+msgstr "Número"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Número copiado."
+msgstr "Número copiado."
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Número de processo"
 msgstr "Número de processo"
@@ -2694,6 +2802,10 @@ msgstr "O ano lectivo está encerrado. Só é possível consultar."
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "O ano passa a ser o ano em curso."
 msgstr "O ano passa a ser o ano em curso."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
+msgstr "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
 
 #: src/features/autenticar/ui/formulario-entrada.tsx
 #: src/shared/lib/erros-dominio.ts
@@ -2787,6 +2899,10 @@ msgstr "Ocupação da turma"
 msgid "opcional"
 msgstr "opcional"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Opcional. Ex.: abono de família."
+msgstr "Opcional. Ex.: abono de família."
+
 #: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Opcional. Ex.: mudança de residência."
 msgstr "Opcional. Ex.: mudança de residência."
@@ -2871,6 +2987,10 @@ msgstr "Para {designacao}. Os aprovados passam à classe seguinte; os reprovados
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
 msgstr "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Para efeitos de"
+msgstr "Para efeitos de"
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Para encerrar, todas as matrículas têm de estar resolvidas e com o resultado final registado. Depois, o ano fica só para consulta."
@@ -2996,6 +3116,10 @@ msgstr "Porque não é o mesmo estudante?"
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "Pré-visualização"
 msgstr "Pré-visualização"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Pré-visualização do documento"
+msgstr "Pré-visualização do documento"
 
 #: src/routes/_app/definicoes.tsx
 #: src/routes/-casca/paleta-comandos.tsx
@@ -3374,6 +3498,10 @@ msgstr "Reveja os campos assinalados."
 msgid "Rever trimestres e calendário"
 msgstr "Rever trimestres e calendário"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Revi o documento. Sei que emitir não se desfaz: um documento emitido só se anula, com motivo."
+msgstr "Revi o documento. Sei que emitir não se desfaz: um documento emitido só se anula, com motivo."
+
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Revisão"
 msgstr "Revisão"
@@ -3412,6 +3540,7 @@ msgstr "Secções das definições"
 msgid "Secretaria"
 msgstr "Secretaria"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "Secretaria escolar"
 msgstr "Secretaria escolar"
@@ -3659,6 +3788,10 @@ msgstr "Tio"
 msgid "Tipo"
 msgstr "Tipo"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Tipo de documento"
+msgstr "Tipo de documento"
+
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Tipo de evento"
 msgstr "Tipo de evento"
@@ -3803,6 +3936,10 @@ msgstr "Utilização"
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Utilizadores"
 msgstr "Utilizadores"
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Válido"
+msgstr "Válido"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Valor actual"

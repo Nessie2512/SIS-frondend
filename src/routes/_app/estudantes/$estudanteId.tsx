@@ -12,6 +12,7 @@ import {
 } from '@/entities/estudante'
 import { CartaoMatricula } from '@/features/confirmar-matricula'
 import { DadosEstudante } from '@/features/editar-estudante'
+import { DocumentosOficiais } from '@/features/emitir-documento'
 import { TransferirEstudante } from '@/features/transferir-estudante'
 import { PercursoEstudante } from '@/features/rectificar-percurso'
 import { OcorrenciasEstudante } from '@/features/registar-ocorrencia'
@@ -69,6 +70,7 @@ function FichaEstudante() {
   const { separador } = Route.useSearch()
   const { soLeitura } = Route.useRouteContext()
   const podeRectificar = useCan('estudantes:escrever') // também registar ocorrências
+  const podeEmitir = useCan('documentos:emitir')
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: e } = useQuery(estudanteQuery(estudanteId))
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
@@ -178,10 +180,7 @@ function FichaEstudante() {
           />
         </PainelSeparador>
         <PainelSeparador value="oficiais" className="pt-6">
-          <EstadoVazio
-            titulo={t`Ainda não foram emitidos documentos oficiais.`}
-            descricao={t`A emissão de declarações e certificados chega numa próxima versão.`}
-          />
+          <DocumentosOficiais estudanteId={estudanteId} nome={e.nome} podeEmitir={podeEmitir} />
         </PainelSeparador>
       </Separadores>
     </article>
