@@ -32,6 +32,10 @@ msgstr "{0, plural, one {# seleccionado} other {# seleccionados}}"
 msgid "{activas} activas"
 msgstr "{activas} activas"
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "{carga} de {maximo} h atribuídas"
+msgstr "{carga} de {maximo} h atribuídas"
+
 #: src/entities/professor/ui/carga-lectiva.tsx
 msgid "{cargaLectiva} de {cargaMaxima} h"
 msgstr "{cargaLectiva} de {cargaMaxima} h"
@@ -47,6 +51,10 @@ msgstr "{designacao}: em falta."
 #: src/features/marcar-documento/model/use-marcar-documento.ts
 msgid "{designacao}: entregue."
 msgstr "{designacao}: entregue."
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "{disciplina}: {professor}."
+msgstr "{disciplina}: {professor}."
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -73,6 +81,10 @@ msgstr "{feitas} matrículas confirmadas."
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{horas} h por semana"
 msgstr "{horas} h por semana"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "{horas} h/semana"
+msgstr "{horas} h/semana"
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "{idade} anos"
@@ -161,6 +173,10 @@ msgstr "{progresso}% · pode continuar a trabalhar"
 #: src/shared/ui/selector.tsx
 msgid "{quantos} seleccionados"
 msgstr "{quantos} seleccionados"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "{semDocente} sem docente"
+msgstr "{semDocente} sem docente"
 
 #: src/shared/ui/selector-data.tsx
 msgid "{textoInicio} – escolha o fim"
@@ -251,6 +267,10 @@ msgstr "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra t
 msgid "A arrastar {nome}. Use as setas e Espaço para largar."
 msgstr "A arrastar {nome}. Use as setas e Espaço para largar."
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "A atribuição actual termina nesta data."
+msgstr "A atribuição actual termina nesta data."
+
 #: src/shared/ui/progresso.tsx
 msgid "A carregar"
 msgstr "A carregar"
@@ -282,6 +302,14 @@ msgstr "A carregar professores"
 #: src/routes/_app/turmas/index.tsx
 msgid "A carregar turmas"
 msgstr "A carregar turmas"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "A carregar…"
+msgstr "A carregar…"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "A classe ainda não tem plano curricular vigente."
+msgstr "A classe ainda não tem plano curricular vigente."
 
 #: src/entities/matricula/model/mapeadores.ts
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
@@ -320,6 +348,10 @@ msgstr "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "A obter o estado da tarefa"
 msgstr "A obter o estado da tarefa"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "A partir de"
+msgstr "A partir de"
 
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "A procurar…"
@@ -613,6 +645,10 @@ msgstr "Arraste os estudantes entre turmas, ou use o menu de cada cartão. Mudar
 msgid "As atribuições fazem-se por turma e disciplina."
 msgstr "As atribuições fazem-se por turma e disciplina."
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "As disciplinas aparecem aqui quando o plano for publicado."
+msgstr "As disciplinas aparecem aqui quando o plano for publicado."
+
 #: src/routes/_app/definicoes/index.tsx
 msgid "As preferências de apresentação ficam guardadas neste navegador."
 msgstr "As preferências de apresentação ficam guardadas neste navegador."
@@ -636,6 +672,14 @@ msgstr "Atribuições"
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Atribuições no ano lectivo"
 msgstr "Atribuições no ano lectivo"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Atribuir"
+msgstr "Atribuir"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Atribuir docente a {disciplina}"
+msgstr "Atribuir docente a {disciplina}"
 
 #: src/routes/_app/definicoes.tsx
 #: src/routes/_app/definicoes/auditoria.tsx
@@ -688,6 +732,7 @@ msgstr "Calendário {designacao}"
 msgid "Cancelado."
 msgstr "Cancelado."
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 #: src/features/editar-plano/ui/accoes-plano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
@@ -927,6 +972,10 @@ msgstr "Data-chave"
 msgid "dd/mm/aaaa"
 msgstr "dd/mm/aaaa"
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "de {de} a {ate}"
+msgstr "de {de} a {ate}"
+
 #: src/entities/professor/model/mapeadores.ts
 #: src/routes/_app/professores/index.tsx
 msgid "De licença"
@@ -1024,6 +1073,10 @@ msgstr "Detalhe"
 msgid "Dia"
 msgstr "Dia"
 
+#: src/features/atribuir-docente/model/esquema.ts
+msgid "Diga porque muda de docente (pelo menos 5 caracteres)."
+msgstr "Diga porque muda de docente (pelo menos 5 caracteres)."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/professores/$professorId.tsx
@@ -1079,6 +1132,14 @@ msgstr "Distribuir estudantes"
 #: src/routes/_app/index.tsx
 msgid "Distribuir por turmas"
 msgstr "Distribuir por turmas"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Docente"
+msgstr "Docente"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Docentes"
+msgstr "Docentes"
 
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento"
@@ -1281,6 +1342,10 @@ msgstr "Escolha a classe."
 msgid "Escolha a turma."
 msgstr "Escolha a turma."
 
+#: src/features/atribuir-docente/model/esquema.ts
+msgid "Escolha o docente."
+msgstr "Escolha o docente."
+
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha o sexo."
 msgstr "Escolha o sexo."
@@ -1297,10 +1362,15 @@ msgstr "Escolha um dia para ver o que acontece e acrescentar um evento."
 msgid "Escolha um dia para ver o que acontece."
 msgstr "Escolha um dia para ver o que acontece."
 
+#: src/features/atribuir-docente/model/esquema.ts
+msgid "Escolha uma data dentro do ano, depois da atribuição actual."
+msgstr "Escolha uma data dentro do ano, depois da atribuição actual."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Escolha uma disciplina."
 msgstr "Escolha uma disciplina."
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/shared/ui/selector.tsx
@@ -1464,6 +1534,10 @@ msgstr "Ex.: 7.ª classe sem turma"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Ex.: Educação Ambiental"
 msgstr "Ex.: Educação Ambiental"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Ex.: licença de maternidade"
+msgstr "Ex.: licença de maternidade"
 
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Ex.: Mãe, Pai, Tia"
@@ -1653,6 +1727,10 @@ msgstr "Há uma nova versão da Secretaria."
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Habilitação"
 msgstr "Habilitação"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Histórico de {disciplina}"
+msgstr "Histórico de {disciplina}"
 
 #: src/entities/calendario/ui/grelha-ano.tsx
 msgid "hoje"
@@ -1963,6 +2041,7 @@ msgstr "Mostrar tarefas"
 msgid "Mostrar todos os atalhos"
 msgstr "Mostrar todos os atalhos"
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Motivo"
@@ -2151,6 +2230,10 @@ msgstr "Novas atribuições"
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Novo (no contexto do ecrã)"
 msgstr "Novo (no contexto do ecrã)"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Novo docente"
+msgstr "Novo docente"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Novo evento a partir deste dia"
@@ -2775,6 +2858,10 @@ msgstr "Sem atribuições neste ano lectivo."
 msgid "Sem datas marcadas."
 msgstr "Sem datas marcadas."
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Sem docente"
+msgstr "Sem docente"
+
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Sem encarregados registados."
 msgstr "Sem encarregados registados."
@@ -2782,6 +2869,10 @@ msgstr "Sem encarregados registados."
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Sem eventos."
 msgstr "Sem eventos."
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Sem horas livres: {carga} de {maximo} h"
+msgstr "Sem horas livres: {carga} de {maximo} h"
 
 #: src/routes/-casca/casca.tsx
 msgid "Sem ligação. Pode continuar a consultar; as alterações são enviadas quando a ligação voltar."
@@ -2845,6 +2936,10 @@ msgstr "Só consultar"
 msgid "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."
 msgstr "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."
 
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Só professores activos e habilitados para {disciplina}."
+msgstr "Só professores activos e habilitados para {disciplina}."
+
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Só professores activos recebem novas atribuições."
 msgstr "Só professores activos recebem novas atribuições."
@@ -2852,6 +2947,14 @@ msgstr "Só professores activos recebem novas atribuições."
 #: src/routes/_app/definicoes/auditoria.tsx
 msgid "Sobre"
 msgstr "Sobre"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Substituir"
+msgstr "Substituir"
+
+#: src/features/atribuir-docente/ui/docentes-turma.tsx
+msgid "Substituir o docente de {disciplina}"
+msgstr "Substituir o docente de {disciplina}"
 
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 msgid "Sugerida"

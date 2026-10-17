@@ -140,7 +140,7 @@ export function gerarCsv(tarefa: Tarefa): { nome: string; linhas: string[] } {
     case 'CARGA_LECTIVA': {
       const linhas = db.professores.map((p) => {
         const doProf = db.atribuicoes.filter(
-          (a) => a.professorId === p.id && a.anoLectivoId === anoLectivoId,
+          (a) => a.ate === null && a.professorId === p.id && a.anoLectivoId === anoLectivoId,
         )
         const horas = doProf.reduce((s, a) => s + a.horasSemanais, 0)
         const turmas = new Set(doProf.map((a) => turmaPorId(a.turmaId)?.designacao)).size

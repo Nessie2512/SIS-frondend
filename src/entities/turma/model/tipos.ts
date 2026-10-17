@@ -1,3 +1,5 @@
+import type { components } from '@/shared/api'
+
 /** Modelo de vista da turma: é isto que os componentes recebem, nunca o DTO (guia 4.3). */
 export type Turno = 'MANHA' | 'TARDE' | 'NOITE'
 export type EstadoTurma = 'ACTIVA' | 'ENCERRADA'
@@ -43,3 +45,6 @@ export interface Inscrito {
   numeroProcesso: string
   fotografiaUrl: string | null
 }
+
+/** Disciplina do plano com o docente em vigor e o histórico de substituições (guia 2.3). */
+export type DocenteTurma = components['schemas']['DocenteTurmaDto']

@@ -275,6 +275,17 @@ export interface paths {
     }>
   }
 
+  // Docentes da turma (guia 2.3: atribuir e substituir)
+  '/turmas/{id}/docentes': {
+    get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
+    post: Op<{
+      path: { id: string }
+      body: S['AtribuirDocenteDto']
+      ok: S['DocenteTurmaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+
   // Administração (guia 2.5: utilizadores, perfis, auditoria)
   '/utilizadores': {
     get: Op<{
@@ -654,6 +665,38 @@ export interface components {
       estado: components['schemas']['TarefaDto']['estado']
       progresso: number
       resultadoUrl: string | null
+    }
+
+    // Docentes da turma
+    DocenteTurmaDto: {
+      disciplinaId: string
+      disciplina: string
+      sigla: string
+      horasSemanais: number
+      actual: {
+        atribuicaoId: string
+        professorId: string
+        professor: string
+        /** Formato: date */
+        desde: string
+      } | null
+      /** Atribuições terminadas, da mais recente para a mais antiga */
+      historico: {
+        professor: string
+        /** Formato: date */
+        desde: string
+        /** Formato: date */
+        ate: string
+        motivo: string
+      }[]
+    }
+    AtribuirDocenteDto: {
+      disciplinaId: string
+      professorId: string
+      /** Formato: date. Na substituição, quando o novo docente começa (a anterior termina aí) */
+      desde?: string
+      /** Obrigatório quando substitui */
+      motivo?: string
     }
 
     // Administração

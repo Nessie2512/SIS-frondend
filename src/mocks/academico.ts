@@ -52,7 +52,13 @@ export interface Atribuicao {
   professorId: string
   horasSemanais: number
   desde: string
+  /** Fim da atribuição (substituição); nula enquanto está em vigor */
+  ate: string | null
+  motivo: string | null
 }
+
+/** Atribuição em vigor: as terminadas ficam no histórico da turma. */
+export const emVigor = (a: Atribuicao) => a.ate === null
 
 export const TIPOS_DOCUMENTO_PROFESSOR: Record<string, string> = {
   BI: 'Bilhete de identidade',
@@ -250,6 +256,8 @@ export function criarAcademico(
         professorId: candidato.id,
         horasSemanais: linha.horasSemanais,
         desde: ano.dataInicio,
+        ate: null,
+        motivo: null,
       })
     }
   }

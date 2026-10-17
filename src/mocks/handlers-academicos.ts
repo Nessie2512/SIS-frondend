@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw'
-import { TIPOS_DOCUMENTO_PROFESSOR, type Plano, type Professor } from './academico'
+import { emVigor, TIPOS_DOCUMENTO_PROFESSOR, type Plano, type Professor } from './academico'
 import { auditar } from './administracao'
 import {
   anoEncerrado,
@@ -27,7 +27,7 @@ const disciplinaPorId = (id: string) => db.disciplinas.find((d) => d.id === id)!
 
 const cargaDe = (professorId: string, anoLectivoId: string) =>
   db.atribuicoes
-    .filter((a) => a.professorId === professorId && a.anoLectivoId === anoLectivoId)
+    .filter((a) => emVigor(a) && a.professorId === professorId && a.anoLectivoId === anoLectivoId)
     .reduce((soma, a) => soma + a.horasSemanais, 0)
 
 function paraProfessorResumo(p: Professor, anoLectivoId: string): S['ProfessorResumoDto'] {
@@ -54,7 +54,7 @@ function paraProfessorDto(p: Professor, anoLectivoId: string): S['ProfessorDto']
     habilitacao: p.habilitacao,
     dataAdmissao: p.dataAdmissao,
     atribuicoes: db.atribuicoes
-      .filter((a) => a.professorId === p.id && a.anoLectivoId === anoLectivoId)
+      .filter((a) => emVigor(a) && a.professorId === p.id && a.anoLectivoId === anoLectivoId)
       .map((a) => {
         const turma = db.turmas.find((t) => t.id === a.turmaId)!
         return {
@@ -149,7 +149,144 @@ const ESTADOS_PROFESSOR: S['EstadoProfessor'][] = ['ACTIVO', 'LICENCA', 'SUSPENS
 // ---------------------------------------------------------------------------
 // Handlers
 // ---------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
+// Docentes da turma (guia 2.3): uma linha por disciplina do plano vigente
+// ---------------------------------------------------------------------------
+const planoVigenteDa = (classeId: string) =>
+  db.planos.find((p) => p.classeId === classeId && p.estado === 'VIGENTE')
+
+function docentesDaTurma(turmaId: string, classeId: string): S['DocenteTurmaDto'][] {
+  const plano = planoVigenteDa(classeId)
+  const nomeDe = (id: string) => db.professores.find((p) => p.id === id)?.nome ?? ''
+  return (plano?.linhas ?? []).map((linha) => {
+    const daDisciplina = db.atribuicoes
+      .filter((a) => a.turmaId === turmaId && a.disciplinaId === linha.disciplinaId)
+      .sort((a, b) => b.desde.localeCompare(a.desde))
+    const actual = daDisciplina.find(emVigor)
+    const d = disciplinaPorId(linha.disciplinaId)
+    return {
+      disciplinaId: d.id,
+      disciplina: d.nome,
+      sigla: d.sigla,
+      horasSemanais: linha.horasSemanais,
+      actual: actual
+        ? {
+            atribuicaoId: actual.id,
+            professorId: actual.professorId,
+            professor: nomeDe(actual.professorId),
+            desde: actual.desde,
+          }
+        : null,
+      historico: daDisciplina
+        .filter((a) => !emVigor(a))
+        .map((a) => ({
+          professor: nomeDe(a.professorId),
+          desde: a.desde,
+          ate: a.ate!,
+          motivo: a.motivo ?? '',
+        })),
+    }
+  })
+}
+
 export const handlersAcademicos = [
+  http.get(
+    `${API}/turmas/:id/docentes`,
+    protegido('turmas:ler', ({ params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      return HttpResponse.json(docentesDaTurma(turma.id, turma.classeId))
+    }),
+  ),
+
+  http.post(
+    `${API}/turmas/:id/docentes`,
+    protegido('turmas:escrever', async ({ request, params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      if (anoEncerrado(turma.anoLectivoId)) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      if (turma.estado === 'ENCERRADA') {
+        return problema(409, 'Turma encerrada', {
+          detail: 'Esta turma está encerrada. As atribuições ficam só para consulta.',
+        })
+      }
+      const corpo = (await request.json()) as S['AtribuirDocenteDto']
+      const linha = planoVigenteDa(turma.classeId)?.linhas.find(
+        (l) => l.disciplinaId === corpo.disciplinaId,
+      )
+      if (!linha) {
+        return problema(422, 'Dados inválidos', {
+          errors: [
+            { campo: 'disciplinaId', mensagem: 'A disciplina não está no plano da classe.' },
+          ],
+        })
+      }
+      const professor = db.professores.find((p) => p.id === corpo.professorId)
+      const actual = db.atribuicoes.find(
+        (a) => emVigor(a) && a.turmaId === turma.id && a.disciplinaId === linha.disciplinaId,
+      )
+      const ano = anosLectivos.find((a) => a.id === turma.anoLectivoId)!
+      const hoje = new Date().toISOString().slice(0, 10)
+      const desde = corpo.desde || (hoje < ano.dataInicio ? ano.dataInicio : hoje)
+      const motivo = corpo.motivo?.trim() ?? ''
+      const erro = (campo: string, mensagem: string, code?: string) =>
+        problema(422, 'Dados inválidos', { code, errors: [{ campo, mensagem }] })
+
+      if (!professor) return erro('professorId', 'Escolha o professor.')
+      if (professor.estado !== 'ACTIVO') {
+        return erro('professorId', 'Só professores activos recebem novas atribuições.')
+      }
+      if (!professor.habilitadas.includes(linha.disciplinaId)) {
+        return erro(
+          'professorId',
+          'Este professor não está habilitado para esta disciplina.',
+          'DOCENTE_NAO_HABILITADO',
+        )
+      }
+      if (actual?.professorId === professor.id) {
+        return erro('professorId', 'Já é o docente desta disciplina.')
+      }
+      const carga = cargaDe(professor.id, turma.anoLectivoId) + linha.horasSemanais
+      if (carga > professor.cargaMaxima) {
+        const maximo = professor.cargaMaxima
+        return erro('professorId', `Passaria a ${carga} de ${maximo} horas semanais.`)
+      }
+      if (actual) {
+        if (motivo.length < 5) {
+          return erro('motivo', 'Diga porque muda de docente (pelo menos 5 caracteres).')
+        }
+        if (desde < actual.desde || desde > ano.dataFim) {
+          return erro('desde', 'A data tem de estar dentro do ano e depois da atribuição actual.')
+        }
+        actual.ate = desde
+        actual.motivo = motivo
+      }
+      db.atribuicoes.push({
+        id: novoId('at'),
+        anoLectivoId: turma.anoLectivoId,
+        turmaId: turma.id,
+        disciplinaId: linha.disciplinaId,
+        professorId: professor.id,
+        horasSemanais: linha.horasSemanais,
+        desde,
+        ate: null,
+        motivo: null,
+      })
+      const disciplina = disciplinaPorId(linha.disciplinaId).nome
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Turma',
+        `${turma.designacao}, ${disciplina}: ${professor.nome}${actual ? ` (substituição: ${motivo})` : ''}`,
+      )
+      const linhaDto = docentesDaTurma(turma.id, turma.classeId).find(
+        (d) => d.disciplinaId === linha.disciplinaId,
+      )!
+      return HttpResponse.json(linhaDto)
+    }),
+  ),
   http.get(
     `${API}/professores`,
     protegido('professores:ler', ({ request }) => {

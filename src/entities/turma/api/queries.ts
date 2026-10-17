@@ -2,7 +2,7 @@ import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { paraInscrito, paraPaginaTurmas, paraTurma } from '../model/mapeadores'
-import type { FiltrosTurma } from '../model/tipos'
+import type { DocenteTurma, FiltrosTurma } from '../model/tipos'
 
 // Chaves organizadas e previsíveis (guia 4.6)
 export const turmaKeys = {
@@ -10,6 +10,7 @@ export const turmaKeys = {
   lista: (f: FiltrosTurma) => [...turmaKeys.todas, 'lista', f] as const,
   detalhe: (id: string) => [...turmaKeys.todas, 'detalhe', id] as const,
   inscritos: (id: string) => [...turmaKeys.detalhe(id), 'inscritos'] as const,
+  docentes: (id: string) => [...turmaKeys.detalhe(id), 'docentes'] as const,
 }
 
 export function turmasQuery(filtros: FiltrosTurma) {
@@ -47,6 +48,21 @@ export function inscritosQuery(turmaId: string) {
         signal,
       })
       return data!.map(paraInscrito)
+    },
+    staleTime: FRESCURA.lista,
+  })
+}
+
+/** Docentes da turma, uma linha por disciplina do plano vigente, com o histórico de cada uma. */
+export function docentesQuery(turmaId: string) {
+  return queryOptions({
+    queryKey: turmaKeys.docentes(turmaId),
+    queryFn: async ({ signal }): Promise<DocenteTurma[]> => {
+      const { data } = await api.GET('/turmas/{id}/docentes', {
+        params: { path: { id: turmaId } },
+        signal,
+      })
+      return data!
     },
     staleTime: FRESCURA.lista,
   })
