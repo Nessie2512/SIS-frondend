@@ -415,7 +415,7 @@ function Emitido({ documento: d }: { documento: DocumentoOficial }) {
   const codigo = d.codigoVerificacao
   return (
     <div className="flex max-w-md flex-col gap-5">
-      <Aviso tom="informacao">{t`${titulo} emitida. Guarde o número e o código de verificação.`}</Aviso>
+      <Aviso tom="informacao">{t`Documento emitido: ${titulo}. Guarde o número e o código de verificação.`}</Aviso>
       <dl className="grid grid-cols-[auto_1fr_auto] items-center gap-x-4 gap-y-3">
         <dt className="text-texto-2">
           <Trans>Número</Trans>
@@ -486,7 +486,7 @@ function DialogoAnular({
       { id: documento.id, motivo: motivo.trim() },
       {
         onSuccess: () => {
-          notificar.sucesso(t`${titulo} ${numero} anulada.`)
+          notificar.sucesso(t`Documento ${numero} anulado.`)
           fechar()
         },
         onError: (e) => setErro((eApiError(e) && e.errors[0]?.mensagem) || mensagemDeErro(e)),

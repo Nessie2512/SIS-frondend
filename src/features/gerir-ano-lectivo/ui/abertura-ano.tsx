@@ -90,8 +90,18 @@ function LinhaEtapa({
     TURMAS: n ? t`${n} turmas preparadas.` : t`Duplique a estrutura do ano em curso.`,
     RENOVACAO: t`Simule, reveja os excluídos e confirme.`,
     MATRICULAS: t`${n} matrículas neste ano. Etapa sem fim marcado.`,
-    DISTRIBUICAO: n ? t`${n} matrículas sem turma.` : t`Todas as matrículas têm turma.`,
-    DOCENTES: n ? t`${n} disciplinas sem docente.` : t`Todas as disciplinas têm docente.`,
+    DISTRIBUICAO:
+      etapa.quantidade === null
+        ? t`Ainda não há matrículas neste ano.`
+        : n
+          ? t`${n} matrículas sem turma.`
+          : t`Todas as matrículas têm turma.`,
+    DOCENTES:
+      etapa.quantidade === null
+        ? t`Prepare primeiro as turmas.`
+        : n
+          ? t`${n} disciplinas sem docente.`
+          : t`Todas as disciplinas têm docente.`,
     ACTIVAR:
       etapa.estado === 'BLOQUEADA'
         ? t`Encerre primeiro o ano ${emCurso}: só pode haver um em curso.`

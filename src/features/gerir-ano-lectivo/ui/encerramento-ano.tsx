@@ -157,7 +157,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
                   aria-label={t`Registar resultados da turma ${designacao}: faltam ${falta} de ${total}`}
                   className="tabular text-acento hover:underline"
                 >
-                  {designacao} ({falta}/{total})
+                  {t`${designacao} (faltam ${falta})`}
                 </Link>
               </li>
             )

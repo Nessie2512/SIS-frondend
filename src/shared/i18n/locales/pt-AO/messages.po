@@ -52,6 +52,10 @@ msgstr "{classe}. Os aprovados passam à classe seguinte na renovação; os repr
 msgid "{criadas} turmas criadas a partir de {origem}."
 msgstr "{criadas} turmas criadas a partir de {origem}."
 
+#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
+msgid "{designacao} (faltam {falta})"
+msgstr "{designacao} (faltam {falta})"
+
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "{designacao}: {n} resultados guardados."
 msgstr "{designacao}: {n} resultados guardados."
@@ -245,14 +249,6 @@ msgstr "{textoInicio} – escolha o fim"
 #: src/entities/calendario/ui/grelha-ano.tsx
 msgid "{tipo}: {titulo}"
 msgstr "{tipo}: {titulo}"
-
-#: src/features/emitir-documento/ui/documentos-oficiais.tsx
-msgid "{titulo} {numero} anulada."
-msgstr "{titulo} {numero} anulada."
-
-#: src/features/emitir-documento/ui/documentos-oficiais.tsx
-msgid "{titulo} emitida. Guarde o número e o código de verificação."
-msgstr "{titulo} emitida. Guarde o número e o código de verificação."
 
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "{titulo} está pronta para descarregar."
@@ -647,6 +643,10 @@ msgstr "Ainda não há estudantes inscritos nesta turma."
 #: src/routes/_app/estudantes/index.tsx
 msgid "Ainda não há estudantes neste ano."
 msgstr "Ainda não há estudantes neste ano."
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "Ainda não há matrículas neste ano."
+msgstr "Ainda não há matrículas neste ano."
 
 #: src/routes/_app/professores/index.tsx
 msgid "Ainda não há professores registados."
@@ -1449,6 +1449,10 @@ msgstr "Docentes"
 msgid "Documento"
 msgstr "Documento"
 
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Documento {numero} anulado."
+msgstr "Documento {numero} anulado."
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -1462,6 +1466,10 @@ msgstr "Documento emitido"
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Documento emitido com o número {numero}."
 msgstr "Documento emitido com o número {numero}."
+
+#: src/features/emitir-documento/ui/documentos-oficiais.tsx
+msgid "Documento emitido: {titulo}. Guarde o número e o código de verificação."
+msgstr "Documento emitido: {titulo}. Guarde o número e o código de verificação."
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
@@ -3129,6 +3137,10 @@ msgstr "Preferências"
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Preparar as turmas"
 msgstr "Preparar as turmas"
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "Prepare primeiro as turmas."
+msgstr "Prepare primeiro as turmas."
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx

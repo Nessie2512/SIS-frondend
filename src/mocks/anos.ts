@@ -90,12 +90,12 @@ function aberturaDe(anoId: string): S['AberturaDto'] {
     {
       id: 'DISTRIBUICAO',
       estado: matriculas.length === 0 ? 'POR_FAZER' : feito(semTurma === 0),
-      quantidade: semTurma,
+      quantidade: matriculas.length === 0 ? null : semTurma,
     },
     {
       id: 'DOCENTES',
       estado: turmas.length === 0 ? 'POR_FAZER' : feito(semDocente === 0),
-      quantidade: semDocente,
+      quantidade: turmas.length === 0 ? null : semDocente,
     },
     {
       id: 'ACTIVAR',
