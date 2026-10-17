@@ -3,6 +3,7 @@ import { Link, type LinkProps } from '@tanstack/react-router'
 import {
   BookOpen,
   CalendarDays,
+  CalendarRange,
   ClipboardList,
   FileSpreadsheet,
   GraduationCap,
@@ -64,6 +65,7 @@ function useEntradas(): { principais: Entrada[]; definicoes: Entrada } {
         rotulo: t`Currículo`,
       },
       { ligacao: { to: '/calendario' }, icone: <CalendarDays />, rotulo: t`Calendário` },
+      { ligacao: { to: '/anos-lectivos' }, icone: <CalendarRange />, rotulo: t`Anos lectivos` },
       { ligacao: { to: '/relatorios' }, icone: <FileSpreadsheet />, rotulo: t`Relatórios` },
     ],
     definicoes: { ligacao: { to: '/definicoes' }, icone: <Settings />, rotulo: t`Definições` },

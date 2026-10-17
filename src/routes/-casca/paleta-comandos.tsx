@@ -4,6 +4,7 @@ import { Command } from 'cmdk'
 import {
   BookOpen,
   CalendarDays,
+  CalendarRange,
   ClipboardList,
   FileSpreadsheet,
   Contrast,
@@ -184,6 +185,12 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             aoEscolher={() => executar(() => void router.navigate({ to: '/calendario' }))}
           >
             <Trans>Calendário</Trans>
+          </Item>
+          <Item
+            icone={<CalendarRange />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/anos-lectivos' }))}
+          >
+            <Trans>Anos lectivos</Trans>
           </Item>
           <Item
             icone={<FileSpreadsheet />}

@@ -36,6 +36,7 @@ import {
 } from './apoio'
 import { handlersAcademicos } from './handlers-academicos'
 import { administracao, auditar, handlersAdministracao } from './administracao'
+import { handlersAnos } from './anos'
 import { gerarCsv, handlersRelatorios } from './relatorios'
 
 /** Os mesmos handlers servem desenvolvimento, testes e Storybook (guia 3.2). */
@@ -841,6 +842,7 @@ export const handlers = [
 
   ...handlersRelatorios,
   ...handlersAdministracao,
+  ...handlersAnos,
   ...handlersAcademicos,
 ]
 

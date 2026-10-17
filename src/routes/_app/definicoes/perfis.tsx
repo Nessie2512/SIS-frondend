@@ -27,6 +27,7 @@ function usePermissoes() {
     extra: [
       { chave: 'documentos:emitir', rotulo: t`Emitir documentos oficiais` },
       { chave: 'inscricoes:excepcao', rotulo: t`Inscrever acima da lotação` },
+      { chave: 'anos:gerir', rotulo: t`Abrir, activar e encerrar anos lectivos` },
     ],
   }
 }

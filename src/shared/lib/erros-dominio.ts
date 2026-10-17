@@ -26,6 +26,9 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   DISCIPLINA_REPETIDA: msg`Já existe uma disciplina com este nome ou sigla.`,
   DOCUMENTOS_EM_FALTA: msg`Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar.`,
   PROPRIA_CONTA: msg`Não pode desactivar a sua própria conta.`,
+  PENDENCIAS_POR_RESOLVER: msg`Ainda há pendências por resolver. Resolva-as antes de encerrar o ano.`,
+  OUTRO_ANO_EM_CURSO: msg`Já há um ano lectivo em curso. Encerre-o primeiro.`,
+  ANO_PLANEADO_EXISTENTE: msg`O próximo ano lectivo já foi criado. Continue a prepará-lo.`,
   EVENTO_FIXO: msg`Os feriados nacionais vêm da lei e não se apagam.`,
   DISCIPLINA_EM_USO: msg`Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la.`,
 }

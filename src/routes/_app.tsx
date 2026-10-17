@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { createFileRoute, Outlet, redirect, useRouter } from '@tanstack/react-router'
+import { createFileRoute, Link, Outlet, redirect, useRouter } from '@tanstack/react-router'
 import { Search } from 'lucide-react'
 import { useEffect } from 'react'
 import { anosLectivosQuery, SelectorAno, useContextoAno } from '@/entities/ano-lectivo'
@@ -8,7 +8,7 @@ import { QuadroTarefas, useTarefasAcompanhadas } from '@/entities/tarefa'
 import { garantirSessao, meQuery, utilizadorKeys } from '@/entities/utilizador'
 import { eventosApi, sessao } from '@/shared/api'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
-import { usePermissoesStore } from '@/shared/lib/permissoes'
+import { useCan, usePermissoesStore } from '@/shared/lib/permissoes'
 import { usePreferencias } from '@/shared/lib/preferencias'
 import { Aviso } from '@/shared/ui'
 import { abrirPaleta, Casca, FaixaSemLigacao } from './-casca/casca'
@@ -51,6 +51,7 @@ function LayoutApp() {
   const ano = anos.find((a) => a.id === anoLectivoId)
   const designacao = ano?.designacao
   const menuRecolhido = usePreferencias((e) => e.menuRecolhido)
+  const podeGerirAnos = useCan('anos:gerir')
 
   // Permissões actualizadas sempre que /auth/me muda (guia 2.7)
   useEffect(() => {
@@ -122,6 +123,18 @@ function LayoutApp() {
           {ano?.soLeitura && (
             <Aviso tom="leitura" forma="faixa">
               {t`O ano lectivo ${designacao} está encerrado. Só é possível consultar.`}
+              {podeGerirAnos && ano && (
+                <>
+                  {' '}
+                  <Link
+                    to="/anos-lectivos/$anoId"
+                    params={{ anoId: ano.id }}
+                    className="text-acento hover:underline"
+                  >
+                    <Trans>Reabrir</Trans>
+                  </Link>
+                </>
+              )}
             </Aviso>
           )}
         </header>

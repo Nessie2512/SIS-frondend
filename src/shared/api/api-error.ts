@@ -23,6 +23,9 @@ export type CodigoErroDominio =
   | 'EVENTO_FIXO'
   | 'DOCUMENTOS_EM_FALTA'
   | 'PROPRIA_CONTA'
+  | 'PENDENCIAS_POR_RESOLVER'
+  | 'OUTRO_ANO_EM_CURSO'
+  | 'ANO_PLANEADO_EXISTENTE'
 
 export interface ErroDeCampo {
   campo: string

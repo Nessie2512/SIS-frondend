@@ -21,7 +21,39 @@ export interface paths {
   '/auth/me': { get: Op<{ ok: S['MeDto'] }> }
 
   // Referência
-  '/anos-lectivos': { get: Op<{ ok: S['AnoLectivoDto'][] }> }
+  '/anos-lectivos': {
+    get: Op<{ ok: S['AnoLectivoDto'][] }>
+    /** Cria o ano seguinte como PLANEADO, com trimestres e calendário gerados */
+    post: Op<{ body: S['NovoAnoLectivoDto']; ok: S['AnoLectivoDto']; erros: 403 | 409 | 422 }>
+  }
+  '/anos-lectivos/{id}/encerramento': {
+    get: Op<{ path: { id: string }; ok: S['EncerramentoDto']; erros: 404 }>
+  }
+  '/anos-lectivos/{id}/encerrar': {
+    post: Op<{
+      path: { id: string }
+      body: S['EncerrarAnoDto']
+      ok: S['AnoLectivoDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+  '/anos-lectivos/{id}/reabrir': {
+    post: Op<{
+      path: { id: string }
+      body: S['ReabrirAnoDto']
+      ok: S['AnoLectivoDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+  '/anos-lectivos/{id}/abertura': {
+    get: Op<{ path: { id: string }; ok: S['AberturaDto']; erros: 404 }>
+  }
+  '/anos-lectivos/{id}/duplicar-turmas': {
+    post: Op<{ path: { id: string }; ok: S['DuplicarTurmasDto']; erros: 403 | 404 | 409 }>
+  }
+  '/anos-lectivos/{id}/activar': {
+    post: Op<{ path: { id: string }; ok: S['AnoLectivoDto']; erros: 403 | 404 | 409 }>
+  }
   '/classes': { get: Op<{ ok: S['ClasseDto'][] }> }
 
   // Painel e pesquisa
@@ -356,6 +388,49 @@ export interface components {
       dataFim: string
       estado: components['schemas']['EstadoAnoLectivo']
     }
+    NovoAnoLectivoDto: {
+      /** Formato: date */
+      dataInicio: string
+      /** Formato: date */
+      dataFim: string
+    }
+    TipoPendencia: 'MATRICULAS_PENDENTES' | 'CONFIRMADAS_SEM_TURMA' | 'RESULTADOS_EM_FALTA'
+    EncerramentoDto: {
+      anoLectivoId: string
+      pendencias: {
+        tipo: components['schemas']['TipoPendencia']
+        quantidade: number
+        bloqueante: boolean
+      }[]
+      turmasSemResultados: { turmaId: string; designacao: string; total: number; emFalta: number }[]
+      podeEncerrar: boolean
+    }
+    /** O texto tem de ser a designação do ano (confirmação digitada, guia 2.3) */
+    EncerrarAnoDto: { confirmacao: string }
+    ReabrirAnoDto: { motivo: string }
+    EtapaAbertura:
+      | 'CRIAR'
+      | 'CALENDARIO'
+      | 'TURMAS'
+      | 'RENOVACAO'
+      | 'MATRICULAS'
+      | 'DISTRIBUICAO'
+      | 'DOCENTES'
+      | 'ACTIVAR'
+    EstadoEtapa: 'FEITA' | 'POR_FAZER' | 'OPCIONAL' | 'BLOQUEADA'
+    EtapaAberturaDto: {
+      id: components['schemas']['EtapaAbertura']
+      estado: components['schemas']['EstadoEtapa']
+      /** Contagem que a etapa mostra (trimestres, turmas, sem turma, sem docente…) */
+      quantidade: number | null
+    }
+    AberturaDto: {
+      anoLectivoId: string
+      etapas: components['schemas']['EtapaAberturaDto'][]
+      /** Designação do ano ainda em curso, que impede activar este */
+      anoEmCurso: string | null
+    }
+    DuplicarTurmasDto: { criadas: number; origem: string }
     ClasseDto: { id: string; designacao: string; cicloDesignacao: string; ordem: number }
 
     // Turmas

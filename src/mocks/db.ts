@@ -39,6 +39,7 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
       'calendario:escrever',
       'administracao:ler',
       'administracao:escrever',
+      'anos:gerir',
     ],
   },
   {
@@ -57,7 +58,7 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
   },
 ]
 
-export const anosLectivos: S['AnoLectivoDto'][] = [
+const ANOS_INICIAIS: S['AnoLectivoDto'][] = [
   {
     id: 'ano-2025',
     designacao: '2025/2026',
@@ -73,6 +74,9 @@ export const anosLectivos: S['AnoLectivoDto'][] = [
     estado: 'EM_CURSO',
   },
 ]
+
+/** Anos lectivos (mutável: abrir, activar, encerrar e reabrir mudam esta lista). */
+export const anosLectivos: S['AnoLectivoDto'][] = ANOS_INICIAIS.map((a) => ({ ...a }))
 
 export const classes: S['ClasseDto'][] = [
   { id: 'c7', designacao: '7.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 7 },
@@ -150,8 +154,17 @@ interface Estado {
   atribuicoes: Atribuicao[]
   trimestres: Trimestre[]
   eventos: Evento[]
+  /** Renovações de matrículas (simuladas e aplicadas) para o ano seguinte */
+  renovacoes: Renovacao[]
   idempotencia: Map<string, unknown>
   sequencia: number
+}
+
+export interface Renovacao {
+  id: string
+  anoOrigemId: string
+  anoDestinoId: string
+  aplicada: boolean
 }
 
 function criar(): Estado {
@@ -356,6 +369,7 @@ function criar(): Estado {
       ]),
     ...criarAcademico(classes, turmas, anosLectivos),
     ...criarCalendario(anosLectivos),
+    renovacoes: [],
     idempotencia: new Map(),
     sequencia: n,
   }
@@ -365,6 +379,7 @@ export let db = criar()
 
 /** Volta ao estado inicial (usado entre testes). */
 export function reporBaseDeDados() {
+  anosLectivos.splice(0, anosLectivos.length, ...ANOS_INICIAIS.map((a) => ({ ...a })))
   db = criar()
 }
 

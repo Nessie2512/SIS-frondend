@@ -38,13 +38,14 @@ export const PERFIS: Omit<S['PerfilDto'], 'utilizadores'>[] = [
       'documentos:emitir',
       'administracao:ler',
       'administracao:escrever',
+      'anos:gerir',
     ],
   },
   {
     id: 'perfil-secretaria',
     nome: 'Secretaria',
     descricao: 'Matrículas, turmas, professores, currículo e calendário.',
-    permissoes: [...LEITURA, ...ESCRITA, 'documentos:emitir'],
+    permissoes: [...LEITURA, ...ESCRITA, 'documentos:emitir', 'anos:gerir'],
   },
   {
     id: 'perfil-direccao',

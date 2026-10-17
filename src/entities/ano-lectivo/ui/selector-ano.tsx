@@ -7,13 +7,7 @@ import { cn } from '@/shared/lib/cn'
 import { EtiquetaEstado } from '@/shared/ui'
 import { anosLectivosQuery } from '../api/queries'
 import { useContextoAno } from '../model/contexto'
-import type { EstadoAnoLectivo } from '../model/tipos'
-
-const TOM: Record<EstadoAnoLectivo, 'sucesso' | 'neutra' | 'aviso'> = {
-  EM_CURSO: 'sucesso',
-  PLANEADO: 'neutra',
-  ENCERRADO: 'aviso',
-}
+import { TOM_ESTADO_ANO } from '../model/mapeadores'
 
 /**
  * Selector do ano lectivo (guia 2.5, 6.3): cápsula no cabeçalho com o ano em contexto e o
@@ -38,7 +32,9 @@ export function SelectorAno() {
         className="flex h-8 items-center gap-2 rounded-full bg-fundo pr-2 pl-3 text-secundario ring-1 ring-linha hover:ring-contorno data-[state=open]:ring-contorno"
       >
         <span className="tabular font-medium text-texto-1">{actual?.designacao ?? '—'}</span>
-        {actual && <EtiquetaEstado tom={TOM[actual.estado]}>{actual.estadoRotulo}</EtiquetaEstado>}
+        {actual && (
+          <EtiquetaEstado tom={TOM_ESTADO_ANO[actual.estado]}>{actual.estadoRotulo}</EtiquetaEstado>
+        )}
         <ChevronDown aria-hidden className="size-4 stroke-[1.5] text-texto-3" />
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal>
@@ -70,7 +66,7 @@ export function SelectorAno() {
                   </DropdownMenu.ItemIndicator>
                 </span>
                 <span className="tabular flex-1">{ano.designacao}</span>
-                <EtiquetaEstado tom={TOM[ano.estado]}>{ano.estadoRotulo}</EtiquetaEstado>
+                <EtiquetaEstado tom={TOM_ESTADO_ANO[ano.estado]}>{ano.estadoRotulo}</EtiquetaEstado>
               </DropdownMenu.RadioItem>
             ))}
           </DropdownMenu.RadioGroup>
