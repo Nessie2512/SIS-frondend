@@ -336,6 +336,24 @@ export interface paths {
     }>
   }
 
+  // Anular matrícula e mudar a situação do estudante (guia 2.2)
+  '/matriculas/{id}/anular': {
+    post: Op<{
+      path: { id: string }
+      body: S['MotivoDto']
+      ok: S['MatriculaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+  '/estudantes/{id}/situacao': {
+    post: Op<{
+      path: { id: string }
+      body: S['MudarSituacaoDto']
+      ok: S['EstudanteDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+
   // Transferência de saída (guia 2.3)
   '/estudantes/{id}/transferir': {
     post: Op<{
@@ -541,7 +559,14 @@ export interface components {
     }
     EstudanteAlteracaoDto: { nome?: string; telefone?: string | null; morada?: string | null }
     PaginaEstudanteDto: Pagina<components['schemas']['EstudanteResumoDto']>
-    TipoEventoPercurso: 'MATRICULA' | 'INSCRICAO' | 'MUDANCA_TURMA' | 'TRANSFERENCIA' | 'RESULTADO' | 'RECTIFICACAO'
+    TipoEventoPercurso:
+      | 'MATRICULA'
+      | 'INSCRICAO'
+      | 'MUDANCA_TURMA'
+      | 'TRANSFERENCIA'
+      | 'RESULTADO'
+      | 'RECTIFICACAO'
+      | 'SITUACAO'
     EventoPercursoDto: {
       id: string
       /** Formato: date-time */
@@ -640,6 +665,15 @@ export interface components {
       duplicadoIgnoradoJustificacao?: string
       /** Transferência de entrada: escola de origem e classes lá concluídas (guia 2.3) */
       transferenciaEntrada?: { escolaOrigem: string; classesConcluidas: string[] }
+    }
+    MotivoDto: { motivo: string }
+    /** Desistência (ACTIVO→DESISTENTE), reingresso (DESISTENTE→ACTIVO), anulação (ACTIVO→ANULADO) */
+    AccaoSituacao: 'DESISTENCIA' | 'REINGRESSO' | 'ANULACAO'
+    MudarSituacaoDto: {
+      accao: components['schemas']['AccaoSituacao']
+      /** Formato: date */
+      data: string
+      motivo: string
     }
     TransferirEstudanteDto: {
       escolaDestino: string

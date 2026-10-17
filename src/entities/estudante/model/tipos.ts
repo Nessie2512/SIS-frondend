@@ -31,7 +31,13 @@ export interface Estudante extends EstudanteResumo {
 }
 
 export type TipoEventoPercurso =
-  'MATRICULA' | 'INSCRICAO' | 'MUDANCA_TURMA' | 'TRANSFERENCIA' | 'RESULTADO' | 'RECTIFICACAO'
+  | 'MATRICULA'
+  | 'INSCRICAO'
+  | 'MUDANCA_TURMA'
+  | 'TRANSFERENCIA'
+  | 'RESULTADO'
+  | 'RECTIFICACAO'
+  | 'SITUACAO'
 
 export interface EventoPercurso {
   id: string

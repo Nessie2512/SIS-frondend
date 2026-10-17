@@ -6,6 +6,7 @@ import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { useCan } from '@/shared/lib/permissoes'
 import { Button, Dica, EtiquetaEstado, notificar } from '@/shared/ui'
 import { useConfirmarMatricula } from '../model/use-confirmar-matricula'
+import { AnularMatricula } from './anular-matricula'
 
 interface Props {
   estudante: Estudante
@@ -61,6 +62,7 @@ export function CartaoMatricula({ estudante, documentos, soLeitura }: Props) {
           </p>
         )}
       </div>
+      {podeEscrever && !soLeitura && <AnularMatricula estudante={estudante} />}
       {estudante.matriculaPendente &&
         podeEscrever &&
         (razao ? (

@@ -52,3 +52,22 @@ export function useConfirmarLote() {
       ]),
   })
 }
+
+/**
+ * Anular a matrícula (guia 5.1): pessimista, com confirmação. Liberta o lugar na turma; a
+ * ficha, as listas e a ocupação das turmas são recarregadas.
+ */
+export function useAnularMatricula() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationKey: ['matriculas', 'anular'],
+    mutationFn: async ({ matriculaId, motivo }: { matriculaId: string; motivo: string }) => {
+      const { data } = await api.POST('/matriculas/{id}/anular', {
+        params: { path: { id: matriculaId } },
+        body: { motivo },
+      })
+      return paraMatricula(data!)
+    },
+    onSuccess: () => qc.invalidateQueries(),
+  })
+}

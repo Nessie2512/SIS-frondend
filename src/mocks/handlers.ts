@@ -419,7 +419,8 @@ export const handlers = [
         const erros: S['ProblemaDto']['errors'] = []
         if (!dados.estudanteId && !dados.estudante)
           erros.push({ campo: 'estudante', mensagem: 'Indique o estudante.' })
-        if (!dados.encarregados.length)
+        // Um estudante que já existe mantém os encarregados que tem
+        if (!dados.estudanteId && !dados.encarregados.length)
           erros.push({ campo: 'encarregados', mensagem: 'Indique pelo menos um encarregado.' })
         if (!classes.some((c) => c.id === dados.classeId))
           erros.push({ campo: 'classeId', mensagem: 'Escolha a classe.' })
@@ -756,6 +757,109 @@ export const handlers = [
     protegido('matriculas:escrever', ({ request, params }) => {
       const { erro, matricula } = confirmarMatricula(String(params.id), utilizadorDo(request)!.nome)
       return erro ?? HttpResponse.json(paraMatriculaDto(matricula!))
+    }),
+  ),
+
+  // ---------------------------------------------------------------- anular matrícula e situação
+  http.post(
+    `${API}/matriculas/:id/anular`,
+    protegido('matriculas:escrever', async ({ request, params }) => {
+      const m = db.matriculas.find((x) => x.id === params.id)
+      if (!m) return problema(404, 'Matrícula não encontrada')
+      if (anoEncerrado(m.anoLectivoId))
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      if (m.estado !== 'PENDENTE' && m.estado !== 'CONFIRMADA') {
+        return problema(409, 'Estado inválido', { detail: 'Esta matrícula já não está activa.' })
+      }
+      const { motivo } = (await request.json()) as S['MotivoDto']
+      if ((motivo?.trim().length ?? 0) < 10) {
+        return problema(422, 'Dados inválidos', {
+          errors: [
+            { campo: 'motivo', mensagem: 'Explique porque anula (pelo menos 10 caracteres).' },
+          ],
+        })
+      }
+      const e = db.estudantes.find((x) => x.id === m.estudanteId)!
+      const quem = utilizadorDo(request)!.nome
+      const classe = classePorId(m.classeId).designacao
+      m.estado = 'ANULADA'
+      m.turmaId = null
+      db.percurso.push({
+        id: novoId('p'),
+        estudanteId: e.id,
+        data: new Date().toISOString(),
+        anoLectivo: anosLectivos.find((a) => a.id === m.anoLectivoId)!.designacao,
+        tipo: 'MATRICULA',
+        descricao: `Matrícula anulada na ${classe}`,
+        autor: quem,
+        rectificaId: null,
+        motivo: motivo.trim(),
+      })
+      auditar(quem, 'ALTERAR', 'Matrícula', `${e.nome}: matrícula na ${classe} anulada`)
+      return HttpResponse.json(paraMatriculaDto(m))
+    }),
+  ),
+
+  http.post(
+    `${API}/estudantes/:id/situacao`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      if (!e) return problema(404, 'Estudante não encontrado')
+      const { accao, data, motivo } = (await request.json()) as S['MudarSituacaoDto']
+      const origem: Record<S['AccaoSituacao'], S['EstadoEstudante']> = {
+        DESISTENCIA: 'ACTIVO',
+        REINGRESSO: 'DESISTENTE',
+        ANULACAO: 'ACTIVO',
+      }
+      if (e.estado !== origem[accao]) {
+        return problema(409, 'Estado inválido', {
+          detail: 'Esta mudança não se aplica à situação actual do estudante.',
+        })
+      }
+      const hoje = new Date().toISOString().slice(0, 10)
+      const erros = [
+        ...(!data || data > hoje
+          ? [{ campo: 'data', mensagem: 'A data não pode ser no futuro.' }]
+          : []),
+        ...((motivo?.trim().length ?? 0) < 10
+          ? [{ campo: 'motivo', mensagem: 'Explique o motivo (pelo menos 10 caracteres).' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const activas = db.matriculas.filter(
+        (m) => m.estudanteId === e.id && (m.estado === 'PENDENTE' || m.estado === 'CONFIRMADA'),
+      )
+      if (accao !== 'REINGRESSO' && activas.some((m) => anoEncerrado(m.anoLectivoId))) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      const quem = utilizadorDo(request)!.nome
+      if (accao !== 'REINGRESSO') {
+        for (const m of activas) {
+          m.estado = 'ANULADA'
+          m.turmaId = null
+        }
+      }
+      e.estado =
+        accao === 'DESISTENCIA' ? 'DESISTENTE' : accao === 'ANULACAO' ? 'ANULADO' : 'ACTIVO'
+      e.versao++
+      const texto = {
+        DESISTENCIA: 'Desistência',
+        REINGRESSO: 'Reingresso',
+        ANULACAO: 'Processo anulado',
+      }[accao]
+      db.percurso.push({
+        id: novoId('p'),
+        estudanteId: e.id,
+        data: `${data}T12:00:00Z`,
+        anoLectivo: anosLectivos.find((a) => a.estado === 'EM_CURSO')?.designacao ?? '2026/2027',
+        tipo: 'SITUACAO',
+        descricao: texto,
+        autor: quem,
+        rectificaId: null,
+        motivo: motivo.trim(),
+      })
+      auditar(quem, 'ALTERAR', 'Estudante', `${e.nome}: ${texto.toLowerCase()}`)
+      return HttpResponse.json(paraEstudanteDto(e))
     }),
   ),
 

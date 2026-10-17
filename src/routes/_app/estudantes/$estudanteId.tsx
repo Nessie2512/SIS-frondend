@@ -11,8 +11,11 @@ import {
   formatarTelefone,
 } from '@/entities/estudante'
 import { CartaoMatricula } from '@/features/confirmar-matricula'
+import { anosLectivosQuery } from '@/entities/ano-lectivo'
 import { DadosEstudante } from '@/features/editar-estudante'
 import { DocumentosOficiais } from '@/features/emitir-documento'
+import { MatricularExistente } from '@/features/matricular-existente'
+import { MenuSituacao } from '@/features/mudar-situacao'
 import { TransferirEstudante } from '@/features/transferir-estudante'
 import { PercursoEstudante } from '@/features/rectificar-percurso'
 import { OcorrenciasEstudante } from '@/features/registar-ocorrencia'
@@ -71,6 +74,10 @@ function FichaEstudante() {
   const { soLeitura } = Route.useRouteContext()
   const podeRectificar = useCan('estudantes:escrever') // também registar ocorrências
   const podeEmitir = useCan('documentos:emitir')
+  const podeMatricular = useCan('matriculas:escrever')
+  const { anoLectivoId } = Route.useRouteContext()
+  const { data: anos = [] } = useQuery(anosLectivosQuery())
+  const ano = anos.find((a) => a.id === anoLectivoId)
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: e } = useQuery(estudanteQuery(estudanteId))
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
@@ -107,6 +114,7 @@ function FichaEstudante() {
           {podeRectificar && !soLeitura && e.estado === 'ACTIVO' && (
             <TransferirEstudante estudante={e} />
           )}
+          {podeRectificar && !soLeitura && <MenuSituacao estudante={e} />}
           <Button asChild>
             <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
               <Printer aria-hidden className="size-4 stroke-[1.5]" />
@@ -146,7 +154,14 @@ function FichaEstudante() {
           </Separador>
         </ListaSeparadores>
 
-        <PainelSeparador value="resumo" className="pt-6">
+        <PainelSeparador value="resumo" className="flex flex-col gap-6 pt-6">
+          {e.estado === 'ACTIVO' && !e.matriculaId && !soLeitura && podeMatricular && ano && (
+            <MatricularExistente
+              estudante={e}
+              anoLectivoId={ano.id}
+              designacaoAno={ano.designacao}
+            />
+          )}
           <DadosEstudante estudante={e} soLeitura={soLeitura} />
         </PainelSeparador>
         <PainelSeparador value="percurso" className="pt-6">
