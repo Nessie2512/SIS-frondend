@@ -78,17 +78,48 @@ const ANOS_INICIAIS: S['AnoLectivoDto'][] = [
 /** Anos lectivos (mutável: abrir, activar, encerrar e reabrir mudam esta lista). */
 export const anosLectivos: S['AnoLectivoDto'][] = ANOS_INICIAIS.map((a) => ({ ...a }))
 
-export const classes: S['ClasseDto'][] = [
-  { id: 'c7', designacao: '7.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 7 },
-  { id: 'c8', designacao: '8.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 8 },
-  { id: 'c9', designacao: '9.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 9 },
+/** Ciclos de ensino; as classes pertencem a um ciclo e têm sequência (ordem) */
+const CICLOS_INICIAIS: S['CicloResumoDto'][] = [
+  { id: 'ciclo-1', designacao: 'I ciclo do ensino secundário', estado: 'ACTIVO' },
+  { id: 'ciclo-2', designacao: 'II ciclo do ensino secundário', estado: 'ACTIVO' },
+]
+const CLASSES_INICIAIS: S['ClasseDto'][] = [
+  {
+    id: 'c7',
+    designacao: '7.ª classe',
+    cicloId: 'ciclo-1',
+    cicloDesignacao: 'I ciclo do ensino secundário',
+    ordem: 7,
+    estado: 'ACTIVA',
+  },
+  {
+    id: 'c8',
+    designacao: '8.ª classe',
+    cicloId: 'ciclo-1',
+    cicloDesignacao: 'I ciclo do ensino secundário',
+    ordem: 8,
+    estado: 'ACTIVA',
+  },
+  {
+    id: 'c9',
+    designacao: '9.ª classe',
+    cicloId: 'ciclo-1',
+    cicloDesignacao: 'I ciclo do ensino secundário',
+    ordem: 9,
+    estado: 'ACTIVA',
+  },
   {
     id: 'c10',
     designacao: '10.ª classe',
+    cicloId: 'ciclo-2',
     cicloDesignacao: 'II ciclo do ensino secundário',
     ordem: 10,
+    estado: 'ACTIVA',
   },
 ]
+/** Mutáveis (gestão de ciclos e classes), repostos com a base de dados */
+export const ciclos: S['CicloResumoDto'][] = CICLOS_INICIAIS.map((c) => ({ ...c }))
+export const classes: S['ClasseDto'][] = CLASSES_INICIAIS.map((c) => ({ ...c }))
 
 const TIPOS_DOCUMENTO = [
   { tipo: 'certidao-nascimento', designacao: 'Certidão de nascimento', obrigatorio: true },
@@ -415,6 +446,8 @@ export let db = criar()
 /** Volta ao estado inicial (usado entre testes). */
 export function reporBaseDeDados() {
   anosLectivos.splice(0, anosLectivos.length, ...ANOS_INICIAIS.map((a) => ({ ...a })))
+  ciclos.splice(0, ciclos.length, ...CICLOS_INICIAIS.map((c) => ({ ...c })))
+  classes.splice(0, classes.length, ...CLASSES_INICIAIS.map((c) => ({ ...c })))
   db = criar()
 }
 

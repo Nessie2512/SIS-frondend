@@ -1,1 +1,1 @@
-export { classesQuery, classeKeys, type Classe } from './api/queries'
+export { ciclosQuery, classesQuery, classeKeys, type Ciclo, type Classe } from './api/queries'

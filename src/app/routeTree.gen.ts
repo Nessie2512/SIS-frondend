@@ -19,6 +19,7 @@ import { Route as AppRelatoriosRouteImport } from './../routes/_app/relatorios'
 import { Route as AppAnosLectivosIndexRouteImport } from './../routes/_app/anos-lectivos/index'
 import { Route as AppAnosLectivosAnoIdRouteImport } from './../routes/_app/anos-lectivos/$anoId'
 import { Route as AppCurriculoIndexRouteImport } from './../routes/_app/curriculo/index'
+import { Route as AppCurriculoClassesRouteImport } from './../routes/_app/curriculo/classes'
 import { Route as AppCurriculoDisciplinasRouteImport } from './../routes/_app/curriculo/disciplinas'
 import { Route as AppDefinicoesIndexRouteImport } from './../routes/_app/definicoes/index'
 import { Route as AppDefinicoesAuditoriaRouteImport } from './../routes/_app/definicoes/auditoria'
@@ -84,6 +85,11 @@ const AppAnosLectivosAnoIdRoute = AppAnosLectivosAnoIdRouteImport.update({
 const AppCurriculoIndexRoute = AppCurriculoIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppCurriculoRoute,
+} as any)
+const AppCurriculoClassesRoute = AppCurriculoClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
   getParentRoute: () => AppCurriculoRoute,
 } as any)
 const AppCurriculoDisciplinasRoute = AppCurriculoDisciplinasRouteImport.update({
@@ -185,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/definicoes': typeof AppDefinicoesRouteWithChildren
   '/relatorios': typeof AppRelatoriosRoute
   '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/curriculo/classes': typeof AppCurriculoClassesRoute
   '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
   '/definicoes/perfis': typeof AppDefinicoesPerfisRoute
@@ -211,6 +218,7 @@ export interface FileRoutesByTo {
   '/relatorios': typeof AppRelatoriosRoute
   '/': typeof AppIndexRoute
   '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/curriculo/classes': typeof AppCurriculoClassesRoute
   '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
   '/definicoes/perfis': typeof AppDefinicoesPerfisRoute
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/': typeof AppIndexRoute
   '/_app/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/_app/curriculo/classes': typeof AppCurriculoClassesRoute
   '/_app/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/_app/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
   '/_app/definicoes/perfis': typeof AppDefinicoesPerfisRoute
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/definicoes'
     | '/relatorios'
     | '/anos-lectivos/$anoId'
+    | '/curriculo/classes'
     | '/curriculo/disciplinas'
     | '/definicoes/auditoria'
     | '/definicoes/perfis'
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/relatorios'
     | '/'
     | '/anos-lectivos/$anoId'
+    | '/curriculo/classes'
     | '/curriculo/disciplinas'
     | '/definicoes/auditoria'
     | '/definicoes/perfis'
@@ -326,6 +337,7 @@ export interface FileRouteTypes {
     | '/_app/relatorios'
     | '/_app/'
     | '/_app/anos-lectivos/$anoId'
+    | '/_app/curriculo/classes'
     | '/_app/curriculo/disciplinas'
     | '/_app/definicoes/auditoria'
     | '/_app/definicoes/perfis'
@@ -422,6 +434,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/curriculo/'
       preLoaderRoute: typeof AppCurriculoIndexRouteImport
+      parentRoute: typeof AppCurriculoRoute
+    }
+    '/_app/curriculo/classes': {
+      id: '/_app/curriculo/classes'
+      path: '/classes'
+      fullPath: '/curriculo/classes'
+      preLoaderRoute: typeof AppCurriculoClassesRouteImport
       parentRoute: typeof AppCurriculoRoute
     }
     '/_app/curriculo/disciplinas': {
@@ -547,11 +566,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppCurriculoRouteChildren {
+  AppCurriculoClassesRoute: typeof AppCurriculoClassesRoute
   AppCurriculoDisciplinasRoute: typeof AppCurriculoDisciplinasRoute
   AppCurriculoIndexRoute: typeof AppCurriculoIndexRoute
 }
 
 const AppCurriculoRouteChildren: AppCurriculoRouteChildren = {
+  AppCurriculoClassesRoute: AppCurriculoClassesRoute,
   AppCurriculoDisciplinasRoute: AppCurriculoDisciplinasRoute,
   AppCurriculoIndexRoute: AppCurriculoIndexRoute,
 }

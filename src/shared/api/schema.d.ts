@@ -54,7 +54,35 @@ export interface paths {
   '/anos-lectivos/{id}/activar': {
     post: Op<{ path: { id: string }; ok: S['AnoLectivoDto']; erros: 403 | 404 | 409 }>
   }
-  '/classes': { get: Op<{ ok: S['ClasseDto'][] }> }
+  '/classes': {
+    get: Op<{ ok: S['ClasseDto'][] }>
+    post: Op<{
+      body: { cicloId: string; designacao: string }
+      ok: S['ClasseDto']
+      erros: 403 | 409 | 422
+    }>
+  }
+  '/classes/{id}': {
+    patch: Op<{
+      path: { id: string }
+      body: { designacao: string }
+      ok: S['ClasseDto']
+      erros: 403 | 404 | 422
+    }>
+    delete: Op<{ path: { id: string }; ok: S['VazioDto']; erros: 403 | 404 | 409 }>
+  }
+  '/classes/{id}/estado': {
+    post: Op<{
+      path: { id: string }
+      body: { estado: 'ACTIVA' | 'INACTIVA' }
+      ok: S['ClasseDto']
+      erros: 403 | 404
+    }>
+  }
+  '/ciclos': {
+    get: Op<{ ok: S['CicloDto'][] }>
+    post: Op<{ body: { designacao: string }; ok: S['CicloResumoDto']; erros: 403 | 422 }>
+  }
 
   // Painel e pesquisa
   '/painel': { get: Op<{ query: { anoLectivoId: string }; ok: S['PainelDto'] }> }
@@ -559,7 +587,25 @@ export interface components {
       anoEmCurso: string | null
     }
     DuplicarTurmasDto: { criadas: number; origem: string }
-    ClasseDto: { id: string; designacao: string; cicloDesignacao: string; ordem: number }
+    ClasseDto: {
+      id: string
+      designacao: string
+      cicloId: string
+      cicloDesignacao: string
+      /** Sequência: a classe seguinte é a de ordem + 1 (relação, nunca texto livre) */
+      ordem: number
+      estado: 'ACTIVA' | 'INACTIVA'
+    }
+    CicloResumoDto: { id: string; designacao: string; estado: 'ACTIVO' | 'INACTIVO' }
+    /** Classe com o uso que impede eliminá-la (guia 2.4: em uso, só se inactiva) */
+    ClasseGestaoDto: components['schemas']['ClasseDto'] & {
+      turmas: number
+      matriculas: number
+      planos: number
+    }
+    CicloDto: components['schemas']['CicloResumoDto'] & {
+      classes: components['schemas']['ClasseGestaoDto'][]
+    }
 
     // Turmas
     TurmaDto: {

@@ -51,11 +51,13 @@ export function PassoClasseTurma({ anoLectivoId }: { anoLectivoId: string }) {
             {(c) => (
               <Selector
                 {...c}
-                opcoes={classes.map((x) => ({
-                  valor: x.id,
-                  rotulo: x.designacao,
-                  descricao: x.ciclo,
-                }))}
+                opcoes={classes
+                  .filter((x) => x.activa)
+                  .map((x) => ({
+                    valor: x.id,
+                    rotulo: x.designacao,
+                    descricao: x.ciclo,
+                  }))}
                 valor={field.value || null}
                 aoMudar={(v) => {
                   field.onChange(v ?? '')

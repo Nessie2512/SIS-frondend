@@ -39,6 +39,7 @@ import { administracao, auditar, handlersAdministracao } from './administracao'
 import { handlersAnos } from './anos'
 import { handlersRenovacoes } from './renovacoes'
 import { handlersDistribuicao } from './distribuicao'
+import { handlersClasses } from './classes'
 import { handlersDocumentosOficiais } from './documentos-oficiais'
 import { gerarCsv, handlersRelatorios } from './relatorios'
 
@@ -1264,6 +1265,7 @@ export const handlers = [
   ...handlersAnos,
   ...handlersRenovacoes,
   ...handlersDistribuicao,
+  ...handlersClasses,
   ...handlersDocumentosOficiais,
   ...handlersAcademicos,
 ]

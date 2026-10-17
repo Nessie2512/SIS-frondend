@@ -129,7 +129,9 @@ export function NovaTurma({
             {(c) => (
               <Selector
                 {...c}
-                opcoes={classes.map((x) => ({ valor: x.id, rotulo: x.designacao }))}
+                opcoes={classes
+                  .filter((x) => x.activa)
+                  .map((x) => ({ valor: x.id, rotulo: x.designacao }))}
                 valor={classeId}
                 aoMudar={setClasseId}
               />

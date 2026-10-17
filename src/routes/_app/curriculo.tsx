@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
-import { BookOpen } from 'lucide-react'
+import { BookOpen, ListTree } from 'lucide-react'
 import { classesQuery } from '@/entities/classe'
 import { TEMPOS } from '@/shared/config/constantes'
 import { ErroDeRota, Esqueleto } from '@/shared/ui'
@@ -37,10 +37,16 @@ function LayoutCurriculo() {
   return (
     <div className="grid gap-8 md:grid-cols-[14rem_1fr]">
       <nav aria-label={t`Currículo`} className="flex flex-col gap-5 text-corpo">
-        <Link to="/curriculo/disciplinas" className={classesLigacao}>
-          <BookOpen aria-hidden className="mr-2 size-4 stroke-[1.5]" />
-          <Trans>Disciplinas</Trans>
-        </Link>
+        <div className="flex flex-col gap-0.5">
+          <Link to="/curriculo/disciplinas" className={classesLigacao}>
+            <BookOpen aria-hidden className="mr-2 size-4 stroke-[1.5]" />
+            <Trans>Disciplinas</Trans>
+          </Link>
+          <Link to="/curriculo/classes" className={classesLigacao}>
+            <ListTree aria-hidden className="mr-2 size-4 stroke-[1.5]" />
+            <Trans>Ciclos e classes</Trans>
+          </Link>
+        </div>
         {ciclos.map((ciclo) => (
           <div key={ciclo.nome} className="flex flex-col gap-1">
             <h2 className="px-3 text-legenda text-texto-3">{ciclo.nome}</h2>
@@ -54,6 +60,7 @@ function LayoutCurriculo() {
                     className={classesLigacao}
                   >
                     {classe.designacao}
+                    {!classe.activa && <span className="ml-1 text-texto-3">{t`(inactiva)`}</span>}
                   </Link>
                 </li>
               ))}

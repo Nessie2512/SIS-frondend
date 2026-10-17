@@ -23,6 +23,10 @@ msgstr "«Igual ao sistema» segue o modo claro ou escuro do computador."
 msgid "(a sua conta)"
 msgstr "(a sua conta)"
 
+#: src/routes/_app/curriculo.tsx
+msgid "(inactiva)"
+msgstr "(inactiva)"
+
 #. placeholder {0}: idsSeleccionados.length
 #: src/shared/ui/tabela-dados.tsx
 msgid "{0, plural, one {# seleccionado} other {# seleccionados}}"
@@ -59,6 +63,18 @@ msgstr "{criadas} turmas criadas a partir de {origem}."
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "{designacao} (faltam {falta})"
 msgstr "{designacao} (faltam {falta})"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{designacao} eliminada."
+msgstr "{designacao} eliminada."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{designacao} inactivada: deixa de ser oferecida em matrículas e turmas novas."
+msgstr "{designacao} inactivada: deixa de ser oferecida em matrículas e turmas novas."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{designacao} reactivada."
+msgstr "{designacao} reactivada."
 
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "{designacao}: {n} resultados guardados."
@@ -173,6 +189,14 @@ msgstr "{nome} acrescentada ao plano."
 #: src/features/inscrever-na-turma/model/use-colocar-na-turma.ts
 msgid "{nome} colocado na {turma}."
 msgstr "{nome} colocado na {turma}."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{nome} criada."
+msgstr "{nome} criada."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{nome} criado."
+msgstr "{nome} criado."
 
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "{nome} está de novo activo."
@@ -335,6 +359,10 @@ msgstr "{total} utilizadores"
 msgid "{turmas} turmas"
 msgstr "{turmas} turmas"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{turmas} turmas, {matriculas} matrículas, {planos} planos"
+msgstr "{turmas} turmas, {matriculas} matrículas, {planos} planos"
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{v} h por semana"
 msgstr "{v} h por semana"
@@ -485,6 +513,10 @@ msgstr "A matrícula deste ano ({matricula}) fica anulada."
 msgid "A obter o estado da tarefa"
 msgstr "A obter o estado da tarefa"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "A ordem das classes define a classe seguinte na renovação. Uma classe em uso não se elimina: inactiva-se."
+msgstr "A ordem das classes define a classe seguinte na renovação. Uma classe em uso não se elimina: inactiva-se."
+
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "A partir de"
 msgstr "A partir de"
@@ -504,6 +536,10 @@ msgstr "A renovação está a correr em segundo plano. Acompanhe-a no quadro de 
 #: src/shared/lib/erros-dominio.ts
 msgid "A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma."
 msgstr "A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "A seguir: {seguinte}"
+msgstr "A seguir: {seguinte}"
 
 #: src/routes/-casca/proteccao-sessao.tsx
 msgid "A sessão terminou"
@@ -746,6 +782,14 @@ msgstr "Ainda não há utilizadores."
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Ainda não pediu nenhum relatório neste ano."
 msgstr "Ainda não pediu nenhum relatório neste ano."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Ainda sem classes neste ciclo."
+msgstr "Ainda sem classes neste ciclo."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Ainda sem uso"
+msgstr "Ainda sem uso"
 
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Ajuda"
@@ -1024,6 +1068,7 @@ msgstr "Cancelado."
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
+#: src/features/gerir-classes/ui/arvore-classes.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/gerir-turmas/ui/encerrar-turma.tsx
@@ -1076,6 +1121,11 @@ msgstr "ciclo"
 #: src/shared/config/glossario.ts
 msgid "ciclos"
 msgstr "ciclos"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+#: src/routes/_app/curriculo.tsx
+msgid "Ciclos e classes"
+msgstr "Ciclos e classes"
 
 #: src/routes/_app/definicoes/index.tsx
 msgid "Claro"
@@ -1264,6 +1314,14 @@ msgstr "Cria {aRenovar} matrículas confirmadas, sem turma, em {designacao}. A r
 msgid "Criar {designacao}"
 msgstr "Criar {designacao}"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Criar ciclo"
+msgstr "Criar ciclo"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Criar classe"
+msgstr "Criar classe"
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Criar disciplina"
 msgstr "Criar disciplina"
@@ -1431,6 +1489,10 @@ msgstr "Densidade confortável"
 msgid "Depois"
 msgstr "Depois"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Depois acrescente-lhe as classes, pela ordem."
+msgstr "Depois acrescente-lhe as classes, pela ordem."
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
 msgstr "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
@@ -1487,6 +1549,10 @@ msgstr "Desfazer a última acção reversível"
 #: src/features/inscrever-na-turma/model/use-colocar-na-turma.ts
 msgid "Desfeito pelo utilizador"
 msgstr "Desfeito pelo utilizador"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Designação"
+msgstr "Designação"
 
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "Desistência de {nome} registada."
@@ -1692,9 +1758,14 @@ msgstr "Editar encarregado"
 msgid "Editar o item em foco"
 msgstr "Editar o item em foco"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Eliminar"
 msgstr "Eliminar"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Eliminar {designacao}"
+msgstr "Eliminar {designacao}"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Eliminar {nome}"
@@ -1863,6 +1934,10 @@ msgstr "Enche a primeira turma, depois a seguinte."
 msgid "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
 msgstr "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Entra a seguir à última classe de {cicloNome}."
+msgstr "Entra a seguir à última classe de {cicloNome}."
+
 #: src/features/autenticar/ui/formulario-entrada.tsx
 msgid "Entrar"
 msgstr "Entrar"
@@ -1975,6 +2050,10 @@ msgstr "Escolher período"
 msgid "Escreva {designacao} para confirmar"
 msgstr "Escreva {designacao} para confirmar"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Escreva a designação da classe."
+msgstr "Escreva a designação da classe."
+
 #: src/features/autenticar/model/esquema.ts
 msgid "Escreva a palavra-passe."
 msgstr "Escreva a palavra-passe."
@@ -1987,6 +2066,10 @@ msgstr "Escreva o nome completo."
 #: src/features/gerir-disciplinas/model/esquema.ts
 msgid "Escreva o nome da disciplina."
 msgstr "Escreva o nome da disciplina."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Escreva o nome do ciclo."
+msgstr "Escreva o nome do ciclo."
 
 #: src/features/gerir-eventos/model/esquema.ts
 msgid "Escreva o nome do evento."
@@ -2024,6 +2107,10 @@ msgstr "Esta classe já tem um rascunho em preparação. Abrimos o rascunho exis
 #: src/shared/lib/erros-dominio.ts
 msgid "Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la."
 msgstr "Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Está em uso: mantém turmas, matrículas e planos; só deixa de ser oferecida."
+msgstr "Está em uso: mantém turmas, matrículas e planos; só deixa de ser oferecida."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
@@ -2139,6 +2226,10 @@ msgstr "Etapas da abertura"
 msgid "Evento"
 msgstr "Evento"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Ex.: 11.ª classe"
+msgstr "Ex.: 11.ª classe"
+
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Ex.: 7.ª classe sem turma"
 msgstr "Ex.: 7.ª classe sem turma"
@@ -2146,6 +2237,10 @@ msgstr "Ex.: 7.ª classe sem turma"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Ex.: Educação Ambiental"
 msgstr "Ex.: Educação Ambiental"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Ex.: Ensino primário"
+msgstr "Ex.: Ensino primário"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Ex.: licença de maternidade"
@@ -2420,13 +2515,19 @@ msgstr "Imprimir ficha"
 msgid "Imprimir lista"
 msgstr "Imprimir lista"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Inactiva"
 msgstr "Inactiva"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Inactivar"
 msgstr "Inactivar"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Inactivar {designacao}"
+msgstr "Inactivar {designacao}"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Inactivar {nome}"
@@ -3031,6 +3132,14 @@ msgstr "Nome ou número de agente"
 msgid "Nome ou número de processo"
 msgstr "Nome ou número de processo"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Nova classe"
+msgstr "Nova classe"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Nova classe em {nomeCiclo}"
+msgstr "Nova classe em {nomeCiclo}"
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Nova disciplina"
 msgstr "Nova disciplina"
@@ -3046,6 +3155,10 @@ msgstr "Novas atribuições"
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Novo (no contexto do ecrã)"
 msgstr "Novo (no contexto do ecrã)"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Novo ciclo"
+msgstr "Novo ciclo"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Novo docente"
@@ -3611,9 +3724,14 @@ msgstr "Reabrir"
 msgid "Reabrir o ano {designacao}"
 msgstr "Reabrir o ano {designacao}"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Reactivar"
 msgstr "Reactivar"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Reactivar {designacao}"
+msgstr "Reactivar {designacao}"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Reactivar {nome}"
@@ -4353,6 +4471,10 @@ msgstr "Turmas com resultados em falta"
 msgid "Turno"
 msgstr "Turno"
 
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Última classe da escola"
+msgstr "Última classe da escola"
+
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Último acesso"
 msgstr "Último acesso"
@@ -4467,6 +4589,10 @@ msgstr "Vistas guardadas"
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "Volta a estar activo; depois matricula-se no ano."
 msgstr "Volta a estar activo; depois matricula-se no ano."
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "Volta a ser oferecida em matrículas e turmas novas."
+msgstr "Volta a ser oferecida em matrículas e turmas novas."
 
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Voltar aos estudantes"
