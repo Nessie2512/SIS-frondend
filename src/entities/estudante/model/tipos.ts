@@ -69,6 +69,8 @@ export interface Encarregado {
   email: string | null
   principal: boolean
   outrosEducandos: number
+  /** Linha provisória enquanto o servidor grava (semi-optimista) */
+  aGuardar?: boolean
 }
 
 export interface FiltrosEstudantes {

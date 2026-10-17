@@ -386,6 +386,136 @@ export const handlers = [
     }),
   ),
 
+  http.get(
+    `${API}/encarregados`,
+    protegido('estudantes:ler', ({ request }) => {
+      const pesquisa = normalizar(new URL(request.url).searchParams.get('pesquisa') ?? '')
+      const digitos = pesquisa.replace(/\D/g, '')
+      if (pesquisa.length < 2) return HttpResponse.json([])
+      return HttpResponse.json(
+        db.encarregados
+          .filter(
+            (x) =>
+              normalizar(x.nome).includes(pesquisa) ||
+              (digitos.length >= 3 && x.telefone.includes(digitos)),
+          )
+          .slice(0, 8)
+          .map((x) => ({
+            id: x.id,
+            nome: x.nome,
+            telefone: x.telefone,
+            educandos: x.educandos
+              .map((id) => db.estudantes.find((e) => e.id === id)?.nome)
+              .filter((n): n is string => Boolean(n)),
+          })) satisfies S['EncarregadoResumoDto'][],
+      )
+    }),
+  ),
+
+  http.post(
+    `${API}/estudantes/:id/encarregados`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      if (!e) return problema(404, 'Estudante não encontrado')
+      const corpo = (await request.json()) as S['AcrescentarEncarregadoDto']
+      let enc = corpo.encarregadoId
+        ? db.encarregados.find((x) => x.id === corpo.encarregadoId)
+        : undefined
+      if (corpo.encarregadoId && !enc) return problema(404, 'Encarregado não encontrado')
+      if (!enc) {
+        const erros = validarEncarregado(corpo)
+        if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+        const telefone = corpo.telefone!.replace(/\D/g, '')
+        const existente = db.encarregados.find((x) => x.telefone === telefone)
+        if (existente) {
+          return problema(409, 'Encarregado existente', {
+            code: 'ENCARREGADO_EXISTENTE',
+            detail: `${existente.nome} já está registado com este telefone.`,
+            encarregadoId: existente.id,
+            nome: existente.nome,
+          })
+        }
+        enc = {
+          id: novoId('enc'),
+          nome: corpo.nome!.trim(),
+          parentesco: corpo.parentesco!.trim(),
+          telefone,
+          email: corpo.email?.trim() || null,
+          educandos: [],
+        }
+        db.encarregados.push(enc)
+      }
+      if (e.encarregadoIds.includes(enc.id)) {
+        return problema(409, 'Já ligado', {
+          detail: 'Este encarregado já está ligado ao estudante.',
+        })
+      }
+      enc.educandos.push(e.id)
+      e.encarregadoIds[corpo.principal ? 'unshift' : 'push'](enc.id)
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Estudante',
+        `${e.nome}: encarregado ${enc.nome} acrescentado`,
+      )
+      return HttpResponse.json(paraEncarregadoDto(enc, e.id, e.encarregadoIds[0] === enc.id), {
+        status: 201,
+      })
+    }),
+  ),
+
+  http.put(
+    `${API}/estudantes/:id/encarregados/:encarregadoId`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      const enc = db.encarregados.find((x) => x.id === params.encarregadoId)
+      if (!e || !enc || !e.encarregadoIds.includes(enc.id)) {
+        return problema(404, 'Encarregado não encontrado')
+      }
+      const corpo = (await request.json()) as S['AcrescentarEncarregadoDto']
+      const erros = validarEncarregado(corpo)
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const telefone = corpo.telefone!.replace(/\D/g, '')
+      if (db.encarregados.some((x) => x.id !== enc.id && x.telefone === telefone)) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'telefone', mensagem: 'Outro encarregado já usa este telefone.' }],
+        })
+      }
+      enc.nome = corpo.nome!.trim()
+      enc.parentesco = corpo.parentesco!.trim()
+      enc.telefone = telefone
+      enc.email = corpo.email?.trim() || null
+      if (corpo.principal) {
+        e.encarregadoIds = [enc.id, ...e.encarregadoIds.filter((x) => x !== enc.id)]
+      }
+      auditar(utilizadorDo(request)!.nome, 'ALTERAR', 'Encarregado', `${enc.nome}: dados alterados`)
+      return HttpResponse.json(paraEncarregadoDto(enc, e.id, e.encarregadoIds[0] === enc.id))
+    }),
+  ),
+
+  http.delete(
+    `${API}/estudantes/:id/encarregados/:encarregadoId`,
+    protegido('estudantes:escrever', ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      const enc = db.encarregados.find((x) => x.id === params.encarregadoId)
+      if (!e || !enc || !e.encarregadoIds.includes(enc.id)) {
+        return problema(404, 'Encarregado não encontrado')
+      }
+      if (e.encarregadoIds.length === 1) {
+        return problema(409, 'Último encarregado', { code: 'ULTIMO_ENCARREGADO' })
+      }
+      e.encarregadoIds = e.encarregadoIds.filter((x) => x !== enc.id)
+      enc.educandos = enc.educandos.filter((x) => x !== e.id)
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Estudante',
+        `${e.nome}: encarregado ${enc.nome} retirado`,
+      )
+      return HttpResponse.json({})
+    }),
+  ),
+
   // ---------------------------------------------------------------- matrículas
   http.get(
     `${API}/matriculas`,
@@ -1221,4 +1351,19 @@ function resultadosDa(turmaId: string): S['ResultadoFinalDto'][] {
       }
     })
     .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
+}
+
+function validarEncarregado(corpo: S['AcrescentarEncarregadoDto']) {
+  const telefone = corpo.telefone?.replace(/\D/g, '') ?? ''
+  return [
+    ...((corpo.nome?.trim().split(/\s+/).length ?? 0) < 2
+      ? [{ campo: 'nome', mensagem: 'Escreva o nome completo.' }]
+      : []),
+    ...(!corpo.parentesco?.trim()
+      ? [{ campo: 'parentesco', mensagem: 'Indique o parentesco.' }]
+      : []),
+    ...(!/^9\d{8}$/.test(telefone)
+      ? [{ campo: 'telefone', mensagem: 'O telefone tem 9 dígitos e começa por 9.' }]
+      : []),
+  ]
 }

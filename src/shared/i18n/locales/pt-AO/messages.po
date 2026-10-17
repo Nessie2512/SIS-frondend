@@ -230,6 +230,10 @@ msgstr "{nome} sobre {destino}."
 msgid "{nome}: {rotulo}."
 msgstr "{nome}: {rotulo}."
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "{nomeExistente} já está registado com este telefone. Ligue-o em vez de criar outra vez."
+msgstr "{nomeExistente} já está registado com este telefone. Ligue-o em vez de criar outra vez."
+
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "{nRetirados} retirados à mão."
 msgstr "{nRetirados} retirados à mão."
@@ -249,6 +253,22 @@ msgstr "{progresso}% · pode continuar a trabalhar"
 #: src/shared/ui/selector.tsx
 msgid "{quantos} seleccionados"
 msgstr "{quantos} seleccionados"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "{quem} acrescentado como encarregado."
+msgstr "{quem} acrescentado como encarregado."
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "{quem} deixou de ser encarregado de {nome}."
+msgstr "{quem} deixou de ser encarregado de {nome}."
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "{quem} é agora encarregado de {nomeEstudante}."
+msgstr "{quem} é agora encarregado de {nomeEstudante}."
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "{quem} passou a encarregado principal."
+msgstr "{quem} passou a encarregado principal."
 
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "{registados} de {total} registados"
@@ -437,6 +457,10 @@ msgstr "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar co
 msgid "A guardar"
 msgstr "A guardar"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "A guardar…"
+msgstr "A guardar…"
+
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
 msgstr "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
@@ -582,6 +606,7 @@ msgid "Acesso"
 msgstr "Acesso"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/shared/ui/edicao-no-sitio.tsx
 msgid "Acrescentar"
 msgstr "Acrescentar"
@@ -594,6 +619,7 @@ msgstr "Acrescentar ao calendário"
 msgid "Acrescentar disciplina ao plano"
 msgstr "Acrescentar disciplina ao plano"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Acrescentar encarregado"
 msgstr "Acrescentar encarregado"
@@ -999,6 +1025,7 @@ msgstr "Cancelado."
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/gerir-turmas/ui/encerrar-turma.tsx
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
@@ -1300,6 +1327,10 @@ msgstr "Critério de distribuição"
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Currículo"
 msgstr "Currículo"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Dados de {quem} guardados."
+msgstr "Dados de {quem} guardados."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
@@ -1641,9 +1672,21 @@ msgstr "Duplicar as turmas"
 msgid "Duplique a estrutura do ano em curso."
 msgstr "Duplique a estrutura do ano em curso."
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Editar"
+msgstr "Editar"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Editar {quem}"
+msgstr "Editar {quem}"
+
 #: src/shared/ui/edicao-no-sitio.tsx
 msgid "Editar {rotulo}: {visivel}"
 msgstr "Editar {rotulo}: {visivel}"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Editar encarregado"
+msgstr "Editar encarregado"
 
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Editar o item em foco"
@@ -1694,6 +1737,7 @@ msgid "Em vigor desde {data}."
 msgstr "Em vigor desde {data}."
 
 #: src/features/autenticar/ui/formulario-entrada.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Email"
@@ -1736,18 +1780,27 @@ msgstr "encarregado"
 msgid "Encarregado {numero}"
 msgstr "Encarregado {numero}"
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "encarregado de"
+msgstr "encarregado de"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Encarregado de mais {outros} estudantes."
 msgstr "Encarregado de mais {outros} estudantes."
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Encarregado de mais 1 estudante."
 msgstr "Encarregado de mais 1 estudante."
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Encarregado principal"
+msgstr "Encarregado principal"
 
 #: src/shared/config/glossario.ts
 msgid "encarregados"
 msgstr "encarregados"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
@@ -1757,6 +1810,10 @@ msgstr "Encarregados"
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Encarregados de educação"
 msgstr "Encarregados de educação"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Encarregados encontrados"
+msgstr "Encarregados encontrados"
 
 #: src/routes/_app/turmas/index.tsx
 msgid "Encerrada"
@@ -1866,6 +1923,10 @@ msgstr "Escolha a turma."
 #: src/features/atribuir-docente/model/esquema.ts
 msgid "Escolha o docente."
 msgstr "Escolha o docente."
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Escolha o encarregado da lista."
+msgstr "Escolha o encarregado da lista."
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha o sexo."
@@ -2006,6 +2067,10 @@ msgstr "Este ano lectivo está encerrado. Só é possível consultar."
 #: src/shared/lib/erros-dominio.ts
 msgid "Este documento é obrigatório e não pode ser dispensado."
 msgstr "Este documento é obrigatório e não pode ser dispensado."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Este encarregado já está registado. Ligue-o ao estudante em vez de o criar de novo."
+msgstr "Este encarregado já está registado. Ligue-o ao estudante em vez de o criar de novo."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Este estudante já está numa turma. Use Mover para mudar de turma."
@@ -2281,6 +2346,7 @@ msgstr "Gerar: {titulo}"
 msgid "Guardado"
 msgstr "Guardado"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Guardar"
 msgstr "Guardar"
@@ -2497,6 +2563,10 @@ msgstr "Já existe uma disciplina com este nome ou sigla."
 msgid "Já há um ano lectivo em curso. Encerre-o primeiro."
 msgstr "Já há um ano lectivo em curso. Encerre-o primeiro."
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Já registado"
+msgstr "Já registado"
+
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Já tem matrícula no ano seguinte"
 msgstr "Já tem matrícula no ano seguinte"
@@ -2512,6 +2582,14 @@ msgstr "Justificação"
 #: src/entities/calendario/ui/grelha-ano.tsx
 msgid "Legenda"
 msgstr "Legenda"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Ligar {nomeExistente}"
+msgstr "Ligar {nomeExistente}"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Ligar ao estudante"
+msgstr "Ligar ao estudante"
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -2903,6 +2981,10 @@ msgstr "Nenhuma. Está resolvido."
 msgid "Neste dia"
 msgstr "Neste dia"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Ninguém encontrado. Escolha «Pessoa nova»."
+msgstr "Ninguém encontrado. Escolha «Pessoa nova»."
+
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Ninguém fica de fora."
 msgstr "Ninguém fica de fora."
@@ -2927,6 +3009,7 @@ msgid "Nome"
 msgstr "Nome"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Nome completo"
@@ -3054,6 +3137,11 @@ msgstr "O estado passa a Transferido e a saída fica no percurso."
 msgid "O estado volta a Activo e o reingresso fica no percurso. Depois matricule-o no ano em curso."
 msgstr "O estado volta a Activo e o reingresso fica no percurso. Depois matricule-o no ano em curso."
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+#: src/shared/lib/erros-dominio.ts
+msgid "O estudante precisa de pelo menos um encarregado."
+msgstr "O estudante precisa de pelo menos um encarregado."
+
 #: src/features/gerir-eventos/model/esquema.ts
 msgid "O evento tem de terminar dentro do ano lectivo."
 msgstr "O evento tem de terminar dentro do ano lectivo."
@@ -3145,6 +3233,7 @@ msgstr "Ocupação das turmas depois da distribuição"
 msgid "opcional"
 msgstr "opcional"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "Opcional."
 msgstr "Opcional."
@@ -3254,6 +3343,7 @@ msgstr "Para encerrar, todas as matrículas têm de estar resolvidas e com o res
 msgid "Para processos abertos por engano. As matrículas activas ficam anuladas e o estado passa a Anulado. Não pode ser desfeito."
 msgstr "Para processos abertos por engano. As matrículas activas ficam anuladas e o estado passa a Anulado. Não pode ser desfeito."
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Parentesco"
 msgstr "Parentesco"
@@ -3327,6 +3417,10 @@ msgstr "Pesquisa"
 msgid "Pesquisar"
 msgstr "Pesquisar"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Pessoa nova"
+msgstr "Pessoa nova"
+
 #: src/routes/_app/definicoes/auditoria.tsx
 msgid "Pessoa, recurso ou detalhe"
 msgstr "Pessoa, recurso ou detalhe"
@@ -3354,6 +3448,10 @@ msgstr "Pode ser o mesmo estudante"
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Pode ter sido escrito mal o endereço. Procure na lista de professores."
 msgstr "Pode ter sido escrito mal o endereço. Procure na lista de professores."
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Por exemplo, o encarregado de um irmão."
+msgstr "Por exemplo, o encarregado de um irmão."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Por fazer"
@@ -3397,8 +3495,8 @@ msgstr "Prepare primeiro as turmas."
 msgid "principal"
 msgstr "principal"
 
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
-#: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/-casca/menu-lateral.tsx
 msgid "Principal"
 msgstr "Principal"
@@ -3439,6 +3537,10 @@ msgstr "Procurar estudante, turma ou comando"
 #: src/routes/_app.tsx
 msgid "Procurar ou agir"
 msgstr "Procurar ou agir"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Procurar por nome ou telefone"
+msgstr "Procurar por nome ou telefone"
 
 #: src/shared/config/glossario.ts
 msgid "professor"
@@ -3491,6 +3593,10 @@ msgstr "Quando"
 #: src/routes/_app/definicoes/auditoria.tsx
 msgid "Quem"
 msgstr "Quem"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Quem é o encarregado"
+msgstr "Quem é o encarregado"
 
 #: src/entities/plano/model/mapeadores.ts
 msgid "Rascunho"
@@ -3752,6 +3858,7 @@ msgid "Resumo por classe"
 msgstr "Resumo por classe"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Retirar"
 msgstr "Retirar"
@@ -3763,6 +3870,10 @@ msgstr "Retirar {nome}"
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Retirar {nome} do plano"
 msgstr "Retirar {nome} do plano"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Retirar {quem}"
+msgstr "Retirar {quem}"
 
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Retirar encarregado {numero}"
@@ -3877,7 +3988,7 @@ msgstr "Sem datas marcadas."
 msgid "Sem docente"
 msgstr "Sem docente"
 
-#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Sem encarregados registados."
 msgstr "Sem encarregados registados."
 
@@ -4048,6 +4159,7 @@ msgid "Tarefas em segundo plano"
 msgstr "Tarefas em segundo plano"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
@@ -4119,6 +4231,14 @@ msgstr "Todas as matrículas têm turma."
 #: src/routes/_app/professores/index.tsx
 msgid "Todos"
 msgstr "Todos"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Tornar {quem} o encarregado principal"
+msgstr "Tornar {quem} o encarregado principal"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "Tornar principal"
+msgstr "Tornar principal"
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Total"

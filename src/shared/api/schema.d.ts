@@ -106,7 +106,16 @@ export interface paths {
       erros: 403 | 409
     }>
   }
-  '/estudantes/{id}/encarregados': { get: Op<{ path: { id: string }; ok: S['EncarregadoDto'][] }> }
+  '/estudantes/{id}/encarregados': {
+    get: Op<{ path: { id: string }; ok: S['EncarregadoDto'][] }>
+    /** Liga um encarregado existente (encarregadoId) ou cria um novo (restantes campos) */
+    post: Op<{
+      path: { id: string }
+      body: S['AcrescentarEncarregadoDto']
+      ok: S['EncarregadoDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
   '/estudantes/{id}/ocorrencias': {
     get: Op<{ path: { id: string }; ok: S['OcorrenciaDto'][] }>
     post: Op<{
@@ -365,6 +374,24 @@ export interface paths {
       body: S['MudarSituacaoDto']
       ok: S['EstudanteDto']
       erros: 403 | 404 | 409 | 422
+    }>
+  }
+
+  // Encarregados (guia 2.1: pessoa partilhada por irmãos, nunca criada duas vezes)
+  '/encarregados': {
+    get: Op<{ query: { pesquisa: string }; ok: S['EncarregadoResumoDto'][] }>
+  }
+  '/estudantes/{id}/encarregados/{encarregadoId}': {
+    put: Op<{
+      path: { id: string; encarregadoId: string }
+      body: S['AcrescentarEncarregadoDto']
+      ok: S['EncarregadoDto']
+      erros: 403 | 404 | 422
+    }>
+    delete: Op<{
+      path: { id: string; encarregadoId: string }
+      ok: S['VazioDto']
+      erros: 403 | 404 | 409
     }>
   }
 
@@ -702,6 +729,15 @@ export interface components {
       transferenciaEntrada?: { escolaOrigem: string; classesConcluidas: string[] }
     }
     MotivoDto: { motivo: string }
+    EncarregadoResumoDto: { id: string; nome: string; telefone: string; educandos: string[] }
+    AcrescentarEncarregadoDto: {
+      encarregadoId?: string
+      nome?: string
+      parentesco?: string
+      telefone?: string
+      email?: string
+      principal: boolean
+    }
     /** Desistência (ACTIVO→DESISTENTE), reingresso (DESISTENTE→ACTIVO), anulação (ACTIVO→ANULADO) */
     AccaoSituacao: 'DESISTENCIA' | 'REINGRESSO' | 'ANULACAO'
     MudarSituacaoDto: {

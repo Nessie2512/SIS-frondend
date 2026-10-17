@@ -29,6 +29,8 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   PENDENCIAS_POR_RESOLVER: msg`Ainda há pendências por resolver. Resolva-as antes de encerrar o ano.`,
   OUTRO_ANO_EM_CURSO: msg`Já há um ano lectivo em curso. Encerre-o primeiro.`,
   ANO_PLANEADO_EXISTENTE: msg`O próximo ano lectivo já foi criado. Continue a prepará-lo.`,
+  ENCARREGADO_EXISTENTE: msg`Este encarregado já está registado. Ligue-o ao estudante em vez de o criar de novo.`,
+  ULTIMO_ENCARREGADO: msg`O estudante precisa de pelo menos um encarregado.`,
   MATRICULA_POR_CONFIRMAR: msg`Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma.`,
   TURMA_COM_INSCRITOS: msg`A turma ainda tem estudantes. Mova-os para outra turma antes de a encerrar.`,
   RENOVACAO_APLICADA: msg`A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma.`,

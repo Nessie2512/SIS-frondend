@@ -3,17 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
 import { ChevronLeft, Printer } from 'lucide-react'
 import * as z from 'zod/mini'
-import {
-  documentosQuery,
-  encarregadosQuery,
-  estudanteQuery,
-  EtiquetaEstadoEstudante,
-  formatarTelefone,
-} from '@/entities/estudante'
+import { documentosQuery, estudanteQuery, EtiquetaEstadoEstudante } from '@/entities/estudante'
 import { CartaoMatricula } from '@/features/confirmar-matricula'
 import { anosLectivosQuery } from '@/entities/ano-lectivo'
 import { DadosEstudante } from '@/features/editar-estudante'
 import { DocumentosOficiais } from '@/features/emitir-documento'
+import { EncarregadosEstudante } from '@/features/gerir-encarregados'
 import { MatricularExistente } from '@/features/matricular-existente'
 import { MenuSituacao } from '@/features/mudar-situacao'
 import { TransferirEstudante } from '@/features/transferir-estudante'
@@ -185,7 +180,11 @@ function FichaEstudante() {
           )}
         </PainelSeparador>
         <PainelSeparador value="encarregados" className="pt-6">
-          <Encarregados estudanteId={estudanteId} />
+          <EncarregadosEstudante
+            estudanteId={estudanteId}
+            nome={e.nome}
+            podeEditar={podeRectificar && !soLeitura}
+          />
         </PainelSeparador>
         <PainelSeparador value="ocorrencias" className="pt-6">
           <OcorrenciasEstudante
@@ -199,41 +198,6 @@ function FichaEstudante() {
         </PainelSeparador>
       </Separadores>
     </article>
-  )
-}
-
-function Encarregados({ estudanteId }: { estudanteId: string }) {
-  const { t } = useLingui()
-  const { data: encarregados } = useQuery(encarregadosQuery(estudanteId))
-  if (!encarregados) return <Esqueleto className="h-32 w-full" />
-  if (!encarregados.length) return <EstadoVazio titulo={t`Sem encarregados registados.`} />
-  return (
-    <ul className="grid gap-3 sm:grid-cols-2">
-      {encarregados.map((enc) => {
-        const outros = enc.outrosEducandos
-        return (
-          <li
-            key={enc.id}
-            className="flex flex-col gap-1 rounded-cartao bg-superficie p-4 ring-1 ring-linha"
-          >
-            <p className="flex items-center gap-2 text-subtitulo">
-              {enc.nome}
-              {enc.principal && <EtiquetaEstado tom="accao">{t`Principal`}</EtiquetaEstado>}
-            </p>
-            <p className="text-texto-2">{enc.parentesco}</p>
-            <p className="tabular">{formatarTelefone(enc.telefone)}</p>
-            {enc.email && <p className="text-texto-2">{enc.email}</p>}
-            {outros > 0 && (
-              <p className="text-secundario text-texto-3">
-                {outros === 1
-                  ? t`Encarregado de mais 1 estudante.`
-                  : t`Encarregado de mais ${outros} estudantes.`}
-              </p>
-            )}
-          </li>
-        )
-      })}
-    </ul>
   )
 }
 
