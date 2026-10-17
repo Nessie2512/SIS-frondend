@@ -1,11 +1,14 @@
+import { useContextoAno } from '@/entities/ano-lectivo'
 import { useTarefasAcompanhadas } from '@/entities/tarefa'
 import '@testing-library/jest-dom/vitest'
 import { cleanup, configure } from '@testing-library/react'
 import { afterAll, afterEach, beforeAll, beforeEach } from 'vitest'
+import { reporAdministracao } from '@/mocks/administracao'
 import { reporBaseDeDados } from '@/mocks/db'
 import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
 import { usePermissoesStore } from '@/shared/lib/permissoes'
+import { usePreferencias } from '@/shared/lib/preferencias'
 import '@/shared/i18n'
 
 // Máquinas mais lentas (ou o primeiro teste, a frio) levam vários segundos a montar o router e as queries
@@ -44,9 +47,13 @@ window.matchMedia = (query: string) =>
 // Cada teste começa com dados iniciais e com a secretária autenticada
 beforeEach(() => {
   reporBaseDeDados()
+  reporAdministracao()
   sessao.definirToken('tk-u1')
   usePermissoesStore.getState().limpar()
   useTarefasAcompanhadas.getState().limpar()
+  // Ano em contexto volta ao ano em curso (a guarda escolhe-o quando não há nenhum)
+  useContextoAno.setState({ anoLectivoId: null })
+  usePreferencias.setState({ menuRecolhido: false, tema: 'sistema', densidade: 'confortavel' })
 })
 
 beforeAll(() => server.listen({ onUnhandledFrame: 'error' }))

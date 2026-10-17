@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
-import { ChevronLeft, Lock } from 'lucide-react'
+import { ChevronLeft, Printer } from 'lucide-react'
 import * as z from 'zod/mini'
 import {
   documentosQuery,
@@ -9,15 +9,20 @@ import {
   estudanteQuery,
   EtiquetaEstadoEstudante,
   formatarTelefone,
-  percursoQuery,
 } from '@/entities/estudante'
+import { CartaoMatricula } from '@/features/confirmar-matricula'
 import { DadosEstudante } from '@/features/editar-estudante'
+import { DocumentosOficiais } from '@/features/emitir-documento'
+import { TransferirEstudante } from '@/features/transferir-estudante'
+import { PercursoEstudante } from '@/features/rectificar-percurso'
+import { OcorrenciasEstudante } from '@/features/registar-ocorrencia'
 import { ListaDocumentos } from '@/features/marcar-documento'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
-import { formatarInstante } from '@/shared/lib/datas'
+import { useCan } from '@/shared/lib/permissoes'
 import {
   Avatar,
+  Button,
   ErroDeRota,
   Esqueleto,
   EstadoVazio,
@@ -64,6 +69,8 @@ function FichaEstudante() {
   const { estudanteId } = Route.useParams()
   const { separador } = Route.useSearch()
   const { soLeitura } = Route.useRouteContext()
+  const podeRectificar = useCan('estudantes:escrever') // também registar ocorrências
+  const podeEmitir = useCan('documentos:emitir')
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: e } = useQuery(estudanteQuery(estudanteId))
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
@@ -95,6 +102,17 @@ function FichaEstudante() {
               <EtiquetaEstado tom="accao">{t`Matrícula a confirmar`}</EtiquetaEstado>
             )}
           </p>
+        </div>
+        <div className="flex shrink-0 flex-wrap justify-end gap-2">
+          {podeRectificar && !soLeitura && e.estado === 'ACTIVO' && (
+            <TransferirEstudante estudante={e} />
+          )}
+          <Button asChild>
+            <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
+              <Printer aria-hidden className="size-4 stroke-[1.5]" />
+              <Trans>Imprimir ficha</Trans>
+            </Link>
+          </Button>
         </div>
       </header>
 
@@ -132,15 +150,21 @@ function FichaEstudante() {
           <DadosEstudante estudante={e} soLeitura={soLeitura} />
         </PainelSeparador>
         <PainelSeparador value="percurso" className="pt-6">
-          <Percurso estudanteId={estudanteId} />
+          <PercursoEstudante
+            estudanteId={estudanteId}
+            podeRectificar={podeRectificar && !soLeitura}
+          />
         </PainelSeparador>
         <PainelSeparador value="documentos" className="pt-6">
           {documentos ? (
-            <ListaDocumentos
-              estudanteId={estudanteId}
-              documentos={documentos}
-              soLeitura={soLeitura}
-            />
+            <div className="flex flex-col gap-6">
+              <CartaoMatricula estudante={e} documentos={documentos} soLeitura={soLeitura} />
+              <ListaDocumentos
+                estudanteId={estudanteId}
+                documentos={documentos}
+                soLeitura={soLeitura}
+              />
+            </div>
           ) : (
             <Esqueleto className="h-64 w-full" />
           )}
@@ -149,63 +173,17 @@ function FichaEstudante() {
           <Encarregados estudanteId={estudanteId} />
         </PainelSeparador>
         <PainelSeparador value="ocorrencias" className="pt-6">
-          <EstadoVazio
-            titulo={t`Sem ocorrências registadas.`}
-            descricao={t`O registo de ocorrências chega numa próxima versão.`}
+          <OcorrenciasEstudante
+            estudanteId={estudanteId}
+            nome={e.nome}
+            podeRegistar={podeRectificar && !soLeitura}
           />
         </PainelSeparador>
         <PainelSeparador value="oficiais" className="pt-6">
-          <EstadoVazio
-            titulo={t`Ainda não foram emitidos documentos oficiais.`}
-            descricao={t`A emissão de declarações e certificados chega numa próxima versão.`}
-          />
+          <DocumentosOficiais estudanteId={estudanteId} nome={e.nome} podeEmitir={podeEmitir} />
         </PainelSeparador>
       </Separadores>
     </article>
-  )
-}
-
-/** Linha do tempo (guia 6.3): vertical, por ano lectivo; entradas imutáveis com cadeado discreto. */
-function Percurso({ estudanteId }: { estudanteId: string }) {
-  const { t } = useLingui()
-  const { data: eventos } = useQuery(percursoQuery(estudanteId))
-  if (!eventos) return <Esqueleto className="h-48 w-full" />
-  if (!eventos.length) return <EstadoVazio titulo={t`Ainda não há registos no percurso.`} />
-
-  const porAno = new Map<string, typeof eventos>()
-  for (const evento of eventos)
-    porAno.set(evento.anoLectivo, [...(porAno.get(evento.anoLectivo) ?? []), evento])
-  return (
-    <div className="flex flex-col gap-8">
-      {[...porAno].map(([ano, doAno]) => (
-        <section key={ano} aria-labelledby={`ano-${ano}`}>
-          <h2 id={`ano-${ano}`} className="tabular mb-3 text-subtitulo">
-            {ano}
-          </h2>
-          <ol className="relative flex flex-col gap-5 border-l border-linha pl-6">
-            {doAno.map((evento) => (
-              <li key={evento.id} className="relative">
-                <span
-                  aria-hidden
-                  className="absolute top-1.5 -left-[29px] size-2.5 rounded-full bg-acento ring-4 ring-fundo"
-                />
-                <p className="flex items-center gap-2 font-medium">
-                  {evento.tipoRotulo}
-                  <Lock
-                    aria-label={t`Registo imutável`}
-                    className="size-3 stroke-[1.5] text-texto-3"
-                  />
-                </p>
-                <p className="text-texto-2">{evento.descricao}</p>
-                <p className="tabular text-secundario text-texto-3">
-                  {formatarInstante(evento.data)} · {evento.autor}
-                </p>
-              </li>
-            ))}
-          </ol>
-        </section>
-      ))}
-    </div>
   )
 }
 

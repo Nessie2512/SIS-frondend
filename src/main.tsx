@@ -15,7 +15,28 @@ async function prepararApiSimulada() {
   if (simulada) {
     const { worker } = await import('./mocks/browser')
     await worker.start({ onUnhandledFrame: 'bypass', quiet: import.meta.env.PROD })
+    manterSimulacaoActiva()
   }
+}
+
+/**
+ * O navegador pode parar o service worker do MSW (separador em segundo plano, poupança de
+ * energia). Ao arrancar de novo, o worker esquece que esta página usa a simulação e deixa os
+ * pedidos seguir para o servidor real (no dev:mock, o proxy para localhost:3000 dá ECONNREFUSED).
+ * Voltar a registar a página quando fica visível, ganha foco, a cada gesto (antes do pedido
+ * que o gesto provoca) e a cada 2 s resolve isso.
+ */
+function manterSimulacaoActiva() {
+  const reactivar = () => {
+    if (document.visibilityState === 'visible') {
+      navigator.serviceWorker.controller?.postMessage('MOCK_ACTIVATE')
+    }
+  }
+  document.addEventListener('visibilitychange', reactivar)
+  window.addEventListener('focus', reactivar)
+  document.addEventListener('pointerdown', reactivar, { capture: true, passive: true })
+  document.addEventListener('keydown', reactivar, { capture: true, passive: true })
+  setInterval(reactivar, 2_000)
 }
 
 sincronizarPreferencias()

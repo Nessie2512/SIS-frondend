@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import { create } from 'zustand'
 import { accionarMarcado, useAtalhos, type Atalho } from '@/shared/lib/atalhos'
 import { useComLigacao } from '@/shared/lib/ligacao'
+import { usePreferencias } from '@/shared/lib/preferencias'
 import { Aviso, desfazerUltima, RegiaoAnuncios } from '@/shared/ui'
 import { AjudaAtalhos } from './ajuda-atalhos'
 import { PaletaComandos } from './paleta-comandos'
@@ -27,6 +28,13 @@ export function Casca() {
   const atalhos = useMemo<Atalho[]>(
     () => [
       { teclas: 'mod+k', accao: () => setPaleta((v) => !v) },
+      {
+        teclas: 'mod+b',
+        accao: () => {
+          const { menuRecolhido, definirMenuRecolhido } = usePreferencias.getState()
+          definirMenuRecolhido(!menuRecolhido)
+        },
+      },
       { teclas: '/', accao: () => accionarMarcado('pesquisa') },
       { teclas: 'n', accao: () => accionarMarcado('novo') },
       { teclas: 'e', accao: () => accionarMarcado('editar') },
@@ -45,6 +53,10 @@ export function Casca() {
         accao: () => void router.navigate({ to: '/matriculas', search: { page: 1 } }),
       },
       { teclas: 'g t', accao: () => void router.navigate({ to: '/turmas' }) },
+      {
+        teclas: 'g p',
+        accao: () => void router.navigate({ to: '/professores', search: { page: 1 } }),
+      },
       { teclas: 'shift+?', accao: () => setAjuda(true) },
     ],
     [router],

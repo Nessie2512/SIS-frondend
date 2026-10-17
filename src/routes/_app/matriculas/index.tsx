@@ -6,10 +6,13 @@ import { useMemo } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
 import { matriculasQuery, type Matricula } from '@/entities/matricula'
+import { ConfirmarLote } from '@/features/confirmar-matricula'
+import { VistasGuardadas } from '@/features/guardar-vista'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { useCan } from '@/shared/lib/permissoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import {
   Button,
@@ -20,9 +23,11 @@ import {
   Esqueleto,
   EstadoVazio,
   EtiquetaEstado,
+  EtiquetasFiltro,
   Selector,
   TabelaDados,
   type ColunaTabela,
+  type EtiquetaFiltro,
 } from '@/shared/ui'
 
 const ESTADOS = ['PENDENTE', 'CONFIRMADA', 'CONCLUIDA'] as const
@@ -53,6 +58,9 @@ export const Route = createFileRoute('/_app/matriculas/')({
   errorComponent: ErroDeRota,
   component: EcraMatriculas,
 })
+
+/** Fora do componente: a tabela memoriza as colunas e precisa de funções estáveis */
+const nomeDaMatricula = (m: Matricula) => m.estudanteNome
 
 function useColunas(): ColunaTabela<Matricula>[] {
   const { t } = useLingui()
@@ -130,9 +138,32 @@ function EcraMatriculas() {
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
+  const podeConfirmar = useCan('matriculas:escrever') && !soLeitura
   const total = data?.total ?? 0
   const pagina = data?.page ?? filtros.page
   const totalPaginas = data?.totalPaginas ?? 1
+
+  // Filtros aplicados como etiquetas removíveis (guia 7.1)
+  const SITUACOES: Record<string, string> = {
+    PENDENTE: t`A confirmar`,
+    CONFIRMADA: t`Confirmadas`,
+    CONCLUIDA: t`Concluídas`,
+  }
+  const etiquetas: EtiquetaFiltro[] = [
+    ...(filtros.classeId
+      ? [
+          {
+            chave: 'classeId',
+            nome: t`Classe`,
+            valor: classes.find((c) => c.id === filtros.classeId)?.designacao ?? filtros.classeId,
+          },
+        ]
+      : []),
+    ...(filtros.estado
+      ? [{ chave: 'estado', nome: t`Situação`, valor: SITUACOES[filtros.estado] ?? filtros.estado }]
+      : []),
+    ...(filtros.semTurma ? [{ chave: 'semTurma', nome: t`Turma`, valor: t`Sem turma` }] : []),
+  ]
 
   return (
     <section className="flex flex-col gap-6">
@@ -147,12 +178,19 @@ function EcraMatriculas() {
         </div>
         <Can permissao="matriculas:escrever">
           {!soLeitura && (
-            <Button asChild variante="primario">
-              <Link to="/matriculas/nova" data-atalho="novo">
-                <Plus aria-hidden />
-                <Trans>Matricular estudante</Trans>
-              </Link>
-            </Button>
+            <div className="flex gap-2">
+              <Button asChild>
+                <Link to="/matriculas/renovar">
+                  <Trans>Renovar em lote</Trans>
+                </Link>
+              </Button>
+              <Button asChild variante="primario">
+                <Link to="/matriculas/nova" data-atalho="novo">
+                  <Plus aria-hidden />
+                  <Trans>Matricular estudante</Trans>
+                </Link>
+              </Button>
+            </div>
           )}
         </Can>
       </div>
@@ -195,6 +233,24 @@ function EcraMatriculas() {
         />
       </div>
 
+      <EtiquetasFiltro
+        etiquetas={etiquetas}
+        aoRemover={(chave) =>
+          void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+        }
+        aoLimpar={() => void navigate({ search: { page: 1 } })}
+        className="-mt-3"
+      />
+
+      <VistasGuardadas
+        ecra="matriculas"
+        pesquisa={filtros}
+        aoAplicar={(guardados) =>
+          void navigate({ search: pesquisaMatriculas.parse({ ...guardados, page: 1 }) })
+        }
+        className="-mt-3"
+      />
+
       <div
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
@@ -210,6 +266,15 @@ function EcraMatriculas() {
           aCarregar={!data}
           erro={isError && !data}
           aoTentarDeNovo={() => void refetch()}
+          // Acções em lote (guia 7.1): seleccionar com Espaço ou com a caixa da linha
+          seleccionavel={podeConfirmar}
+          nomeDaLinha={nomeDaMatricula}
+          accoesLote={(ids, limpar) => (
+            <ConfirmarLote
+              seleccionadas={(data?.matriculas ?? []).filter((m) => ids.includes(m.id))}
+              aoTerminar={limpar}
+            />
+          )}
           vazio={
             <EstadoVazio
               variante={

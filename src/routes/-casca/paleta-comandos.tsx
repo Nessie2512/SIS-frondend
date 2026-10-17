@@ -2,14 +2,21 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useRouter } from '@tanstack/react-router'
 import { Command } from 'cmdk'
 import {
+  BookOpen,
+  CalendarDays,
+  CalendarRange,
   ClipboardList,
+  FileSpreadsheet,
   Contrast,
   GraduationCap,
   Home,
   Keyboard,
   Moon,
+  PanelLeft,
+  Presentation,
   Rows3,
   Rows4,
+  Settings,
   Sun,
   UserPlus,
   UserRound,
@@ -36,6 +43,8 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
   const router = useRouter()
   const definirTema = usePreferencias((e) => e.definirTema)
   const definirDensidade = usePreferencias((e) => e.definirDensidade)
+  const menuRecolhido = usePreferencias((e) => e.menuRecolhido)
+  const definirMenuRecolhido = usePreferencias((e) => e.definirMenuRecolhido)
   const [procura, setProcura] = useState('')
   const pesquisa = usePesquisa(procura)
 
@@ -154,6 +163,41 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
           >
             <Trans>Turmas</Trans>
           </Item>
+          <Item
+            icone={<Presentation />}
+            atalho="g p"
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/professores', search: { page: 1 } }))
+            }
+          >
+            <Trans>Professores</Trans>
+          </Item>
+          <Item
+            icone={<BookOpen />}
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/curriculo', search: { classeId: 'c7' } }))
+            }
+          >
+            <Trans>Currículo</Trans>
+          </Item>
+          <Item
+            icone={<CalendarDays />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/calendario' }))}
+          >
+            <Trans>Calendário</Trans>
+          </Item>
+          <Item
+            icone={<CalendarRange />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/anos-lectivos' }))}
+          >
+            <Trans>Anos lectivos</Trans>
+          </Item>
+          <Item
+            icone={<FileSpreadsheet />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/relatorios' }))}
+          >
+            <Trans>Relatórios</Trans>
+          </Item>
         </Grupo>
         <Grupo titulo={t`Agir`}>
           <Item
@@ -164,6 +208,23 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
           </Item>
         </Grupo>
         <Grupo titulo={t`Preferências`}>
+          <Item
+            icone={<Settings />}
+            aoEscolher={() => executar(() => void router.navigate({ to: '/definicoes' }))}
+          >
+            <Trans>Abrir as definições</Trans>
+          </Item>
+          <Item
+            icone={<PanelLeft />}
+            atalho="mod+b"
+            aoEscolher={() => executar(() => definirMenuRecolhido(!menuRecolhido))}
+          >
+            {menuRecolhido ? (
+              <Trans>Expandir o menu lateral</Trans>
+            ) : (
+              <Trans>Recolher o menu lateral</Trans>
+            )}
+          </Item>
           <Item icone={<Sun />} aoEscolher={() => executar(() => definirTema('claro'))}>
             <Trans>Usar tema claro</Trans>
           </Item>

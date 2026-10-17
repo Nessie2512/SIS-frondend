@@ -9,8 +9,10 @@ import type {
   Estudante,
   EstudanteResumo,
   EventoPercurso,
+  Ocorrencia,
   PaginaEstudantes,
   TipoEventoPercurso,
+  TipoOcorrencia,
   TomEstado,
 } from './tipos'
 
@@ -53,6 +55,8 @@ export function paraEstudanteResumo(dto: Dto<'EstudanteResumoDto'>): EstudanteRe
     estadoTom: estado.tom,
     matricula: m ? `${m.classeDesignacao} · ${turma}` : null,
     semTurma: Boolean(m && !m.turmaDesignacao),
+    matriculaId: m?.id ?? null,
+    turmaId: m?.turmaId ?? null,
     matriculaPendente: m?.estado === 'PENDENTE',
     documentosEmFalta: dto.documentosEmFalta,
   }
@@ -97,8 +101,16 @@ export function paraEncarregado(dto: Dto<'EncarregadoDto'>): Encarregado {
 }
 
 /** Telefone angolano para mostrar: 923 456 789 */
-export function formatarTelefone(telefone: string | null) {
-  if (!telefone) return null
-  const digitos = telefone.replace(/\D/g, '')
-  return digitos.length === 9 ? digitos.replace(/(\d{3})(\d{3})(\d{3})/, '$1 $2 $3') : telefone
+// Partilhado com professores e encarregados
+export { formatarTelefone } from '@/shared/lib/formatar'
+
+export const TIPOS_OCORRENCIA = {
+  DISCIPLINAR: msg`Disciplinar`,
+  SAUDE: msg`Saúde`,
+  PEDAGOGICA: msg`Pedagógica`,
+  OUTRA: msg`Outra`,
+} satisfies Record<TipoOcorrencia, unknown>
+
+export function paraOcorrencia(dto: Dto<'OcorrenciaDto'>): Ocorrencia {
+  return { ...dto, tipoRotulo: i18n._(TIPOS_OCORRENCIA[dto.tipo]) }
 }

@@ -1,4 +1,13 @@
 import type { components } from '@/shared/api'
+import {
+  criarAcademico,
+  type Atribuicao,
+  type Disciplina,
+  type Plano,
+  type Professor,
+} from './academico'
+import { criarCalendario, type Evento, type Trimestre } from './calendario'
+import { APELIDOS, gerador, NOMES_F, NOMES_M } from './nomes'
 
 /**
  * Base de dados em memória do MSW (só desenvolvimento e testes).
@@ -6,68 +15,6 @@ import type { components } from '@/shared/api'
  * para os ecrãs se comportarem como com o backend real. Manter coerente com schema.d.ts.
  */
 type S = components['schemas']
-
-// ---------------------------------------------------------------------------
-// Gerador determinista (os mesmos dados em cada arranque)
-// ---------------------------------------------------------------------------
-function gerador(semente: number) {
-  let s = semente
-  return () => {
-    s = (s * 1664525 + 1013904223) % 2 ** 32
-    return s / 2 ** 32
-  }
-}
-
-const NOMES_F = [
-  'Maria',
-  'Ana',
-  'Luísa',
-  'Teresa',
-  'Esperança',
-  'Joana',
-  'Isabel',
-  'Rosa',
-  'Helena',
-  'Graça',
-  'Marta',
-  'Domingas',
-  'Celeste',
-  'Paula',
-]
-const NOMES_M = [
-  'João',
-  'Pedro',
-  'Manuel',
-  'António',
-  'Carlos',
-  'Domingos',
-  'Francisco',
-  'Paulo',
-  'José',
-  'Miguel',
-  'Mateus',
-  'Adão',
-  'Bento',
-  'Simão',
-]
-const APELIDOS = [
-  'Santos',
-  'Mateus',
-  'Domingos',
-  'Cassoma',
-  'Neto',
-  'Lopes',
-  'Fernandes',
-  'Kiala',
-  'Mbala',
-  'Tchissola',
-  'Quintas',
-  'Sebastião',
-  'Chipenda',
-  'Bento',
-  'Manuel',
-  'Vunge',
-]
 
 export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
   {
@@ -84,6 +31,15 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
       'turmas:escrever',
       'inscricoes:excepcao',
       'documentos:emitir',
+      'professores:ler',
+      'professores:escrever',
+      'curriculo:ler',
+      'curriculo:escrever',
+      'calendario:ler',
+      'calendario:escrever',
+      'administracao:ler',
+      'administracao:escrever',
+      'anos:gerir',
     ],
   },
   {
@@ -91,11 +47,18 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
     nome: 'João Consulta',
     email: 'consulta@escola.ao',
     palavraPasse: 'consulta',
-    permissoes: ['estudantes:ler', 'matriculas:ler', 'turmas:ler'],
+    permissoes: [
+      'estudantes:ler',
+      'matriculas:ler',
+      'turmas:ler',
+      'professores:ler',
+      'curriculo:ler',
+      'calendario:ler',
+    ],
   },
 ]
 
-export const anosLectivos: S['AnoLectivoDto'][] = [
+const ANOS_INICIAIS: S['AnoLectivoDto'][] = [
   {
     id: 'ano-2025',
     designacao: '2025/2026',
@@ -111,6 +74,9 @@ export const anosLectivos: S['AnoLectivoDto'][] = [
     estado: 'EM_CURSO',
   },
 ]
+
+/** Anos lectivos (mutável: abrir, activar, encerrar e reabrir mudam esta lista). */
+export const anosLectivos: S['AnoLectivoDto'][] = ANOS_INICIAIS.map((a) => ({ ...a }))
 
 export const classes: S['ClasseDto'][] = [
   { id: 'c7', designacao: '7.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 7 },
@@ -152,6 +118,8 @@ interface Matricula {
   turmaId: string | null
   estado: S['EstadoMatricula']
   criadaEm: string
+  /** Resultado final do ano (guia 2.3: registado antes de encerrar) */
+  resultado: S['ResultadoFinal'] | null
 }
 interface Encarregado extends Omit<S['EncarregadoDto'], 'principal' | 'outrosEducandos'> {
   educandos: string[]
@@ -159,13 +127,18 @@ interface Encarregado extends Omit<S['EncarregadoDto'], 'principal' | 'outrosEdu
 type Documento = S['DocumentoEstudanteDto'] & {
   estudanteId: string
 }
-interface Tarefa {
+export interface Tarefa {
   id: string
-  turmaId: string
+  tipo: S['TipoRelatorio'] | 'RENOVACAO'
+  parametros: { anoLectivoId: string; turmaId?: string; classeId?: string }
   titulo: string
+  utilizadorId: string | null
   inicio: number
   duracao: number
   falha: boolean
+  /** Resultado já calculado (renovação): linhas do CSV e avisos por linha */
+  linhas?: string[]
+  avisos?: { linha: number; mensagem: string }[]
 }
 
 interface Estado {
@@ -176,8 +149,43 @@ interface Estado {
   documentos: Documento[]
   percurso: (S['EventoPercursoDto'] & { estudanteId: string })[]
   tarefas: Tarefa[]
+  vistas: (S['VistaDto'] & { utilizadorId: string })[]
+  ocorrencias: (S['OcorrenciaDto'] & { estudanteId: string })[]
+  disciplinas: Disciplina[]
+  planos: Plano[]
+  professores: Professor[]
+  atribuicoes: Atribuicao[]
+  trimestres: Trimestre[]
+  eventos: Evento[]
+  /** Renovações de matrículas (simuladas e aplicadas) para o ano seguinte */
+  renovacoes: Renovacao[]
+  documentosOficiais: DocumentoOficial[]
   idempotencia: Map<string, unknown>
   sequencia: number
+}
+
+/** Documento oficial emitido (número, código e conteúdo gerados no servidor). */
+export interface DocumentoOficial {
+  id: string
+  estudanteId: string
+  tipo: S['TipoDocumentoOficial']
+  numero: string
+  codigo: string
+  emitidoEm: string
+  emitidoPor: string
+  finalidade: string | null
+  estado: 'VALIDO' | 'ANULADO'
+  motivoAnulacao: string | null
+  conteudo: S['ConteudoDocumentoDto']
+}
+
+export interface Renovacao {
+  id: string
+  anoOrigemId: string
+  anoDestinoId: string
+  aplicada: boolean
+  /** Matrículas que a simulação incluía (para avisar de quem entretanto deixou de poder) */
+  incluidos: string[]
 }
 
 function criar(): Estado {
@@ -261,6 +269,7 @@ function criar(): Estado {
         turmaId: semTurma ? null : turma.id,
         estado: pendente ? 'PENDENTE' : 'CONFIRMADA',
         criadaEm: '2026-08-20T09:30:00Z',
+        resultado: null,
       })
       for (const d of TIPOS_DOCUMENTO) {
         const emFalta = pendente && d.obrigatorio && aleatorio() < 0.5
@@ -311,6 +320,7 @@ function criar(): Estado {
           descricao: `Matriculado na ${turma.classeDesignacao}`,
           autor: 'Maria Secretária',
           rectificaId: null,
+          motivo: null,
         },
         ...(semTurma
           ? []
@@ -324,6 +334,7 @@ function criar(): Estado {
                 descricao: `Inscrito na turma ${turma.designacao}`,
                 autor: 'Maria Secretária',
                 rectificaId: null,
+                motivo: null,
               },
             ]),
       )
@@ -338,6 +349,49 @@ function criar(): Estado {
     documentos,
     percurso,
     tarefas: [],
+    // Exemplo do guia 7.1, para a secretária ver logo como funcionam
+    vistas: [
+      {
+        id: 'v1',
+        utilizadorId: 'u1',
+        ecra: 'matriculas',
+        nome: '7.ª classe sem turma',
+        filtros: { classeId: 'c7', semTurma: true },
+      },
+    ],
+    // Algumas ocorrências de exemplo, para a ficha não aparecer sempre vazia
+    ocorrencias: estudantes
+      .filter((_, i) => i % 23 === 4)
+      .flatMap((e, i) => [
+        {
+          id: `oc${i * 2 + 1}`,
+          estudanteId: e.id,
+          data: '2026-09-22',
+          tipo: 'PEDAGOGICA' as const,
+          descricao:
+            'Faltou à prova de diagnóstico de Matemática; marcada nova data com o professor.',
+          autor: 'Maria Secretária',
+          registadaEm: '2026-09-22T10:15:00Z',
+        },
+        ...(i % 2
+          ? [
+              {
+                id: `oc${i * 2 + 2}`,
+                estudanteId: e.id,
+                data: '2026-10-05',
+                tipo: 'SAUDE' as const,
+                descricao:
+                  'Sentiu-se mal durante a aula de Educação Física; o encarregado foi avisado.',
+                autor: 'Maria Secretária',
+                registadaEm: '2026-10-05T11:40:00Z',
+              },
+            ]
+          : []),
+      ]),
+    ...criarAcademico(classes, turmas, anosLectivos),
+    ...criarCalendario(anosLectivos),
+    renovacoes: [],
+    documentosOficiais: [],
     idempotencia: new Map(),
     sequencia: n,
   }
@@ -347,6 +401,7 @@ export let db = criar()
 
 /** Volta ao estado inicial (usado entre testes). */
 export function reporBaseDeDados() {
+  anosLectivos.splice(0, anosLectivos.length, ...ANOS_INICIAIS.map((a) => ({ ...a })))
   db = criar()
 }
 
@@ -391,6 +446,7 @@ export function paraEstudanteResumo(
       ? {
           id: m.id,
           classeDesignacao: classePorId(m.classeId).designacao,
+          turmaId: m.turmaId,
           turmaDesignacao: turmaPorId(m.turmaId)?.designacao ?? null,
           estado: m.estado,
         }
@@ -466,8 +522,11 @@ export function paraTarefaDto(t: Tarefa): S['TarefaDto'] {
     estado: terminou ? (t.falha ? 'FALHADA' : 'CONCLUIDA') : 'EM_CURSO',
     progresso: t.falha && terminou ? 70 : progresso,
     resultadoUrl: terminou && !t.falha ? `/api/v1/tarefas/${t.id}/resultado` : null,
-    erros:
-      t.falha && terminou ? [{ linha: 12, mensagem: 'Estudante sem número de processo.' }] : [],
+    erros: !terminou
+      ? []
+      : t.falha
+        ? [{ linha: 12, mensagem: 'Estudante sem número de processo.' }]
+        : (t.avisos ?? []),
   }
 }
 

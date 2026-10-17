@@ -12,12 +12,30 @@ import { Route as rootRouteImport } from './../routes/__root'
 import { Route as AppRouteImport } from './../routes/_app'
 import { Route as EntrarRouteImport } from './../routes/entrar'
 import { Route as AppIndexRouteImport } from './../routes/_app/index'
+import { Route as AppCalendarioRouteImport } from './../routes/_app/calendario'
+import { Route as AppCurriculoRouteImport } from './../routes/_app/curriculo'
+import { Route as AppDefinicoesRouteImport } from './../routes/_app/definicoes'
+import { Route as AppRelatoriosRouteImport } from './../routes/_app/relatorios'
+import { Route as AppAnosLectivosIndexRouteImport } from './../routes/_app/anos-lectivos/index'
+import { Route as AppAnosLectivosAnoIdRouteImport } from './../routes/_app/anos-lectivos/$anoId'
+import { Route as AppCurriculoIndexRouteImport } from './../routes/_app/curriculo/index'
+import { Route as AppCurriculoDisciplinasRouteImport } from './../routes/_app/curriculo/disciplinas'
+import { Route as AppDefinicoesIndexRouteImport } from './../routes/_app/definicoes/index'
+import { Route as AppDefinicoesAuditoriaRouteImport } from './../routes/_app/definicoes/auditoria'
+import { Route as AppDefinicoesPerfisRouteImport } from './../routes/_app/definicoes/perfis'
+import { Route as AppDefinicoesUtilizadoresRouteImport } from './../routes/_app/definicoes/utilizadores'
 import { Route as AppEstudantesIndexRouteImport } from './../routes/_app/estudantes/index'
 import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/estudantes/$estudanteId'
 import { Route as AppMatriculasIndexRouteImport } from './../routes/_app/matriculas/index'
 import { Route as AppMatriculasNovaRouteImport } from './../routes/_app/matriculas/nova'
+import { Route as AppMatriculasRenovarRouteImport } from './../routes/_app/matriculas/renovar'
+import { Route as AppProfessoresIndexRouteImport } from './../routes/_app/professores/index'
+import { Route as AppProfessoresProfessorIdRouteImport } from './../routes/_app/professores/$professorId'
 import { Route as AppTurmasIndexRouteImport } from './../routes/_app/turmas/index'
 import { Route as AppTurmasQuadroRouteImport } from './../routes/_app/turmas/quadro'
+import { Route as AppImprimirEstudanteEstudanteIdRouteImport } from './../routes/_app/imprimir/estudante.$estudanteId'
+import { Route as AppImprimirTurmaTurmaIdRouteImport } from './../routes/_app/imprimir/turma.$turmaId'
+import { Route as AppTurmasTurmaIdResultadosRouteImport } from './../routes/_app/turmas/$turmaId.resultados'
 
 const AppRoute = AppRouteImport.update({
   id: '/_app',
@@ -33,6 +51,67 @@ const AppIndexRoute = AppIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
+const AppCalendarioRoute = AppCalendarioRouteImport.update({
+  id: '/calendario',
+  path: '/calendario',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCurriculoRoute = AppCurriculoRouteImport.update({
+  id: '/curriculo',
+  path: '/curriculo',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDefinicoesRoute = AppDefinicoesRouteImport.update({
+  id: '/definicoes',
+  path: '/definicoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
+  id: '/relatorios',
+  path: '/relatorios',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnosLectivosIndexRoute = AppAnosLectivosIndexRouteImport.update({
+  id: '/anos-lectivos/',
+  path: '/anos-lectivos/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnosLectivosAnoIdRoute = AppAnosLectivosAnoIdRouteImport.update({
+  id: '/anos-lectivos/$anoId',
+  path: '/anos-lectivos/$anoId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppCurriculoIndexRoute = AppCurriculoIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppCurriculoRoute,
+} as any)
+const AppCurriculoDisciplinasRoute = AppCurriculoDisciplinasRouteImport.update({
+  id: '/disciplinas',
+  path: '/disciplinas',
+  getParentRoute: () => AppCurriculoRoute,
+} as any)
+const AppDefinicoesIndexRoute = AppDefinicoesIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppDefinicoesRoute,
+} as any)
+const AppDefinicoesAuditoriaRoute = AppDefinicoesAuditoriaRouteImport.update({
+  id: '/auditoria',
+  path: '/auditoria',
+  getParentRoute: () => AppDefinicoesRoute,
+} as any)
+const AppDefinicoesPerfisRoute = AppDefinicoesPerfisRouteImport.update({
+  id: '/perfis',
+  path: '/perfis',
+  getParentRoute: () => AppDefinicoesRoute,
+} as any)
+const AppDefinicoesUtilizadoresRoute =
+  AppDefinicoesUtilizadoresRouteImport.update({
+    id: '/utilizadores',
+    path: '/utilizadores',
+    getParentRoute: () => AppDefinicoesRoute,
+  } as any)
 const AppEstudantesIndexRoute = AppEstudantesIndexRouteImport.update({
   id: '/estudantes/',
   path: '/estudantes/',
@@ -54,6 +133,22 @@ const AppMatriculasNovaRoute = AppMatriculasNovaRouteImport.update({
   path: '/matriculas/nova',
   getParentRoute: () => AppRoute,
 } as any)
+const AppMatriculasRenovarRoute = AppMatriculasRenovarRouteImport.update({
+  id: '/matriculas/renovar',
+  path: '/matriculas/renovar',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfessoresIndexRoute = AppProfessoresIndexRouteImport.update({
+  id: '/professores/',
+  path: '/professores/',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppProfessoresProfessorIdRoute =
+  AppProfessoresProfessorIdRouteImport.update({
+    id: '/professores/$professorId',
+    path: '/professores/$professorId',
+    getParentRoute: () => AppRoute,
+  } as any)
 const AppTurmasIndexRoute = AppTurmasIndexRouteImport.update({
   id: '/turmas/',
   path: '/turmas/',
@@ -64,71 +159,192 @@ const AppTurmasQuadroRoute = AppTurmasQuadroRouteImport.update({
   path: '/turmas/quadro',
   getParentRoute: () => AppRoute,
 } as any)
+const AppImprimirEstudanteEstudanteIdRoute =
+  AppImprimirEstudanteEstudanteIdRouteImport.update({
+    id: '/imprimir/estudante/$estudanteId',
+    path: '/imprimir/estudante/$estudanteId',
+    getParentRoute: () => AppRoute,
+  } as any)
+const AppImprimirTurmaTurmaIdRoute = AppImprimirTurmaTurmaIdRouteImport.update({
+  id: '/imprimir/turma/$turmaId',
+  path: '/imprimir/turma/$turmaId',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppTurmasTurmaIdResultadosRoute =
+  AppTurmasTurmaIdResultadosRouteImport.update({
+    id: '/turmas/$turmaId/resultados',
+    path: '/turmas/$turmaId/resultados',
+    getParentRoute: () => AppRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AppIndexRoute
   '/entrar': typeof EntrarRoute
+  '/calendario': typeof AppCalendarioRoute
+  '/curriculo': typeof AppCurriculoRouteWithChildren
+  '/definicoes': typeof AppDefinicoesRouteWithChildren
+  '/relatorios': typeof AppRelatoriosRoute
+  '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
+  '/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
+  '/definicoes/perfis': typeof AppDefinicoesPerfisRoute
+  '/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/matriculas/renovar': typeof AppMatriculasRenovarRoute
+  '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/anos-lectivos/': typeof AppAnosLectivosIndexRoute
+  '/curriculo/': typeof AppCurriculoIndexRoute
+  '/definicoes/': typeof AppDefinicoesIndexRoute
   '/estudantes/': typeof AppEstudantesIndexRoute
   '/matriculas/': typeof AppMatriculasIndexRoute
+  '/professores/': typeof AppProfessoresIndexRoute
   '/turmas/': typeof AppTurmasIndexRoute
+  '/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
+  '/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
+  '/turmas/$turmaId/resultados': typeof AppTurmasTurmaIdResultadosRoute
 }
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
+  '/calendario': typeof AppCalendarioRoute
+  '/relatorios': typeof AppRelatoriosRoute
   '/': typeof AppIndexRoute
+  '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
+  '/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
+  '/definicoes/perfis': typeof AppDefinicoesPerfisRoute
+  '/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/matriculas/renovar': typeof AppMatriculasRenovarRoute
+  '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/anos-lectivos': typeof AppAnosLectivosIndexRoute
+  '/curriculo': typeof AppCurriculoIndexRoute
+  '/definicoes': typeof AppDefinicoesIndexRoute
   '/estudantes': typeof AppEstudantesIndexRoute
   '/matriculas': typeof AppMatriculasIndexRoute
+  '/professores': typeof AppProfessoresIndexRoute
   '/turmas': typeof AppTurmasIndexRoute
+  '/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
+  '/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
+  '/turmas/$turmaId/resultados': typeof AppTurmasTurmaIdResultadosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/entrar': typeof EntrarRoute
+  '/_app/calendario': typeof AppCalendarioRoute
+  '/_app/curriculo': typeof AppCurriculoRouteWithChildren
+  '/_app/definicoes': typeof AppDefinicoesRouteWithChildren
+  '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/': typeof AppIndexRoute
+  '/_app/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/_app/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
+  '/_app/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
+  '/_app/definicoes/perfis': typeof AppDefinicoesPerfisRoute
+  '/_app/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
   '/_app/matriculas/nova': typeof AppMatriculasNovaRoute
+  '/_app/matriculas/renovar': typeof AppMatriculasRenovarRoute
+  '/_app/professores/$professorId': typeof AppProfessoresProfessorIdRoute
   '/_app/turmas/quadro': typeof AppTurmasQuadroRoute
+  '/_app/anos-lectivos/': typeof AppAnosLectivosIndexRoute
+  '/_app/curriculo/': typeof AppCurriculoIndexRoute
+  '/_app/definicoes/': typeof AppDefinicoesIndexRoute
   '/_app/estudantes/': typeof AppEstudantesIndexRoute
   '/_app/matriculas/': typeof AppMatriculasIndexRoute
+  '/_app/professores/': typeof AppProfessoresIndexRoute
   '/_app/turmas/': typeof AppTurmasIndexRoute
+  '/_app/imprimir/estudante/$estudanteId': typeof AppImprimirEstudanteEstudanteIdRoute
+  '/_app/imprimir/turma/$turmaId': typeof AppImprimirTurmaTurmaIdRoute
+  '/_app/turmas/$turmaId/resultados': typeof AppTurmasTurmaIdResultadosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/entrar'
+    | '/calendario'
+    | '/curriculo'
+    | '/definicoes'
+    | '/relatorios'
+    | '/anos-lectivos/$anoId'
+    | '/curriculo/disciplinas'
+    | '/definicoes/auditoria'
+    | '/definicoes/perfis'
+    | '/definicoes/utilizadores'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
+    | '/matriculas/renovar'
+    | '/professores/$professorId'
     | '/turmas/quadro'
+    | '/anos-lectivos/'
+    | '/curriculo/'
+    | '/definicoes/'
     | '/estudantes/'
     | '/matriculas/'
+    | '/professores/'
     | '/turmas/'
+    | '/imprimir/estudante/$estudanteId'
+    | '/imprimir/turma/$turmaId'
+    | '/turmas/$turmaId/resultados'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/entrar'
+    | '/calendario'
+    | '/relatorios'
     | '/'
+    | '/anos-lectivos/$anoId'
+    | '/curriculo/disciplinas'
+    | '/definicoes/auditoria'
+    | '/definicoes/perfis'
+    | '/definicoes/utilizadores'
     | '/estudantes/$estudanteId'
     | '/matriculas/nova'
+    | '/matriculas/renovar'
+    | '/professores/$professorId'
     | '/turmas/quadro'
+    | '/anos-lectivos'
+    | '/curriculo'
+    | '/definicoes'
     | '/estudantes'
     | '/matriculas'
+    | '/professores'
     | '/turmas'
+    | '/imprimir/estudante/$estudanteId'
+    | '/imprimir/turma/$turmaId'
+    | '/turmas/$turmaId/resultados'
   id:
     | '__root__'
     | '/_app'
     | '/entrar'
+    | '/_app/calendario'
+    | '/_app/curriculo'
+    | '/_app/definicoes'
+    | '/_app/relatorios'
     | '/_app/'
+    | '/_app/anos-lectivos/$anoId'
+    | '/_app/curriculo/disciplinas'
+    | '/_app/definicoes/auditoria'
+    | '/_app/definicoes/perfis'
+    | '/_app/definicoes/utilizadores'
     | '/_app/estudantes/$estudanteId'
     | '/_app/matriculas/nova'
+    | '/_app/matriculas/renovar'
+    | '/_app/professores/$professorId'
     | '/_app/turmas/quadro'
+    | '/_app/anos-lectivos/'
+    | '/_app/curriculo/'
+    | '/_app/definicoes/'
     | '/_app/estudantes/'
     | '/_app/matriculas/'
+    | '/_app/professores/'
     | '/_app/turmas/'
+    | '/_app/imprimir/estudante/$estudanteId'
+    | '/_app/imprimir/turma/$turmaId'
+    | '/_app/turmas/$turmaId/resultados'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -159,6 +375,90 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/calendario': {
+      id: '/_app/calendario'
+      path: '/calendario'
+      fullPath: '/calendario'
+      preLoaderRoute: typeof AppCalendarioRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/curriculo': {
+      id: '/_app/curriculo'
+      path: '/curriculo'
+      fullPath: '/curriculo'
+      preLoaderRoute: typeof AppCurriculoRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/definicoes': {
+      id: '/_app/definicoes'
+      path: '/definicoes'
+      fullPath: '/definicoes'
+      preLoaderRoute: typeof AppDefinicoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/relatorios': {
+      id: '/_app/relatorios'
+      path: '/relatorios'
+      fullPath: '/relatorios'
+      preLoaderRoute: typeof AppRelatoriosRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/anos-lectivos/': {
+      id: '/_app/anos-lectivos/'
+      path: '/anos-lectivos'
+      fullPath: '/anos-lectivos/'
+      preLoaderRoute: typeof AppAnosLectivosIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/anos-lectivos/$anoId': {
+      id: '/_app/anos-lectivos/$anoId'
+      path: '/anos-lectivos/$anoId'
+      fullPath: '/anos-lectivos/$anoId'
+      preLoaderRoute: typeof AppAnosLectivosAnoIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/curriculo/': {
+      id: '/_app/curriculo/'
+      path: '/'
+      fullPath: '/curriculo/'
+      preLoaderRoute: typeof AppCurriculoIndexRouteImport
+      parentRoute: typeof AppCurriculoRoute
+    }
+    '/_app/curriculo/disciplinas': {
+      id: '/_app/curriculo/disciplinas'
+      path: '/disciplinas'
+      fullPath: '/curriculo/disciplinas'
+      preLoaderRoute: typeof AppCurriculoDisciplinasRouteImport
+      parentRoute: typeof AppCurriculoRoute
+    }
+    '/_app/definicoes/': {
+      id: '/_app/definicoes/'
+      path: '/'
+      fullPath: '/definicoes/'
+      preLoaderRoute: typeof AppDefinicoesIndexRouteImport
+      parentRoute: typeof AppDefinicoesRoute
+    }
+    '/_app/definicoes/auditoria': {
+      id: '/_app/definicoes/auditoria'
+      path: '/auditoria'
+      fullPath: '/definicoes/auditoria'
+      preLoaderRoute: typeof AppDefinicoesAuditoriaRouteImport
+      parentRoute: typeof AppDefinicoesRoute
+    }
+    '/_app/definicoes/perfis': {
+      id: '/_app/definicoes/perfis'
+      path: '/perfis'
+      fullPath: '/definicoes/perfis'
+      preLoaderRoute: typeof AppDefinicoesPerfisRouteImport
+      parentRoute: typeof AppDefinicoesRoute
+    }
+    '/_app/definicoes/utilizadores': {
+      id: '/_app/definicoes/utilizadores'
+      path: '/utilizadores'
+      fullPath: '/definicoes/utilizadores'
+      preLoaderRoute: typeof AppDefinicoesUtilizadoresRouteImport
+      parentRoute: typeof AppDefinicoesRoute
+    }
     '/_app/estudantes/': {
       id: '/_app/estudantes/'
       path: '/estudantes'
@@ -187,6 +487,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppMatriculasNovaRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/matriculas/renovar': {
+      id: '/_app/matriculas/renovar'
+      path: '/matriculas/renovar'
+      fullPath: '/matriculas/renovar'
+      preLoaderRoute: typeof AppMatriculasRenovarRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/professores/': {
+      id: '/_app/professores/'
+      path: '/professores'
+      fullPath: '/professores/'
+      preLoaderRoute: typeof AppProfessoresIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/professores/$professorId': {
+      id: '/_app/professores/$professorId'
+      path: '/professores/$professorId'
+      fullPath: '/professores/$professorId'
+      preLoaderRoute: typeof AppProfessoresProfessorIdRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/turmas/': {
       id: '/_app/turmas/'
       path: '/turmas'
@@ -201,27 +522,104 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppTurmasQuadroRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/imprimir/estudante/$estudanteId': {
+      id: '/_app/imprimir/estudante/$estudanteId'
+      path: '/imprimir/estudante/$estudanteId'
+      fullPath: '/imprimir/estudante/$estudanteId'
+      preLoaderRoute: typeof AppImprimirEstudanteEstudanteIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/imprimir/turma/$turmaId': {
+      id: '/_app/imprimir/turma/$turmaId'
+      path: '/imprimir/turma/$turmaId'
+      fullPath: '/imprimir/turma/$turmaId'
+      preLoaderRoute: typeof AppImprimirTurmaTurmaIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/turmas/$turmaId/resultados': {
+      id: '/_app/turmas/$turmaId/resultados'
+      path: '/turmas/$turmaId/resultados'
+      fullPath: '/turmas/$turmaId/resultados'
+      preLoaderRoute: typeof AppTurmasTurmaIdResultadosRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
+interface AppCurriculoRouteChildren {
+  AppCurriculoDisciplinasRoute: typeof AppCurriculoDisciplinasRoute
+  AppCurriculoIndexRoute: typeof AppCurriculoIndexRoute
+}
+
+const AppCurriculoRouteChildren: AppCurriculoRouteChildren = {
+  AppCurriculoDisciplinasRoute: AppCurriculoDisciplinasRoute,
+  AppCurriculoIndexRoute: AppCurriculoIndexRoute,
+}
+
+const AppCurriculoRouteWithChildren = AppCurriculoRoute._addFileChildren(
+  AppCurriculoRouteChildren,
+)
+
+interface AppDefinicoesRouteChildren {
+  AppDefinicoesAuditoriaRoute: typeof AppDefinicoesAuditoriaRoute
+  AppDefinicoesPerfisRoute: typeof AppDefinicoesPerfisRoute
+  AppDefinicoesUtilizadoresRoute: typeof AppDefinicoesUtilizadoresRoute
+  AppDefinicoesIndexRoute: typeof AppDefinicoesIndexRoute
+}
+
+const AppDefinicoesRouteChildren: AppDefinicoesRouteChildren = {
+  AppDefinicoesAuditoriaRoute: AppDefinicoesAuditoriaRoute,
+  AppDefinicoesPerfisRoute: AppDefinicoesPerfisRoute,
+  AppDefinicoesUtilizadoresRoute: AppDefinicoesUtilizadoresRoute,
+  AppDefinicoesIndexRoute: AppDefinicoesIndexRoute,
+}
+
+const AppDefinicoesRouteWithChildren = AppDefinicoesRoute._addFileChildren(
+  AppDefinicoesRouteChildren,
+)
+
 interface AppRouteChildren {
+  AppCalendarioRoute: typeof AppCalendarioRoute
+  AppCurriculoRoute: typeof AppCurriculoRouteWithChildren
+  AppDefinicoesRoute: typeof AppDefinicoesRouteWithChildren
+  AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAnosLectivosAnoIdRoute: typeof AppAnosLectivosAnoIdRoute
   AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
   AppMatriculasNovaRoute: typeof AppMatriculasNovaRoute
+  AppMatriculasRenovarRoute: typeof AppMatriculasRenovarRoute
+  AppProfessoresProfessorIdRoute: typeof AppProfessoresProfessorIdRoute
   AppTurmasQuadroRoute: typeof AppTurmasQuadroRoute
+  AppAnosLectivosIndexRoute: typeof AppAnosLectivosIndexRoute
   AppEstudantesIndexRoute: typeof AppEstudantesIndexRoute
   AppMatriculasIndexRoute: typeof AppMatriculasIndexRoute
+  AppProfessoresIndexRoute: typeof AppProfessoresIndexRoute
   AppTurmasIndexRoute: typeof AppTurmasIndexRoute
+  AppImprimirEstudanteEstudanteIdRoute: typeof AppImprimirEstudanteEstudanteIdRoute
+  AppImprimirTurmaTurmaIdRoute: typeof AppImprimirTurmaTurmaIdRoute
+  AppTurmasTurmaIdResultadosRoute: typeof AppTurmasTurmaIdResultadosRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppCalendarioRoute: AppCalendarioRoute,
+  AppCurriculoRoute: AppCurriculoRouteWithChildren,
+  AppDefinicoesRoute: AppDefinicoesRouteWithChildren,
+  AppRelatoriosRoute: AppRelatoriosRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAnosLectivosAnoIdRoute: AppAnosLectivosAnoIdRoute,
   AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
   AppMatriculasNovaRoute: AppMatriculasNovaRoute,
+  AppMatriculasRenovarRoute: AppMatriculasRenovarRoute,
+  AppProfessoresProfessorIdRoute: AppProfessoresProfessorIdRoute,
   AppTurmasQuadroRoute: AppTurmasQuadroRoute,
+  AppAnosLectivosIndexRoute: AppAnosLectivosIndexRoute,
   AppEstudantesIndexRoute: AppEstudantesIndexRoute,
   AppMatriculasIndexRoute: AppMatriculasIndexRoute,
+  AppProfessoresIndexRoute: AppProfessoresIndexRoute,
   AppTurmasIndexRoute: AppTurmasIndexRoute,
+  AppImprimirEstudanteEstudanteIdRoute: AppImprimirEstudanteEstudanteIdRoute,
+  AppImprimirTurmaTurmaIdRoute: AppImprimirTurmaTurmaIdRoute,
+  AppTurmasTurmaIdResultadosRoute: AppTurmasTurmaIdResultadosRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

@@ -11,8 +11,11 @@ export type Densidade = 'confortavel' | 'compacta'
 interface EstadoPreferencias {
   tema: PreferenciaTema
   densidade: Densidade
+  /** Menu lateral só com ícones */
+  menuRecolhido: boolean
   definirTema: (tema: PreferenciaTema) => void
   definirDensidade: (densidade: Densidade) => void
+  definirMenuRecolhido: (recolhido: boolean) => void
 }
 
 /** A mesma chave é lida pelo script em index.html para aplicar o tema antes da primeira pintura. */
@@ -23,10 +26,15 @@ export const usePreferencias = create<EstadoPreferencias>()(
     (set) => ({
       tema: 'sistema',
       densidade: 'confortavel',
+      menuRecolhido: false,
       definirTema: (tema) => set({ tema }),
       definirDensidade: (densidade) => set({ densidade }),
+      definirMenuRecolhido: (menuRecolhido) => set({ menuRecolhido }),
     }),
-    { name: CHAVE_PREFERENCIAS, partialize: ({ tema, densidade }) => ({ tema, densidade }) },
+    {
+      name: CHAVE_PREFERENCIAS,
+      partialize: ({ tema, densidade, menuRecolhido }) => ({ tema, densidade, menuRecolhido }),
+    },
   ),
 )
 

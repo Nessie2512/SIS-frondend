@@ -1,5 +1,4 @@
-import { delay, http, HttpResponse, type DefaultBodyType, type StrictRequest } from 'msw'
-import type { components } from '@/shared/api'
+import { http, HttpResponse } from 'msw'
 import {
   anosLectivos,
   classePorId,
@@ -20,87 +19,27 @@ import {
   TIPOS_DOCUMENTO_OBRIGATORIOS,
   turmaPorId,
   UTILIZADORES,
+  type Tarefa,
 } from './db'
 
-type S = components['schemas']
-const API = '/api/v1'
-
-/** Latência simulada só no navegador; nos testes responde de imediato. */
-const latencia = (ms: number) => delay(import.meta.env.MODE === 'test' ? 0 : ms)
-
-// ---------------------------------------------------------------------------
-// Respostas de erro no formato application/problem+json (guia 2.6)
-// ---------------------------------------------------------------------------
-function problema(
-  status: number,
-  title: string,
-  extra: Partial<S['ProblemaDto']> & Record<string, unknown> = {},
-) {
-  return HttpResponse.json(
-    { title, status, ...extra },
-    { status, headers: { 'Content-Type': 'application/problem+json' } },
-  )
-}
-
-// ---------------------------------------------------------------------------
-// Sessão simulada: token "tk-<utilizador>"; o cookie "sessao" faz de token de renovação
-// ---------------------------------------------------------------------------
-function utilizadorDo(request: Request) {
-  const token = request.headers.get('Authorization')?.replace('Bearer ', '')
-  const id = token?.startsWith('tk-') ? token.slice(3) : undefined
-  return UTILIZADORES.find((u) => u.id === id)
-}
-
-type Contexto = {
-  request: StrictRequest<DefaultBodyType>
-  params: Record<string, string | readonly string[] | undefined>
-}
-
-/** Exige sessão (401) e, opcionalmente, uma permissão (403). */
-function protegido<C extends Contexto>(
-  permissao: string | null,
-  resolver: (c: C) => Response | Promise<Response>,
-) {
-  return async (contexto: C) => {
-    await latencia(120)
-    const utilizador = utilizadorDo(contexto.request)
-    if (!utilizador) return problema(401, 'Sessão expirada')
-    if (permissao && !utilizador.permissoes.includes(permissao)) {
-      return problema(403, 'Permissão negada', { code: 'PERMISSAO_NEGADA' })
-    }
-    return resolver(contexto)
-  }
-}
-
-const anoEncerrado = (anoLectivoId: string) =>
-  anosLectivos.find((a) => a.id === anoLectivoId)?.estado === 'ENCERRADO'
-const etag = (versao: number) => `"v${versao}"`
-
-function paginar<T>(lista: T[], url: URL) {
-  const page = Math.max(1, Number(url.searchParams.get('page') ?? 1))
-  const pageSize = Math.min(100, Number(url.searchParams.get('pageSize') ?? 50))
-  return {
-    items: lista.slice((page - 1) * pageSize, page * pageSize),
-    total: lista.length,
-    page,
-    pageSize,
-  }
-}
-
-/** Repete a resposta original quando a mesma Idempotency-Key volta a chegar (guia 4.5). */
-function idempotente(request: Request, criar: () => Response): Response {
-  const chave = request.headers.get('Idempotency-Key')
-  if (!chave) return problema(400, 'Falta a Idempotency-Key')
-  const anterior = db.idempotencia.get(chave) as { status: number; corpo: unknown } | undefined
-  if (anterior)
-    return HttpResponse.json(anterior.corpo as DefaultBodyType, { status: anterior.status })
-  const resposta = criar()
-  void resposta
-    .clone()
-    .json()
-    .then((corpo) => db.idempotencia.set(chave, { status: resposta.status, corpo }))
-  return resposta
-}
+import {
+  anoEncerrado,
+  API,
+  etag,
+  idempotente,
+  latencia,
+  paginar,
+  problema,
+  protegido,
+  utilizadorDo,
+  type S,
+} from './apoio'
+import { handlersAcademicos } from './handlers-academicos'
+import { administracao, auditar, handlersAdministracao } from './administracao'
+import { handlersAnos } from './anos'
+import { handlersRenovacoes } from './renovacoes'
+import { handlersDocumentosOficiais } from './documentos-oficiais'
+import { gerarCsv, handlersRelatorios } from './relatorios'
 
 /** Os mesmos handlers servem desenvolvimento, testes e Storybook (guia 3.2). */
 export const handlers = [
@@ -113,7 +52,14 @@ export const handlers = [
     )
     if (!utilizador)
       return problema(401, 'Credenciais inválidas', { code: 'CREDENCIAIS_INVALIDAS' })
+    const conta = administracao.utilizadores.find((u) => u.id === utilizador.id)
+    if (conta?.estado === 'INACTIVO') {
+      return problema(403, 'Conta inactiva', {
+        detail: 'Esta conta foi desactivada. Fale com a administração da escola.',
+      })
+    }
     const { palavraPasse: _, ...me } = utilizador
+    auditar(me.nome, 'ENTRAR', 'Sessão', 'Entrada na aplicação')
     return HttpResponse.json(
       { accessToken: `tk-${utilizador.id}`, utilizador: me },
       { headers: { 'Set-Cookie': `sessao=${utilizador.id}; Path=/` } },
@@ -294,6 +240,48 @@ export const handlers = [
     ),
   ),
 
+  http.post(
+    `${API}/estudantes/:id/percurso/:eventoId/rectificar`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const original = db.percurso.find(
+        (p) => p.estudanteId === params.id && p.id === params.eventoId,
+      )
+      if (!original) return problema(404, 'Registo não encontrado')
+      if (original.tipo === 'RECTIFICACAO') {
+        return problema(409, 'Rectificação', {
+          detail: 'Uma rectificação não se rectifica; rectifique a entrada original.',
+        })
+      }
+      const corpo = (await request.json()) as S['RectificacaoDto']
+      const descricao = corpo.descricao?.trim() ?? ''
+      const motivo = corpo.motivo?.trim() ?? ''
+      const erros = [
+        ...(descricao.length < 3
+          ? [{ campo: 'descricao', mensagem: 'Escreva o registo correcto.' }]
+          : []),
+        ...(motivo.length < 10
+          ? [{ campo: 'motivo', mensagem: 'Explique o motivo (pelo menos 10 caracteres).' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const rectificacao = {
+        id: novoId('p'),
+        estudanteId: original.estudanteId,
+        data: new Date().toISOString(),
+        anoLectivo: original.anoLectivo,
+        tipo: 'RECTIFICACAO' as const,
+        descricao,
+        autor: utilizadorDo(request)!.nome,
+        rectificaId: original.id,
+        motivo,
+      }
+      db.percurso.push(rectificacao)
+      auditar(rectificacao.autor, 'RECTIFICAR', 'Percurso', `${original.descricao} → ${descricao}`)
+      const { estudanteId: _, ...dto } = rectificacao
+      return HttpResponse.json(dto, { status: 201 })
+    }),
+  ),
+
   http.get(
     `${API}/estudantes/:id/documentos`,
     protegido('estudantes:ler', ({ params }) =>
@@ -322,6 +310,61 @@ export const handlers = [
       doc.estado = estado
       const { estudanteId: _, ...dto } = doc
       return HttpResponse.json(dto)
+    }),
+  ),
+
+  http.get(
+    `${API}/estudantes/:id/ocorrencias`,
+    protegido('estudantes:ler', ({ params }) =>
+      HttpResponse.json(
+        db.ocorrencias
+          .filter((o) => o.estudanteId === params.id)
+          .sort(
+            (a, b) => b.data.localeCompare(a.data) || b.registadaEm.localeCompare(a.registadaEm),
+          )
+          .map(({ estudanteId: _, ...o }) => o) satisfies S['OcorrenciaDto'][],
+      ),
+    ),
+  ),
+
+  http.post(
+    `${API}/estudantes/:id/ocorrencias`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      if (!e) return problema(404, 'Estudante não encontrado')
+      const corpo = (await request.json()) as S['NovaOcorrenciaDto']
+      const descricao = corpo.descricao?.trim() ?? ''
+      const hoje = new Date().toISOString().slice(0, 10)
+      const erros = [
+        ...(descricao.length < 10
+          ? [
+              {
+                campo: 'descricao',
+                mensagem: 'Descreva o que aconteceu (pelo menos 10 caracteres).',
+              },
+            ]
+          : []),
+        ...(!corpo.data || corpo.data > hoje
+          ? [{ campo: 'data', mensagem: 'A data não pode ser no futuro.' }]
+          : []),
+        ...(!['DISCIPLINAR', 'SAUDE', 'PEDAGOGICA', 'OUTRA'].includes(corpo.tipo)
+          ? [{ campo: 'tipo', mensagem: 'Escolha o tipo.' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const ocorrencia = {
+        id: novoId('oc'),
+        estudanteId: e.id,
+        data: corpo.data,
+        tipo: corpo.tipo,
+        descricao,
+        autor: utilizadorDo(request)!.nome,
+        registadaEm: new Date().toISOString(),
+      }
+      db.ocorrencias.push(ocorrencia)
+      auditar(ocorrencia.autor, 'CRIAR', 'Ocorrência', `${e.nome}: ${descricao.slice(0, 60)}`)
+      const { estudanteId: _, ...dto } = ocorrencia
+      return HttpResponse.json(dto satisfies S['OcorrenciaDto'], { status: 201 })
     }),
   ),
 
@@ -484,8 +527,40 @@ export const handlers = [
           turmaId: dados.turmaId ?? null,
           estado: completos ? ('CONFIRMADA' as const) : ('PENDENTE' as const),
           criadaEm: new Date().toISOString(),
+          resultado: null,
         }
         db.matriculas.push(matricula)
+        // Transferência de entrada: a escola de origem e as classes lá concluídas entram no
+        // percurso antes da matrícula, para a cronologia ficar completa (guia 2.3)
+        const entrada = dados.transferenciaEntrada
+        if (entrada?.escolaOrigem.trim()) {
+          const anoLectivo = anosLectivos.find((a) => a.id === dados.anoLectivoId)!.designacao
+          const escola = entrada.escolaOrigem.trim()
+          for (const classeId of entrada.classesConcluidas) {
+            db.percurso.push({
+              id: novoId('p'),
+              estudanteId,
+              data: matricula.criadaEm,
+              anoLectivo: 'Anterior',
+              tipo: 'RESULTADO',
+              descricao: `Concluiu a ${classePorId(classeId).designacao} em ${escola}`,
+              autor: 'Maria Secretária',
+              rectificaId: null,
+              motivo: null,
+            })
+          }
+          db.percurso.push({
+            id: novoId('p'),
+            estudanteId,
+            data: matricula.criadaEm,
+            anoLectivo,
+            tipo: 'TRANSFERENCIA',
+            descricao: `Transferido de ${escola}`,
+            autor: 'Maria Secretária',
+            rectificaId: null,
+            motivo: null,
+          })
+        }
         db.percurso.push({
           id: novoId('p'),
           estudanteId,
@@ -495,6 +570,7 @@ export const handlers = [
           descricao: `Matriculado na ${classePorId(dados.classeId).designacao}`,
           autor: 'Maria Secretária',
           rectificaId: null,
+          motivo: null,
         })
         return HttpResponse.json(paraMatriculaDto(matricula), { status: 201 })
       })
@@ -615,10 +691,12 @@ export const handlers = [
       idempotente(request, () => {
         const turma = turmaPorId(String(params.id))
         if (!turma) return problema(404, 'Turma não encontrada')
-        const tarefa = {
+        const tarefa: Tarefa = {
           id: novoId('t'),
-          turmaId: turma.id,
+          tipo: 'LISTA_NOMINAL',
+          parametros: { anoLectivoId: turma.anoLectivoId, turmaId: turma.id },
           titulo: `Lista nominal da ${turma.designacao}`,
+          utilizadorId: utilizadorDo(request)?.id ?? null,
           inicio: Date.now(),
           duracao: import.meta.env.MODE === 'test' ? 0 : 6000,
           // A turma C simula uma falha, para mostrar o relatório de erros por linha
@@ -639,25 +717,249 @@ export const handlers = [
     }),
   ),
 
+  http.post(
+    `${API}/matriculas/confirmar`,
+    protegido('matriculas:escrever', async ({ request }) => {
+      const { ids } = (await request.json()) as { ids: string[] }
+      if (!Array.isArray(ids) || !ids.length) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'ids', mensagem: 'Escolha pelo menos uma matrícula.' }],
+        })
+      }
+      const quem = utilizadorDo(request)!.nome
+      return idempotente(request, () => {
+        const confirmadas: S['MatriculaDto'][] = []
+        const recusadas: S['ResultadoLoteDto']['recusadas'] = []
+        for (const id of ids) {
+          const { erro, matricula } = confirmarMatricula(id, quem)
+          if (matricula) confirmadas.push(paraMatriculaDto(matricula))
+          else {
+            const m = db.matriculas.find((x) => x.id === id)
+            const nome = m ? db.estudantes.find((e) => e.id === m.estudanteId)!.nome : id
+            recusadas.push({
+              id,
+              estudanteNome: nome,
+              motivo:
+                erro?.status === 409
+                  ? 'Faltam documentos obrigatórios.'
+                  : 'Matrícula não encontrada.',
+            })
+          }
+        }
+        return HttpResponse.json({ confirmadas, recusadas } satisfies S['ResultadoLoteDto'])
+      })
+    }),
+  ),
+
+  http.post(
+    `${API}/matriculas/:id/confirmar`,
+    protegido('matriculas:escrever', ({ request, params }) => {
+      const { erro, matricula } = confirmarMatricula(String(params.id), utilizadorDo(request)!.nome)
+      return erro ?? HttpResponse.json(paraMatriculaDto(matricula!))
+    }),
+  ),
+
+  // ---------------------------------------------------------------- transferência de saída
+  http.post(
+    `${API}/estudantes/:id/transferir`,
+    protegido('estudantes:escrever', async ({ request, params }) => {
+      const e = db.estudantes.find((x) => x.id === params.id)
+      if (!e) return problema(404, 'Estudante não encontrado')
+      if (e.estado !== 'ACTIVO') {
+        return problema(409, 'Estado inválido', {
+          detail: 'Só um estudante activo pode ser transferido.',
+        })
+      }
+      const corpo = (await request.json()) as S['TransferirEstudanteDto']
+      const escola = corpo.escolaDestino?.trim() ?? ''
+      const hoje = new Date().toISOString().slice(0, 10)
+      const erros = [
+        ...(escola.length < 3
+          ? [{ campo: 'escolaDestino', mensagem: 'Indique a escola de destino.' }]
+          : []),
+        ...(!corpo.data || corpo.data > hoje
+          ? [{ campo: 'data', mensagem: 'A data não pode ser no futuro.' }]
+          : []),
+      ]
+      if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+      const activas = db.matriculas.filter(
+        (m) => m.estudanteId === e.id && (m.estado === 'PENDENTE' || m.estado === 'CONFIRMADA'),
+      )
+      if (activas.some((m) => anoEncerrado(m.anoLectivoId))) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      const quem = utilizadorDo(request)!.nome
+      for (const m of activas) {
+        m.estado = 'ANULADA'
+        m.turmaId = null
+      }
+      e.estado = 'TRANSFERIDO'
+      e.versao++
+      const ano = anosLectivos.find((a) => a.estado === 'EM_CURSO')?.designacao ?? '2026/2027'
+      db.percurso.push({
+        id: novoId('p'),
+        estudanteId: e.id,
+        data: `${corpo.data}T12:00:00Z`,
+        anoLectivo: ano,
+        tipo: 'TRANSFERENCIA',
+        descricao: `Transferido para ${escola}`,
+        autor: quem,
+        rectificaId: null,
+        motivo: corpo.motivo?.trim() || null,
+      })
+      auditar(quem, 'ALTERAR', 'Estudante', `${e.nome}: transferido para ${escola}`)
+      return HttpResponse.json(paraEstudanteDto(e))
+    }),
+  ),
+
+  // ---------------------------------------------------------------- resultados finais
+  http.get(
+    `${API}/turmas/:id/resultados`,
+    protegido('matriculas:ler', ({ params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      return HttpResponse.json(resultadosDa(turma.id))
+    }),
+  ),
+
+  http.put(
+    `${API}/turmas/:id/resultados`,
+    protegido('matriculas:escrever', async ({ request, params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      if (anoEncerrado(turma.anoLectivoId)) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      const { resultados } = (await request.json()) as S['RegistarResultadosDto']
+      const daTurma = new Map(
+        db.matriculas
+          .filter((m) => m.turmaId === turma.id && m.estado === 'CONFIRMADA')
+          .map((m) => [m.id, m]),
+      )
+      const invalidos = resultados.filter(
+        (r) =>
+          !daTurma.has(r.matriculaId) ||
+          (r.resultado !== null && r.resultado !== 'APROVADO' && r.resultado !== 'REPROVADO'),
+      )
+      if (invalidos.length) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'resultados', mensagem: 'Há matrículas que não são desta turma.' }],
+        })
+      }
+      for (const r of resultados) daTurma.get(r.matriculaId)!.resultado = r.resultado
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Resultados finais',
+        `${turma.designacao}: ${resultados.length} resultados registados`,
+      )
+      return HttpResponse.json(resultadosDa(turma.id))
+    }),
+  ),
+
+  // ---------------------------------------------------------------- vistas guardadas
+  http.get(
+    `${API}/vistas`,
+    protegido(null, ({ request }) => {
+      const utilizador = utilizadorDo(request)!
+      const ecra = new URL(request.url).searchParams.get('ecra')
+      return HttpResponse.json(
+        db.vistas
+          .filter((v) => v.utilizadorId === utilizador.id && v.ecra === ecra)
+          .map(({ utilizadorId: _, ...v }) => v) satisfies S['VistaDto'][],
+      )
+    }),
+  ),
+
+  http.post(
+    `${API}/vistas`,
+    protegido(null, async ({ request }) => {
+      const utilizador = utilizadorDo(request)!
+      const corpo = (await request.json()) as S['NovaVistaDto']
+      const nome = corpo.nome?.trim() ?? ''
+      if (nome.length < 2) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'nome', mensagem: 'Dê um nome à vista.' }],
+        })
+      }
+      const repetida = db.vistas.some(
+        (v) =>
+          v.utilizadorId === utilizador.id &&
+          v.ecra === corpo.ecra &&
+          normalizar(v.nome) === normalizar(nome),
+      )
+      if (repetida) {
+        return problema(409, 'Vista repetida', {
+          code: 'VISTA_REPETIDA',
+          errors: [{ campo: 'nome', mensagem: 'Já tem uma vista com este nome.' }],
+        })
+      }
+      const vista = { id: novoId('v'), ecra: corpo.ecra, nome, filtros: corpo.filtros }
+      db.vistas.push({ ...vista, utilizadorId: utilizador.id })
+      return HttpResponse.json(vista satisfies S['VistaDto'], { status: 201 })
+    }),
+  ),
+
+  http.delete(
+    `${API}/vistas/:id`,
+    protegido(null, ({ request, params }) => {
+      const utilizador = utilizadorDo(request)!
+      const indice = db.vistas.findIndex(
+        (v) => v.id === params.id && v.utilizadorId === utilizador.id,
+      )
+      if (indice < 0) return problema(404, 'Vista não encontrada')
+      db.vistas.splice(indice, 1)
+      return HttpResponse.json({})
+    }),
+  ),
+
   // O resultado chega por um URL de curta duração, como uma ligação assinada: não leva o token
   http.get(`${API}/tarefas/:id/resultado`, ({ params }) => {
     const tarefa = db.tarefas.find((t) => t.id === params.id)
-    const turma = tarefa && turmaPorId(tarefa.turmaId)
-    if (!tarefa || !turma) return problema(404, 'Resultado não encontrado')
-    const linhas = db.matriculas
-      .filter((m) => m.turmaId === turma.id)
-      .map((m) => db.estudantes.find((e) => e.id === m.estudanteId)!)
-      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
-      .map((e, i) => `${i + 1};${e.numeroProcesso};${e.nome}`)
-    const nome = `lista-nominal-${turma.designacao.replace(/\W+/g, '')}.csv`
-    return new HttpResponse(['N.º;Processo;Nome', ...linhas].join('\n'), {
+    if (!tarefa) return problema(404, 'Resultado não encontrado')
+    const { nome, linhas } = gerarCsv(tarefa)
+    return new HttpResponse(linhas.join('\n'), {
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
         'Content-Disposition': `attachment; filename="${nome}"`,
       },
     })
   }),
+
+  ...handlersRelatorios,
+  ...handlersAdministracao,
+  ...handlersAnos,
+  ...handlersRenovacoes,
+  ...handlersDocumentosOficiais,
+  ...handlersAcademicos,
 ]
+
+/** Confirmar: ano aberto, matrícula pendente e documentos obrigatórios entregues (guia 2.4). */
+function confirmarMatricula(id: string, quem: string) {
+  const matricula = db.matriculas.find((m) => m.id === id)
+  if (!matricula) return { erro: problema(404, 'Matrícula não encontrada') }
+  if (anoEncerrado(matricula.anoLectivoId)) {
+    return { erro: problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' }) }
+  }
+  if (matricula.estado === 'CONFIRMADA') return { matricula }
+  const emFalta = db.documentos.filter(
+    (d) => d.estudanteId === matricula.estudanteId && d.obrigatorio && d.estado === 'EM_FALTA',
+  )
+  if (emFalta.length) {
+    return {
+      erro: problema(409, 'Documentos em falta', {
+        code: 'DOCUMENTOS_EM_FALTA',
+        detail: `Faltam ${emFalta.length} documentos obrigatórios.`,
+        emFalta: emFalta.map((d) => d.designacao),
+      }),
+    }
+  }
+  matricula.estado = 'CONFIRMADA'
+  registarPercurso(matricula.estudanteId, 'MATRICULA', 'Matrícula confirmada')
+  const nome = db.estudantes.find((e) => e.id === matricula.estudanteId)?.nome ?? ''
+  auditar(quem, 'CONFIRMAR', 'Matrícula', `${nome}: documentos completos; matrícula confirmada`)
+  return { matricula }
+}
 
 /** Regras ao colocar uma matrícula numa turma: ano aberto, mesma classe, lotação (guia 2.4). */
 function validarDestino(request: Request, turmaId: string, classeId: string, excepcao?: string) {
@@ -680,15 +982,39 @@ function validarDestino(request: Request, turmaId: string, classeId: string, exc
   return null
 }
 
-function registarPercurso(estudanteId: string, tipo: S['TipoEventoPercurso'], descricao: string) {
+export function registarPercurso(
+  estudanteId: string,
+  tipo: S['TipoEventoPercurso'],
+  descricao: string,
+  anoLectivo = '2026/2027',
+  autor = 'Maria Secretária',
+) {
   db.percurso.push({
     id: novoId('p'),
     estudanteId,
     data: new Date().toISOString(),
-    anoLectivo: '2026/2027',
+    anoLectivo,
     tipo,
     descricao,
-    autor: 'Maria Secretária',
+    autor,
     rectificaId: null,
+    motivo: null,
   })
+}
+
+/** Matrículas confirmadas da turma com o resultado final, por ordem alfabética. */
+function resultadosDa(turmaId: string): S['ResultadoFinalDto'][] {
+  return db.matriculas
+    .filter((m) => m.turmaId === turmaId && (m.estado === 'CONFIRMADA' || m.estado === 'CONCLUIDA'))
+    .map((m) => {
+      const e = db.estudantes.find((x) => x.id === m.estudanteId)!
+      return {
+        matriculaId: m.id,
+        estudanteId: e.id,
+        nome: e.nome,
+        numeroProcesso: e.numeroProcesso,
+        resultado: m.resultado,
+      }
+    })
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
 }

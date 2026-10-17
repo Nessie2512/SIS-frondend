@@ -5,7 +5,7 @@ import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { classesQuery } from '@/entities/classe'
 import { BarraOcupacao, turmasQuery } from '@/entities/turma'
 import { cn } from '@/shared/lib/cn'
-import { Campo, EtiquetaEstado, Esqueleto, Selector } from '@/shared/ui'
+import { Campo, Entrada, EtiquetaEstado, Esqueleto, Selector } from '@/shared/ui'
 import type { DadosMatricula } from '../model/esquema'
 
 /** Passo 4: classe e turma. Sugere a turma com mais vagas; turmas cheias ficam desactivadas com a razão (guia 2.3). */
@@ -14,11 +14,15 @@ export function PassoClasseTurma({ anoLectivoId }: { anoLectivoId: string }) {
   const {
     control,
     setValue,
+    register,
     formState: { errors },
   } = useFormContext<DadosMatricula>()
   const classeId = useWatch({ control, name: 'classeId' })
+  const transferida = useWatch({ control, name: 'transferencia.activa' })
   const turmaId = useWatch({ control, name: 'turmaId' })
   const { data: classes = [] } = useQuery(classesQuery())
+  const ordemEscolhida = classes.find((c) => c.id === classeId)?.ordem ?? 0
+  const anteriores = classes.filter((c) => c.ordem < ordemEscolhida)
   const { data: pagina, isLoading } = useQuery({
     ...turmasQuery({ anoLectivoId, classeId, estado: 'ACTIVA', page: 1 }),
     enabled: Boolean(classeId),
@@ -62,6 +66,69 @@ export function PassoClasseTurma({ anoLectivoId }: { anoLectivoId: string }) {
           </Campo>
         )}
       />
+
+      <fieldset className="flex flex-col gap-3 rounded-cartao bg-superficie p-4 ring-1 ring-linha">
+        <legend className="sr-only">{t`Transferência de entrada`}</legend>
+        <label className="flex cursor-pointer items-center gap-3">
+          <input
+            type="checkbox"
+            {...register('transferencia.activa')}
+            className="size-4 accent-(--color-acento)"
+          />
+          <span className="flex flex-col">
+            <span className="font-medium">
+              <Trans>Vem transferido de outra escola</Trans>
+            </span>
+            <span className="text-secundario text-texto-2">
+              <Trans>A escola de origem e as classes lá concluídas entram no percurso.</Trans>
+            </span>
+          </span>
+        </label>
+        {transferida && (
+          <>
+            <Campo
+              rotulo={t`Escola de origem`}
+              erro={errors.transferencia?.escola?.message}
+              obrigatorio
+              className="max-w-md"
+            >
+              {(c) => <Entrada {...c} {...register('transferencia.escola')} />}
+            </Campo>
+            {anteriores.length > 0 && (
+              <Controller
+                control={control}
+                name="transferencia.classesConcluidas"
+                render={({ field }) => (
+                  <fieldset className="flex flex-col gap-1.5">
+                    <legend className="mb-1 text-legenda text-texto-2">
+                      <Trans>Classes concluídas nessa escola</Trans>
+                    </legend>
+                    <div className="flex flex-wrap gap-x-5 gap-y-2">
+                      {anteriores.map((c) => (
+                        <label key={c.id} className="flex cursor-pointer items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={field.value.includes(c.id)}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.checked
+                                  ? [...field.value, c.id]
+                                  : field.value.filter((x) => x !== c.id),
+                              )
+                            }
+                            className="size-4 accent-(--color-acento)"
+                          />
+                          {c.designacao}
+                        </label>
+                      ))}
+                    </div>
+                  </fieldset>
+                )}
+              />
+            )}
+          </>
+        )}
+      </fieldset>
 
       {classeId && (
         <fieldset className="flex flex-col gap-2">

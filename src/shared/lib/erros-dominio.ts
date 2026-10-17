@@ -20,6 +20,18 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   INSCRICAO_EXISTENTE: msg`Este estudante já está numa turma. Use Mover para mudar de turma.`,
   DOCUMENTO_OBRIGATORIO: msg`Este documento é obrigatório e não pode ser dispensado.`,
   CREDENCIAIS_INVALIDAS: msg`O email ou a palavra-passe não estão correctos.`,
+  VISTA_REPETIDA: msg`Já tem uma vista com este nome. Escolha outro.`,
+  PLANO_NAO_EDITAVEL: msg`Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão.`,
+  RASCUNHO_EXISTENTE: msg`Esta classe já tem um rascunho em preparação. Abrimos o rascunho existente.`,
+  DISCIPLINA_REPETIDA: msg`Já existe uma disciplina com este nome ou sigla.`,
+  DOCUMENTOS_EM_FALTA: msg`Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar.`,
+  PROPRIA_CONTA: msg`Não pode desactivar a sua própria conta.`,
+  PENDENCIAS_POR_RESOLVER: msg`Ainda há pendências por resolver. Resolva-as antes de encerrar o ano.`,
+  OUTRO_ANO_EM_CURSO: msg`Já há um ano lectivo em curso. Encerre-o primeiro.`,
+  ANO_PLANEADO_EXISTENTE: msg`O próximo ano lectivo já foi criado. Continue a prepará-lo.`,
+  RENOVACAO_APLICADA: msg`A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma.`,
+  EVENTO_FIXO: msg`Os feriados nacionais vêm da lei e não se apagam.`,
+  DISCIPLINA_EM_USO: msg`Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la.`,
 }
 
 const SESSAO_EXPIRADA = msg`A sessão terminou. Entre de novo para continuar.`

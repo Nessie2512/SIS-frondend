@@ -53,6 +53,17 @@ export function PassoRevisao({ irPara }: { irPara: (passo: number) => void }) {
       <Bloco titulo={t`Classe e turma`} aoCorrigir={() => irPara(3)}>
         <Linha rotulo={t`Classe`} valor={classe?.designacao ?? '—'} />
         <Linha rotulo={t`Turma`} valor={turma?.designacao ?? t`Inscrever mais tarde`} />
+        {dados.transferencia.activa && (
+          <Linha
+            rotulo={t`Vem de`}
+            valor={[
+              dados.transferencia.escola,
+              ...classes
+                .filter((c) => dados.transferencia.classesConcluidas.includes(c.id))
+                .map((c) => c.designacao),
+            ].join(' · ')}
+          />
+        )}
       </Bloco>
     </div>
   )

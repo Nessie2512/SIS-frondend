@@ -1,7 +1,9 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { Printer } from 'lucide-react'
 import { useMemo } from 'react'
+import { useCan } from '@/shared/lib/permissoes'
 // zod/mini nas rotas: os esquemas de pesquisa vão no JavaScript inicial e o mini pesa uma fracção
 import * as z from 'zod/mini'
 import {
@@ -11,6 +13,8 @@ import {
   type FiltrosTurma,
   type Turma,
 } from '@/entities/turma'
+import { anosLectivosQuery } from '@/entities/ano-lectivo'
+import { DocentesTurma } from '@/features/atribuir-docente'
 import { BotaoGerarListaNominal } from '@/features/gerar-lista-nominal'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
@@ -199,6 +203,10 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
 /** Painel lateral de resumo (guia 6.3): abre a partir da linha; o URL regista a turma aberta; Esc fecha. */
 function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () => void }) {
   const { t } = useLingui()
+  const { anoLectivoId, soLeitura } = Route.useRouteContext()
+  const podeAtribuir = useCan('turmas:escrever')
+  const { data: anos = [] } = useQuery(anosLectivosQuery())
+  const ano = anos.find((a) => a.id === anoLectivoId)
   const { data: turma } = useQuery({ ...turmaQuery(id ?? ''), enabled: Boolean(id) })
   const titulo = turma?.designacao ?? t`Turma`
 
@@ -214,6 +222,17 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
             <Button asChild>
               <Link to="/turmas/quadro" search={{ classeId: turma.classeId }}>
                 <Trans>Abrir no quadro</Trans>
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link to="/turmas/$turmaId/resultados" params={{ turmaId: turma.id }}>
+                <Trans>Resultados finais</Trans>
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link to="/imprimir/turma/$turmaId" params={{ turmaId: turma.id }}>
+                <Printer aria-hidden className="size-4 stroke-[1.5]" />
+                <Trans>Imprimir lista</Trans>
               </Link>
             </Button>
             <BotaoGerarListaNominal turmaId={turma.id} />
@@ -248,6 +267,17 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
             <BarraOcupacao turma={turma} />
           </dd>
         </dl>
+      ) : null}
+      {turma && ano ? (
+        <div className="mt-6">
+          <DocentesTurma
+            turmaId={turma.id}
+            anoLectivoId={ano.id}
+            inicioAno={ano.dataInicio}
+            fimAno={ano.dataFim}
+            podeAlterar={podeAtribuir && !soLeitura && !turma.encerrada}
+          />
+        </div>
       ) : (
         <div className="flex flex-col gap-3" aria-hidden>
           <Esqueleto className="h-5 w-40" />

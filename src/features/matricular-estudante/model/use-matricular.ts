@@ -44,6 +44,12 @@ export function useMatricular(anoLectivoId: string) {
           duplicadoIgnoradoJustificacao: dados.duplicado.ignorado
             ? dados.duplicado.justificacao
             : undefined,
+          transferenciaEntrada: dados.transferencia.activa
+            ? {
+                escolaOrigem: dados.transferencia.escola,
+                classesConcluidas: dados.transferencia.classesConcluidas,
+              }
+            : undefined,
         },
       })
       return paraMatricula(data!)

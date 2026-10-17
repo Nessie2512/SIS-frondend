@@ -26,7 +26,7 @@ export function QuadroTarefas() {
       // Fica utilizável mesmo com um painel modal aberto, como as notificações
       aria-label={t`Tarefas em segundo plano`}
       style={{ pointerEvents: 'auto' }}
-      className="fixed bottom-4 left-4 z-30 w-80 overflow-hidden rounded-cartao bg-superficie shadow-flutuante ring-1 ring-linha print:hidden"
+      className="fixed bottom-4 left-[calc(var(--largura-menu,0px)+1rem)] z-30 w-80 overflow-hidden rounded-cartao bg-superficie shadow-flutuante ring-1 ring-linha transition-[left] duration-(--duracao-padrao) ease-padrao print:hidden"
     >
       <header className="flex h-10 items-center justify-between border-b border-linha pr-1 pl-4">
         <h2 className="text-secundario font-medium">
@@ -115,6 +115,20 @@ function LinhaTarefa({ id }: { id: string }) {
             <Trans>Descarregar</Trans>
           </a>
         </Button>
+      )}
+      {tarefa.estado === 'CONCLUIDA' && tarefa.erros.length > 0 && (
+        <div className="flex flex-col gap-1 text-secundario">
+          <p className="text-aviso">
+            <Trans>Concluída com avisos:</Trans>
+          </p>
+          <ul className="flex flex-col gap-0.5 text-texto-2">
+            {tarefa.erros.map((e) => {
+              const linha = e.linha
+              const mensagem = e.mensagem
+              return <li key={`${linha}-${mensagem}`}>{t`Linha ${linha}: ${mensagem}`}</li>
+            })}
+          </ul>
+        </div>
       )}
       {tarefa.estado === 'FALHADA' && (
         <div className="flex flex-col gap-1 text-secundario">

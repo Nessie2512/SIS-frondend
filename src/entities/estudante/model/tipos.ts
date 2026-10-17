@@ -15,6 +15,9 @@ export interface EstudanteResumo {
   /** Ex.: "7.ª classe · 7.ª A" ou "7.ª classe · sem turma" */
   matricula: string | null
   semTurma: boolean
+  /** Matrícula no ano em contexto */
+  matriculaId: string | null
+  turmaId: string | null
   matriculaPendente: boolean
   documentosEmFalta: number
 }
@@ -39,6 +42,7 @@ export interface EventoPercurso {
   descricao: string
   autor: string
   rectificaId: string | null
+  motivo: string | null
 }
 
 export type EstadoDocumento = 'ENTREGUE' | 'EM_FALTA' | 'DISPENSADO'
@@ -74,4 +78,16 @@ export interface PaginaEstudantes {
   total: number
   page: number
   totalPaginas: number
+}
+
+export type TipoOcorrencia = 'DISCIPLINAR' | 'SAUDE' | 'PEDAGOGICA' | 'OUTRA'
+
+export interface Ocorrencia {
+  id: string
+  data: string
+  tipo: TipoOcorrencia
+  tipoRotulo: string
+  descricao: string
+  autor: string
+  registadaEm: string
 }

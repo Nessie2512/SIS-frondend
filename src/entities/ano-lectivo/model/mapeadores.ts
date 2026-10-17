@@ -20,3 +20,10 @@ export function paraAnoLectivo(dto: Dto<'AnoLectivoDto'>): AnoLectivo {
     soLeitura: dto.estado === 'ENCERRADO',
   }
 }
+
+/** Tom da etiqueta de estado do ano (cabeçalho, lista e ficha do ano). */
+export const TOM_ESTADO_ANO: Record<EstadoAnoLectivo, 'sucesso' | 'neutra' | 'aviso'> = {
+  EM_CURSO: 'sucesso',
+  PLANEADO: 'neutra',
+  ENCERRADO: 'aviso',
+}

@@ -71,6 +71,12 @@ export const esquemaMatricula = z
     documentosEntregues: z.array(z.string()),
     classeId: z.string().min(1, { error: m(msg`Escolha a classe.`) }),
     turmaId: z.string().nullable(),
+    /** Transferência de entrada (guia 2.3): escola de origem e classes lá concluídas */
+    transferencia: z.object({
+      activa: z.boolean(),
+      escola: z.string().trim(),
+      classesConcluidas: z.array(z.string()),
+    }),
   })
   .superRefine((dados, ctx) => {
     // Ignorar um possível duplicado exige justificação (guia 6.3)
@@ -79,6 +85,13 @@ export const esquemaMatricula = z
         code: 'custom',
         path: ['duplicado', 'ignorado'],
         message: i18n._(msg`Confirme se é o mesmo estudante antes de continuar.`),
+      })
+    }
+    if (dados.transferencia.activa && dados.transferencia.escola.length < 3) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['transferencia', 'escola'],
+        message: i18n._(msg`Indique a escola de origem.`),
       })
     }
     if (dados.duplicado.ignorado && dados.duplicado.justificacao.length < 10) {
@@ -107,6 +120,7 @@ export const VALORES_INICIAIS: DadosMatricula = {
   documentosEntregues: [],
   classeId: '',
   turmaId: null,
+  transferencia: { activa: false, escola: '', classesConcluidas: [] },
 }
 
 /** Campos validados ao sair de cada passo (guia 6.3: cada passo valida ao sair). */
@@ -114,7 +128,7 @@ export const CAMPOS_POR_PASSO = [
   ['estudante', 'duplicado'],
   ['encarregados'],
   ['documentosEntregues'],
-  ['classeId', 'turmaId'],
+  ['classeId', 'turmaId', 'transferencia'],
   [],
 ] as const
 

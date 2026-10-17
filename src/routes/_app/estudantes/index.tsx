@@ -5,6 +5,7 @@ import { Plus, Search } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
+import { VistasGuardadas } from '@/features/guardar-vista'
 import {
   estudanteQuery,
   estudantesQuery,
@@ -27,10 +28,12 @@ import {
   Esqueleto,
   EstadoVazio,
   EtiquetaEstado,
+  EtiquetasFiltro,
   Folha,
   Selector,
   TabelaDados,
   type ColunaTabela,
+  type EtiquetaFiltro,
 } from '@/shared/ui'
 
 const ESTADOS = ['ACTIVO', 'TRANSFERIDO', 'DESISTENTE', 'CONCLUIDO', 'ANULADO'] as const
@@ -138,6 +141,45 @@ function EcraEstudantes() {
   const total = data?.total ?? 0
   const temFiltros = Boolean(q || filtros.classeId || filtros.estado)
 
+  const opcoesEstado = [
+    { valor: 'ACTIVO', rotulo: t`Activo` },
+    { valor: 'TRANSFERIDO', rotulo: t`Transferido` },
+    { valor: 'DESISTENTE', rotulo: t`Desistente` },
+    { valor: 'CONCLUIDO', rotulo: t`Concluído` },
+    { valor: 'ANULADO', rotulo: t`Anulado` },
+  ]
+
+  // Filtros aplicados como etiquetas removíveis (guia 7.1)
+  const etiquetas: EtiquetaFiltro[] = [
+    ...(q ? [{ chave: 'q', nome: t`Pesquisa`, valor: q }] : []),
+    ...(filtros.classeId
+      ? [
+          {
+            chave: 'classeId',
+            nome: t`Classe`,
+            valor: classes.find((c) => c.id === filtros.classeId)?.designacao ?? filtros.classeId,
+          },
+        ]
+      : []),
+    ...(filtros.estado
+      ? [
+          {
+            chave: 'estado',
+            nome: t`Estado`,
+            valor: opcoesEstado.find((o) => o.valor === filtros.estado)?.rotulo ?? filtros.estado,
+          },
+        ]
+      : []),
+  ]
+
+  function retirarFiltro(chave: string) {
+    if (chave === 'q') {
+      clearTimeout(espera.current)
+      setTexto('')
+    }
+    void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+  }
+
   // Pesquisa à medida que se escreve: espera 120 ms e o URL acompanha (guia 5.6, 7.1)
   function pesquisar(valor: string) {
     setTexto(valor)
@@ -207,13 +249,7 @@ function EcraEstudantes() {
             <Selector
               {...c}
               placeholder={t`Todos`}
-              opcoes={[
-                { valor: 'ACTIVO', rotulo: t`Activo` },
-                { valor: 'TRANSFERIDO', rotulo: t`Transferido` },
-                { valor: 'DESISTENTE', rotulo: t`Desistente` },
-                { valor: 'CONCLUIDO', rotulo: t`Concluído` },
-                { valor: 'ANULADO', rotulo: t`Anulado` },
-              ]}
+              opcoes={opcoesEstado}
               valor={filtros.estado ?? null}
               aoMudar={(estado) =>
                 void navigate({
@@ -228,6 +264,29 @@ function EcraEstudantes() {
           )}
         </Campo>
       </div>
+
+      <EtiquetasFiltro
+        etiquetas={etiquetas}
+        aoRemover={retirarFiltro}
+        aoLimpar={() => {
+          clearTimeout(espera.current)
+          setTexto('')
+          void navigate({ search: { page: 1 } })
+        }}
+        className="-mt-3"
+      />
+
+      <VistasGuardadas
+        ecra="estudantes"
+        pesquisa={{ q, ...filtros }}
+        aoAplicar={(guardados) => {
+          const nova = pesquisaEstudantes.parse({ ...guardados, page: 1 })
+          clearTimeout(espera.current)
+          setTexto(nova.q ?? '')
+          void navigate({ search: nova })
+        }}
+        className="-mt-3"
+      />
 
       <div
         className={cn(

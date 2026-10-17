@@ -41,6 +41,8 @@ export function EdicaoNoSitio({
   const [estado, setEstado] = useState<'repouso' | 'a-guardar' | 'guardado'>('repouso')
   const botao = useRef<HTMLButtonElement>(null)
   const texto = (mostrar ? mostrar(valor) : valor) || null
+  // O nome acessível contém o texto visível (WCAG 2.5.3): quem usa voz diz o que vê
+  const visivel = texto ?? t`Acrescentar`
 
   function abrir() {
     setRascunho(valor ?? '')
@@ -131,7 +133,7 @@ export function EdicaoNoSitio({
               id={id}
               type="button"
               onClick={abrir}
-              aria-label={t`Editar ${rotulo}`}
+              aria-label={t`Editar ${rotulo}: ${visivel}`}
               className={cn(
                 'group -mx-2 flex items-center gap-2 rounded-controlo px-2 py-1.5 text-left hover:bg-fundo',
                 !texto && 'text-texto-3',
