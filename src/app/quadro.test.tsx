@@ -6,7 +6,13 @@ import { desfazerUltima } from '@/shared/ui'
 import { renderizarEm } from '@/test/renderizar'
 
 const semTurmaDa7 = () =>
-  db.matriculas.find((m) => m.classeId === 'c7' && !m.turmaId && m.anoLectivoId === 'ano-2026')!
+  db.matriculas.find(
+    (m) =>
+      m.classeId === 'c7' &&
+      !m.turmaId &&
+      m.anoLectivoId === 'ano-2026' &&
+      m.estado === 'CONFIRMADA',
+  )!
 const nomeDe = (estudanteId: string) => db.estudantes.find((e) => e.id === estudanteId)!.nome
 
 /** O quadro é o ecrã mais pesado (uma coluna por turma, um cartão por estudante): esperar que monte. */

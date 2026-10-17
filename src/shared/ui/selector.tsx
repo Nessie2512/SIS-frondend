@@ -24,6 +24,8 @@ interface PropsComuns {
   /** Assíncrono: a pesquisa vai ao servidor; espera 120 ms entre teclas (guia 5.6) */
   aoPesquisar?: (texto: string) => void
   'aria-describedby'?: string
+  /** Só quando não há etiqueta visível (ex.: uma linha de tabela) */
+  'aria-label'?: string
   'aria-invalid'?: true
   'aria-required'?: true
 }
@@ -87,6 +89,7 @@ export function Selector(props: Props) {
         aria-expanded={aberto}
         aria-haspopup="listbox"
         aria-describedby={props['aria-describedby']}
+        aria-label={props['aria-label']}
         aria-invalid={props['aria-invalid']}
         aria-required={props['aria-required']}
         disabled={desactivado}

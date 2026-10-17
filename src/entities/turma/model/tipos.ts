@@ -46,6 +46,8 @@ export interface Inscrito {
   nome: string
   numeroProcesso: string
   fotografiaUrl: string | null
+  /** Matrícula por confirmar: ainda não pode ser inscrita numa turma (guia 2.1) */
+  porConfirmar?: boolean
 }
 
 /** Disciplina do plano com o docente em vigor e o histórico de substituições (guia 2.3). */

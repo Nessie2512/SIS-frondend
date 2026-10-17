@@ -129,7 +129,7 @@ type Documento = S['DocumentoEstudanteDto'] & {
 }
 export interface Tarefa {
   id: string
-  tipo: S['TipoRelatorio'] | 'RENOVACAO'
+  tipo: S['TipoRelatorio'] | 'RENOVACAO' | 'DISTRIBUICAO'
   parametros: { anoLectivoId: string; turmaId?: string; classeId?: string }
   titulo: string
   utilizadorId: string | null
@@ -340,6 +340,19 @@ function criar(): Estado {
       )
     }
   })
+
+  // Dos 3 sem turma de cada classe, 2 já têm a matrícula confirmada (documentos entregues):
+  // podem ser inscritos; o terceiro fica por confirmar e o quadro não o deixa inscrever (guia 2.1).
+  // Ajuste feito depois de gerar, para não mudar a sequência aleatória dos restantes dados.
+  for (const classe of classes) {
+    const semTurma = matriculas.filter((m) => m.classeId === classe.id && !m.turmaId)
+    for (const m of semTurma.slice(0, 2)) {
+      m.estado = 'CONFIRMADA'
+      for (const d of documentos) {
+        if (d.estudanteId === m.estudanteId && d.obrigatorio) d.estado = 'ENTREGUE'
+      }
+    }
+  }
 
   return {
     turmas,

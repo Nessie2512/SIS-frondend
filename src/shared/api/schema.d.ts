@@ -406,6 +406,19 @@ export interface paths {
     }>
   }
 
+  // Distribuição automática por turmas (guia 2.3: critério, simular, ajustar, confirmar)
+  '/distribuicoes/simular': {
+    post: Op<{ body: S['SimularDistribuicaoDto']; ok: S['DistribuicaoDto']; erros: 403 | 409 }>
+  }
+  '/distribuicoes/aplicar': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['AplicarDistribuicaoDto']
+      ok: S['TarefaDto']
+      erros: 403 | 409
+    }>
+  }
+
   // Docentes da turma (guia 2.3: atribuir e substituir)
   '/turmas/{id}/docentes': {
     get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
@@ -961,6 +974,39 @@ export interface components {
     }
     ConteudoDocumentoDto: { titulo: string; paragrafos: string[] }
     AnularDocumentoDto: { motivo: string }
+
+    // Distribuição automática
+    /** Equilibrar a ocupação, encher por ordem alfabética das turmas, ou equilibrar rapazes e raparigas */
+    CriterioDistribuicao: 'EQUILIBRAR' | 'ALFABETICA' | 'SEXO'
+    SimularDistribuicaoDto: {
+      anoLectivoId: string
+      classeId: string
+      criterio: components['schemas']['CriterioDistribuicao']
+    }
+    DistribuicaoDto: {
+      criterio: components['schemas']['CriterioDistribuicao']
+      turmas: { turmaId: string; designacao: string; lotacao: number; inscritos: number }[]
+      propostas: {
+        matriculaId: string
+        estudanteId: string
+        nome: string
+        numeroProcesso: string
+        sexo: 'M' | 'F'
+        turmaId: string
+      }[]
+      excluidos: {
+        matriculaId: string
+        estudanteId: string
+        nome: string
+        numeroProcesso: string
+        motivo: 'MATRICULA_POR_CONFIRMAR' | 'SEM_VAGAS'
+      }[]
+    }
+    AplicarDistribuicaoDto: {
+      anoLectivoId: string
+      classeId: string
+      inscricoes: { matriculaId: string; turmaId: string }[]
+    }
 
     // Docentes da turma
     DocenteTurmaDto: {

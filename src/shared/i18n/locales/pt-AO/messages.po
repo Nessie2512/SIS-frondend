@@ -44,6 +44,10 @@ msgstr "{cargaLectiva} de {cargaMaxima} h"
 msgid "{cargaLectiva} de {cargaMaxima} horas semanais"
 msgstr "{cargaLectiva} de {cargaMaxima} horas semanais"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "{classe}: matrículas confirmadas sem turma. Simular não muda nada."
+msgstr "{classe}: matrículas confirmadas sem turma. Simular não muda nada."
+
 #: src/routes/_app/turmas/$turmaId.resultados.tsx
 msgid "{classe}. Os aprovados passam à classe seguinte na renovação; os reprovados repetem."
 msgstr "{classe}. Os aprovados passam à classe seguinte na renovação; os reprovados repetem."
@@ -121,6 +125,10 @@ msgstr "{jaConfirmadas} já estavam confirmadas e não mudam."
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "{n, plural, one {# utilizador} other {# utilizadores}}"
 msgstr "{n, plural, one {# utilizador} other {# utilizadores}}"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "{n, plural, one {Inscrever # estudante} other {Inscrever # estudantes}}"
+msgstr "{n, plural, one {Inscrever # estudante} other {Inscrever # estudantes}}"
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "{n} disciplinas sem docente."
@@ -429,6 +437,10 @@ msgstr "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar co
 msgid "A guardar"
 msgstr "A guardar"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
+msgstr "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
+
 #: src/features/gerar-lista-nominal/ui/botao-gerar-lista-nominal.tsx
 msgid "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 msgstr "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
@@ -645,6 +657,7 @@ msgstr "Agente n.º {agente}"
 msgid "Agir"
 msgstr "Agir"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Agora"
 msgstr "Agora"
@@ -953,6 +966,10 @@ msgstr "Boa tarde, {nome}"
 msgid "Bom dia, {nome}"
 msgstr "Bom dia, {nome}"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Cada estudante vai para a turma com mais vagas."
+msgstr "Cada estudante vai para a turma com mais vagas."
+
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Cada utilizador tem um perfil. Os perfis são definidos pela escola e mudam-se no servidor."
 msgstr "Cada utilizador tem um perfil. Os perfis são definidos pela escola e mudam-se no servidor."
@@ -974,6 +991,7 @@ msgstr "Cancelado."
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/confirmar-matricula/ui/anular-matricula.tsx
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 #: src/features/editar-plano/ui/accoes-plano.tsx
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
@@ -1268,6 +1286,14 @@ msgstr "Crie primeiro o próximo ano lectivo; a renovação é uma das etapas da
 msgid "Criou"
 msgstr "Criou"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Critério"
+msgstr "Critério"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Critério de distribuição"
+msgstr "Critério de distribuição"
+
 #: src/routes/_app/curriculo.tsx
 #: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/-casca/menu-lateral.tsx
@@ -1369,6 +1395,10 @@ msgstr "Densidade compacta"
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Densidade confortável"
 msgstr "Densidade confortável"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Depois"
+msgstr "Depois"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Depois de criada, pode ser acrescentada aos rascunhos dos planos."
@@ -1500,6 +1530,10 @@ msgstr "Disponível"
 #: src/routes/_app/turmas/quadro.tsx
 msgid "Distribuição por turmas"
 msgstr "Distribuição por turmas"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Distribuir automaticamente"
+msgstr "Distribuir automaticamente"
 
 #: src/routes/_app/turmas/index.tsx
 msgid "Distribuir estudantes"
@@ -1764,6 +1798,10 @@ msgstr "Encerrar turma"
 msgid "Encerre primeiro o ano {emCurso}: só pode haver um em curso."
 msgstr "Encerre primeiro o ano {emCurso}: só pode haver um em curso."
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Enche a primeira turma, depois a seguinte."
+msgstr "Enche a primeira turma, depois a seguinte."
+
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
 msgstr "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
@@ -1793,6 +1831,18 @@ msgstr "Entregue"
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Entrou"
 msgstr "Entrou"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Equilibra rapazes e raparigas em cada turma."
+msgstr "Equilibra rapazes e raparigas em cada turma."
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Equilibrar ocupação"
+msgstr "Equilibrar ocupação"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Equilibrar sexo"
+msgstr "Equilibrar sexo"
 
 #: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Escola de destino"
@@ -1913,6 +1963,10 @@ msgstr "Esta classe já tem um rascunho em preparação. Abrimos o rascunho exis
 #: src/shared/lib/erros-dominio.ts
 msgid "Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la."
 msgstr "Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
+msgstr "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
 
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "Esta tarefa já não está disponível."
@@ -2090,6 +2144,10 @@ msgstr "Explique porque reabre (pelo menos 10 caracteres)."
 msgid "Exportações recentes"
 msgstr "Exportações recentes"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "F"
+msgstr "F"
+
 #: src/entities/relatorio/api/queries.ts
 msgid "Falhou"
 msgstr "Falhou"
@@ -2165,6 +2223,10 @@ msgstr "Fica na lista de estudantes sem turma, no quadro da distribuição."
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Ficam de fora ({n})"
 msgstr "Ficam de fora ({n})"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Ficam de fora ({nExcluidos})"
+msgstr "Ficam de fora ({nExcluidos})"
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Ficam por confirmar"
@@ -2246,6 +2308,10 @@ msgstr "Guardar vista"
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Há alterações por guardar"
 msgstr "Há alterações por guardar"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Há turmas acima da lotação. Mude alguns estudantes de turma antes de confirmar."
+msgstr "Há turmas acima da lotação. Mude alguns estudantes de turma antes de confirmar."
 
 #: src/app/pwa.ts
 msgid "Há uma nova versão da Secretaria."
@@ -2477,6 +2543,10 @@ msgstr "Lotação máxima"
 msgid "Lotação máxima atingida"
 msgstr "Lotação máxima atingida"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "M"
+msgstr "M"
+
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Mãe"
 msgstr "Mãe"
@@ -2537,6 +2607,14 @@ msgstr "Matrícula de {nome} registada"
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Matrícula de {nome} registada."
 msgstr "Matrícula de {nome} registada."
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "matrícula por confirmar"
+msgstr "matrícula por confirmar"
+
+#: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
+msgid "Matrícula por confirmar: confirme-a antes de inscrever."
+msgstr "Matrícula por confirmar: confirme-a antes de inscrever."
 
 #: src/routes/_app/index.tsx
 msgid "Matriculados, por distribuir"
@@ -2733,6 +2811,18 @@ msgstr "Não foi possível guardar. A sua alteração continua aqui."
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "Não há estudantes com matrícula confirmada nesta turma."
 msgstr "Não há estudantes com matrícula confirmada nesta turma."
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Não há matrículas confirmadas sem turma nesta classe."
+msgstr "Não há matrículas confirmadas sem turma nesta classe."
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "não há vagas nas turmas da classe"
+msgstr "não há vagas nas turmas da classe"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Não inscrever agora"
+msgstr "Não inscrever agora"
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Não pode desactivar a sua própria conta."
@@ -3045,6 +3135,10 @@ msgstr "Ocupação"
 #: src/entities/turma/ui/barra-ocupacao.tsx
 msgid "Ocupação da turma"
 msgstr "Ocupação da turma"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Ocupação das turmas depois da distribuição"
+msgstr "Ocupação das turmas depois da distribuição"
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
@@ -3369,6 +3463,10 @@ msgstr "Professores"
 #: src/entities/relatorio/api/queries.ts
 msgid "Pronto"
 msgstr "Pronto"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Proposta ({nPropostas})"
+msgstr "Proposta ({nPropostas})"
 
 #: src/features/editar-plano/ui/accoes-plano.tsx
 msgid "Publicar"
@@ -4064,6 +4162,7 @@ msgstr "Transferir para outra escola"
 msgid "turma"
 msgstr "turma"
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
@@ -4082,6 +4181,10 @@ msgstr "Turma {designacao} criada."
 msgid "Turma {designacao} encerrada."
 msgstr "Turma {designacao} encerrada."
 
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Turma a turma"
+msgstr "Turma a turma"
+
 #: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "Turma cheia"
 msgstr "Turma cheia"
@@ -4097,6 +4200,10 @@ msgstr "Turma cheia: largar aqui pede uma excepção justificada."
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Turma cheia: não aceita mais estudantes."
 msgstr "Turma cheia: não aceita mais estudantes."
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "Turma de {nome}"
+msgstr "Turma de {nome}"
 
 #: src/shared/config/glossario.ts
 msgid "turmas"

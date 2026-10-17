@@ -38,6 +38,7 @@ import { handlersAcademicos } from './handlers-academicos'
 import { administracao, auditar, handlersAdministracao } from './administracao'
 import { handlersAnos } from './anos'
 import { handlersRenovacoes } from './renovacoes'
+import { handlersDistribuicao } from './distribuicao'
 import { handlersDocumentosOficiais } from './documentos-oficiais'
 import { gerarCsv, handlersRelatorios } from './relatorios'
 
@@ -721,6 +722,10 @@ export const handlers = [
       const { matriculaId, excepcaoJustificacao } = (await request.json()) as S['InscreverDto']
       const matricula = db.matriculas.find((m) => m.id === matriculaId)
       if (!matricula) return problema(404, 'Matrícula não encontrada')
+      // Só se inscreve numa turma uma matrícula confirmada (guia 2.1)
+      if (matricula.estado !== 'CONFIRMADA') {
+        return problema(409, 'Matrícula por confirmar', { code: 'MATRICULA_POR_CONFIRMAR' })
+      }
       const recusa = validarDestino(request, turma.id, matricula.classeId, excepcaoJustificacao)
       if (recusa) return recusa
       if (matricula.turmaId) {
@@ -1128,6 +1133,7 @@ export const handlers = [
   ...handlersAdministracao,
   ...handlersAnos,
   ...handlersRenovacoes,
+  ...handlersDistribuicao,
   ...handlersDocumentosOficiais,
   ...handlersAcademicos,
 ]
