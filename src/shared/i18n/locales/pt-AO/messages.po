@@ -393,6 +393,10 @@ msgstr "A classe ainda não tem plano curricular vigente."
 msgid "A confirmar"
 msgstr "A confirmar"
 
+#: src/routes/_app/turmas/index.tsx
+msgid "A criar…"
+msgstr "A criar…"
+
 #: src/shared/ui/selector-data.tsx
 msgid "A data está fora do ano lectivo ({de} a {ate})."
 msgstr "A data está fora do ano lectivo ({de} a {ate})."
@@ -400,6 +404,10 @@ msgstr "A data está fora do ano lectivo ({de} a {ate})."
 #: src/features/registar-ocorrencia/model/esquema.ts
 msgid "A data não pode ser no futuro."
 msgstr "A data não pode ser no futuro."
+
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "A designação é atribuída a seguir às turmas que a classe já tem."
+msgstr "A designação é atribuída a seguir às turmas que a classe já tem."
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "A disciplina sai da lista. Não está em nenhum plano nem habilitação, por isso nada mais muda."
@@ -424,6 +432,10 @@ msgstr "A guardar"
 #: src/features/gerar-lista-nominal/ui/botao-gerar-lista-nominal.tsx
 msgid "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 msgstr "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
+
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "A lotação vai de 10 a 60 estudantes."
+msgstr "A lotação vai de 10 a 60 estudantes."
 
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "A matrícula deste ano ({matricula}) fica anulada e o lugar na turma fica livre. O estado passa a Desistente; pode voltar com um reingresso."
@@ -472,6 +484,14 @@ msgstr "A sigla tem 2 a 5 letras, sem espaços."
 #: src/routes/_app/matriculas/nova.tsx
 msgid "A sua conta não tem permissão para matricular estudantes."
 msgstr "A sua conta não tem permissão para matricular estudantes."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "A turma ainda tem estudantes. Mova-os para outra turma antes de a encerrar."
+msgstr "A turma ainda tem estudantes. Mova-os para outra turma antes de a encerrar."
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "A turma fica só de leitura e deixa de receber inscrições. Os docentes atribuídos terminam hoje."
+msgstr "A turma fica só de leitura e deixa de receber inscrições. Os docentes atribuídos terminam hoje."
 
 #: src/features/editar-plano/ui/accoes-plano.tsx
 msgid "A versão {versao} passa a vigente e a versão {versaoVigente} fica arquivada. Depois de publicada não se edita: para mudar, cria-se outra versão."
@@ -961,6 +981,8 @@ msgstr "Cancelado."
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/matricular-existente/ui/matricular-existente.tsx
@@ -1019,6 +1041,7 @@ msgid "classe"
 msgstr "classe"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/matricular-existente/ui/matricular-existente.tsx
@@ -1215,6 +1238,10 @@ msgstr "Criar o ano lectivo"
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 msgid "Criar o ano seguinte"
 msgstr "Criar o ano seguinte"
+
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "Criar turma"
+msgstr "Criar turma"
 
 #: src/routes/_app/turmas/index.tsx
 msgid "Crie a primeira ou duplique as do ano anterior."
@@ -1568,6 +1595,10 @@ msgstr "Documentos oficiais"
 msgid "Duas fotografias tipo passe"
 msgstr "Duas fotografias tipo passe"
 
+#: src/routes/_app/turmas/index.tsx
+msgid "Duplicar as do ano anterior"
+msgstr "Duplicar as do ano anterior"
+
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Duplicar as turmas"
 msgstr "Duplicar as turmas"
@@ -1709,6 +1740,14 @@ msgstr "Encerrado"
 msgid "Encerramento do ano"
 msgstr "Encerramento do ano"
 
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "Encerrar {designacao}"
+msgstr "Encerrar {designacao}"
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "Encerrar a turma {designacao}"
+msgstr "Encerrar a turma {designacao}"
+
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Encerrar o ano"
 msgstr "Encerrar o ano"
@@ -1716,6 +1755,10 @@ msgstr "Encerrar o ano"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Encerrar o ano {designacao}"
 msgstr "Encerrar o ano {designacao}"
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "Encerrar turma"
+msgstr "Encerrar turma"
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Encerre primeiro o ano {emCurso}: só pode haver um em curso."
@@ -1760,6 +1803,7 @@ msgid "Escola de origem"
 msgstr "Escola de origem"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/features/matricular-estudante/model/esquema.ts
 #: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "Escolha a classe."
@@ -2033,6 +2077,10 @@ msgstr "Explique o motivo (pelo menos 10 caracteres)."
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Explique porque anula (pelo menos 10 caracteres)."
 msgstr "Explique porque anula (pelo menos 10 caracteres)."
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "Explique porque encerra (pelo menos 10 caracteres)."
+msgstr "Explique porque encerra (pelo menos 10 caracteres)."
 
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 msgid "Explique porque reabre (pelo menos 10 caracteres)."
@@ -2421,6 +2469,10 @@ msgstr "Lista nominal — {designacao}"
 msgid "Lista nominal da turma {designacao}"
 msgstr "Lista nominal da turma {designacao}"
 
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "Lotação máxima"
+msgstr "Lotação máxima"
+
 #: src/routes/_app/index.tsx
 msgid "Lotação máxima atingida"
 msgstr "Lotação máxima atingida"
@@ -2434,6 +2486,7 @@ msgid "Mais dados (opcionais)"
 msgstr "Mais dados (opcionais)"
 
 #: src/entities/turma/model/mapeadores.ts
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "Manhã"
 msgstr "Manhã"
 
@@ -2590,6 +2643,7 @@ msgstr "Mostrar todos os atalhos"
 #: src/features/confirmar-matricula/ui/anular-matricula.tsx
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
@@ -2605,6 +2659,10 @@ msgstr "Motivo da anulação: {motivo}"
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Motivo: {motivo}"
 msgstr "Motivo: {motivo}"
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "Mova primeiro os {inscritos} estudantes para outra turma."
+msgstr "Mova primeiro os {inscritos} estudantes para outra turma."
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Mover {nome} para…"
@@ -2764,6 +2822,7 @@ msgid "Ninguém renova com os dados actuais."
 msgstr "Ninguém renova com os dados actuais."
 
 #: src/entities/turma/model/mapeadores.ts
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "Noite"
 msgstr "Noite"
 
@@ -2802,6 +2861,10 @@ msgstr "Nome ou número de processo"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Nova disciplina"
 msgstr "Nova disciplina"
+
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "Nova turma"
+msgstr "Nova turma"
 
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Novas atribuições"
@@ -2987,6 +3050,10 @@ msgstr "Ocupação da turma"
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "opcional"
 msgstr "opcional"
+
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "Opcional."
+msgstr "Opcional."
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Opcional. Ex.: abono de família."
@@ -3639,6 +3706,7 @@ msgstr "Sai da turma {designacao}, que fica com {ficam} de {lotacao}."
 msgid "Sair sem guardar"
 msgstr "Sair sem guardar"
 
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/routes/_app/turmas/index.tsx
 msgid "Sala"
 msgstr "Sala"
@@ -3869,6 +3937,7 @@ msgid "Também pode:"
 msgstr "Também pode:"
 
 #: src/entities/turma/model/mapeadores.ts
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "Tarde"
 msgstr "Tarde"
 
@@ -4005,6 +4074,14 @@ msgstr "turma"
 msgid "Turma"
 msgstr "Turma"
 
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "Turma {designacao} criada."
+msgstr "Turma {designacao} criada."
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "Turma {designacao} encerrada."
+msgstr "Turma {designacao} encerrada."
+
 #: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "Turma cheia"
 msgstr "Turma cheia"
@@ -4044,6 +4121,7 @@ msgstr "Turmas cheias"
 msgid "Turmas com resultados em falta"
 msgstr "Turmas com resultados em falta"
 
+#: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/routes/_app/turmas/index.tsx
 msgid "Turno"
 msgstr "Turno"

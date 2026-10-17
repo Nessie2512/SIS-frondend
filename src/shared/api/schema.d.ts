@@ -164,6 +164,20 @@ export interface paths {
       }
       ok: S['PaginaTurmaDto']
     }>
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['NovaTurmaDto']
+      ok: S['TurmaDto']
+      erros: 403 | 409 | 422
+    }>
+  }
+  '/turmas/{id}/encerrar': {
+    post: Op<{
+      path: { id: string }
+      body: S['MotivoDto']
+      ok: S['TurmaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
   }
   '/turmas/{id}': { get: Op<{ path: { id: string }; ok: S['TurmaDto']; erros: 404 }> }
   '/turmas/{id}/inscritos': { get: Op<{ path: { id: string }; ok: S['InscritoDto'][] }> }
@@ -518,6 +532,14 @@ export interface components {
       lotacaoMaxima: number
       inscritos: number
       estado: components['schemas']['EstadoTurma']
+    }
+    /** A designação é gerada pelo servidor (letra seguinte livre na classe) */
+    NovaTurmaDto: {
+      anoLectivoId: string
+      classeId: string
+      turno: components['schemas']['Turno']
+      sala?: string
+      lotacaoMaxima: number
     }
     PaginaTurmaDto: Pagina<components['schemas']['TurmaDto']>
     InscritoDto: {

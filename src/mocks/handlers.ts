@@ -598,6 +598,100 @@ export const handlers = [
     }),
   ),
 
+  http.post(
+    `${API}/turmas`,
+    protegido('turmas:escrever', async ({ request }) => {
+      const corpo = (await request.json()) as S['NovaTurmaDto']
+      return idempotente(request, () => {
+        if (anoEncerrado(corpo.anoLectivoId)) {
+          return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+        }
+        const classe = classes.find((c) => c.id === corpo.classeId)
+        const lotacao = Number(corpo.lotacaoMaxima)
+        const erros = [
+          ...(!classe ? [{ campo: 'classeId', mensagem: 'Escolha a classe.' }] : []),
+          ...(!['MANHA', 'TARDE', 'NOITE'].includes(corpo.turno)
+            ? [{ campo: 'turno', mensagem: 'Escolha o turno.' }]
+            : []),
+          ...(!Number.isInteger(lotacao) || lotacao < 10 || lotacao > 60
+            ? [{ campo: 'lotacaoMaxima', mensagem: 'A lotação vai de 10 a 60 estudantes.' }]
+            : []),
+        ]
+        if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })
+        // Designação gerada: a letra seguinte livre na classe (7.ª A, B, C… D)
+        const usadas = new Set(
+          db.turmas
+            .filter((t) => t.anoLectivoId === corpo.anoLectivoId && t.classeId === classe!.id)
+            .map((t) => t.designacao.split(' ').at(-1)),
+        )
+        const letra = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find((l) => !usadas.has(l))!
+        const turma = {
+          id: `${corpo.anoLectivoId}-${classe!.id}-${letra}`,
+          anoLectivoId: corpo.anoLectivoId,
+          designacao: `${classe!.designacao.replace(' classe', '')} ${letra}`,
+          classeId: classe!.id,
+          classeDesignacao: classe!.designacao,
+          turno: corpo.turno,
+          sala: corpo.sala?.trim() || null,
+          lotacaoMaxima: lotacao,
+          estado: 'ACTIVA' as const,
+        }
+        db.turmas.push(turma)
+        auditar(
+          utilizadorDo(request)!.nome,
+          'CRIAR',
+          'Turma',
+          `${turma.designacao} (${lotacao} lugares)`,
+        )
+        return HttpResponse.json(paraTurmaDto(turma), { status: 201 })
+      })
+    }),
+  ),
+
+  http.post(
+    `${API}/turmas/:id/encerrar`,
+    protegido('turmas:escrever', async ({ request, params }) => {
+      const turma = db.turmas.find((t) => t.id === params.id)
+      if (!turma) return problema(404, 'Turma não encontrada')
+      if (anoEncerrado(turma.anoLectivoId)) {
+        return problema(409, 'Ano encerrado', { code: 'ANO_ENCERRADO' })
+      }
+      if (turma.estado === 'ENCERRADA') {
+        return problema(409, 'Já encerrada', { detail: 'Esta turma já está encerrada.' })
+      }
+      const inscritos = contarInscritos(turma.id)
+      if (inscritos > 0) {
+        return problema(409, 'Turma com inscritos', {
+          code: 'TURMA_COM_INSCRITOS',
+          detail: `Mova primeiro os ${inscritos} estudantes para outra turma.`,
+        })
+      }
+      const { motivo } = (await request.json()) as S['MotivoDto']
+      if ((motivo?.trim().length ?? 0) < 10) {
+        return problema(422, 'Dados inválidos', {
+          errors: [
+            { campo: 'motivo', mensagem: 'Explique porque encerra (pelo menos 10 caracteres).' },
+          ],
+        })
+      }
+      const hoje = new Date().toISOString().slice(0, 10)
+      for (const a of db.atribuicoes) {
+        if (a.turmaId === turma.id && a.ate === null) {
+          a.ate = hoje
+          a.motivo = 'Turma encerrada'
+        }
+      }
+      turma.estado = 'ENCERRADA'
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Turma',
+        `${turma.designacao}: encerrada (${motivo.trim()})`,
+      )
+      return HttpResponse.json(paraTurmaDto(turma))
+    }),
+  ),
+
   http.get(
     `${API}/turmas/:id`,
     protegido('turmas:ler', ({ params }) => {

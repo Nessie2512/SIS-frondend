@@ -15,6 +15,7 @@ import {
 } from '@/entities/turma'
 import { anosLectivosQuery } from '@/entities/ano-lectivo'
 import { DocentesTurma } from '@/features/atribuir-docente'
+import { EncerrarTurma, NovaTurma } from '@/features/gerir-turmas'
 import { BotaoGerarListaNominal } from '@/features/gerar-lista-nominal'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
@@ -80,7 +81,14 @@ function useColunas(): ColunaTabela<Turma>[] {
     return [
       c.accessor('designacao', {
         header: t`Turma`,
-        cell: (info) => <span className="font-medium">{info.getValue()}</span>,
+        cell: (info) =>
+          info.row.original.aGuardar ? (
+            <span className="text-texto-3" aria-busy="true">
+              <Trans>A criar…</Trans>
+            </span>
+          ) : (
+            <span className="font-medium">{info.getValue()}</span>
+          ),
       }),
       c.accessor('classe', {
         header: t`Classe`,
@@ -109,6 +117,8 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
   const filtros: FiltrosTurma = { anoLectivoId, ...search }
   const { data, isPlaceholderData, isError, refetch } = useQuery(turmasQuery(filtros))
   const colunas = useColunas()
+  const { soLeitura } = Route.useRouteContext()
+  const podeCriar = useCan('turmas:escrever') && !soLeitura
   const pagina = data?.page ?? search.page
   const totalPaginas = data?.totalPaginas ?? 1
 
@@ -119,6 +129,7 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
           <Trans>Turmas</Trans>
         </h1>
         <div className="flex items-center gap-3">
+          {podeCriar && <NovaTurma anoLectivoId={anoLectivoId} classeInicial={search.classeId} />}
           <Button asChild>
             <Link to="/turmas/quadro" search={{ classeId: search.classeId ?? 'c7' }}>
               <Trans>Distribuir estudantes</Trans>
@@ -160,6 +171,18 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
             <EstadoVazio
               titulo={t`Ainda não há turmas neste ano.`}
               descricao={t`Crie a primeira ou duplique as do ano anterior.`}
+              accao={
+                podeCriar ? (
+                  <div className="flex flex-wrap justify-center gap-2">
+                    <NovaTurma anoLectivoId={anoLectivoId} variante="secundario" />
+                    <Button asChild>
+                      <Link to="/anos-lectivos/$anoId" params={{ anoId: anoLectivoId }}>
+                        <Trans>Duplicar as do ano anterior</Trans>
+                      </Link>
+                    </Button>
+                  </div>
+                ) : undefined
+              }
             />
           }
         />
@@ -236,6 +259,7 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
               </Link>
             </Button>
             <BotaoGerarListaNominal turmaId={turma.id} />
+            {podeAtribuir && !soLeitura && !turma.encerrada && <EncerrarTurma turma={turma} />}
           </>
         )
       }
