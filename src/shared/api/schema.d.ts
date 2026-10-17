@@ -96,6 +96,12 @@ export interface paths {
         pesquisa?: string
         classeId?: string
         estado?: S['EstadoEstudante']
+        /** Filtros avançados */
+        semTurma?: boolean
+        documentosEmFalta?: boolean
+        sexo?: 'M' | 'F'
+        /** Campo do DTO, com «-» para descendente (ex.: -nome) */
+        ordenar?: string
         page?: number
         pageSize?: number
       }
@@ -162,6 +168,7 @@ export interface paths {
         classeId?: string
         estado?: S['EstadoMatricula']
         semTurma?: boolean
+        ordenar?: string
         page?: number
         pageSize?: number
       }
@@ -248,6 +255,7 @@ export interface paths {
         pesquisa?: string
         estado?: S['EstadoProfessor']
         disciplinaId?: string
+        ordenar?: string
         page?: number
         pageSize?: number
       }

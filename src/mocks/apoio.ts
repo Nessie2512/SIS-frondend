@@ -57,7 +57,25 @@ export const anoEncerrado = (anoLectivoId: string) =>
   anosLectivos.find((a) => a.id === anoLectivoId)?.estado === 'ENCERRADO'
 export const etag = (versao: number) => `"v${versao}"`
 
-export function paginar<T>(lista: T[], url: URL) {
+/** Ordena por um campo do DTO: «nome» ou «-nome»; nulos no fim (guia 7.1: ordenação no URL). */
+function ordenar<T>(lista: T[], ordem: string | null): T[] {
+  if (!ordem) return lista
+  const desc = ordem.startsWith('-')
+  const campo = ordem.replace(/^-/, '') as keyof T
+  const sinal = desc ? -1 : 1
+  return [...lista].sort((a, b) => {
+    const x = a[campo]
+    const y = b[campo]
+    if (x === y) return 0
+    if (x === null || x === undefined) return 1
+    if (y === null || y === undefined) return -1
+    if (typeof x === 'number' && typeof y === 'number') return (x - y) * sinal
+    return String(x).localeCompare(String(y), 'pt', { numeric: true }) * sinal
+  })
+}
+
+export function paginar<T>(listaOriginal: T[], url: URL) {
+  const lista = ordenar(listaOriginal, url.searchParams.get('ordenar'))
   const page = Math.max(1, Number(url.searchParams.get('page') ?? 1))
   const pageSize = Math.min(100, Number(url.searchParams.get('pageSize') ?? 50))
   return {

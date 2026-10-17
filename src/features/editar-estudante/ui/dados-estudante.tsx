@@ -56,6 +56,7 @@ export function DadosEstudante({ estudante, soLeitura }: Props) {
       <div className="divide-y divide-linha">
         {editavel('nome', {
           autoComplete: 'off',
+          atalhoEditar: true,
           validar: (v) => (v.split(/\s+/).length < 2 ? t`Escreva o nome completo.` : undefined),
         })}
         {/* Número de processo é imutável: sempre texto, nunca campo (guia 2.4) */}

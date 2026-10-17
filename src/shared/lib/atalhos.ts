@@ -100,7 +100,14 @@ export function useAtalhos(atalhos: Atalho[]) {
 
 /** Executa a acção do elemento marcado com data-atalho no ecrã actual (ex.: botão "Nova turma"). */
 export function accionarMarcado(nome: 'novo' | 'editar' | 'pesquisa') {
-  const el = document.querySelector<HTMLElement>(`[data-atalho="${nome}"]`)
+  // E edita o item em foco (guia 7.5): primeiro o item que contém o foco, depois o do ecrã
+  const emFoco =
+    nome === 'editar'
+      ? document.activeElement
+          ?.closest('[data-editavel]')
+          ?.querySelector<HTMLElement>('[data-accao="editar"]')
+      : null
+  const el = emFoco ?? document.querySelector<HTMLElement>(`[data-atalho="${nome}"]`)
   if (!el) return false
   if (nome === 'pesquisa') el.focus()
   else el.click()

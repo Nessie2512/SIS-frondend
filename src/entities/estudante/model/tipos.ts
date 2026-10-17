@@ -78,6 +78,10 @@ export interface FiltrosEstudantes {
   pesquisa?: string
   classeId?: string
   estado?: EstadoEstudante
+  semTurma?: boolean
+  documentosEmFalta?: boolean
+  sexo?: 'M' | 'F'
+  ordenar?: string
   page: number
 }
 

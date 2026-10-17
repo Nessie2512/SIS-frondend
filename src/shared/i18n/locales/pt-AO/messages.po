@@ -919,6 +919,10 @@ msgstr "Apagar «{titulo}»"
 msgid "Apagar a vista «{nome}»"
 msgstr "Apagar a vista «{nome}»"
 
+#: src/routes/_app/estudantes/index.tsx
+msgid "Aplicar"
+msgstr "Aplicar"
+
 #: src/routes/_app/definicoes/index.tsx
 msgid "Apresentação"
 msgstr "Apresentação"
@@ -1177,6 +1181,10 @@ msgstr "Código copiado."
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Código de verificação"
 msgstr "Código de verificação"
+
+#: src/routes/_app/estudantes/index.tsx
+msgid "Com documentos obrigatórios em falta"
+msgstr "Com documentos obrigatórios em falta"
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "Comece por matricular o primeiro."
@@ -1784,6 +1792,10 @@ msgstr "Eliminar disciplina"
 msgid "Em curso"
 msgstr "Em curso"
 
+#: src/routes/_app/estudantes/index.tsx
+msgid "em falta"
+msgstr "em falta"
+
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -2359,6 +2371,7 @@ msgstr "Feita"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Feminino"
 msgstr "Feminino"
@@ -2412,6 +2425,10 @@ msgstr "Ficha do professor"
 #: src/shared/ui/etiquetas-filtro.tsx
 msgid "Filtros aplicados"
 msgstr "Filtros aplicados"
+
+#: src/routes/_app/estudantes/index.tsx
+msgid "Filtros avançados"
+msgstr "Filtros avançados"
 
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 msgid "Fim"
@@ -2693,6 +2710,10 @@ msgid "Ligar ao estudante"
 msgstr "Ligar ao estudante"
 
 #: src/routes/_app/estudantes/index.tsx
+msgid "Limpar"
+msgstr "Limpar"
+
+#: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/shared/ui/etiquetas-filtro.tsx
 msgid "Limpar filtros"
@@ -2749,6 +2770,7 @@ msgstr "Marcar os {emFalta} em falta como aprovados"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Masculino"
 msgstr "Masculino"
@@ -2794,6 +2816,10 @@ msgstr "matrícula por confirmar"
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Matrícula por confirmar: confirme-a antes de inscrever."
 msgstr "Matrícula por confirmar: confirme-a antes de inscrever."
+
+#: src/routes/_app/estudantes/index.tsx
+msgid "Matriculados sem turma"
+msgstr "Matriculados sem turma"
 
 #: src/routes/_app/index.tsx
 msgid "Matriculados, por distribuir"
@@ -4146,6 +4172,7 @@ msgstr "Sem resultados."
 
 #: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/routes/_app/estudantes/index.tsx
 msgid "sem turma"
 msgstr "sem turma"
 
@@ -4168,6 +4195,7 @@ msgstr "Sessão bloqueada"
 
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Sexo"
 msgstr "Sexo"
@@ -4405,6 +4433,7 @@ msgstr "turma"
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/matricular-existente/ui/matricular-existente.tsx
+#: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/turmas/index.tsx

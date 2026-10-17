@@ -102,6 +102,7 @@ export function EncarregadosEstudante({ estudanteId, nome, podeEditar }: Props) 
             return (
               <li
                 key={enc.id}
+                data-editavel
                 aria-busy={enc.aGuardar || undefined}
                 className={cn(
                   'flex flex-col gap-1 rounded-cartao bg-superficie p-4 ring-1 ring-linha',
@@ -129,6 +130,7 @@ export function EncarregadosEstudante({ estudanteId, nome, podeEditar }: Props) 
                   <div className="mt-2 flex flex-wrap gap-3 text-secundario">
                     <button
                       type="button"
+                      data-accao="editar"
                       aria-label={t`Editar ${quem}`}
                       onClick={() => setFolha({ modo: 'editar', enc })}
                       className="text-acento hover:underline"

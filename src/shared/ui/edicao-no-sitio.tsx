@@ -17,6 +17,8 @@ interface Props {
   desactivadoPorque?: string
   inputMode?: 'text' | 'tel' | 'email' | 'numeric'
   autoComplete?: string
+  /** Marca este campo como o que a tecla E edita no ecrã (guia 7.5) */
+  atalhoEditar?: boolean
 }
 
 /**
@@ -32,6 +34,7 @@ export function EdicaoNoSitio({
   desactivadoPorque,
   inputMode,
   autoComplete,
+  atalhoEditar,
 }: Props) {
   const { t } = useLingui()
   const id = useId()
@@ -133,6 +136,7 @@ export function EdicaoNoSitio({
               id={id}
               type="button"
               onClick={abrir}
+              data-atalho={atalhoEditar ? 'editar' : undefined}
               aria-label={t`Editar ${rotulo}: ${visivel}`}
               className={cn(
                 'group -mx-2 flex items-center gap-2 rounded-controlo px-2 py-1.5 text-left hover:bg-fundo',

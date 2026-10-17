@@ -115,6 +115,8 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
     enableRowSelection: Boolean(seleccionavel),
     enableSortingRemoval: true,
     enableSorting: !props.semOrdenacao,
+    // Ordenação controlada por fora (listas paginadas): o servidor ordena, a tabela só mostra
+    manualSorting: Boolean(props.aoMudarOrdenacao),
   })
 
   const linhas = tabela.getRowModel().rows

@@ -149,6 +149,9 @@ export const handlers = [
       const pesquisa = normalizar(url.searchParams.get('pesquisa') ?? '')
       const classeId = url.searchParams.get('classeId')
       const estado = url.searchParams.get('estado')
+      const semTurma = url.searchParams.get('semTurma') === 'true'
+      const comDocumentosEmFalta = url.searchParams.get('documentosEmFalta') === 'true'
+      const sexo = url.searchParams.get('sexo')
       const lista = db.estudantes
         .filter((e) => {
           const m = matriculaDe(e.id, anoLectivoId)
@@ -157,7 +160,13 @@ export const handlers = [
               normalizar(e.nome).includes(pesquisa) ||
               e.numeroProcesso.includes(pesquisa)) &&
             (!classeId || m?.classeId === classeId) &&
-            (!estado || e.estado === estado)
+            (!estado || e.estado === estado) &&
+            (!semTurma || (m && !m.turmaId)) &&
+            (!comDocumentosEmFalta ||
+              db.documentos.some(
+                (d) => d.estudanteId === e.id && d.obrigatorio && d.estado === 'EM_FALTA',
+              )) &&
+            (!sexo || e.sexo === sexo)
           )
         })
         .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))

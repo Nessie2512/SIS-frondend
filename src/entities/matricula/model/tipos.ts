@@ -21,6 +21,8 @@ export interface FiltrosMatriculas {
   classeId?: string
   estado?: EstadoMatricula
   semTurma?: boolean
+  /** Campo da API, com «-» para descendente */
+  ordenar?: string
   page: number
 }
 
