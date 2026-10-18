@@ -9,7 +9,7 @@ export const Route = createFileRoute('/_app/definicoes')({
 })
 
 const classesSeparador =
-  '-mb-px border-b-2 border-transparent px-1 pb-2.5 text-corpo whitespace-nowrap text-texto-2 outline-none hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento data-[status=active]:border-acento data-[status=active]:font-medium data-[status=active]:text-texto-1'
+  '-mb-px inline-flex items-center border-b-2 border-transparent px-1 pb-2.5 text-corpo whitespace-nowrap text-texto-2 outline-none hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento data-[status=active]:border-acento data-[status=active]:font-medium data-[status=active]:text-texto-1'
 
 /**
  * Definições (guia 2.5): preferências de cada um e, para quem administra, utilizadores,

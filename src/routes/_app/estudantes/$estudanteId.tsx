@@ -91,10 +91,10 @@ function FichaEstudante() {
         <Trans>Estudantes</Trans>
       </Link>
 
-      <header className="flex items-center gap-5">
+      <header className="flex flex-wrap items-center gap-5">
         <Avatar nome={e.nome} fotografia={e.fotografiaUrl} tamanho="grande" />
-        <div className="flex min-w-0 flex-1 flex-col gap-1">
-          <h1 className="truncate text-titulo-pagina">{e.nome}</h1>
+        <div className="flex min-w-48 flex-1 flex-col gap-1">
+          <h1 className="text-titulo-pagina">{e.nome}</h1>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-secundario text-texto-2">
             <span className="tabular">{t`Processo ${processo}`}</span>
             <span aria-hidden>·</span>
@@ -105,7 +105,7 @@ function FichaEstudante() {
             )}
           </p>
         </div>
-        <div className="flex shrink-0 flex-wrap justify-end gap-2">
+        <div className="flex flex-wrap gap-2 sm:justify-end">
           {podeRectificar && !soLeitura && e.estado === 'ACTIVO' && (
             <TransferirEstudante estudante={e} />
           )}

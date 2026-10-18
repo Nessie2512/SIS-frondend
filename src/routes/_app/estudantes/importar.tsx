@@ -37,7 +37,7 @@ function EcraImportar() {
         <Link
           to="/estudantes"
           search={{ page: 1 }}
-          className="inline-flex min-h-6 w-fit items-center gap-1 text-secundario text-texto-2 hover:text-texto-1"
+          className="inline-flex w-fit items-center gap-1 text-secundario text-texto-2 hover:text-texto-1"
         >
           <ChevronLeft aria-hidden className="size-4" />
           <Trans>Estudantes</Trans>

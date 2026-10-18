@@ -7,7 +7,11 @@ export const Separadores = Tabs.Root
 
 export function ListaSeparadores({ children, rotulo }: { children: ReactNode; rotulo: string }) {
   return (
-    <Tabs.List aria-label={rotulo} className="flex gap-4 border-b border-linha">
+    // Em ecrãs estreitos, os separadores deslizam na horizontal em vez de se sobreporem
+    <Tabs.List
+      aria-label={rotulo}
+      className="flex gap-4 overflow-x-auto border-b border-linha [scrollbar-width:none]"
+    >
       {children}
     </Tabs.List>
   )
@@ -26,7 +30,7 @@ export function Separador({ valor, children, contador, desactivado }: PropsSepar
       value={valor}
       disabled={desactivado}
       className={cn(
-        '-mb-px flex h-9 items-center gap-1.5 border-b-2 border-transparent text-corpo text-texto-2',
+        '-mb-px flex h-9 shrink-0 items-center gap-1.5 border-b-2 border-transparent text-corpo whitespace-nowrap text-texto-2',
         'transition-colors duration-(--duracao-micro) hover:text-texto-1',
         'data-[state=active]:border-acento data-[state=active]:text-texto-1',
         'disabled:pointer-events-none disabled:opacity-50',
@@ -73,7 +77,7 @@ export function ControloSegmentado({ rotulo, opcoes, valor, aoMudar }: PropsSegm
           value={opcao.valor}
           disabled={opcao.desactivado}
           className={cn(
-            'h-7 rounded-[6px] px-3 text-texto-2 transition-colors duration-(--duracao-micro)',
+            'h-8 rounded-[6px] px-3 text-texto-2 transition-colors duration-(--duracao-micro)',
             'hover:text-texto-1 data-[state=on]:bg-superficie data-[state=on]:text-texto-1 data-[state=on]:shadow-elevado',
             'disabled:pointer-events-none disabled:opacity-50',
           )}

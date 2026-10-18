@@ -16,6 +16,8 @@
 
 /* Classes dark: seguem o atributo data-tema, não só a preferência do sistema */
 @custom-variant dark (&:where([data-tema='escuro'], [data-tema='escuro'] *));
+/* Ecrãs de toque (ponteiro grosseiro): alvos de 44 px em vez de 32 (guia 8.1) */
+@custom-variant toque (@media (pointer: coarse));
 
 @theme {
   --font-sans:
@@ -170,6 +172,55 @@
   }
   body {
     @apply bg-fundo font-sans text-corpo text-texto-1 antialiased;
+  }
+  /*
+   * Alvos de clique e toque (guia 8.1): mínimo de 32 px em computador e 44 px em toque. Vale
+   * para todos os controlos; as ligações dentro de texto são inline e ficam com a altura da
+   * linha (excepção da WCAG 2.5.8). Caixas e opções contam com a etiqueta que as envolve.
+   */
+  :where(
+    button,
+    select,
+    input:not([type='checkbox'], [type='radio'], [type='hidden']),
+    a[href],
+    summary,
+    [role='button'],
+    [role='tab'],
+    [role='menuitem'],
+    [role='option'],
+    [role='radio'],
+    [role='switch'],
+    [role='combobox']
+  ) {
+    min-height: 2rem;
+  }
+  :where(button, a[href], [role='button'], [role='tab'], [role='radio']) {
+    min-width: 2rem;
+  }
+  :where(label:has(> input[type='checkbox'], > input[type='radio'])) {
+    min-height: 2rem;
+  }
+  @media (pointer: coarse) {
+    :where(
+      button,
+      select,
+      input:not([type='checkbox'], [type='radio'], [type='hidden']),
+      a[href],
+      summary,
+      [role='button'],
+      [role='tab'],
+      [role='menuitem'],
+      [role='option'],
+      [role='radio'],
+      [role='switch'],
+      [role='combobox'],
+      label:has(> input[type='checkbox'], > input[type='radio'])
+    ) {
+      min-height: 2.75rem;
+    }
+    :where(button, a[href], [role='button'], [role='tab'], [role='radio']) {
+      min-width: 2.75rem;
+    }
   }
   /* Números tabulares em processos, datas e contagens (guia 6.1) */
   .tabular {

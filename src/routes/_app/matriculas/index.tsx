@@ -94,7 +94,7 @@ function useColunas(): ColunaTabela<Matricula>[] {
             to="/estudantes/$estudanteId"
             params={{ estudanteId: info.row.original.estudanteId }}
             search={{ separador: 'resumo' }}
-            className="font-medium hover:text-acento"
+            className="inline-flex items-center font-medium hover:text-acento"
             onClick={(e) => e.stopPropagation()}
           >
             {info.getValue()}

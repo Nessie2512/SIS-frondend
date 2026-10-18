@@ -278,7 +278,11 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
                     aria-current={linha.id === idActiva ? 'true' : undefined}
                     onKeyDown={(e) => aoTeclar(e, linha, indice)}
                     onFocus={() => setActiva(indice)}
-                    onClick={() => aoAbrir?.(linha.original)}
+                    onClick={(e) => {
+                      // A etiqueta da caixa de selecção não abre a linha
+                      if ((e.target as HTMLElement).closest('label[data-seleccao]')) return
+                      aoAbrir?.(linha.original)
+                    }}
                     className={cn(
                       'h-linha outline-none focus-visible:bg-acento/5 focus-visible:shadow-[inset_2px_0_0_var(--color-acento)]',
                       aoAbrir && 'cursor-pointer hover:bg-fundo',
@@ -362,14 +366,20 @@ function CaixaSeleccao({
   indeterminado,
   ...props
 }: React.ComponentProps<'input'> & { indeterminado?: boolean }) {
+  // A etiqueta à volta é o alvo (32 px; 44 px em toque); a caixa mantém o tamanho visual
   return (
-    <input
-      type="checkbox"
-      ref={(el) => {
-        if (el) el.indeterminate = Boolean(indeterminado) && !props.checked
-      }}
-      className="size-4 accent-(--color-acento)"
-      {...props}
-    />
+    <label
+      data-seleccao
+      className="-m-2 flex size-8 cursor-pointer items-center justify-center toque:size-11"
+    >
+      <input
+        type="checkbox"
+        ref={(el) => {
+          if (el) el.indeterminate = Boolean(indeterminado) && !props.checked
+        }}
+        className="size-4 accent-(--color-acento)"
+        {...props}
+      />
+    </label>
   )
 }

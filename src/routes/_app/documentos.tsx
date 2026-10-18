@@ -153,7 +153,7 @@ function useColunas(
                 download
                 onClick={(e) => e.stopPropagation()}
                 aria-label={t`Descarregar ${titulo} ${numero}`}
-                className="inline-flex min-h-6 items-center gap-1 text-acento hover:underline"
+                className="inline-flex items-center gap-1 text-acento hover:underline"
               >
                 <Download aria-hidden className="size-4 stroke-[1.5]" />
                 <Trans>PDF</Trans>
@@ -166,7 +166,7 @@ function useColunas(
                     aoAnular(d)
                   }}
                   aria-label={t`Anular ${titulo} ${numero}`}
-                  className="min-h-6 text-perigo hover:underline"
+                  className="text-perigo hover:underline"
                 >
                   <Trans>Anular</Trans>
                 </button>

@@ -97,9 +97,10 @@ function LayoutApp() {
       <MenuLateral />
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-20 border-b border-linha bg-superficie/80 backdrop-blur-md print:hidden">
-          <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-6">
+          <div className="mx-auto flex h-14 max-w-6xl items-center gap-3 px-4 sm:px-6">
             <MenuMovel />
-            <span className="text-subtitulo md:hidden">
+            {/* No telemóvel o nome cede lugar ao ano e à conta, para nada sair do ecrã */}
+            <span className="hidden text-subtitulo sm:inline md:hidden">
               <Trans>Secretaria</Trans>
             </span>
             <div className="ml-auto flex items-center gap-2">
@@ -140,7 +141,7 @@ function LayoutApp() {
         </header>
         <main
           id="conteudo"
-          className="mx-auto w-full max-w-6xl px-6 py-8 print:max-w-none print:p-0"
+          className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 print:max-w-none print:p-0"
         >
           <Outlet />
         </main>

@@ -159,7 +159,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
                     one: `Registar resultados da turma ${designacao}: falta # de ${total}`,
                     other: `Registar resultados da turma ${designacao}: faltam # de ${total}`,
                   })}
-                  className="tabular inline-flex min-h-6 items-center text-acento hover:underline"
+                  className="tabular inline-flex items-center text-acento hover:underline"
                 >
                   {plural(falta, {
                     one: `${designacao} (falta #)`,

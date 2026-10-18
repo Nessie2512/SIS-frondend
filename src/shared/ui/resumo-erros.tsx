@@ -43,7 +43,7 @@ export function ResumoErros({
                   aoEscolher?.(e.campo)
                   if (document.activeElement === antes) focarPeloErro(evento.currentTarget, e)
                 }}
-                className="min-h-8 text-left text-perigo underline-offset-2 hover:underline"
+                className="text-left text-perigo underline-offset-2 hover:underline"
               >
                 <span className="font-medium">{e.rotulo}</span>: {e.mensagem}
               </button>

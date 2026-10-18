@@ -66,7 +66,7 @@ export function VistasGuardadas({ ecra, pesquisa, aoAplicar, className }: Props)
               <li
                 key={vista.id}
                 className={cn(
-                  'group flex h-7 items-center rounded-full text-secundario ring-1 transition-colors duration-(--duracao-micro)',
+                  'group flex min-h-8 items-center rounded-full text-secundario ring-1 transition-colors duration-(--duracao-micro)',
                   eActiva
                     ? 'bg-acento/10 text-texto-1 ring-acento/40'
                     : 'bg-superficie text-texto-2 ring-linha hover:text-texto-1',
@@ -79,7 +79,7 @@ export function VistasGuardadas({ ecra, pesquisa, aoAplicar, className }: Props)
                     aoAplicar(vista.filtros)
                     anunciar.educado(t`Vista «${nome}» aplicada.`)
                   }}
-                  className="h-full rounded-l-full pr-1 pl-3 outline-none focus-visible:ring-2 focus-visible:ring-acento"
+                  className="self-stretch rounded-l-full pr-1 pl-3 outline-none focus-visible:ring-2 focus-visible:ring-acento"
                 >
                   {nome}
                 </button>
@@ -87,7 +87,7 @@ export function VistasGuardadas({ ecra, pesquisa, aoAplicar, className }: Props)
                   type="button"
                   aria-label={t`Apagar a vista «${nome}»`}
                   onClick={() => apagarVista(vista)}
-                  className="mr-0.5 flex size-6 items-center justify-center rounded-full text-texto-3 outline-none hover:bg-fundo hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento"
+                  className="mr-0.5 flex size-8 items-center justify-center rounded-full text-texto-3 outline-none hover:bg-fundo hover:text-texto-1 focus-visible:ring-2 focus-visible:ring-acento"
                 >
                   <X aria-hidden className="size-3.5 stroke-[1.5]" />
                 </button>
