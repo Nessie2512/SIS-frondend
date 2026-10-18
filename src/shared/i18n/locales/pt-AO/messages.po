@@ -533,6 +533,10 @@ msgstr "A {nomeDestino} está cheia. Uma excepção fica registada com a justifi
 msgid "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra turma."
 msgstr "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra turma."
 
+#: src/app/query-client.ts
+msgid "A alteração não foi guardada e voltou ao que estava."
+msgstr "A alteração não foi guardada e voltou ao que estava."
+
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "a analisar…"
 msgstr "a analisar…"
@@ -3627,6 +3631,10 @@ msgstr "O ano passa a ser o ano em curso."
 msgid "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
 msgstr "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
 
+#: src/features/marcar-documento/model/use-marcar-documento.ts
+msgid "O documento voltou ao estado anterior."
+msgstr "O documento voltou ao estado anterior."
+
 #: src/features/autenticar/ui/formulario-entrada.tsx
 #: src/shared/lib/erros-dominio.ts
 msgid "O email ou a palavra-passe não estão correctos."
@@ -3648,6 +3656,10 @@ msgstr "O estado volta a Activo e o reingresso fica no percurso. Depois matricul
 #: src/shared/lib/erros-dominio.ts
 msgid "O estudante precisa de pelo menos um encarregado."
 msgstr "O estudante precisa de pelo menos um encarregado."
+
+#: src/features/inscrever-na-turma/model/use-colocar-na-turma.ts
+msgid "O estudante voltou ao lugar de antes."
+msgstr "O estudante voltou ao lugar de antes."
 
 #: src/features/gerir-eventos/model/esquema.ts
 msgid "O evento tem de terminar dentro do ano lectivo."

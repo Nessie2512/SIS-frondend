@@ -81,7 +81,9 @@ describe('Currículo: planos', () => {
     await utilizador.clear(campo)
     await utilizador.type(campo, '3{Enter}')
 
-    expect(await screen.findByText(/Outra pessoa alterou este registo/)).toBeInTheDocument()
+    expect(
+      await screen.findByText(/Outra pessoa alterou este registo/, { selector: 'p' }),
+    ).toBeInTheDocument()
     expect(await screen.findByText('7 h por semana')).toBeInTheDocument()
     expect(horas('p-c7-3', 'd-fis')).toBe(2)
   })

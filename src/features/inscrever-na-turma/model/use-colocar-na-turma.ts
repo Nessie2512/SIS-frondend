@@ -37,6 +37,7 @@ export function useColocarNaTurma(
 
   const mutacao = useMutation({
     mutationKey: ['colocar-na-turma'],
+    meta: { reversao: msg`O estudante voltou ao lugar de antes.` },
     scope: { id: `quadro:${classeId}` },
     mutationFn: async ({ cartao, origem, destino, motivo, excepcao }: Colocacao) => {
       const matriculaId = cartao.matriculaId
@@ -67,8 +68,8 @@ export function useColocarNaTurma(
     },
     onError: (erro, c, contexto) => {
       if (contexto?.antes) qc.setQueryData(chave, contexto.antes)
+      // O anúncio assertivo da reversão é feito pela cache de mutações (meta.reversao)
       const mensagem = mensagemDeErro(erro)
-      anunciar.assertivo(mensagem)
       if (eApiError(erro) && erro.temCodigo('LOTACAO_ESGOTADA') && aoRecusarPorLotacao) {
         aoRecusarPorLotacao(c)
       } else {

@@ -22,6 +22,7 @@ export function useMarcarDocumento(estudanteId: string) {
 
   return useMutation({
     mutationKey: ['marcar-documento'],
+    meta: { reversao: msg`O documento voltou ao estado anterior.` },
     scope: { id: `estudante:${estudanteId}:documentos` },
     mutationFn: async ({ documento, entregue }: Variaveis) => {
       const estado = entregue ? 'ENTREGUE' : documento.obrigatorio ? 'EM_FALTA' : 'DISPENSADO'
@@ -61,7 +62,7 @@ export function useMarcarDocumento(estudanteId: string) {
     onError: (erro, _v, contexto) => {
       if (contexto?.antesDocs) qc.setQueryData(chaveDocs, contexto.antesDocs)
       if (contexto?.antesEstudante) qc.setQueryData(chaveEstudante, contexto.antesEstudante)
-      anunciar.assertivo(notificarErroDeDominio(erro))
+      notificarErroDeDominio(erro) // o anúncio assertivo vem da cache de mutações
     },
     // A cache optimista é uma previsão; o servidor tem a última palavra (guia 5.5)
     onSettled: () => {
