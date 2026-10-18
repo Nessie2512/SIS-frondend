@@ -16,6 +16,30 @@
 
 /* Classes dark: seguem o atributo data-tema, não só a preferência do sistema */
 @custom-variant dark (&:where([data-tema='escuro'], [data-tema='escuro'] *));
+/*
+ * Transições entre ecrãs (guia 5.6): o ecrã troca por desvanecimento curto; a linha, o painel e
+ * a ficha partilham o nome «ficha» e a forma expande-se de uma para o outro. Com movimento
+ * reduzido, as durações dos tokens descem para 1 ms e fica só a troca.
+ */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: var(--duracao-padrao);
+  animation-timing-function: var(--ease-padrao);
+}
+::view-transition-group(ficha) {
+  animation-duration: var(--duracao-painel);
+  animation-timing-function: var(--ease-padrao);
+}
+::view-transition-old(ficha),
+::view-transition-new(ficha) {
+  /* Sem esticar o texto: as imagens ficam ancoradas ao canto e a forma é que cresce */
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+  overflow: clip;
+  animation-duration: var(--duracao-padrao);
+}
+
 /* Ecrãs de toque (ponteiro grosseiro): alvos de 44 px em vez de 32 (guia 8.1) */
 @custom-variant toque (@media (pointer: coarse));
 

@@ -21,6 +21,7 @@ import { Can } from '@/shared/lib/can'
 import { useCan } from '@/shared/lib/permissoes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { cliqueSimples, NOME_TRANSICAO_FICHA, navegarComTransicao } from '@/shared/lib/transicoes'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import {
@@ -471,6 +472,7 @@ function EcraEstudantes() {
 /** Painel lateral de resumo (guia 6.3): abre a partir da linha, o URL regista-o, ligação para a ficha. */
 function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: () => void }) {
   const { t } = useLingui()
+  const navigate = useNavigate()
   const { data: e } = useQuery({ ...estudanteQuery(id ?? ''), enabled: Boolean(id) })
   const processo = e?.numeroProcesso
   const idade = e?.idade ?? 0
@@ -480,6 +482,7 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
     <Folha
       aberta={Boolean(id)}
       aoMudar={(aberta) => !aberta && aoFechar()}
+      nomeTransicao={NOME_TRANSICAO_FICHA}
       titulo={e?.nome ?? t`Estudante`}
       descricao={e ? t`Processo ${processo}` : undefined}
       rodape={
@@ -489,6 +492,18 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
               to="/estudantes/$estudanteId"
               params={{ estudanteId: id }}
               search={{ separador: 'resumo' }}
+              onClick={(e) => {
+                if (!cliqueSimples(e)) return
+                e.preventDefault()
+                navegarComTransicao(() =>
+                  navigate({
+                    to: '/estudantes/$estudanteId',
+                    params: { estudanteId: id },
+                    search: { separador: 'resumo' },
+                    viewTransition: false,
+                  }),
+                )
+              }}
             >
               <Trans>Abrir ficha</Trans>
             </Link>

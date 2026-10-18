@@ -10,7 +10,7 @@ export function ListaSeparadores({ children, rotulo }: { children: ReactNode; ro
     // Em ecrãs estreitos, os separadores deslizam na horizontal em vez de se sobreporem
     <Tabs.List
       aria-label={rotulo}
-      className="flex gap-4 overflow-x-auto border-b border-linha [scrollbar-width:none]"
+      className="flex [scrollbar-width:none] gap-4 overflow-x-auto border-b border-linha"
     >
       {children}
     </Tabs.List>

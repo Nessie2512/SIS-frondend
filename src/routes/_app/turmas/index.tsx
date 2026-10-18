@@ -21,6 +21,7 @@ import { BotaoGerarListaNominal } from '@/features/gerar-lista-nominal'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import {
   Button,
   colunasDe,
@@ -238,6 +239,7 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
     <Folha
       aberta={Boolean(id)}
       aoMudar={(aberta) => !aberta && aoFechar()}
+      nomeTransicao={NOME_TRANSICAO_FICHA}
       titulo={titulo}
       descricao={turma?.classe}
       rodape={

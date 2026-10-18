@@ -18,6 +18,7 @@ import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import { cn } from '@/shared/lib/cn'
+import { cliqueSimples, NOME_TRANSICAO_FICHA, navegarComTransicao } from '@/shared/lib/transicoes'
 import { formatarTelefone } from '@/shared/lib/formatar'
 import {
   Avatar,
@@ -382,6 +383,7 @@ function PainelProfessor({
   aoFechar: () => void
 }) {
   const { t } = useLingui()
+  const navigate = useNavigate()
   const { data: p } = useQuery({ ...professorQuery(id ?? '', anoLectivoId), enabled: Boolean(id) })
   const agente = p?.numeroAgente
   const turmas = new Set(p?.atribuicoes.map((a) => a.turmaId)).size
@@ -391,6 +393,7 @@ function PainelProfessor({
     <Folha
       aberta={Boolean(id)}
       aoMudar={(aberta) => !aberta && aoFechar()}
+      nomeTransicao={NOME_TRANSICAO_FICHA}
       titulo={p?.nome ?? t`Professor`}
       descricao={p ? t`Agente n.º ${agente}` : undefined}
       rodape={
@@ -400,6 +403,18 @@ function PainelProfessor({
               to="/professores/$professorId"
               params={{ professorId: id }}
               search={{ separador: 'resumo' }}
+              onClick={(e) => {
+                if (!cliqueSimples(e)) return
+                e.preventDefault()
+                navegarComTransicao(() =>
+                  navigate({
+                    to: '/professores/$professorId',
+                    params: { professorId: id },
+                    search: { separador: 'resumo' },
+                    viewTransition: false,
+                  }),
+                )
+              }}
             >
               <Trans>Abrir ficha</Trans>
             </Link>
