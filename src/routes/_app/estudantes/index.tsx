@@ -5,6 +5,8 @@ import { FileUp, Plus, Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
+import { EmitirEmLote } from '@/features/emitir-documento'
+import { ExportarSeleccao } from '@/features/exportar-estudantes'
 import { VistasGuardadas } from '@/features/guardar-vista'
 import {
   estudanteQuery,
@@ -15,6 +17,7 @@ import {
 } from '@/entities/estudante'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
+import { useCan } from '@/shared/lib/permissoes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
 import { formatarDataCivil } from '@/shared/lib/datas'
@@ -147,6 +150,7 @@ function EcraEstudantes() {
   const { anoLectivoId } = Route.useRouteContext()
   const { estudante: aberto, q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const podeEmitir = useCan('documentos:emitir')
   const [texto, setTexto] = useState(q ?? '')
   // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
   // deixava temporizadores antigos por cancelar e o URL ficava com texto truncado
@@ -393,6 +397,17 @@ function EcraEstudantes() {
           aoTentarDeNovo={() => void refetch()}
           idActiva={aberto}
           aoAbrir={(e) => void navigate({ search: (s) => ({ ...s, estudante: e.id }) })}
+          // Acções em lote (guia 6.3, 7.1): Espaço ou a caixa da linha; a barra flutua em baixo
+          seleccionavel
+          nomeDaLinha={(e) => e.nome}
+          accoesLote={(ids, limpar) => (
+            <>
+              <ExportarSeleccao ids={ids} />
+              {podeEmitir && anoLectivoId && (
+                <EmitirEmLote anoLectivoId={anoLectivoId} estudanteIds={ids} aoTerminar={limpar} />
+              )}
+            </>
+          )}
           vazio={
             temFiltros ? (
               <EstadoVazio

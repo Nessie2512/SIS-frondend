@@ -278,11 +278,15 @@ function criarDocumento(
 function simularLote(pedido: S['PedidoLoteDto']): S['SimulacaoLoteDto'] {
   const incluidos: S['SimulacaoLoteDto']['incluidos'] = []
   const excluidos: S['SimulacaoLoteDto']['excluidos'] = []
-  const daTurma = db.matriculas
-    .filter((m) => m.turmaId === pedido.turmaId && m.estado !== 'ANULADA')
-    .map((m) => db.estudantes.find((e) => e.id === m.estudanteId)!)
-    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
-  for (const e of daTurma) {
+  const alvo = pedido.estudanteIds
+    ? pedido.estudanteIds
+        .map((id) => db.estudantes.find((e) => e.id === id))
+        .filter((e) => e !== undefined)
+    : db.matriculas
+        .filter((m) => m.turmaId === pedido.turmaId && m.estado !== 'ANULADA')
+        .map((m) => db.estudantes.find((e) => e.id === m.estudanteId)!)
+  alvo.sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
+  for (const e of alvo) {
     const linha = { estudanteId: e.id, nome: e.nome, numeroProcesso: e.numeroProcesso }
     const tipo = tiposDisponiveis(e.id).find((t) => t.tipo === pedido.tipo)!
     if (e.estado !== 'ACTIVO') excluidos.push({ ...linha, razao: 'Não está activo.' })
@@ -293,6 +297,20 @@ function simularLote(pedido: S['PedidoLoteDto']): S['SimulacaoLoteDto'] {
 }
 
 const TIPOS_LOTE = ['DECLARACAO_MATRICULA', 'DECLARACAO_FREQUENCIA']
+
+/** Uma turma ou uma lista de estudantes (até 200), nunca os dois. */
+function validarAlvo(pedido: S['PedidoLoteDto']) {
+  if (pedido.estudanteIds) {
+    if (pedido.turmaId || !pedido.estudanteIds.length || pedido.estudanteIds.length > 200) {
+      return problema(422, 'Dados inválidos', {
+        errors: [{ campo: 'estudanteIds', mensagem: 'Escolha entre 1 e 200 estudantes.' }],
+      })
+    }
+    return null
+  }
+  if (!db.turmas.some((t) => t.id === pedido.turmaId)) return problema(404, 'Turma não encontrada')
+  return null
+}
 
 export const handlersDocumentosOficiais = [
   http.get(
@@ -384,8 +402,8 @@ export const handlersDocumentosOficiais = [
           errors: [{ campo: 'tipo', mensagem: 'Só as declarações se emitem em lote.' }],
         })
       }
-      if (!db.turmas.some((t) => t.id === pedido.turmaId))
-        return problema(404, 'Turma não encontrada')
+      const erro = validarAlvo(pedido)
+      if (erro) return erro
       return HttpResponse.json(simularLote(pedido))
     }),
   ),
@@ -396,17 +414,20 @@ export const handlersDocumentosOficiais = [
       const pedido = (await request.json()) as S['PedidoLoteDto']
       const quem = utilizadorDo(request)!
       return idempotente(request, () => {
-        const turma = db.turmas.find((t) => t.id === pedido.turmaId)
-        if (!turma) return problema(404, 'Turma não encontrada')
+        const erro = validarAlvo(pedido)
+        if (erro) return erro
         if (!TIPOS_LOTE.includes(pedido.tipo)) {
           return problema(422, 'Dados inválidos', {
             errors: [{ campo: 'tipo', mensagem: 'Só as declarações se emitem em lote.' }],
           })
         }
+        const turma = db.turmas.find((t) => t.id === pedido.turmaId)
+        const ano = anosLectivos.find((a) => a.estado === 'EM_CURSO')!
+        const de = turma?.designacao ?? 'estudantes seleccionados'
         const { incluidos, excluidos } = simularLote(pedido)
         if (!incluidos.length) {
           return problema(409, 'Ninguém para emitir', {
-            detail: 'Nenhum estudante da turma pode receber este documento.',
+            detail: 'Nenhum dos estudantes pode receber este documento.',
           })
         }
         const documentos = incluidos.map((x) =>
@@ -416,8 +437,8 @@ export const handlersDocumentosOficiais = [
         const tarefa: Tarefa = {
           id: novoId('t'),
           tipo: 'DOCUMENTOS_LOTE',
-          parametros: { anoLectivoId: turma.anoLectivoId, turmaId: turma.id },
-          titulo: `${TITULO[pedido.tipo]}, ${turma.designacao}: ${n} ${n === 1 ? 'documento' : 'documentos'}`,
+          parametros: { anoLectivoId: turma?.anoLectivoId ?? ano.id, turmaId: turma?.id },
+          titulo: `${TITULO[pedido.tipo]}, ${de}: ${n} ${n === 1 ? 'documento' : 'documentos'}`,
           utilizadorId: quem.id,
           inicio: Date.now(),
           duracao: import.meta.env.MODE === 'test' ? 0 : 4000,
@@ -433,7 +454,7 @@ export const handlersDocumentosOficiais = [
           quem.nome,
           'CRIAR',
           'Documento oficial',
-          `${TITULO[pedido.tipo]} em lote, ${turma.designacao}: ${documentos[0]!.numero} a ${documentos[n - 1]!.numero}`,
+          `${TITULO[pedido.tipo]} em lote, ${de}: ${documentos[0]!.numero} a ${documentos[n - 1]!.numero}`,
         )
         return HttpResponse.json(paraTarefaDto(tarefa), { status: 202 })
       })

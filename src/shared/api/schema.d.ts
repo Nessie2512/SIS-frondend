@@ -1106,7 +1106,9 @@ export interface components {
     PedidoLoteDto: {
       /** Só declarações (matrícula ou frequência) se emitem em lote */
       tipo: 'DECLARACAO_MATRICULA' | 'DECLARACAO_FREQUENCIA'
-      turmaId: string
+      /** Uma turma inteira, ou os estudantes seleccionados numa lista (um dos dois) */
+      turmaId?: string
+      estudanteIds?: string[]
       finalidade?: string
     }
     EstudanteLoteDto: { estudanteId: string; nome: string; numeroProcesso: string }

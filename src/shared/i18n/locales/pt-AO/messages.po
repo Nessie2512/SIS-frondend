@@ -32,6 +32,11 @@ msgstr "(inactiva)"
 msgid "{0, plural, one {# seleccionado} other {# seleccionados}}"
 msgstr "{0, plural, one {# seleccionado} other {# seleccionados}}"
 
+#. placeholder {0}: estudanteIds.length
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "{0, plural, one {Declaração para o estudante seleccionado, num só PDF.} other {Declarações para os # estudantes seleccionados, num só PDF.}}"
+msgstr "{0, plural, one {Declaração para o estudante seleccionado, num só PDF.} other {Declarações para os # estudantes seleccionados, num só PDF.}}"
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "{activas} activas"
 msgstr "{activas} activas"
@@ -1514,6 +1519,7 @@ msgid "Data da saída"
 msgstr "Data da saída"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Data de nascimento"
@@ -1838,6 +1844,7 @@ msgstr "Documentos de {nome}"
 msgid "Documentos do estudante"
 msgstr "Documentos do estudante"
 
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 #: src/routes/_app/index.tsx
 msgid "Documentos em falta"
 msgstr "Documentos em falta"
@@ -1988,6 +1995,10 @@ msgstr "Emitir certificado"
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Emitir declaração"
 msgstr "Emitir declaração"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Emitir declarações"
+msgstr "Emitir declarações"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/emitir-documento/ui/emitir-global.tsx
@@ -2494,6 +2505,14 @@ msgstr "Explique porque reabre (pelo menos 10 caracteres)."
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Exportações recentes"
 msgstr "Exportações recentes"
+
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
+msgid "Exportados {n} estudantes."
+msgstr "Exportados {n} estudantes."
+
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
+msgid "Exportar CSV"
+msgstr "Exportar CSV"
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "F"
@@ -3046,6 +3065,7 @@ msgstr "matrícula"
 
 #: src/entities/estudante/model/mapeadores.ts
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 #: src/routes/_app/estudantes/index.tsx
 msgid "Matrícula"
 msgstr "Matrícula"
@@ -3415,6 +3435,7 @@ msgstr "Ninguém renova com os dados actuais."
 msgid "Noite"
 msgstr "Noite"
 
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
@@ -3972,6 +3993,7 @@ msgstr "Principal"
 msgid "Problema"
 msgstr "Problema"
 
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 #: src/routes/_app/matriculas/index.tsx
@@ -4587,6 +4609,7 @@ msgid "Simule, reveja os excluídos e confirme."
 msgstr "Simule, reveja os excluídos e confirme."
 
 #: src/entities/estudante/model/mapeadores.ts
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "Situação"

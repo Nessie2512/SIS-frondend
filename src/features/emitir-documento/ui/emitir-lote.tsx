@@ -23,10 +23,21 @@ import {
 import { useEmitirLote } from '../model/use-documentos'
 
 /**
- * Emitir em lote (guia 2.1, 5.1, 5.7): declarações para uma turma inteira. Mostra antes quem
- * recebe e quem fica de fora (com a razão), pede confirmação e gera um PDF único numa tarefa.
+ * Emitir em lote (guia 2.1, 5.1, 5.7): declarações para uma turma inteira ou para os estudantes
+ * seleccionados numa lista. Mostra antes quem recebe e quem fica de fora (com a razão), pede
+ * confirmação e gera um PDF único numa tarefa.
  */
-export function EmitirEmLote({ anoLectivoId }: { anoLectivoId: string }) {
+export function EmitirEmLote({
+  anoLectivoId,
+  estudanteIds,
+  aoTerminar,
+}: {
+  anoLectivoId: string
+  /** Seleccionados numa lista (guia 7.1); sem eles, escolhe-se a turma */
+  estudanteIds?: string[]
+  /** Chamado ao concluir, depois de a tarefa começar (ex.: limpar a selecção) */
+  aoTerminar?: () => void
+}) {
   const { t } = useLingui()
   const emitir = useEmitirLote()
   const [aberta, setAberta] = useState(false)
@@ -45,15 +56,17 @@ export function EmitirEmLote({ anoLectivoId }: { anoLectivoId: string }) {
   }, [finalidade])
   const { data: pagina } = useQuery({
     ...turmasQuery({ anoLectivoId, estado: 'ACTIVA', page: 1 }),
-    enabled: aberta,
+    enabled: aberta && !estudanteIds,
   })
-  const pedido = turmaId ? { tipo, turmaId, finalidade: finalidadeVista || undefined } : null
+  const alvo = estudanteIds ? { estudanteIds } : turmaId ? { turmaId } : null
+  const pedido = alvo ? { tipo, ...alvo, finalidade: finalidadeVista || undefined } : null
   const { data: efeito, isFetching } = useQuery({
     ...simulacaoLoteQuery(pedido),
     enabled: aberta && pedido !== null && !tarefaId,
   })
 
   function fechar() {
+    if (tarefaId) aoTerminar?.()
     setAberta(false)
     setTurmaId(null)
     setFinalidade('')
@@ -65,10 +78,10 @@ export function EmitirEmLote({ anoLectivoId }: { anoLectivoId: string }) {
   }
 
   function confirmar() {
-    if (!turmaId) return
+    if (!alvo) return
     setErro(undefined)
     emitir.mutate(
-      { tipo, turmaId, finalidade: finalidade.trim() || undefined, chave },
+      { tipo, ...alvo, finalidade: finalidade.trim() || undefined, chave },
       {
         onSuccess: (tarefa) => {
           setTarefaId(tarefa.id)
@@ -94,17 +107,31 @@ export function EmitirEmLote({ anoLectivoId }: { anoLectivoId: string }) {
 
   return (
     <>
-      <Button onClick={() => setAberta(true)}>
-        <Files aria-hidden className="size-4 stroke-[1.5]" />
-        <Trans>Emitir em lote</Trans>
-      </Button>
+      {estudanteIds ? (
+        <Button tamanho="compacto" onClick={() => setAberta(true)}>
+          <Files aria-hidden className="size-4 stroke-[1.5]" />
+          <Trans>Emitir declarações</Trans>
+        </Button>
+      ) : (
+        <Button onClick={() => setAberta(true)}>
+          <Files aria-hidden className="size-4 stroke-[1.5]" />
+          <Trans>Emitir em lote</Trans>
+        </Button>
+      )}
       <Folha
         larga
         aberta={aberta}
         aoMudar={(v) => !v && fechar()}
         pendente={emitir.isPending}
         titulo={t`Emitir em lote`}
-        descricao={t`Declarações para uma turma inteira, num só PDF.`}
+        descricao={
+          estudanteIds
+            ? plural(estudanteIds.length, {
+                one: 'Declaração para o estudante seleccionado, num só PDF.',
+                other: 'Declarações para os # estudantes seleccionados, num só PDF.',
+              })
+            : t`Declarações para uma turma inteira, num só PDF.`
+        }
         rodape={
           tarefaId ? (
             <Button variante="primario" onClick={fechar}>
@@ -161,26 +188,28 @@ export function EmitirEmLote({ anoLectivoId }: { anoLectivoId: string }) {
                   </label>
                 ))}
               </fieldset>
-              <Campo rotulo={t`Turma`} obrigatorio>
-                {(c) => (
-                  <Selector
-                    {...c}
-                    opcoes={(pagina?.turmas ?? []).map((x) => {
-                      const inscritos = x.inscritos
-                      return {
-                        valor: x.id,
-                        rotulo: x.designacao,
-                        descricao: t`${inscritos} inscritos`,
-                      }
-                    })}
-                    valor={turmaId}
-                    aoMudar={(v) => {
-                      setTurmaId(v)
-                      setRevisto(false)
-                    }}
-                  />
-                )}
-              </Campo>
+              {!estudanteIds && (
+                <Campo rotulo={t`Turma`} obrigatorio>
+                  {(c) => (
+                    <Selector
+                      {...c}
+                      opcoes={(pagina?.turmas ?? []).map((x) => {
+                        const inscritos = x.inscritos
+                        return {
+                          valor: x.id,
+                          rotulo: x.designacao,
+                          descricao: t`${inscritos} inscritos`,
+                        }
+                      })}
+                      valor={turmaId}
+                      aoMudar={(v) => {
+                        setTurmaId(v)
+                        setRevisto(false)
+                      }}
+                    />
+                  )}
+                </Campo>
+              )}
               <Campo rotulo={t`Para efeitos de`} descricao={t`Opcional. Igual para todos.`}>
                 {(c) => (
                   <Entrada
@@ -213,8 +242,8 @@ export function EmitirEmLote({ anoLectivoId }: { anoLectivoId: string }) {
               </label>
             </div>
             <Efeito
-              semTurma={!turmaId}
-              aCarregar={Boolean(turmaId) && (!efeito || isFetching)}
+              semTurma={!alvo}
+              aCarregar={Boolean(alvo) && (!efeito || isFetching)}
               incluidos={efeito?.incluidos}
               excluidos={efeito?.excluidos}
             />
