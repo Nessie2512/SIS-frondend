@@ -21,7 +21,12 @@ import { Can } from '@/shared/lib/can'
 import { useCan } from '@/shared/lib/permissoes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
-import { cliqueSimples, NOME_TRANSICAO_FICHA, navegarComTransicao } from '@/shared/lib/transicoes'
+import {
+  cliqueSimples,
+  NOME_TRANSICAO_FICHA,
+  navegarComTransicao,
+  useFiltrarEmTransicao,
+} from '@/shared/lib/transicoes'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import {
@@ -152,6 +157,7 @@ function EcraEstudantes() {
   const { anoLectivoId } = Route.useRouteContext()
   const { estudante: aberto, q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const podeEmitir = useCan('documentos:emitir')
   const [texto, setTexto] = useState(q ?? '')
   // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
@@ -225,7 +231,7 @@ function EcraEstudantes() {
       clearTimeout(espera.current)
       setTexto('')
     }
-    void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+    filtrar(() => navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) }))
   }
 
   // Pesquisa à medida que se escreve: espera 120 ms e o URL acompanha (guia 5.6, 7.1)
@@ -234,10 +240,12 @@ function EcraEstudantes() {
     clearTimeout(espera.current)
     espera.current = setTimeout(
       () =>
-        void navigate({
-          search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
-          replace: true,
-        }),
+        filtrar(() =>
+          navigate({
+            search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
+            replace: true,
+          }),
+        ),
       TEMPOS.pesquisaEspera,
     )
   }
@@ -293,9 +301,11 @@ function EcraEstudantes() {
               opcoes={classes.map((classe) => ({ valor: classe.id, rotulo: classe.designacao }))}
               valor={filtros.classeId ?? null}
               aoMudar={(classeId) =>
-                void navigate({
-                  search: (s) => ({ ...s, classeId: classeId ?? undefined, page: 1 }),
-                })
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({ ...s, classeId: classeId ?? undefined, page: 1 }),
+                  }),
+                )
               }
             />
           )}
@@ -308,13 +318,15 @@ function EcraEstudantes() {
               opcoes={opcoesEstado}
               valor={filtros.estado ?? null}
               aoMudar={(estado) =>
-                void navigate({
-                  search: (s) => ({
-                    ...s,
-                    estado: (estado ?? undefined) as Estado | undefined,
-                    page: 1,
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({
+                      ...s,
+                      estado: (estado ?? undefined) as Estado | undefined,
+                      page: 1,
+                    }),
                   }),
-                })
+                )
               }
             />
           )}
@@ -343,15 +355,17 @@ function EcraEstudantes() {
           }}
           aoAplicar={(v) => {
             setAvancados(false)
-            void navigate({
-              search: (s) => ({
-                ...s,
-                semTurma: v.semTurma || undefined,
-                documentosEmFalta: v.documentosEmFalta || undefined,
-                sexo: v.sexo,
-                page: 1,
+            filtrar(() =>
+              navigate({
+                search: (s) => ({
+                  ...s,
+                  semTurma: v.semTurma || undefined,
+                  documentosEmFalta: v.documentosEmFalta || undefined,
+                  sexo: v.sexo,
+                  page: 1,
+                }),
               }),
-            })
+            )
           }}
         />
       )}
@@ -362,7 +376,7 @@ function EcraEstudantes() {
         aoLimpar={() => {
           clearTimeout(espera.current)
           setTexto('')
-          void navigate({ search: { page: 1 } })
+          filtrar(() => navigate({ search: { page: 1 } }))
         }}
         className="-mt-3"
       />
@@ -374,22 +388,23 @@ function EcraEstudantes() {
           const nova = pesquisaEstudantes.parse({ ...guardados, page: 1 })
           clearTimeout(espera.current)
           setTexto(nova.q ?? '')
-          void navigate({ search: nova })
+          filtrar(() => navigate({ search: nova }))
         }}
         className="-mt-3"
       />
 
       <div
+        aria-busy={isPlaceholderData || aFiltrar || undefined}
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
-          isPlaceholderData && 'opacity-60',
+          (isPlaceholderData || aFiltrar) && 'opacity-60',
         )}
       >
         <TabelaDados
           rotulo={t`Estudantes`}
           ordenacao={ordenacaoDoUrl(ordem)}
           aoMudarOrdenacao={(o) =>
-            void navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) })
+            filtrar(() => navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) }))
           }
           colunas={colunas}
           dados={data?.estudantes}
@@ -447,14 +462,14 @@ function EcraEstudantes() {
           <Button
             tamanho="compacto"
             disabled={pagina <= 1}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina - 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina - 1 }) }))}
           >
             <Trans>Anterior</Trans>
           </Button>
           <Button
             tamanho="compacto"
             disabled={pagina >= totalPaginas}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina + 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina + 1 }) }))}
           >
             <Trans>Seguinte</Trans>
           </Button>

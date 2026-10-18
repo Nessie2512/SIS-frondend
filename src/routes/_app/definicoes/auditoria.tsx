@@ -15,6 +15,7 @@ import {
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { useFiltrarEmTransicao } from '@/shared/lib/transicoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import {
   Button,
@@ -83,6 +84,7 @@ function EcraAuditoria() {
   const { t } = useLingui()
   const { q, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const [texto, setTexto] = useState(q ?? '')
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => () => clearTimeout(espera.current), [])
@@ -113,10 +115,12 @@ function EcraAuditoria() {
     clearTimeout(espera.current)
     espera.current = setTimeout(
       () =>
-        void navigate({
-          search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
-          replace: true,
-        }),
+        filtrar(() =>
+          navigate({
+            search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
+            replace: true,
+          }),
+        ),
       TEMPOS.pesquisaEspera,
     )
   }
@@ -154,13 +158,15 @@ function EcraAuditoria() {
               opcoes={opcoesAccao}
               valor={filtros.accao ?? null}
               aoMudar={(accao) =>
-                void navigate({
-                  search: (s) => ({
-                    ...s,
-                    accao: (accao ?? undefined) as AccaoAuditoria | undefined,
-                    page: 1,
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({
+                      ...s,
+                      accao: (accao ?? undefined) as AccaoAuditoria | undefined,
+                      page: 1,
+                    }),
                   }),
-                })
+                )
               }
             />
           )}
@@ -171,19 +177,20 @@ function EcraAuditoria() {
         etiquetas={etiquetas}
         aoRemover={(chave) => {
           if (chave === 'q') limparTexto()
-          void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+          filtrar(() => navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) }))
         }}
         aoLimpar={() => {
           limparTexto()
-          void navigate({ search: { page: 1 } })
+          filtrar(() => navigate({ search: { page: 1 } }))
         }}
         className="-mt-3"
       />
 
       <div
+        aria-busy={isPlaceholderData || aFiltrar || undefined}
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
-          isPlaceholderData && 'opacity-60',
+          (isPlaceholderData || aFiltrar) && 'opacity-60',
         )}
       >
         <TabelaDados
@@ -222,14 +229,14 @@ function EcraAuditoria() {
           <Button
             tamanho="compacto"
             disabled={pagina <= 1}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina - 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina - 1 }) }))}
           >
             <Trans>Anterior</Trans>
           </Button>
           <Button
             tamanho="compacto"
             disabled={pagina >= totalPaginas}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina + 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina + 1 }) }))}
           >
             <Trans>Seguinte</Trans>
           </Button>

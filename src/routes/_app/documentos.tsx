@@ -15,6 +15,7 @@ import { DialogoAnular, EmitirDocumentoGlobal, EmitirEmLote } from '@/features/e
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { useFiltrarEmTransicao } from '@/shared/lib/transicoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import { useCan } from '@/shared/lib/permissoes'
@@ -188,6 +189,7 @@ function EcraDocumentos() {
   const { anoLectivoId } = Route.useRouteContext()
   const { q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const podeEmitir = useCan('documentos:emitir')
   const [texto, setTexto] = useState(q ?? '')
   const [aAnular, setAAnular] = useState<DocumentoOficial>()
@@ -244,7 +246,7 @@ function EcraDocumentos() {
       clearTimeout(espera.current)
       setTexto('')
     }
-    void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+    filtrar(() => navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) }))
   }
 
   function pesquisar(valor: string) {
@@ -252,10 +254,12 @@ function EcraDocumentos() {
     clearTimeout(espera.current)
     espera.current = setTimeout(
       () =>
-        void navigate({
-          search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
-          replace: true,
-        }),
+        filtrar(() =>
+          navigate({
+            search: (s) => ({ ...s, q: valor.trim() || undefined, page: 1 }),
+            replace: true,
+          }),
+        ),
       TEMPOS.pesquisaEspera,
     )
   }
@@ -301,13 +305,15 @@ function EcraDocumentos() {
               opcoes={opcoesTipo}
               valor={filtros.tipo ?? null}
               aoMudar={(tipo) =>
-                void navigate({
-                  search: (s) => ({
-                    ...s,
-                    tipo: (tipo ?? undefined) as TipoDocumentoOficial | undefined,
-                    page: 1,
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({
+                      ...s,
+                      tipo: (tipo ?? undefined) as TipoDocumentoOficial | undefined,
+                      page: 1,
+                    }),
                   }),
-                })
+                )
               }
             />
           )}
@@ -320,13 +326,15 @@ function EcraDocumentos() {
               opcoes={opcoesEstado}
               valor={filtros.estado ?? null}
               aoMudar={(estado) =>
-                void navigate({
-                  search: (s) => ({
-                    ...s,
-                    estado: (estado ?? undefined) as EstadoDocumentoOficial | undefined,
-                    page: 1,
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({
+                      ...s,
+                      estado: (estado ?? undefined) as EstadoDocumentoOficial | undefined,
+                      page: 1,
+                    }),
                   }),
-                })
+                )
               }
             />
           )}
@@ -339,22 +347,23 @@ function EcraDocumentos() {
         aoLimpar={() => {
           clearTimeout(espera.current)
           setTexto('')
-          void navigate({ search: { page: 1 } })
+          filtrar(() => navigate({ search: { page: 1 } }))
         }}
         className="-mt-3"
       />
 
       <div
+        aria-busy={isPlaceholderData || aFiltrar || undefined}
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
-          isPlaceholderData && 'opacity-60',
+          (isPlaceholderData || aFiltrar) && 'opacity-60',
         )}
       >
         <TabelaDados
           rotulo={t`Documentos emitidos`}
           ordenacao={ordenacaoDoUrl(ordem)}
           aoMudarOrdenacao={(o) =>
-            void navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) })
+            filtrar(() => navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) }))
           }
           colunas={colunas}
           dados={data?.documentos}
@@ -406,14 +415,14 @@ function EcraDocumentos() {
           <Button
             tamanho="compacto"
             disabled={pagina <= 1}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina - 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina - 1 }) }))}
           >
             <Trans>Anterior</Trans>
           </Button>
           <Button
             tamanho="compacto"
             disabled={pagina >= totalPaginas}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina + 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina + 1 }) }))}
           >
             <Trans>Seguinte</Trans>
           </Button>

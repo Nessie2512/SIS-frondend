@@ -14,6 +14,7 @@ import { Can } from '@/shared/lib/can'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import { cn } from '@/shared/lib/cn'
+import { useFiltrarEmTransicao } from '@/shared/lib/transicoes'
 import { useCan } from '@/shared/lib/permissoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import {
@@ -152,6 +153,7 @@ function EcraMatriculas() {
   const { anoLectivoId, soLeitura } = Route.useRouteContext()
   const { ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const { data: classes = [] } = useQuery(classesQuery())
   const { data, isPlaceholderData, isError, refetch } = useQuery({
     ...matriculasQuery({
@@ -228,9 +230,11 @@ function EcraMatriculas() {
               opcoes={classes.map((x) => ({ valor: x.id, rotulo: x.designacao }))}
               valor={filtros.classeId ?? null}
               aoMudar={(classeId) =>
-                void navigate({
-                  search: (s) => ({ ...s, classeId: classeId ?? undefined, page: 1 }),
-                })
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({ ...s, classeId: classeId ?? undefined, page: 1 }),
+                  }),
+                )
               }
             />
           )}
@@ -239,14 +243,16 @@ function EcraMatriculas() {
           rotulo={t`Estado da matrícula`}
           valor={filtros.semTurma ? 'SEM_TURMA' : (filtros.estado ?? 'TODAS')}
           aoMudar={(v) =>
-            void navigate({
-              search: (s) => ({
-                ...s,
-                page: 1,
-                semTurma: v === 'SEM_TURMA' ? true : undefined,
-                estado: v === 'PENDENTE' || v === 'CONFIRMADA' ? v : undefined,
+            filtrar(() =>
+              navigate({
+                search: (s) => ({
+                  ...s,
+                  page: 1,
+                  semTurma: v === 'SEM_TURMA' ? true : undefined,
+                  estado: v === 'PENDENTE' || v === 'CONFIRMADA' ? v : undefined,
+                }),
               }),
-            })
+            )
           }
           opcoes={[
             { valor: 'TODAS', rotulo: t`Todas` },
@@ -260,9 +266,9 @@ function EcraMatriculas() {
       <EtiquetasFiltro
         etiquetas={etiquetas}
         aoRemover={(chave) =>
-          void navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) })
+          filtrar(() => navigate({ search: (s) => ({ ...s, [chave]: undefined, page: 1 }) }))
         }
-        aoLimpar={() => void navigate({ search: { page: 1 } })}
+        aoLimpar={() => filtrar(() => navigate({ search: { page: 1 } }))}
         className="-mt-3"
       />
 
@@ -270,22 +276,23 @@ function EcraMatriculas() {
         ecra="matriculas"
         pesquisa={filtros}
         aoAplicar={(guardados) =>
-          void navigate({ search: pesquisaMatriculas.parse({ ...guardados, page: 1 }) })
+          filtrar(() => navigate({ search: pesquisaMatriculas.parse({ ...guardados, page: 1 }) }))
         }
         className="-mt-3"
       />
 
       <div
+        aria-busy={isPlaceholderData || aFiltrar || undefined}
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
-          isPlaceholderData && 'opacity-60',
+          (isPlaceholderData || aFiltrar) && 'opacity-60',
         )}
       >
         <TabelaDados
           rotulo={t`Matrículas`}
           ordenacao={ordenacaoDoUrl(ordem)}
           aoMudarOrdenacao={(o) =>
-            void navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) })
+            filtrar(() => navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) }))
           }
           colunas={colunas}
           dados={data?.matriculas}
@@ -329,14 +336,14 @@ function EcraMatriculas() {
           <Button
             tamanho="compacto"
             disabled={pagina <= 1}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina - 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina - 1 }) }))}
           >
             <Trans>Anterior</Trans>
           </Button>
           <Button
             tamanho="compacto"
             disabled={pagina >= totalPaginas}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: pagina + 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: pagina + 1 }) }))}
           >
             <Trans>Seguinte</Trans>
           </Button>

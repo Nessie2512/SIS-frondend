@@ -1,3 +1,5 @@
+import { useCallback, useTransition } from 'react'
+
 /**
  * Transições entre ecrãs (guia 5.6): a linha clicada expande-se no painel de resumo e o painel
  * na ficha. Os três têm o mesmo nome de transição, um de cada vez no DOM.
@@ -25,3 +27,21 @@ export const cliqueSimples = (e: {
   shiftKey: boolean
   altKey: boolean
 }) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey
+
+/**
+ * Mudanças de filtro, pesquisa, ordem e página como transições do React (guia 5.6): a
+ * interface continua a responder enquanto a lista nova se prepara, e `aFiltrar` diz que há uma
+ * a caminho (a lista fica translúcida e com aria-busy). Recebe a navegação já pronta, para os
+ * tipos do router ficarem intactos.
+ */
+export function useFiltrarEmTransicao() {
+  const [aFiltrar, iniciar] = useTransition()
+  const filtrar = useCallback(
+    (navegar: () => Promise<unknown>) =>
+      iniciar(async () => {
+        await navegar()
+      }),
+    [],
+  )
+  return { filtrar, aFiltrar }
+}

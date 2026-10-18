@@ -21,7 +21,7 @@ import { BotaoGerarListaNominal } from '@/features/gerar-lista-nominal'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
-import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
+import { NOME_TRANSICAO_FICHA, useFiltrarEmTransicao } from '@/shared/lib/transicoes'
 import {
   Button,
   colunasDe,
@@ -116,6 +116,7 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
   const { t } = useLingui()
   const { turma: turmaAberta, ...search } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const filtros: FiltrosTurma = { anoLectivoId, ...search }
   const { data, isPlaceholderData, isError, refetch } = useQuery(turmasQuery(filtros))
   const colunas = useColunas()
@@ -141,9 +142,11 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
             rotulo={t`Estado das turmas`}
             valor={search.estado}
             aoMudar={(estado) =>
-              void navigate({
-                search: (s) => ({ ...s, estado: estado as 'ACTIVA' | 'ENCERRADA', page: 1 }),
-              })
+              filtrar(() =>
+                navigate({
+                  search: (s) => ({ ...s, estado: estado as 'ACTIVA' | 'ENCERRADA', page: 1 }),
+                }),
+              )
             }
             opcoes={[
               { valor: 'ACTIVA', rotulo: t`Activas` },
@@ -154,9 +157,10 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
       </div>
 
       <div
+        aria-busy={isPlaceholderData || aFiltrar || undefined}
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
-          isPlaceholderData && 'opacity-60',
+          (isPlaceholderData || aFiltrar) && 'opacity-60',
         )}
       >
         <TabelaDados
@@ -203,14 +207,14 @@ function ListaTurmas({ anoLectivoId }: { anoLectivoId: string }) {
           <Button
             tamanho="compacto"
             disabled={search.page <= 1}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: s.page - 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: s.page - 1 }) }))}
           >
             <Trans>Anterior</Trans>
           </Button>
           <Button
             tamanho="compacto"
             disabled={search.page >= totalPaginas}
-            onClick={() => void navigate({ search: (s) => ({ ...s, page: s.page + 1 }) })}
+            onClick={() => filtrar(() => navigate({ search: (s) => ({ ...s, page: s.page + 1 }) }))}
           >
             <Trans>Seguinte</Trans>
           </Button>
