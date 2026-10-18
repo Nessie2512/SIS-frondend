@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type FieldPath } from 'react-hook-form'
 import { entrar, type Utilizador } from '@/entities/utilizador'
 import { eApiError } from '@/shared/api'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
-import { Aviso, Button, Campo, Entrada } from '@/shared/ui'
+import { Aviso, Button, Campo, Entrada, ResumoErros } from '@/shared/ui'
+import { errosDoFormulario } from '@/shared/lib/erros-formulario'
 import { esquemaEntrada, type DadosEntrada } from '../model/esquema'
 
 interface Props {
@@ -25,12 +26,16 @@ export function FormularioEntrada({ emailInicial = '', aoEntrar, textoBotao }: P
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    setFocus,
+    formState: { errors, isSubmitting, submitCount },
   } = useForm<DadosEntrada>({
     resolver: zodResolver(esquemaEntrada),
     mode: 'onTouched',
     defaultValues: { email: emailInicial, palavraPasse: '' },
   })
+  // Resumo de erros no topo ao submeter (guia 7.2, 8.1)
+  const ROTULOS: Record<string, string> = { email: t`Email`, palavraPasse: t`Palavra-passe` }
+  const erros = submitCount ? errosDoFormulario(errors, (c) => ROTULOS[c]) : []
 
   const submeter = handleSubmit(async (dados) => {
     setErroGeral(undefined)
@@ -47,6 +52,7 @@ export function FormularioEntrada({ emailInicial = '', aoEntrar, textoBotao }: P
 
   return (
     <form onSubmit={submeter} noValidate className="flex flex-col gap-4">
+      <ResumoErros erros={erros} aoEscolher={(c) => setFocus(c as FieldPath<DadosEntrada>)} />
       {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
       <Campo rotulo={t`Email`} erro={errors.email?.message} obrigatorio>
         {(c) => <Entrada {...c} type="email" autoComplete="username" {...register('email')} />}

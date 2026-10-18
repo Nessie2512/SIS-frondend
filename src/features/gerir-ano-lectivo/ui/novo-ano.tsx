@@ -5,7 +5,7 @@ import type { AnoLectivo } from '@/entities/ano-lectivo'
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
-import { Aviso, Button, Folha, notificar, SelectorData } from '@/shared/ui'
+import { Aviso, Button, Folha, notificar, SelectorData, ResumoErros } from '@/shared/ui'
 import { useCriarAno } from '../model/use-accoes-ano'
 
 const somarAno = (data: string, anos: number) =>
@@ -29,6 +29,11 @@ export function NovoAnoLectivo({
   const [fim, setFim] = useState(somarAno(ultimo.dataFim, 1))
   const [erros, setErros] = useState<Record<string, string>>({})
   const [erroGeral, setErroGeral] = useState<string>()
+  // Resumo de erros no topo (guia 7.2, 8.1), pela ordem dos campos
+  const ROTULOS: Record<string, string> = { dataInicio: t`Início`, dataFim: t`Fim` }
+  const resumo = Object.entries(ROTULOS).flatMap(([campo, rotulo]) =>
+    erros[campo] ? [{ campo, rotulo, mensagem: erros[campo] }] : [],
+  )
   const y = Number(inicio.slice(0, 4))
   const designacao = Number.isFinite(y) ? `${y}/${y + 1}` : '—'
 
@@ -80,6 +85,7 @@ export function NovoAnoLectivo({
       >
         <div className="flex flex-col gap-4">
           {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
+          <ResumoErros erros={resumo} />
           <SelectorData
             rotulo={t`Início`}
             valor={inicio}

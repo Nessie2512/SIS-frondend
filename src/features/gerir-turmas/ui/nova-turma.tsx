@@ -15,6 +15,7 @@ import {
   Folha,
   notificar,
   Selector,
+  ResumoErros,
 } from '@/shared/ui'
 import { useCriarTurma } from '../model/use-turmas'
 
@@ -43,6 +44,16 @@ export function NovaTurma({
   const [lotacao, setLotacao] = useState('40')
   const [erros, setErros] = useState<Record<string, string>>({})
   const [erroGeral, setErroGeral] = useState<string>()
+  // Resumo de erros no topo (guia 7.2, 8.1), pela ordem dos campos
+  const ROTULOS: Record<string, string> = {
+    classeId: t`Classe`,
+    lotacaoMaxima: t`Lotação máxima`,
+    sala: t`Sala`,
+    turno: t`Turno`,
+  }
+  const resumo = Object.entries(ROTULOS).flatMap(([campo, rotulo]) =>
+    erros[campo] ? [{ campo, rotulo, mensagem: erros[campo] }] : [],
+  )
   const [chave, setChave] = useState(novaChaveIdempotencia)
 
   function limpar() {
@@ -125,6 +136,7 @@ export function NovaTurma({
       >
         <div className="flex flex-col gap-4">
           {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
+          <ResumoErros erros={resumo} />
           <Campo rotulo={t`Classe`} erro={erros.classeId} obrigatorio>
             {(c) => (
               <Selector

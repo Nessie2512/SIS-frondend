@@ -4,7 +4,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
-import { useForm } from 'react-hook-form'
+import { useForm, type FieldPath } from 'react-hook-form'
 import { disciplinasQuery, type Disciplina } from '@/entities/disciplina'
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
@@ -20,7 +20,9 @@ import {
   Folha,
   notificar,
   notificarComDesfazer,
+  ResumoErros,
 } from '@/shared/ui'
+import { errosDoFormulario } from '@/shared/lib/erros-formulario'
 import { esquemaDisciplina, type DadosDisciplina } from '../model/esquema'
 import {
   useAlterarEstadoDisciplina,
@@ -165,14 +167,18 @@ function FolhaNovaDisciplina({ aberta, aoFechar }: { aberta: boolean; aoFechar: 
   const {
     register,
     handleSubmit,
+    setFocus,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, submitCount },
   } = useForm<DadosDisciplina>({
     resolver: zodResolver(esquemaDisciplina),
     mode: 'onTouched',
     defaultValues: { nome: '', sigla: '' },
   })
+  // Resumo de erros no topo ao submeter (guia 7.2, 8.1)
+  const ROTULOS: Record<string, string> = { nome: t`Nome`, sigla: t`Sigla` }
+  const erros = submitCount ? errosDoFormulario(errors, (c) => ROTULOS[c]) : []
 
   function fechar() {
     reset()
@@ -227,6 +233,7 @@ function FolhaNovaDisciplina({ aberta, aoFechar }: { aberta: boolean; aoFechar: 
         onSubmit={(e) => void handleSubmit(gravar)(e)}
         className="flex flex-col gap-4"
       >
+        <ResumoErros erros={erros} aoEscolher={(c) => setFocus(c as FieldPath<DadosDisciplina>)} />
         {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
         <Campo rotulo={t`Nome`} erro={errors.nome?.message} obrigatorio>
           {(c) => <Entrada {...c} placeholder={t`Ex.: Educação Ambiental`} {...register('nome')} />}

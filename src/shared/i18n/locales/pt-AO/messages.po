@@ -251,6 +251,10 @@ msgstr "{n, plural, one {A inscrever # estudante. Acompanhe no quadro de tarefas
 msgid "{n, plural, one {Confirmar # matrícula} other {Confirmar # matrículas}}"
 msgstr "{n, plural, one {Confirmar # matrícula} other {Confirmar # matrículas}}"
 
+#: src/shared/ui/resumo-erros.tsx
+msgid "{n, plural, one {Corrija # campo antes de continuar.} other {Corrija # campos antes de continuar.}}"
+msgstr "{n, plural, one {Corrija # campo antes de continuar.} other {Corrija # campos antes de continuar.}}"
+
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "{n, plural, one {Emitir # declaração de frequência} other {Emitir # declarações de frequência}}"
 msgstr "{n, plural, one {Emitir # declaração de frequência} other {Emitir # declarações de frequência}}"
@@ -1322,6 +1326,7 @@ msgstr "classe"
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/matricular-existente/ui/matricular-existente.tsx
@@ -1602,6 +1607,7 @@ msgstr "Data da saída"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Data de nascimento"
@@ -1891,6 +1897,7 @@ msgid "Documento {numero} anulado."
 msgstr "Documento {numero} anulado."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento de identificação"
@@ -2048,6 +2055,7 @@ msgstr "Em vigor desde {data}."
 
 #: src/features/autenticar/ui/formulario-entrada.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Email"
@@ -2110,6 +2118,10 @@ msgstr "Encarregado"
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Encarregado {numero}"
 msgstr "Encarregado {numero}"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+msgid "Encarregado {numero}: {rotulo}"
+msgstr "Encarregado {numero}: {rotulo}"
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "encarregado de"
@@ -2237,6 +2249,7 @@ msgstr "Erros por linha"
 msgid "Escola de destino"
 msgstr "Escola de destino"
 
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 msgid "Escola de origem"
 msgstr "Escola de origem"
@@ -3486,6 +3499,7 @@ msgstr "Nome"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Nome completo"
@@ -3870,6 +3884,7 @@ msgid "Para quem é o documento?"
 msgstr "Para quem é o documento?"
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Parentesco"
 msgstr "Parentesco"
@@ -3997,9 +4012,14 @@ msgstr "Por inactividade. O que estava a fazer continua guardado, {nome}."
 msgid "Por registar"
 msgstr "Por registar"
 
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Porque não é o mesmo estudante?"
 msgstr "Porque não é o mesmo estudante?"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+msgid "Possível duplicado"
+msgstr "Possível duplicado"
 
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "Pré-visualização"
@@ -4618,6 +4638,7 @@ msgstr "Sem uso"
 msgid "Sessão bloqueada"
 msgstr "Sessão bloqueada"
 
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
@@ -4728,6 +4749,7 @@ msgstr "Tarefas em segundo plano"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
@@ -4859,6 +4881,7 @@ msgstr "turma"
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 #: src/features/gerar-relatorio/ui/relatorios.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/matricular-existente/ui/matricular-existente.tsx

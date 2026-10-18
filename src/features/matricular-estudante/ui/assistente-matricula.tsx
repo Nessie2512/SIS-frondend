@@ -10,7 +10,8 @@ import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
-import { Aviso, AvisoAoSair, Button, EtiquetaEstado } from '@/shared/ui'
+import { errosDoFormulario } from '@/shared/lib/erros-formulario'
+import { Aviso, AvisoAoSair, Button, EtiquetaEstado, ResumoErros } from '@/shared/ui'
 import {
   CAMPOS_POR_PASSO,
   esquemaMatricula,
@@ -71,10 +72,50 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
     [subscribe, passo, rascunho],
   )
 
+  // Resumo de erros (guia 7.2): aparece ao tentar avançar ou gravar com erros no passo
+  const [tentou, setTentou] = useState(false)
+  const erros = tentou
+    ? errosDoFormulario(formState.errors, rotuloDoCampo, CAMPOS_POR_PASSO[passo])
+    : []
+
+  function rotuloDoCampo(campo: string): string | undefined {
+    const enc = /^encarregados\.(\d+)\.(\w+)$/.exec(campo)
+    if (enc) {
+      const numero = Number(enc[1]) + 1
+      const ROTULO: Record<string, string> = {
+        nome: t`Nome completo`,
+        parentesco: t`Parentesco`,
+        telefone: t`Telefone`,
+        email: t`Email`,
+      }
+      const rotulo = ROTULO[enc[2]!]
+      return rotulo && t`Encarregado ${numero}: ${rotulo}`
+    }
+    const ROTULOS: Record<string, string> = {
+      'estudante.nome': t`Nome completo`,
+      'estudante.dataNascimento': t`Data de nascimento`,
+      'estudante.sexo': t`Sexo`,
+      'estudante.documentoIdentificacao': t`Documento de identificação`,
+      'estudante.telefone': t`Telefone`,
+      'duplicado.ignorado': t`Possível duplicado`,
+      'duplicado.justificacao': t`Porque não é o mesmo estudante?`,
+      encarregados: t`Encarregados`,
+      classeId: t`Classe`,
+      turmaId: t`Turma`,
+      'transferencia.escola': t`Escola de origem`,
+    }
+    return ROTULOS[campo]
+  }
+
+  function irParaCampo(campo: string) {
+    setFocus(campo as FieldPath<DadosMatricula>)
+  }
+
   const PASSOS = [t`Dados pessoais`, t`Encarregados`, t`Documentos`, t`Classe e turma`, t`Revisão`]
   const ultimo = passo === PASSOS.length - 1
 
   function irPara(destino: number) {
+    setTentou(false)
     setPasso(destino)
     rascunho.guardar(formulario.getValues(), destino)
     const nome = PASSOS[destino]
@@ -87,6 +128,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
     const campos = CAMPOS_POR_PASSO[passo] as readonly FieldPath<DadosMatricula>[]
     const valido = await trigger(campos, { shouldFocus: true })
     if (valido) irPara(passo + 1)
+    else setTentou(true)
   }
 
   async function gravar(dados: DadosMatricula) {
@@ -189,7 +231,11 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
           onSubmit={(e) => {
             e.preventDefault()
             // Validação completa só ao gravar; um erro em passo anterior volta ao primeiro passo
-            if (ultimo) void handleSubmit(gravar, () => irPara(0))()
+            if (ultimo)
+              void handleSubmit(gravar, () => {
+                irPara(0)
+                setTentou(true)
+              })()
             else void avancar()
           }}
           className="flex max-w-2xl flex-col gap-6"
@@ -197,6 +243,8 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
           <h2 ref={titulo} tabIndex={-1} className="text-titulo-seccao outline-none">
             {PASSOS[passo]}
           </h2>
+
+          <ResumoErros erros={erros} aoEscolher={irParaCampo} />
 
           {passo === 0 && <PassoDados anoInicio={anoInicio} />}
           {passo === 1 && <PassoEncarregados />}

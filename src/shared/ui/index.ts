@@ -24,6 +24,7 @@ export {
 } from './separadores'
 export { EtiquetaEstado } from './etiqueta-estado'
 export { Aviso } from './aviso'
+export { ResumoErros } from './resumo-erros'
 export { notificar, notificarComDesfazer, desfazerUltima } from './notificacoes'
 export { BarraProgresso, IndicadorPontual } from './progresso'
 export { Avatar } from './avatar'

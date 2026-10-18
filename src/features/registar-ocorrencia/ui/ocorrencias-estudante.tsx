@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, type FieldPath } from 'react-hook-form'
 import { hojeCivil } from '@/entities/calendario'
 import { ocorrenciasQuery, TIPOS_OCORRENCIA, type TipoOcorrencia } from '@/entities/estudante'
 import { i18n } from '@lingui/core'
@@ -23,7 +23,9 @@ import {
   Folha,
   notificar,
   SelectorData,
+  ResumoErros,
 } from '@/shared/ui'
+import { errosDoFormulario } from '@/shared/lib/erros-formulario'
 import { esquemaOcorrencia, TIPOS, type DadosOcorrencia } from '../model/esquema'
 import { useRegistarOcorrencia } from '../model/use-registar-ocorrencia'
 
@@ -113,14 +115,22 @@ function FolhaRegistar({
     register,
     control,
     handleSubmit,
+    setFocus,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, submitCount },
   } = useForm<DadosOcorrencia>({
     resolver: zodResolver(esquemaOcorrencia(hoje)),
     mode: 'onTouched',
     defaultValues: { tipo: 'PEDAGOGICA', data: hoje, descricao: '' },
   })
+  // Resumo de erros no topo ao submeter (guia 7.2, 8.1)
+  const ROTULOS: Record<string, string> = {
+    tipo: t`Tipo de ocorrência`,
+    data: t`Data`,
+    descricao: t`O que aconteceu`,
+  }
+  const erros = submitCount ? errosDoFormulario(errors, (c) => ROTULOS[c]) : []
 
   function fechar() {
     reset()
@@ -175,6 +185,7 @@ function FolhaRegistar({
         onSubmit={(e) => void handleSubmit(gravar)(e)}
         className="flex flex-col gap-4"
       >
+        <ResumoErros erros={erros} aoEscolher={(c) => setFocus(c as FieldPath<DadosOcorrencia>)} />
         {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
         <Controller
           control={control}

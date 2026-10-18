@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Lock, Trash2 } from 'lucide-react'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, type FieldPath } from 'react-hook-form'
 import {
   dataPorExtenso,
   eventosDe,
@@ -25,7 +25,9 @@ import {
   notificar,
   notificarComDesfazer,
   SelectorData,
+  ResumoErros,
 } from '@/shared/ui'
+import { errosDoFormulario } from '@/shared/lib/erros-formulario'
 import { esquemaEvento, TIPOS_CRIAVEIS, type DadosEvento } from '../model/esquema'
 import { useApagarEvento, useCriarEvento } from '../model/use-eventos'
 
@@ -174,14 +176,22 @@ function NovoEvento({
     register,
     control,
     handleSubmit,
+    setFocus,
     reset,
     setError,
-    formState: { errors },
+    formState: { errors, submitCount },
   } = useForm<DadosEvento>({
     resolver: zodResolver(esquemaEvento(dia, fimDoAno)),
     mode: 'onTouched',
     defaultValues: { titulo: '', tipo: 'EVENTO', fim: dia },
   })
+  // Resumo de erros no topo ao submeter (guia 7.2, 8.1)
+  const CAMPOS: Record<string, string> = {
+    titulo: t`Nome`,
+    tipo: t`Tipo de evento`,
+    fim: t`Último dia`,
+  }
+  const erros = submitCount ? errosDoFormulario(errors, (c) => CAMPOS[c]) : []
 
   const ROTULOS: Record<(typeof TIPOS_CRIAVEIS)[number], string> = {
     EVENTO: t`Evento`,
@@ -218,6 +228,7 @@ function NovoEvento({
         onSubmit={(e) => void handleSubmit(gravar)(e)}
         className="flex flex-col gap-4"
       >
+        <ResumoErros erros={erros} aoEscolher={(c) => setFocus(c as FieldPath<DadosEvento>)} />
         {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
         <Campo rotulo={t`Nome`} erro={errors.titulo?.message} obrigatorio>
           {(c) => (

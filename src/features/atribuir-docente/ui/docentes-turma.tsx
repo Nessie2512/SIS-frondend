@@ -3,7 +3,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { History } from 'lucide-react'
 import { useState } from 'react'
-import { Controller, useForm } from 'react-hook-form'
+import { Controller, useForm, type FieldPath } from 'react-hook-form'
 import { hojeCivil } from '@/entities/calendario'
 import { professoresQuery } from '@/entities/professor'
 import { docentesQuery, type DocenteTurma } from '@/entities/turma'
@@ -20,7 +20,9 @@ import {
   notificar,
   Selector,
   SelectorData,
+  ResumoErros,
 } from '@/shared/ui'
+import { errosDoFormulario } from '@/shared/lib/erros-formulario'
 import { esquemaAtribuicao, type DadosAtribuicao } from '../model/esquema'
 import { useAtribuirDocente } from '../model/use-atribuir-docente'
 
@@ -208,11 +210,19 @@ function FormAtribuir({
     control,
     register,
     handleSubmit,
-    formState: { errors },
+    setFocus,
+    formState: { errors, submitCount },
   } = useForm<DadosAtribuicao>({
     resolver: zodResolver(esquemaAtribuicao(substituicao, minimo, fimAno)),
     defaultValues: { professorId: '', desde: substituicao ? sugerida : '', motivo: '' },
   })
+  // Resumo de erros no topo ao submeter (guia 7.2, 8.1)
+  const ROTULOS: Record<string, string> = {
+    professorId: substituicao ? t`Novo docente` : t`Docente`,
+    desde: t`A partir de`,
+    motivo: t`Motivo`,
+  }
+  const erros = submitCount ? errosDoFormulario(errors, (c) => ROTULOS[c]) : []
   const disciplina = linha.disciplina
   const horas = linha.horasSemanais
 
@@ -266,6 +276,7 @@ function FormAtribuir({
       onSubmit={(e) => void handleSubmit(gravar)(e)}
       className="flex flex-col gap-3 rounded-controlo bg-fundo p-3"
     >
+      <ResumoErros erros={erros} aoEscolher={(c) => setFocus(c as FieldPath<DadosAtribuicao>)} />
       <Controller
         control={control}
         name="professorId"
