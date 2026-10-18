@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { CircleCheck } from 'lucide-react'
 import type { DocumentoEstudante, Estudante } from '@/entities/estudante'
@@ -36,9 +37,10 @@ export function CartaoMatricula({ estudante, documentos, soLeitura }: Props) {
   const razao = soLeitura
     ? t`O ano lectivo está encerrado.`
     : !completa
-      ? emFalta === 1
-        ? t`Falta 1 documento obrigatório.`
-        : t`Faltam ${emFalta} documentos obrigatórios.`
+      ? plural(emFalta, {
+          one: 'Falta # documento obrigatório.',
+          other: 'Faltam # documentos obrigatórios.',
+        })
       : undefined
 
   return (
@@ -58,7 +60,10 @@ export function CartaoMatricula({ estudante, documentos, soLeitura }: Props) {
         <p className="text-secundario text-texto-2">{matricula}</p>
         {estudante.matriculaPendente && (
           <p className="tabular text-secundario text-texto-2">
-            {t`Documentos obrigatórios: ${entregues} de ${total} entregues`}
+            {plural(total, {
+              one: `Documentos obrigatórios: ${entregues} de # entregue`,
+              other: `Documentos obrigatórios: ${entregues} de # entregues`,
+            })}
           </p>
         )}
       </div>

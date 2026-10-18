@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
@@ -172,7 +173,11 @@ function LinhaClasse({
           {seguinte ? t`A seguir: ${seguinte}` : t`Última classe da escola`}
           {' · '}
           {emUso
-            ? t`${turmas} turmas, ${matriculas} matrículas, ${planos} planos`
+            ? [
+                plural(turmas, { one: '# turma', other: '# turmas' }),
+                plural(matriculas, { one: '# matrícula', other: '# matrículas' }),
+                plural(planos, { one: '# plano', other: '# planos' }),
+              ].join(', ')
             : t`Ainda sem uso`}
         </span>
       </div>

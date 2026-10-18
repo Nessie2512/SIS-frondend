@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
@@ -120,7 +121,9 @@ export function MatricularExistente({
                     return {
                       valor: x.id,
                       rotulo: x.designacao,
-                      descricao: x.turmaCheia ? t`Turma cheia` : t`${vagas} vagas`,
+                      descricao: x.turmaCheia
+                        ? t`Turma cheia`
+                        : plural(vagas, { one: '# vaga', other: '# vagas' }),
                       desactivada: x.turmaCheia,
                     }
                   })}

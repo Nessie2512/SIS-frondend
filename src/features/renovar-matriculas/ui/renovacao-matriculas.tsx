@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Link } from '@tanstack/react-router'
 import { ListChecks, RotateCcw } from 'lucide-react'
@@ -43,7 +44,9 @@ export function RenovacaoMatriculas({ destino }: { destino: AnoLectivo }) {
       onSuccess: (s) => {
         const n = s.incluidos.length
         const fora = s.excluidos.length
-        anunciar.educado(t`Simulação pronta: ${n} renovam, ${fora} ficam de fora.`)
+        anunciar.educado(
+          `${plural(n, { one: 'Simulação pronta: # renova', other: 'Simulação pronta: # renovam' })}, ${plural(fora, { one: '# fica de fora.', other: '# ficam de fora.' })}`,
+        )
       },
       onError: (e) => notificar.erro(mensagemDeErro(e)),
     })
@@ -109,22 +112,32 @@ export function RenovacaoMatriculas({ destino }: { destino: AnoLectivo }) {
           <TabelaExcluidos sim={sim} />
           <div className="sticky bottom-0 -mx-6 flex items-center justify-end gap-3 border-t border-linha bg-fundo/90 px-6 py-3 backdrop-blur-md">
             <p className="tabular text-secundario text-texto-2" aria-live="polite">
-              {nRetirados > 0 && t`${nRetirados} retirados à mão.`}
+              {nRetirados > 0 &&
+                plural(nRetirados, { one: '# retirado à mão.', other: '# retirados à mão.' })}
             </p>
             <Button
               variante="primario"
               disabled={aRenovar === 0}
               onClick={() => setAConfirmar(true)}
             >
-              <Trans>Confirmar a renovação de {aRenovar} matrículas</Trans>
+              {plural(aRenovar, {
+                one: 'Confirmar a renovação de # matrícula',
+                other: 'Confirmar a renovação de # matrículas',
+              })}
             </Button>
           </div>
           <Dialogo
             aberta={aConfirmar}
             aoMudar={setAConfirmar}
             pendente={aplicar.isPending}
-            titulo={t`Renovar ${aRenovar} matrículas para ${designacao}`}
-            descricao={t`Cria ${aRenovar} matrículas confirmadas, sem turma, em ${designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.`}
+            titulo={plural(aRenovar, {
+              one: `Renovar # matrícula para ${designacao}`,
+              other: `Renovar # matrículas para ${designacao}`,
+            })}
+            descricao={plural(aRenovar, {
+              one: `Cria # matrícula confirmada, sem turma, em ${designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.`,
+              other: `Cria # matrículas confirmadas, sem turma, em ${designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.`,
+            })}
             rodape={
               <>
                 <Button onClick={() => setAConfirmar(false)} disabled={aplicar.isPending}>
@@ -222,9 +235,10 @@ function SemResultado({ sim }: { sim: Simulacao }) {
   if (n === 0) return null
   return (
     <Aviso tom="aviso">
-      <Trans>
-        {n} estudantes ficam de fora por não terem resultado final registado em {origem}.
-      </Trans>{' '}
+      {plural(n, {
+        one: `# estudante fica de fora por não ter resultado final registado em ${origem}.`,
+        other: `# estudantes ficam de fora por não terem resultado final registado em ${origem}.`,
+      })}{' '}
       <Link
         to="/anos-lectivos/$anoId"
         params={{ anoId: sim.anoOrigemId }}

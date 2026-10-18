@@ -38,8 +38,20 @@ msgid "{0, plural, one {Declaração para o estudante seleccionado, num só PDF.
 msgstr "{0, plural, one {Declaração para o estudante seleccionado, num só PDF.} other {Declarações para os # estudantes seleccionados, num só PDF.}}"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
-msgid "{activas} activas"
-msgstr "{activas} activas"
+msgid "{activas, plural, one {# activa} other {# activas}}"
+msgstr "{activas, plural, one {# activa} other {# activas}}"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{aRenovar, plural, one {Confirmar a renovação de # matrícula} other {Confirmar a renovação de # matrículas}}"
+msgstr "{aRenovar, plural, one {Confirmar a renovação de # matrícula} other {Confirmar a renovação de # matrículas}}"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{aRenovar, plural, one {Cria # matrícula confirmada, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.} other {Cria # matrículas confirmadas, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.}}"
+msgstr "{aRenovar, plural, one {Cria # matrícula confirmada, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.} other {Cria # matrículas confirmadas, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma.}}"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{aRenovar, plural, one {Renovar # matrícula para {designacao}} other {Renovar # matrículas para {designacao}}}"
+msgstr "{aRenovar, plural, one {Renovar # matrícula para {designacao}} other {Renovar # matrículas para {designacao}}}"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "{carga} de {maximo} h atribuídas"
@@ -50,8 +62,8 @@ msgid "{cargaLectiva} de {cargaMaxima} h"
 msgstr "{cargaLectiva} de {cargaMaxima} h"
 
 #: src/entities/professor/ui/carga-lectiva.tsx
-msgid "{cargaLectiva} de {cargaMaxima} horas semanais"
-msgstr "{cargaLectiva} de {cargaMaxima} horas semanais"
+msgid "{cargaMaxima, plural, one {{cargaLectiva} de # hora semanal} other {{cargaLectiva} de # horas semanais}}"
+msgstr "{cargaMaxima, plural, one {{cargaLectiva} de # hora semanal} other {{cargaLectiva} de # horas semanais}}"
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "{classe}: matrículas confirmadas sem turma. Simular não muda nada."
@@ -62,12 +74,8 @@ msgid "{classe}. Os aprovados passam à classe seguinte na renovação; os repro
 msgstr "{classe}. Os aprovados passam à classe seguinte na renovação; os reprovados repetem."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{criadas} turmas criadas a partir de {origem}."
-msgstr "{criadas} turmas criadas a partir de {origem}."
-
-#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
-msgid "{designacao} (faltam {falta})"
-msgstr "{designacao} (faltam {falta})"
+msgid "{criadas, plural, one {# turma criada a partir de {origem}.} other {# turmas criadas a partir de {origem}.}}"
+msgstr "{criadas, plural, one {# turma criada a partir de {origem}.} other {# turmas criadas a partir de {origem}.}}"
 
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "{designacao} eliminada."
@@ -85,10 +93,6 @@ msgstr "{designacao} inactivada: deixa de ser oferecida em matrículas e turmas 
 msgid "{designacao} reactivada."
 msgstr "{designacao} reactivada."
 
-#: src/features/registar-resultados/ui/tabela-resultados.tsx
-msgid "{designacao}: {n} resultados guardados."
-msgstr "{designacao}: {n} resultados guardados."
-
 #: src/features/marcar-documento/model/use-marcar-documento.ts
 msgid "{designacao}: em falta."
 msgstr "{designacao}: em falta."
@@ -101,31 +105,63 @@ msgstr "{designacao}: entregue."
 msgid "{disciplina}: {professor}."
 msgstr "{disciplina}: {professor}."
 
+#: src/features/marcar-documento/ui/lista-documentos.tsx
+#: src/routes/_app/estudantes/index.tsx
+msgid "{emFalta, plural, one {# obrigatório em falta} other {# obrigatórios em falta}}"
+msgstr "{emFalta, plural, one {# obrigatório em falta} other {# obrigatórios em falta}}"
+
+#: src/features/matricular-estudante/ui/passo-documentos.tsx
+msgid "{emFalta, plural, one {Falta # documento obrigatório. A matrícula fica a confirmar até ser entregue.} other {Faltam # documentos obrigatórios. A matrícula fica a confirmar até serem entregues.}}"
+msgstr "{emFalta, plural, one {Falta # documento obrigatório. A matrícula fica a confirmar até ser entregue.} other {Faltam # documentos obrigatórios. A matrícula fica a confirmar até serem entregues.}}"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+msgid "{emFalta, plural, one {Falta # documento obrigatório. Pode marcá-lo na ficha quando for entregue.} other {Faltam # documentos obrigatórios. Pode marcá-los na ficha quando forem entregues.}}"
+msgstr "{emFalta, plural, one {Falta # documento obrigatório. Pode marcá-lo na ficha quando for entregue.} other {Faltam # documentos obrigatórios. Pode marcá-los na ficha quando forem entregues.}}"
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "{emFalta, plural, one {Falta # documento obrigatório.} other {Faltam # documentos obrigatórios.}}"
+msgstr "{emFalta, plural, one {Falta # documento obrigatório.} other {Faltam # documentos obrigatórios.}}"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{emFalta, plural, one {Marcar o # em falta como aprovado} other {Marcar os # em falta como aprovados}}"
+msgstr "{emFalta, plural, one {Marcar o # em falta como aprovado} other {Marcar os # em falta como aprovados}}"
+
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "{emFalta} em falta"
 msgstr "{emFalta} em falta"
 
-#: src/features/marcar-documento/ui/lista-documentos.tsx
-#: src/routes/_app/estudantes/index.tsx
-msgid "{emFalta} obrigatórios em falta"
-msgstr "{emFalta} obrigatórios em falta"
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{errosLidos, plural, one {# com erros.} other {# com erros.}}"
+msgstr "{errosLidos, plural, one {# com erros.} other {# com erros.}}"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{falhadas, plural, one {# ficou por confirmar.} other {# ficaram por confirmar.}}"
+msgstr "{falhadas, plural, one {# ficou por confirmar.} other {# ficaram por confirmar.}}"
+
+#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
+msgid "{falta, plural, one {{designacao} (falta #)} other {{designacao} (faltam #)}}"
+msgstr "{falta, plural, one {{designacao} (falta #)} other {{designacao} (faltam #)}}"
+
+#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
+msgid "{falta, plural, one {Registar resultados da turma {designacao}: falta # de {total}} other {Registar resultados da turma {designacao}: faltam # de {total}}}"
+msgstr "{falta, plural, one {Registar resultados da turma {designacao}: falta # de {total}} other {Registar resultados da turma {designacao}: faltam # de {total}}}"
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "{falta} em falta"
 msgstr "{falta} em falta"
 
-#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{feitas} de {total} etapas feitas"
-msgstr "{feitas} de {total} etapas feitas"
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{feitas, plural, one {# matrícula confirmada.} other {# matrículas confirmadas.}}"
+msgstr "{feitas, plural, one {# matrícula confirmada.} other {# matrículas confirmadas.}}"
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "{feitas} matrículas confirmadas; {falhadas} ficaram por confirmar."
-msgstr "{feitas} matrículas confirmadas; {falhadas} ficaram por confirmar."
+msgid "{feitas, plural, one {# matrícula confirmada} other {# matrículas confirmadas}}"
+msgstr "{feitas, plural, one {# matrícula confirmada} other {# matrículas confirmadas}}"
 
-#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "{feitas} matrículas confirmadas."
-msgstr "{feitas} matrículas confirmadas."
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{fora, plural, one {# fica de fora.} other {# ficam de fora.}}"
+msgstr "{fora, plural, one {# fica de fora.} other {# ficam de fora.}}"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{horas} h por semana"
@@ -136,24 +172,84 @@ msgid "{horas} h/semana"
 msgstr "{horas} h/semana"
 
 #: src/routes/_app/estudantes/index.tsx
-msgid "{idade} anos"
-msgstr "{idade} anos"
+msgid "{idade, plural, one {# ano} other {# anos}}"
+msgstr "{idade, plural, one {# ano} other {# anos}}"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "{inscritos, plural, one {# inscrito} other {# inscritos}}"
+msgstr "{inscritos, plural, one {# inscrito} other {# inscritos}}"
+
+#: src/features/gerir-turmas/ui/encerrar-turma.tsx
+msgid "{inscritos, plural, one {Mova primeiro o # estudante para outra turma.} other {Mova primeiro os # estudantes para outra turma.}}"
+msgstr "{inscritos, plural, one {Mova primeiro o # estudante para outra turma.} other {Mova primeiro os # estudantes para outra turma.}}"
 
 #: src/entities/turma/ui/barra-ocupacao.tsx
 msgid "{inscritos} de {lotacaoMaxima}"
 msgstr "{inscritos} de {lotacaoMaxima}"
 
-#: src/features/emitir-documento/ui/emitir-lote.tsx
-msgid "{inscritos} inscritos"
-msgstr "{inscritos} inscritos"
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{jaConfirmadas, plural, one {# já estava confirmada e não muda.} other {# já estavam confirmadas e não mudam.}}"
+msgstr "{jaConfirmadas, plural, one {# já estava confirmada e não muda.} other {# já estavam confirmadas e não mudam.}}"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{linhasComErro, plural, one {# com erros.} other {# com erros.}}"
+msgstr "{linhasComErro, plural, one {# com erros.} other {# com erros.}}"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{linhasComErro, plural, one {A # com erros fica de fora; corrija-a e importe-a depois.} other {As # com erros ficam de fora; corrija-as e importe-as depois.}}"
+msgstr "{linhasComErro, plural, one {A # com erros fica de fora; corrija-a e importe-a depois.} other {As # com erros ficam de fora; corrija-as e importe-as depois.}}"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{matriculas, plural, one {# matrícula} other {# matrículas}}"
+msgstr "{matriculas, plural, one {# matrícula} other {# matrículas}}"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{n, plural, one {{designacao}: # resultado guardado.} other {{designacao}: # resultados guardados.}}"
+msgstr "{n, plural, one {{designacao}: # resultado guardado.} other {{designacao}: # resultados guardados.}}"
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "{n, plural, one {# disciplina sem docente.} other {# disciplinas sem docente.}}"
+msgstr "{n, plural, one {# disciplina sem docente.} other {# disciplinas sem docente.}}"
+
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{n, plural, one {# estudante fica de fora por não ter resultado final registado em {origem}.} other {# estudantes ficam de fora por não terem resultado final registado em {origem}.}}"
+msgstr "{n, plural, one {# estudante fica de fora por não ter resultado final registado em {origem}.} other {# estudantes ficam de fora por não terem resultado final registado em {origem}.}}"
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "{jaConfirmadas} já estavam confirmadas e não mudam."
-msgstr "{jaConfirmadas} já estavam confirmadas e não mudam."
+msgid "{n, plural, one {# matrícula fica confirmada.} other {# matrículas ficam confirmadas.}}"
+msgstr "{n, plural, one {# matrícula fica confirmada.} other {# matrículas ficam confirmadas.}}"
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "{n, plural, one {# matrícula neste ano. Etapa sem fim marcado.} other {# matrículas neste ano. Etapa sem fim marcado.}}"
+msgstr "{n, plural, one {# matrícula neste ano. Etapa sem fim marcado.} other {# matrículas neste ano. Etapa sem fim marcado.}}"
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "{n, plural, one {# matrícula sem turma.} other {# matrículas sem turma.}}"
+msgstr "{n, plural, one {# matrícula sem turma.} other {# matrículas sem turma.}}"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{n, plural, one {# resultado guardado.} other {# resultados guardados.}}"
+msgstr "{n, plural, one {# resultado guardado.} other {# resultados guardados.}}"
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "{n, plural, one {# trimestre gerado. Reveja feriados e datas-chave.} other {# trimestres gerados. Reveja feriados e datas-chave.}}"
+msgstr "{n, plural, one {# trimestre gerado. Reveja feriados e datas-chave.} other {# trimestres gerados. Reveja feriados e datas-chave.}}"
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "{n, plural, one {# turma preparada.} other {# turmas preparadas.}}"
+msgstr "{n, plural, one {# turma preparada.} other {# turmas preparadas.}}"
 
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "{n, plural, one {# utilizador} other {# utilizadores}}"
 msgstr "{n, plural, one {# utilizador} other {# utilizadores}}"
+
+#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+msgid "{n, plural, one {A inscrever # estudante. Acompanhe no quadro de tarefas.} other {A inscrever # estudantes. Acompanhe no quadro de tarefas.}}"
+msgstr "{n, plural, one {A inscrever # estudante. Acompanhe no quadro de tarefas.} other {A inscrever # estudantes. Acompanhe no quadro de tarefas.}}"
+
+#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
+msgid "{n, plural, one {Confirmar # matrícula} other {Confirmar # matrículas}}"
+msgstr "{n, plural, one {Confirmar # matrícula} other {Confirmar # matrículas}}"
 
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "{n, plural, one {Emitir # declaração de frequência} other {Emitir # declarações de frequência}}"
@@ -163,45 +259,25 @@ msgstr "{n, plural, one {Emitir # declaração de frequência} other {Emitir # d
 msgid "{n, plural, one {Emitir # declaração de matrícula} other {Emitir # declarações de matrícula}}"
 msgstr "{n, plural, one {Emitir # declaração de matrícula} other {Emitir # declarações de matrícula}}"
 
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
+msgid "{n, plural, one {Exportado # estudante.} other {Exportados # estudantes.}}"
+msgstr "{n, plural, one {Exportado # estudante.} other {Exportados # estudantes.}}"
+
+#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
+msgid "{n, plural, one {Falta #.} other {Faltam #.}}"
+msgstr "{n, plural, one {Falta #.} other {Faltam #.}}"
+
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "{n, plural, one {Inscrever # estudante} other {Inscrever # estudantes}}"
 msgstr "{n, plural, one {Inscrever # estudante} other {Inscrever # estudantes}}"
 
-#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{n} disciplinas sem docente."
-msgstr "{n} disciplinas sem docente."
+#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+msgid "{n, plural, one {Simulação pronta: # renova} other {Simulação pronta: # renovam}}"
+msgstr "{n, plural, one {Simulação pronta: # renova} other {Simulação pronta: # renovam}}"
 
 #: src/routes/_app/matriculas/index.tsx
 msgid "{n} em falta"
 msgstr "{n} em falta"
-
-#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
-msgid "{n} estudantes ficam de fora por não terem resultado final registado em {origem}."
-msgstr "{n} estudantes ficam de fora por não terem resultado final registado em {origem}."
-
-#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "{n} matrículas ficam confirmadas."
-msgstr "{n} matrículas ficam confirmadas."
-
-#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{n} matrículas neste ano. Etapa sem fim marcado."
-msgstr "{n} matrículas neste ano. Etapa sem fim marcado."
-
-#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{n} matrículas sem turma."
-msgstr "{n} matrículas sem turma."
-
-#: src/features/registar-resultados/ui/tabela-resultados.tsx
-msgid "{n} resultados guardados."
-msgstr "{n} resultados guardados."
-
-#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{n} trimestres gerados. Reveja feriados e datas-chave."
-msgstr "{n} trimestres gerados. Reveja feriados e datas-chave."
-
-#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
-msgid "{n} turmas preparadas."
-msgstr "{n} turmas preparadas."
 
 #: src/features/editar-plano/model/use-editar-plano.ts
 msgid "{nome} acrescentada ao plano."
@@ -280,12 +356,20 @@ msgid "{nomeExistente} já está registado com este telefone. Ligue-o em vez de 
 msgstr "{nomeExistente} já está registado com este telefone. Ligue-o em vez de criar outra vez."
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
-msgid "{nRetirados} retirados à mão."
-msgstr "{nRetirados} retirados à mão."
+msgid "{nRetirados, plural, one {# retirado à mão.} other {# retirados à mão.}}"
+msgstr "{nRetirados, plural, one {# retirado à mão.} other {# retirados à mão.}}"
 
 #: src/entities/calendario/model/mapeadores.ts
 msgid "{numero}.º trimestre"
 msgstr "{numero}.º trimestre"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "{outros, plural, one {Encarregado de mais # estudante.} other {Encarregado de mais # estudantes.}}"
+msgstr "{outros, plural, one {Encarregado de mais # estudante.} other {Encarregado de mais # estudantes.}}"
+
+#: src/features/gerir-classes/ui/arvore-classes.tsx
+msgid "{planos, plural, one {# plano} other {# planos}}"
+msgstr "{planos, plural, one {# plano} other {# planos}}"
 
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "{porGuardar} por guardar"
@@ -296,12 +380,24 @@ msgid "{progresso}% · pode continuar a trabalhar"
 msgstr "{progresso}% · pode continuar a trabalhar"
 
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{prontas, plural, one {# pronta a importar} other {# prontas a importar}}"
+msgstr "{prontas, plural, one {# pronta a importar} other {# prontas a importar}}"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "{prontas, plural, one {Importar # estudante} other {Importar # estudantes}}"
 msgstr "{prontas, plural, one {Importar # estudante} other {Importar # estudantes}}"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{prontas, plural, one {Importar só a # linha sem erros.} other {Importar só as # linhas sem erros.}}"
+msgstr "{prontas, plural, one {Importar só a # linha sem erros.} other {Importar só as # linhas sem erros.}}"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{prontasLidas, plural, one {Ficheiro analisado: # linha pronta} other {Ficheiro analisado: # linhas prontas}}"
+msgstr "{prontasLidas, plural, one {Ficheiro analisado: # linha pronta} other {Ficheiro analisado: # linhas prontas}}"
+
 #: src/shared/ui/selector.tsx
-msgid "{quantos} seleccionados"
-msgstr "{quantos} seleccionados"
+msgid "{quantos, plural, one {# seleccionado} other {# seleccionados}}"
+msgstr "{quantos, plural, one {# seleccionado} other {# seleccionados}}"
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "{quem} acrescentado como encarregado."
@@ -318,10 +414,6 @@ msgstr "{quem} é agora encarregado de {nomeEstudante}."
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "{quem} passou a encarregado principal."
 msgstr "{quem} passou a encarregado principal."
-
-#: src/features/registar-resultados/ui/tabela-resultados.tsx
-msgid "{registados} de {total} registados"
-msgstr "{registados} de {total} registados"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "{semDocente} sem docente"
@@ -355,66 +447,63 @@ msgstr "{titulo} falhou. Veja o relatório no quadro de tarefas."
 msgid "{titulo}: a gerar. Acompanhe no quadro de tarefas."
 msgstr "{titulo}: a gerar. Acompanhe no quadro de tarefas."
 
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "{total, plural, one {{feitas} de # etapa feita} other {{feitas} de # etapas feitas}}"
+msgstr "{total, plural, one {{feitas} de # etapa feita} other {{feitas} de # etapas feitas}}"
+
+#: src/features/registar-resultados/ui/tabela-resultados.tsx
+msgid "{total, plural, one {{registados} de # registado} other {{registados} de # registados}}"
+msgstr "{total, plural, one {{registados} de # registado} other {{registados} de # registados}}"
+
 #: src/routes/_app/documentos.tsx
-msgid "{total} documentos emitidos"
-msgstr "{total} documentos emitidos"
+msgid "{total, plural, one {# documento emitido} other {# documentos emitidos}}"
+msgstr "{total, plural, one {# documento emitido} other {# documentos emitidos}}"
 
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
-msgid "{total} estudantes"
-msgstr "{total} estudantes"
+msgid "{total, plural, one {# estudante} other {# estudantes}}"
+msgstr "{total, plural, one {# estudante} other {# estudantes}}"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{total, plural, one {# linha} other {# linhas}}"
+msgstr "{total, plural, one {# linha} other {# linhas}}"
+
+#: src/routes/_app/matriculas/index.tsx
+msgid "{total, plural, one {# matrícula} other {# matrículas}}"
+msgstr "{total, plural, one {# matrícula} other {# matrículas}}"
+
+#: src/routes/_app/professores/index.tsx
+msgid "{total, plural, one {# professor} other {# professores}}"
+msgstr "{total, plural, one {# professor} other {# professores}}"
+
+#: src/routes/_app/definicoes/auditoria.tsx
+msgid "{total, plural, one {# registo} other {# registos}}"
+msgstr "{total, plural, one {# registo} other {# registos}}"
+
+#: src/routes/_app/definicoes/utilizadores.tsx
+msgid "{total, plural, one {# utilizador} other {# utilizadores}}"
+msgstr "{total, plural, one {# utilizador} other {# utilizadores}}"
+
+#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
+msgid "{total, plural, one {Documentos obrigatórios: {entregues} de # entregue} other {Documentos obrigatórios: {entregues} de # entregues}}"
+msgstr "{total, plural, one {Documentos obrigatórios: {entregues} de # entregue} other {Documentos obrigatórios: {entregues} de # entregues}}"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{total} h"
 msgstr "{total} h"
 
-#: src/features/importar-estudantes/ui/importar-estudantes.tsx
-msgid "{total} linhas: {prontas} prontas a importar, {linhasComErro} com erros."
-msgstr "{total} linhas: {prontas} prontas a importar, {linhasComErro} com erros."
-
-#: src/routes/_app/matriculas/index.tsx
-msgid "{total} matrículas"
-msgstr "{total} matrículas"
-
-#: src/routes/_app/professores/index.tsx
-msgid "{total} professores"
-msgstr "{total} professores"
-
-#: src/routes/_app/definicoes/auditoria.tsx
-msgid "{total} registos"
-msgstr "{total} registos"
-
-#: src/routes/_app/definicoes/utilizadores.tsx
-msgid "{total} utilizadores"
-msgstr "{total} utilizadores"
-
-#: src/routes/_app/professores/$professorId.tsx
-msgid "{turmas} turmas"
-msgstr "{turmas} turmas"
-
 #: src/features/gerir-classes/ui/arvore-classes.tsx
-msgid "{turmas} turmas, {matriculas} matrículas, {planos} planos"
-msgstr "{turmas} turmas, {matriculas} matrículas, {planos} planos"
+#: src/routes/_app/professores/$professorId.tsx
+msgid "{turmas, plural, one {# turma} other {# turmas}}"
+msgstr "{turmas, plural, one {# turma} other {# turmas}}"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "{v} h por semana"
 msgstr "{v} h por semana"
 
 #: src/features/matricular-existente/ui/matricular-existente.tsx
-msgid "{vagas} vagas"
-msgstr "{vagas} vagas"
-
-#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "1 já estava confirmada e não muda."
-msgstr "1 já estava confirmada e não muda."
-
-#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "1 matrícula fica confirmada."
-msgstr "1 matrícula fica confirmada."
-
-#: src/routes/_app/professores/$professorId.tsx
-msgid "1 turma"
-msgstr "1 turma"
+msgid "{vagas, plural, one {# vaga} other {# vagas}}"
+msgstr "{vagas, plural, one {# vaga} other {# vagas}}"
 
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "1. Preparar o ficheiro"
@@ -553,10 +642,6 @@ msgstr "A idade tem de estar entre 4 e 30 anos."
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "A importação falhou. Nenhum estudante foi criado."
 msgstr "A importação falhou. Nenhum estudante foi criado."
-
-#: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
-msgid "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
-msgstr "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
 
 #: src/features/gerar-lista-nominal/ui/botao-gerar-lista-nominal.tsx
 msgid "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
@@ -1347,18 +1432,6 @@ msgstr "Confirmada"
 msgid "Confirmadas"
 msgstr "Confirmadas"
 
-#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "Confirmar {n} matrículas"
-msgstr "Confirmar {n} matrículas"
-
-#: src/features/confirmar-matricula/ui/confirmar-lote.tsx
-msgid "Confirmar 1 matrícula"
-msgstr "Confirmar 1 matrícula"
-
-#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
-msgid "Confirmar a renovação de {aRenovar} matrículas"
-msgstr "Confirmar a renovação de {aRenovar} matrículas"
-
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Confirmar matrícula"
 msgstr "Confirmar matrícula"
@@ -1426,10 +1499,6 @@ msgstr "Corre em segundo plano: pode sair deste ecrã e acompanhar no quadro de 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Corrigir"
 msgstr "Corrigir"
-
-#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
-msgid "Cria {aRenovar} matrículas confirmadas, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma."
-msgstr "Cria {aRenovar} matrículas confirmadas, sem turma, em {designacao}. A renovação só se faz uma vez para cada ano; as que faltarem fazem-se depois uma a uma."
 
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 msgid "Criar {designacao}"
@@ -1879,10 +1948,6 @@ msgstr "Documentos entregues"
 msgid "Documentos obrigatórios completos: a matrícula fica confirmada."
 msgstr "Documentos obrigatórios completos: a matrícula fica confirmada."
 
-#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
-msgid "Documentos obrigatórios: {entregues} de {total} entregues"
-msgstr "Documentos obrigatórios: {entregues} de {total} entregues"
-
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 msgid "Documentos oficiais"
@@ -2049,14 +2114,6 @@ msgstr "Encarregado {numero}"
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "encarregado de"
 msgstr "encarregado de"
-
-#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
-msgid "Encarregado de mais {outros} estudantes."
-msgstr "Encarregado de mais {outros} estudantes."
-
-#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
-msgid "Encarregado de mais 1 estudante."
-msgstr "Encarregado de mais 1 estudante."
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Encarregado principal"
@@ -2525,10 +2582,6 @@ msgid "Exportações recentes"
 msgstr "Exportações recentes"
 
 #: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
-msgid "Exportados {n} estudantes."
-msgstr "Exportados {n} estudantes."
-
-#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
 msgid "Exportar CSV"
 msgstr "Exportar CSV"
 
@@ -2539,10 +2592,6 @@ msgstr "F"
 #: src/entities/relatorio/api/queries.ts
 msgid "Falhou"
 msgstr "Falhou"
-
-#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
-msgid "Falta 1 documento obrigatório."
-msgstr "Falta 1 documento obrigatório."
 
 #: src/features/importar-estudantes/ui/mensagens.ts
 msgid "Falta a classe."
@@ -2559,22 +2608,6 @@ msgstr "Falta o nome do encarregado."
 #: src/features/importar-estudantes/ui/mensagens.ts
 msgid "Falta o nome."
 msgstr "Falta o nome."
-
-#: src/features/confirmar-matricula/ui/cartao-matricula.tsx
-msgid "Faltam {emFalta} documentos obrigatórios."
-msgstr "Faltam {emFalta} documentos obrigatórios."
-
-#: src/features/matricular-estudante/ui/passo-documentos.tsx
-msgid "Faltam {emFalta} documentos obrigatórios. A matrícula fica a confirmar até serem entregues."
-msgstr "Faltam {emFalta} documentos obrigatórios. A matrícula fica a confirmar até serem entregues."
-
-#: src/features/matricular-estudante/ui/assistente-matricula.tsx
-msgid "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quando forem entregues."
-msgstr "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quando forem entregues."
-
-#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
-msgid "Faltam {n}."
-msgstr "Faltam {n}."
 
 #: src/features/importar-estudantes/ui/mensagens.ts
 msgid "Faltam colunas no cabeçalho: {colunas}. Use o modelo."
@@ -2662,10 +2695,6 @@ msgstr "Ficha do estudante"
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Ficha do professor"
 msgstr "Ficha do professor"
-
-#: src/features/importar-estudantes/ui/importar-estudantes.tsx
-msgid "Ficheiro analisado: {prontasLidas} linhas prontas, {errosLidos} com erros."
-msgstr "Ficheiro analisado: {prontasLidas} linhas prontas, {errosLidos} com erros."
 
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "Ficheiro CSV"
@@ -2797,10 +2826,6 @@ msgstr "Importar estudantes"
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "Importar outro ficheiro"
 msgstr "Importar outro ficheiro"
-
-#: src/features/importar-estudantes/ui/importar-estudantes.tsx
-msgid "Importar só as {prontas} linhas sem erros. As {linhasComErro} com erros ficam de fora; corrija-as e importe-as depois."
-msgstr "Importar só as {prontas} linhas sem erros. As {linhasComErro} com erros ficam de fora; corrija-as e importe-as depois."
 
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "Imprimir"
@@ -3068,10 +3093,6 @@ msgstr "Manhã"
 msgid "Manter o actual"
 msgstr "Manter o actual"
 
-#: src/features/registar-resultados/ui/tabela-resultados.tsx
-msgid "Marcar os {emFalta} em falta como aprovados"
-msgstr "Marcar os {emFalta} em falta como aprovados"
-
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
@@ -3251,10 +3272,6 @@ msgstr "Motivo da anulação: {motivo}"
 #: src/features/rectificar-percurso/ui/percurso-estudante.tsx
 msgid "Motivo: {motivo}"
 msgstr "Motivo: {motivo}"
-
-#: src/features/gerir-turmas/ui/encerrar-turma.tsx
-msgid "Mova primeiro os {inscritos} estudantes para outra turma."
-msgstr "Mova primeiro os {inscritos} estudantes para outra turma."
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Mover {nome} para…"
@@ -4255,10 +4272,6 @@ msgid "Registar reingresso"
 msgstr "Registar reingresso"
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
-msgid "Registar resultados da turma {designacao}: faltam {falta} de {total}"
-msgstr "Registar resultados da turma {designacao}: faltam {falta} de {total}"
-
-#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Registe aprovado ou reprovado em cada turma."
 msgstr "Registe aprovado ou reprovado em cada turma."
 
@@ -4315,10 +4328,6 @@ msgstr "Renovam ({n})"
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Renovar {aRenovar}"
 msgstr "Renovar {aRenovar}"
-
-#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
-msgid "Renovar {aRenovar} matrículas para {designacao}"
-msgstr "Renovar {aRenovar} matrículas para {designacao}"
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Renovar as matrículas"
@@ -4615,10 +4624,6 @@ msgstr "Sexo"
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Sigla"
 msgstr "Sigla"
-
-#: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
-msgid "Simulação pronta: {n} renovam, {fora} ficam de fora."
-msgstr "Simulação pronta: {n} renovam, {fora} ficam de fora."
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Simular a renovação"

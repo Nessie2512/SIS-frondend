@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound, useNavigate } from '@tanstack/react-router'
@@ -171,9 +172,7 @@ function Disciplinas({ professor: p }: { professor: Professor }) {
             <span className="tabular text-secundario text-texto-2">
               {turmas === 0
                 ? t`Sem turmas este ano`
-                : turmas === 1
-                  ? t`1 turma`
-                  : t`${turmas} turmas`}
+                : plural(turmas, { one: '# turma', other: '# turmas' })}
             </span>
           </li>
         )

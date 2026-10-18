@@ -86,7 +86,10 @@ export function DistribuirAutomaticamente({
       { anoLectivoId, classeId, inscricoes },
       {
         onSuccess: () => {
-          const mensagem = t`A inscrever ${n} estudantes. Acompanhe no quadro de tarefas.`
+          const mensagem = plural(n, {
+            one: 'A inscrever # estudante. Acompanhe no quadro de tarefas.',
+            other: 'A inscrever # estudantes. Acompanhe no quadro de tarefas.',
+          })
           anunciar.educado(mensagem)
           notificar.sucesso(mensagem)
           fechar()

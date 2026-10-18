@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
@@ -67,7 +68,9 @@ export function ListaDisciplinas({ podeEditar }: { podeEditar: boolean }) {
           <h1 id="titulo-disciplinas" className="text-titulo-pagina">
             <Trans>Disciplinas</Trans>
           </h1>
-          <p className="tabular text-secundario text-texto-2">{t`${activas} activas`}</p>
+          <p className="tabular text-secundario text-texto-2">
+            {plural(activas, { one: '# activa', other: '# activas' })}
+          </p>
         </div>
         {podeEditar && (
           <Button variante="primario" data-atalho="novo" onClick={() => setACriar(true)}>

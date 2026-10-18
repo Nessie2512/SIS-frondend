@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useState } from 'react'
 import type { Turma } from '@/entities/turma'
@@ -45,7 +46,10 @@ export function EncerrarTurma({ turma }: { turma: Turma }) {
   }
 
   if (inscritos > 0) {
-    const razao = t`Mova primeiro os ${inscritos} estudantes para outra turma.`
+    const razao = plural(inscritos, {
+      one: 'Mova primeiro o # estudante para outra turma.',
+      other: 'Mova primeiro os # estudantes para outra turma.',
+    })
     return (
       <>
         <Dica texto={razao}>

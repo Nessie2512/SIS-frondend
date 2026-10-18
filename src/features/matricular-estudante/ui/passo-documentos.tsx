@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Aviso } from '@/shared/ui'
@@ -48,7 +49,11 @@ export function PassoDocumentos() {
             </fieldset>
             {emFalta > 0 ? (
               <Aviso tom="aviso">
-                {t`Faltam ${emFalta} documentos obrigatórios. A matrícula fica a confirmar até serem entregues.`}
+                {plural(emFalta, {
+                  one: 'Falta # documento obrigatório. A matrícula fica a confirmar até ser entregue.',
+                  other:
+                    'Faltam # documentos obrigatórios. A matrícula fica a confirmar até serem entregues.',
+                })}
               </Aviso>
             ) : (
               <Aviso tom="informacao">{t`Documentos obrigatórios completos: a matrícula fica confirmada.`}</Aviso>

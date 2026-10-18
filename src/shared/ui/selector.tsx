@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Command } from 'cmdk'
 import { Check, ChevronsUpDown } from 'lucide-react'
@@ -64,7 +65,7 @@ export function Selector(props: Props) {
       ? (placeholder ?? t`Escolher`)
       : rotulos.length <= 2
         ? rotulos.join(', ')
-        : t`${quantos} seleccionados`
+        : plural(quantos, { one: '# seleccionado', other: '# seleccionados' })
 
   function escolher(valor: string) {
     if (props.multiplo) {

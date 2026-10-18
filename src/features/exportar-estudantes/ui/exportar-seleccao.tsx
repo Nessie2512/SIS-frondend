@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { useLingui } from '@lingui/react/macro'
 import { useQueryClient } from '@tanstack/react-query'
 import { Download } from 'lucide-react'
@@ -45,7 +46,9 @@ export function ExportarSeleccao({ ids }: { ids: string[] }) {
       ]),
     ])
     const n = linhas.length
-    anunciar.educado(t`Exportados ${n} estudantes.`)
+    anunciar.educado(
+      plural(n, { one: 'Exportado # estudante.', other: 'Exportados # estudantes.' }),
+    )
   }
 
   return (

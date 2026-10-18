@@ -65,7 +65,7 @@ export function ImportarEstudantes({
       anunciar.educado(
         r.erroFicheiro
           ? mensagens.ficheiro(r.erroFicheiro)
-          : t`Ficheiro analisado: ${prontasLidas} linhas prontas, ${errosLidos} com erros.`,
+          : `${plural(prontasLidas, { one: 'Ficheiro analisado: # linha pronta', other: 'Ficheiro analisado: # linhas prontas' })}, ${plural(errosLidos, { one: '# com erros.', other: '# com erros.' })}`,
       )
     } catch (falha) {
       setErro(mensagemDeErro(falha))
@@ -191,7 +191,7 @@ export function ImportarEstudantes({
                   className="mt-0.5 size-4 accent-(--color-acento)"
                 />
                 <span className="text-secundario">
-                  {t`Importar só as ${prontas} linhas sem erros. As ${linhasComErro} com erros ficam de fora; corrija-as e importe-as depois.`}
+                  {`${plural(prontas, { one: 'Importar só a # linha sem erros.', other: 'Importar só as # linhas sem erros.' })} ${plural(linhasComErro, { one: 'A # com erros fica de fora; corrija-a e importe-a depois.', other: 'As # com erros ficam de fora; corrija-as e importe-as depois.' })}`}
                 </span>
               </label>
             )
@@ -224,7 +224,7 @@ function PreVisualizacao({ analise, linhasComErro }: { analise: Analise; linhasC
   return (
     <div className="flex flex-col gap-4">
       <p className="tabular" role="status">
-        {t`${total} linhas: ${prontas} prontas a importar, ${linhasComErro} com erros.`}
+        {`${plural(total, { one: '# linha', other: '# linhas' })}: ${plural(prontas, { one: '# pronta a importar', other: '# prontas a importar' })}, ${plural(linhasComErro, { one: '# com erros.', other: '# com erros.' })}`}
       </p>
       {analise.erros.length > 0 && (
         <div className="overflow-x-auto rounded-cartao ring-1 ring-perigo/40">

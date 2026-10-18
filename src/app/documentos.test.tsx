@@ -48,7 +48,7 @@ describe('Área Documentos', () => {
       .catch(() => screen.findByRole('table', { name: 'Documentos emitidos' }))
     expect(await within(tabela).findByText('DM-2026/00001')).toBeInTheDocument()
     expect(within(tabela).getByText(estudante.nome)).toBeInTheDocument()
-    expect(screen.getByText('1 documentos emitidos')).toBeInTheDocument()
+    expect(screen.getByText('1 documento emitido')).toBeInTheDocument()
 
     // Filtrar por estado: nenhum anulado ainda
     await utilizador.click(screen.getByRole('combobox', { name: 'Estado' }))

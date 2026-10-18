@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import type { DocumentoEstudante } from '@/entities/estudante'
 import { cn } from '@/shared/lib/cn'
@@ -25,7 +26,9 @@ export function ListaDocumentos({ estudanteId, documentos, soLeitura }: Props) {
           <Trans>Documentos do estudante</Trans>
         </h2>
         {emFalta > 0 ? (
-          <EtiquetaEstado tom="aviso">{t`${emFalta} obrigatórios em falta`}</EtiquetaEstado>
+          <EtiquetaEstado tom="aviso">
+            {plural(emFalta, { one: '# obrigatório em falta', other: '# obrigatórios em falta' })}
+          </EtiquetaEstado>
         ) : (
           <EtiquetaEstado tom="sucesso">{t`Processo completo`}</EtiquetaEstado>
         )}

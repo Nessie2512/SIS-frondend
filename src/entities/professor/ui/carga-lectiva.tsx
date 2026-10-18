@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { cn } from '@/shared/lib/cn'
 import type { ProfessorResumo } from '../model/tipos'
@@ -21,7 +22,10 @@ export function CargaLectiva({
         aria-valuemin={0}
         aria-valuemax={cargaMaxima}
         aria-valuenow={cargaLectiva}
-        aria-valuetext={t`${cargaLectiva} de ${cargaMaxima} horas semanais`}
+        aria-valuetext={plural(cargaMaxima, {
+          one: `${cargaLectiva} de # hora semanal`,
+          other: `${cargaLectiva} de # horas semanais`,
+        })}
         className="h-1.5 w-20 overflow-hidden rounded-full bg-linha"
       >
         <div

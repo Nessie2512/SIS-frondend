@@ -198,7 +198,7 @@ export function EmitirEmLote({
                         return {
                           valor: x.id,
                           rotulo: x.designacao,
-                          descricao: t`${inscritos} inscritos`,
+                          descricao: plural(inscritos, { one: '# inscrito', other: '# inscritos' }),
                         }
                       })}
                       valor={turmaId}

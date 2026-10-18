@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { UserPlus } from 'lucide-react'
@@ -121,9 +122,10 @@ export function EncarregadosEstudante({ estudanteId, nome, podeEditar }: Props) 
                 {enc.email && <p className="text-texto-2">{enc.email}</p>}
                 {outros > 0 && (
                   <p className="text-secundario text-texto-3">
-                    {outros === 1
-                      ? t`Encarregado de mais 1 estudante.`
-                      : t`Encarregado de mais ${outros} estudantes.`}
+                    {plural(outros, {
+                      one: 'Encarregado de mais # estudante.',
+                      other: 'Encarregado de mais # estudantes.',
+                    })}
                   </p>
                 )}
                 {podeEditar && !enc.aGuardar && (

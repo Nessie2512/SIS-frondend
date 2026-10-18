@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
@@ -248,7 +249,7 @@ function EcraEstudantes() {
             <Trans>Estudantes</Trans>
           </h1>
           <p className="tabular text-secundario text-texto-2" aria-live="polite">
-            {t`${total} estudantes`}
+            {plural(total, { one: '# estudante', other: '# estudantes' })}
           </p>
         </div>
         <Can permissao="matriculas:escrever">
@@ -472,7 +473,7 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
   const { t } = useLingui()
   const { data: e } = useQuery({ ...estudanteQuery(id ?? ''), enabled: Boolean(id) })
   const processo = e?.numeroProcesso
-  const idade = e?.idade
+  const idade = e?.idade ?? 0
   const emFalta = e?.documentosEmFalta ?? 0
 
   return (
@@ -506,12 +507,20 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
             <dd>{e.matricula ?? '—'}</dd>
             <dt className="text-texto-2">{t`Nascimento`}</dt>
             <dd className="tabular">
-              {formatarDataCivil(e.dataNascimento)} · {t`${idade} anos`}
+              {formatarDataCivil(e.dataNascimento)} ·{' '}
+              {plural(idade, { one: '# ano', other: '# anos' })}
             </dd>
             <dt className="text-texto-2">{t`Telefone`}</dt>
             <dd className="tabular">{formatarTelefone(e.telefone) ?? '—'}</dd>
             <dt className="text-texto-2">{t`Documentos`}</dt>
-            <dd>{emFalta ? t`${emFalta} obrigatórios em falta` : t`Completos`}</dd>
+            <dd>
+              {emFalta
+                ? plural(emFalta, {
+                    one: '# obrigatório em falta',
+                    other: '# obrigatórios em falta',
+                  })
+                : t`Completos`}
+            </dd>
           </dl>
         </div>
       ) : (
