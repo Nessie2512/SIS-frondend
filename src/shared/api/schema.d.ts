@@ -223,7 +223,17 @@ export interface paths {
       erros: 403 | 404 | 409 | 422
     }>
   }
-  '/turmas/{id}': { get: Op<{ path: { id: string }; ok: S['TurmaDto']; erros: 404 }> }
+  '/turmas/{id}': {
+    get: Op<{ path: { id: string }; ok: S['TurmaDto']; erros: 404 }>
+    /** Edição no sítio (guia 5.1): optimista, com If-Match; 412 se outra pessoa mudou */
+    patch: Op<{
+      path: { id: string }
+      header: { 'If-Match'?: string }
+      body: S['TurmaAlteracaoDto']
+      ok: S['TurmaDto']
+      erros: 403 | 404 | 409 | 412 | 422
+    }>
+  }
   '/turmas/{id}/inscritos': { get: Op<{ path: { id: string }; ok: S['InscritoDto'][] }> }
   '/turmas/{id}/inscricoes': {
     post: Op<{ path: { id: string }; body: S['InscreverDto']; ok: S['InscritoDto']; erros: 403 | 409 }>
@@ -662,7 +672,10 @@ export interface components {
       lotacaoMaxima: number
       inscritos: number
       estado: components['schemas']['EstadoTurma']
+      /** Professor responsável pela turma (director de turma) */
+      directorTurma: { professorId: string; nome: string } | null
     }
+    TurmaAlteracaoDto: { sala?: string | null; directorTurmaId?: string | null }
     /** A designação é gerada pelo servidor (letra seguinte livre na classe) */
     NovaTurmaDto: {
       anoLectivoId: string

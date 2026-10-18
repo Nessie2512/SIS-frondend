@@ -24,6 +24,10 @@ interface PropsComuns {
   /** Assíncrono: a pesquisa vai ao servidor; espera 120 ms entre teclas (guia 5.6) */
   aoPesquisar?: (texto: string) => void
   'aria-describedby'?: string
+  /** Abre a lista logo ao aparecer (edição no sítio: o clique que abriu o campo já escolheu) */
+  abertoAoMontar?: boolean
+  /** A lista fechou sem escolha (Esc ou clique fora) */
+  aoFechar?: () => void
   /** Só quando não há etiqueta visível (ex.: uma linha de tabela) */
   'aria-label'?: string
   'aria-invalid'?: true
@@ -45,7 +49,7 @@ type Props =
 export function Selector(props: Props) {
   const { t } = useLingui()
   const { id, opcoes, placeholder, desactivado, aCarregar, aoPesquisar } = props
-  const [aberto, setAberto] = useState(false)
+  const [aberto, setAberto] = useState(Boolean(props.abertoAoMontar))
   const [pesquisa, setPesquisa] = useState('')
   // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
   // deixava temporizadores antigos por cancelar
@@ -82,7 +86,13 @@ export function Selector(props: Props) {
   }
 
   return (
-    <Popover.Root open={aberto} onOpenChange={setAberto}>
+    <Popover.Root
+      open={aberto}
+      onOpenChange={(v) => {
+        setAberto(v)
+        if (!v) props.aoFechar?.()
+      }}
+    >
       <Popover.Trigger
         id={id}
         role="combobox"

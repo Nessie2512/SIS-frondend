@@ -134,8 +134,11 @@ export const TIPOS_DOCUMENTO_OBRIGATORIOS = TIPOS_DOCUMENTO.filter((d) => d.obri
 
 const TURNOS: S['Turno'][] = ['MANHA', 'TARDE', 'NOITE']
 
-interface Turma extends Omit<S['TurmaDto'], 'inscritos'> {
+interface Turma extends Omit<S['TurmaDto'], 'inscritos' | 'directorTurma'> {
   anoLectivoId: string
+  /** Para If-Match (edição no sítio); sem valor, versão 1 */
+  versao?: number
+  directorTurmaId?: string | null
 }
 interface Estudante extends Omit<S['EstudanteDto'], 'matriculaActual' | 'documentosEmFalta'> {
   versao: number
@@ -462,8 +465,20 @@ const turmaPorId = (id: string | null) => (id ? db.turmas.find((t) => t.id === i
 export const contarInscritos = (turmaId: string) =>
   db.matriculas.filter((m) => m.turmaId === turmaId && m.estado !== 'ANULADA').length
 
-export function paraTurmaDto({ anoLectivoId: _, ...t }: Turma): S['TurmaDto'] {
-  return { ...t, inscritos: contarInscritos(t.id) }
+export function paraTurmaDto({
+  anoLectivoId: _,
+  versao: _v,
+  directorTurmaId,
+  ...t
+}: Turma): S['TurmaDto'] {
+  const director = directorTurmaId
+    ? db.professores.find((p) => p.id === directorTurmaId)
+    : undefined
+  return {
+    ...t,
+    inscritos: contarInscritos(t.id),
+    directorTurma: director ? { professorId: director.id, nome: director.nome } : null,
+  }
 }
 
 const documentosEmFalta = (estudanteId: string) =>

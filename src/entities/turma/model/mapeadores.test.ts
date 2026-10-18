@@ -11,6 +11,7 @@ const base = {
   lotacaoMaxima: 40,
   inscritos: 38,
   estado: 'ACTIVA' as const,
+  directorTurma: null,
 }
 
 describe('paraTurma', () => {

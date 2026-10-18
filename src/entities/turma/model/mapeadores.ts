@@ -26,6 +26,7 @@ export function paraTurma(dto: Dto<'TurmaDto'>): Turma {
     ocupacao: dto.lotacaoMaxima > 0 ? Math.min(1, dto.inscritos / dto.lotacaoMaxima) : 0,
     turmaCheia: vagas === 0,
     encerrada: dto.estado === 'ENCERRADA',
+    directorTurma: dto.directorTurma,
   }
 }
 

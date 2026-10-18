@@ -81,3 +81,23 @@ export const NumaFicha: Historia = {
     </div>
   ),
 }
+
+/** Escolha numa lista (ex.: director de turma): abrir mostra as opções e escolher guarda. */
+export const EscolhaNumaLista: Historia = {
+  args: {
+    rotulo: 'Director de turma',
+    valor: null,
+    mostrar: (v) => (v === 'p2' ? 'Ana Kiala' : v === 'p1' ? 'João Mendes' : null),
+    opcoes: [
+      { valor: '', rotulo: 'Sem director de turma' },
+      { valor: 'p1', rotulo: 'João Mendes', descricao: 'Matemática' },
+      { valor: 'p2', rotulo: 'Ana Kiala', descricao: 'Língua Portuguesa' },
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const ecra = within(canvasElement)
+    await userEvent.click(ecra.getByRole('button', { name: /^Editar Director de turma:/ }))
+    const pagina = within(canvasElement.ownerDocument.body)
+    await expect(await pagina.findByRole('option', { name: /Ana Kiala/ })).toBeVisible()
+  },
+}

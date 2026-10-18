@@ -19,6 +19,8 @@ export interface Turma {
   ocupacao: number
   turmaCheia: boolean
   encerrada: boolean
+  /** Director de turma (professor responsável) */
+  directorTurma: { professorId: string; nome: string } | null
   /** Linha provisória enquanto o servidor cria a turma (semi-optimista) */
   aGuardar?: boolean
 }

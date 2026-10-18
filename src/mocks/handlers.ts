@@ -839,7 +839,97 @@ export const handlers = [
     protegido('turmas:ler', ({ params }) => {
       const turma = turmaPorId(String(params.id))
       if (!turma) return problema(404, 'Turma não encontrada')
-      return HttpResponse.json(paraTurmaDto(turma))
+      return HttpResponse.json(paraTurmaDto(turma), {
+        headers: { ETag: etag(turma.versao ?? 1) },
+      })
+    }),
+  ),
+
+  http.patch(
+    `${API}/turmas/:id`,
+    protegido('turmas:escrever', async ({ request, params }) => {
+      const turma = turmaPorId(String(params.id))
+      if (!turma) return problema(404, 'Turma não encontrada')
+      const versaoPedida = request.headers.get('If-Match')
+      if (versaoPedida && versaoPedida !== etag(turma.versao ?? 1)) {
+        return problema(412, 'Versão desactualizada', { code: 'VERSAO_DESACTUALIZADA' })
+      }
+      if (turma.estado !== 'ACTIVA' || anoEncerrado(turma.anoLectivoId)) {
+        return problema(409, 'Turma encerrada', { detail: 'Uma turma encerrada já não muda.' })
+      }
+      const alteracao = (await request.json()) as S['TurmaAlteracaoDto']
+      const detalhes: string[] = []
+      if (alteracao.sala !== undefined) {
+        const sala = alteracao.sala?.trim() || null
+        if (sala && sala.length > 20) {
+          return problema(422, 'Dados inválidos', {
+            errors: [{ campo: 'sala', mensagem: 'Até 20 caracteres.' }],
+          })
+        }
+        const ocupada =
+          sala &&
+          db.turmas.find(
+            (t) =>
+              t.id !== turma.id &&
+              t.anoLectivoId === turma.anoLectivoId &&
+              t.estado === 'ACTIVA' &&
+              t.turno === turma.turno &&
+              normalizar(t.sala ?? '') === normalizar(sala),
+          )
+        if (ocupada) {
+          return problema(422, 'Dados inválidos', {
+            errors: [
+              {
+                campo: 'sala',
+                mensagem: `A ${sala} já é da ${ocupada.designacao} no mesmo turno.`,
+              },
+            ],
+          })
+        }
+        turma.sala = sala
+        detalhes.push(`sala ${sala ?? '(sem sala)'}`)
+      }
+      if (alteracao.directorTurmaId !== undefined) {
+        const id = alteracao.directorTurmaId
+        const professor = id ? db.professores.find((p) => p.id === id) : null
+        if (id && !professor) return problema(404, 'Professor não encontrado')
+        if (professor && professor.estado !== 'ACTIVO') {
+          return problema(422, 'Dados inválidos', {
+            errors: [
+              { campo: 'directorTurmaId', mensagem: 'Só um professor activo dirige turma.' },
+            ],
+          })
+        }
+        const outra =
+          professor &&
+          db.turmas.find(
+            (t) =>
+              t.id !== turma.id &&
+              t.anoLectivoId === turma.anoLectivoId &&
+              t.estado === 'ACTIVA' &&
+              t.directorTurmaId === professor.id,
+          )
+        if (outra) {
+          return problema(422, 'Dados inválidos', {
+            errors: [
+              {
+                campo: 'directorTurmaId',
+                mensagem: `${professor.nome} já é director de turma da ${outra.designacao}.`,
+              },
+            ],
+          })
+        }
+        turma.directorTurmaId = professor?.id ?? null
+        detalhes.push(`director de turma ${professor?.nome ?? '(nenhum)'}`)
+      }
+      turma.versao = (turma.versao ?? 1) + 1
+      auditar(
+        utilizadorDo(request)!.nome,
+        'ALTERAR',
+        'Turma',
+        `${turma.designacao}: ${detalhes.join(', ')}`,
+      )
+      return HttpResponse.json(paraTurmaDto(turma), { headers: { ETag: etag(turma.versao) } })
     }),
   ),
 

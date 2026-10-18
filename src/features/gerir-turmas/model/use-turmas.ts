@@ -37,6 +37,7 @@ export function useCriarTurma(anoLectivoId: string) {
           lotacaoMaxima: nova.lotacaoMaxima,
           inscritos: 0,
           estado: 'ACTIVA',
+          directorTurma: null,
         }),
         aGuardar: true,
       }

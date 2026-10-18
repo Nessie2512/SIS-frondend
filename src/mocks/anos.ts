@@ -251,6 +251,9 @@ export const handlersAnos = [
           id: `${ano.id}${t.id.slice(origem.id.length)}`,
           anoLectivoId: ano.id,
           estado: 'ACTIVA' as const,
+          // O director de turma escolhe-se de novo em cada ano
+          versao: 1,
+          directorTurmaId: null,
         }))
       db.turmas.push(...copiadas)
       const n = copiadas.length

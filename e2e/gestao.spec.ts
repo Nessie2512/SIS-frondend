@@ -63,3 +63,20 @@ test('ciclos e classes: em uso só se inactiva, com a explicação', async ({ pa
   await expect(ciclo.getByRole('button', { name: 'Eliminar 10.ª classe' })).toHaveCount(0)
   await semViolacoes(page)
 })
+
+test('turma: sala e director de turma editados no sítio, no painel', async ({ page }) => {
+  await entrar(page, undefined, '/turmas?turma=ano-2026-c7-A')
+  const painel = page.getByRole('dialog', { name: '7.ª A' })
+  await painel.getByRole('button', { name: /^Editar Sala:/ }).click()
+  await painel.getByLabel('Sala').fill('Laboratório 2')
+  await painel.getByLabel('Sala').press('Enter')
+  await expect(painel.getByRole('button', { name: 'Editar Sala: Laboratório 2' })).toBeVisible()
+  await painel.getByRole('button', { name: 'Editar Director de turma: Acrescentar' }).click()
+  await expect(page.getByRole('option').nth(1)).toBeVisible()
+  await semViolacoes(page)
+  await page.getByRole('option').nth(1).click()
+  await expect(
+    painel.getByRole('button', { name: /^Editar Director de turma: (?!Acrescentar)/ }),
+  ).toBeVisible()
+  await semViolacoes(page)
+})

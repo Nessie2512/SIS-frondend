@@ -626,6 +626,10 @@ msgstr "A sua conta não tem permissão para matricular estudantes."
 msgid "A turma ainda tem estudantes. Mova-os para outra turma antes de a encerrar."
 msgstr "A turma ainda tem estudantes. Mova-os para outra turma antes de a encerrar."
 
+#: src/routes/_app/turmas/index.tsx
+msgid "A turma está encerrada."
+msgstr "A turma está encerrada."
+
 #: src/features/gerir-turmas/ui/encerrar-turma.tsx
 msgid "A turma fica só de leitura e deixa de receber inscrições. Os docentes atribuídos terminam hoje."
 msgstr "A turma fica só de leitura e deixa de receber inscrições. Os docentes atribuídos terminam hoje."
@@ -869,6 +873,7 @@ msgstr "Algo correu mal do nosso lado. Tente de novo dentro de momentos."
 
 #: src/features/editar-estudante/model/use-editar-estudante.ts
 #: src/features/editar-plano/model/use-editar-plano.ts
+#: src/features/editar-turma/model/use-editar-turma.ts
 msgid "Alteração guardada."
 msgstr "Alteração guardada."
 
@@ -1050,6 +1055,10 @@ msgstr "Assinatura: ____________________________"
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Atalhos de teclado"
 msgstr "Atalhos de teclado"
+
+#: src/features/editar-turma/ui/dados-turma.tsx
+msgid "Até 20 caracteres."
+msgstr "Até 20 caracteres."
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Atestado médico"
@@ -1498,6 +1507,10 @@ msgstr "Critério de distribuição"
 msgid "Currículo"
 msgstr "Currículo"
 
+#: src/features/editar-turma/ui/dados-turma.tsx
+msgid "Dados da turma"
+msgstr "Dados da turma"
+
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Dados de {quem} guardados."
 msgstr "Dados de {quem} guardados."
@@ -1721,6 +1734,10 @@ msgstr "Dia"
 #: src/features/atribuir-docente/model/esquema.ts
 msgid "Diga porque muda de docente (pelo menos 5 caracteres)."
 msgstr "Diga porque muda de docente (pelo menos 5 caracteres)."
+
+#: src/features/editar-turma/ui/dados-turma.tsx
+msgid "Director de turma"
+msgstr "Director de turma"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
@@ -2109,6 +2126,7 @@ msgid "Enche a primeira turma, depois a seguinte."
 msgstr "Enche a primeira turma, depois a seguinte."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
 msgstr "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
 
@@ -2695,6 +2713,7 @@ msgid "Guardar"
 msgstr "Guardar"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Guardar o meu"
 msgstr "Guardar o meu"
 
@@ -3045,6 +3064,7 @@ msgid "Manhã"
 msgstr "Manhã"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Manter o actual"
 msgstr "Manter o actual"
 
@@ -3564,6 +3584,7 @@ msgstr "O ano lectivo está encerrado. Os resultados ficam só para consulta."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/marcar-documento/ui/lista-documentos.tsx
+#: src/routes/_app/turmas/index.tsx
 msgid "O ano lectivo está encerrado. Só é possível consultar."
 msgstr "O ano lectivo está encerrado. Só é possível consultar."
 
@@ -3650,6 +3671,7 @@ msgid "O seu perfil não permite importar estudantes."
 msgstr "O seu perfil não permite importar estudantes."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/editar-turma/ui/dados-turma.tsx
 msgid "O seu valor"
 msgstr "O seu valor"
 
@@ -3758,6 +3780,7 @@ msgid "Outra"
 msgstr "Outra"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Outra pessoa alterou este dado"
 msgstr "Outra pessoa alterou este dado"
 
@@ -4438,6 +4461,7 @@ msgstr "Sai da turma {designacao}, que fica com {ficam} de {lotacao}."
 msgid "Sair sem guardar"
 msgstr "Sair sem guardar"
 
+#: src/features/editar-turma/ui/dados-turma.tsx
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/routes/_app/turmas/index.tsx
 msgid "Sala"
@@ -4507,6 +4531,10 @@ msgstr "Sem atribuições neste ano lectivo."
 #: src/routes/_app/calendario.tsx
 msgid "Sem datas marcadas."
 msgstr "Sem datas marcadas."
+
+#: src/features/editar-turma/ui/dados-turma.tsx
+msgid "Sem director de turma"
+msgstr "Sem director de turma"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Sem docente"
@@ -4935,6 +4963,7 @@ msgid "Válido"
 msgstr "Válido"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Valor actual"
 msgstr "Valor actual"
 
