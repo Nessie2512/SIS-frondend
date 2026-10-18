@@ -116,6 +116,8 @@ export function Selector(props: Props) {
       </Popover.Trigger>
       <Popover.Portal>
         <Popover.Content
+          // O Radix dá-lhe o papel de diálogo: precisa de nome (axe aria-dialog-name)
+          aria-label={props['aria-label'] ?? t`Opções`}
           align="start"
           sideOffset={4}
           className="z-50 w-(--radix-popover-trigger-width) min-w-56 overflow-hidden rounded-cartao bg-superficie shadow-flutuante ring-1 ring-linha data-[state=open]:animate-desvanecer-entrar"

@@ -3760,6 +3760,10 @@ msgstr "Opcional. Igual para todos."
 msgid "Opcional. Sem turma, fica no quadro para distribuir."
 msgstr "Opcional. Sem turma, fica no quadro para distribuir."
 
+#: src/shared/ui/selector.tsx
+msgid "Opções"
+msgstr "Opções"
+
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Os documentos já estão numerados; o PDF é gerado em segundo plano. Pode fechar e descarregar no quadro de tarefas."
 msgstr "Os documentos já estão numerados; o PDF é gerado em segundo plano. Pode fechar e descarregar no quadro de tarefas."

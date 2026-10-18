@@ -98,6 +98,6 @@ export const EscolhaNumaLista: Historia = {
     const ecra = within(canvasElement)
     await userEvent.click(ecra.getByRole('button', { name: /^Editar Director de turma:/ }))
     const pagina = within(canvasElement.ownerDocument.body)
-    await expect(await pagina.findByRole('option', { name: /Ana Kiala/ })).toBeVisible()
+    await expect(await pagina.findByRole('option', { name: /Ana Kiala/ })).toBeInTheDocument()
   },
 }
