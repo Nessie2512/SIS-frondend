@@ -68,6 +68,10 @@ msgstr "{designacao} (faltam {falta})"
 msgid "{designacao} eliminada."
 msgstr "{designacao} eliminada."
 
+#: src/routes/_app/estudantes/importar.tsx
+msgid "{designacao} está encerrado: não aceita novas matrículas."
+msgstr "{designacao} está encerrado: não aceita novas matrículas."
+
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "{designacao} inactivada: deixa de ser oferecida em matrículas e turmas novas."
 msgstr "{designacao} inactivada: deixa de ser oferecida em matrículas e turmas novas."
@@ -274,6 +278,10 @@ msgstr "{porGuardar} por guardar"
 msgid "{progresso}% · pode continuar a trabalhar"
 msgstr "{progresso}% · pode continuar a trabalhar"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{prontas, plural, one {Importar # estudante} other {Importar # estudantes}}"
+msgstr "{prontas, plural, one {Importar # estudante} other {Importar # estudantes}}"
+
 #: src/shared/ui/selector.tsx
 msgid "{quantos} seleccionados"
 msgstr "{quantos} seleccionados"
@@ -343,6 +351,10 @@ msgstr "{total} estudantes"
 msgid "{total} h"
 msgstr "{total} h"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "{total} linhas: {prontas} prontas a importar, {linhasComErro} com erros."
+msgstr "{total} linhas: {prontas} prontas a importar, {linhasComErro} com erros."
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "{total} matrículas"
 msgstr "{total} matrículas"
@@ -387,9 +399,21 @@ msgstr "1 matrícula fica confirmada."
 msgid "1 turma"
 msgstr "1 turma"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "1. Preparar o ficheiro"
+msgstr "1. Preparar o ficheiro"
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "2 a 5 letras, usada nos horários e pautas."
 msgstr "2 a 5 letras, usada nos horários e pautas."
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "2. Escolher e rever"
+msgstr "2. Escolher e rever"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "3. Confirmar"
+msgstr "3. Confirmar"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "A {nomeDestino} está cheia. Uma excepção fica registada com a justificação."
@@ -398,6 +422,10 @@ msgstr "A {nomeDestino} está cheia. Uma excepção fica registada com a justifi
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra turma."
 msgstr "A {nomeTurma} já está cheia ({inscritos} de {maximo}). Escolha outra turma."
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "a analisar…"
+msgstr "a analisar…"
 
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "A arrastar {nome}. Use as setas e Espaço para largar."
@@ -496,6 +524,14 @@ msgstr "A guardar"
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "A guardar…"
 msgstr "A guardar…"
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "A idade tem de estar entre 4 e 30 anos."
+msgstr "A idade tem de estar entre 4 e 30 anos."
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "A importação falhou. Nenhum estudante foi criado."
+msgstr "A importação falhou. Nenhum estudante foi criado."
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "A inscrever {n} estudantes. Acompanhe no quadro de tarefas."
@@ -751,6 +787,7 @@ msgid "Ainda não há ano seguinte para onde renovar."
 msgstr "Ainda não há ano seguinte para onde renovar."
 
 #: src/routes/_app/calendario.tsx
+#: src/routes/_app/estudantes/importar.tsx
 #: src/routes/_app/index.tsx
 #: src/routes/_app/relatorios.tsx
 #: src/routes/_app/turmas/index.tsx
@@ -1026,6 +1063,10 @@ msgstr "Auditoria"
 msgid "Ausência temporária. Mantém as atribuições, mas não recebe novas."
 msgstr "Ausência temporária. Mantém as atribuições, mas não recebe novas."
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Avisos por linha"
+msgstr "Avisos por linha"
+
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Avó"
 msgstr "Avó"
@@ -1037,6 +1078,10 @@ msgstr "Avô"
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Bilhete de identidade"
 msgstr "Bilhete de identidade"
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Bilhete inválido (ex.: 004512345LA041)."
+msgstr "Bilhete inválido (ex.: 004512345LA041)."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Bloqueada"
@@ -1160,6 +1205,7 @@ msgstr "classe"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/gerir-turmas/ui/nova-turma.tsx
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/matricular-existente/ui/matricular-existente.tsx
@@ -1171,6 +1217,10 @@ msgstr "classe"
 #: src/routes/_app/turmas/quadro.tsx
 msgid "Classe"
 msgstr "Classe"
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Classe desconhecida: «{valor}»."
+msgstr "Classe desconhecida: «{valor}»."
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
@@ -1200,6 +1250,14 @@ msgstr "Código copiado."
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Código de verificação"
 msgstr "Código de verificação"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Coluna"
+msgstr "Coluna"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Colunas:"
+msgstr "Colunas:"
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "Com documentos obrigatórios em falta"
@@ -1329,6 +1387,10 @@ msgstr "Copiar o código de verificação"
 msgid "Copiar o número"
 msgstr "Copiar o número"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Corre em segundo plano: pode sair deste ecrã e acompanhar no quadro de tarefas."
+msgstr "Corre em segundo plano: pode sair deste ecrã e acompanhar no quadro de tarefas."
+
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Corrigir"
 msgstr "Corrigir"
@@ -1438,6 +1500,10 @@ msgstr "Data da saída"
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Data de nascimento"
 msgstr "Data de nascimento"
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Data inválida: use DD/MM/AAAA."
+msgstr "Data inválida: use DD/MM/AAAA."
 
 #: src/shared/ui/selector-data.tsx
 msgid "Data inválida. Use o formato dd/mm/aaaa."
@@ -1559,9 +1625,17 @@ msgstr "Descarregar"
 msgid "Descarregar {titulo} {numero}"
 msgstr "Descarregar {titulo} {numero}"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Descarregar modelo"
+msgstr "Descarregar modelo"
+
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Descarregar PDF"
 msgstr "Descarregar PDF"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Descarregar relatório"
+msgstr "Descarregar relatório"
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Descarregar: {titulo}"
@@ -1898,6 +1972,10 @@ msgstr "Emitir guia"
 msgid "encarregado"
 msgstr "encarregado"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Encarregado"
+msgstr "Encarregado"
+
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Encarregado {numero}"
 msgstr "Encarregado {numero}"
@@ -2027,6 +2105,10 @@ msgstr "Equilibrar ocupação"
 msgid "Equilibrar sexo"
 msgstr "Equilibrar sexo"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Erros por linha"
+msgstr "Erros por linha"
+
 #: src/features/transferir-estudante/ui/transferir-estudante.tsx
 msgid "Escola de destino"
 msgstr "Escola de destino"
@@ -2092,6 +2174,10 @@ msgstr "Escolher"
 #: src/entities/ano-lectivo/ui/selector-ano.tsx
 msgid "Escolher ano lectivo"
 msgstr "Escolher ano lectivo"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Escolher outro ficheiro"
+msgstr "Escolher outro ficheiro"
 
 #: src/shared/ui/selector-data.tsx
 msgid "Escolher período"
@@ -2260,6 +2346,7 @@ msgstr "estudantes"
 
 #: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/routes/_app/estudantes/importar.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/-casca/menu-lateral.tsx
 #: src/routes/-casca/paleta-comandos.tsx
@@ -2378,6 +2465,22 @@ msgstr "Falhou"
 msgid "Falta 1 documento obrigatório."
 msgstr "Falta 1 documento obrigatório."
 
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Falta a classe."
+msgstr "Falta a classe."
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Falta a data de nascimento."
+msgstr "Falta a data de nascimento."
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Falta o nome do encarregado."
+msgstr "Falta o nome do encarregado."
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Falta o nome."
+msgstr "Falta o nome."
+
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 msgid "Faltam {emFalta} documentos obrigatórios."
 msgstr "Faltam {emFalta} documentos obrigatórios."
@@ -2393,6 +2496,10 @@ msgstr "Faltam {emFalta} documentos obrigatórios. Pode marcá-los na ficha quan
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Faltam {n}."
 msgstr "Faltam {n}."
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Faltam colunas no cabeçalho: {colunas}. Use o modelo."
+msgstr "Faltam colunas no cabeçalho: {colunas}. Use o modelo."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Faltam documentos obrigatórios. Marque-os como entregues antes de confirmar."
@@ -2471,6 +2578,14 @@ msgstr "Ficha do estudante"
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Ficha do professor"
 msgstr "Ficha do professor"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Ficheiro analisado: {prontasLidas} linhas prontas, {errosLidos} com erros."
+msgstr "Ficheiro analisado: {prontasLidas} linhas prontas, {errosLidos} com erros."
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Ficheiro CSV"
+msgstr "Ficheiro CSV"
 
 #: src/shared/ui/etiquetas-filtro.tsx
 msgid "Filtros aplicados"
@@ -2574,6 +2689,34 @@ msgstr "Igual ao primeiro num evento de um só dia."
 msgid "Igual ao sistema"
 msgstr "Igual ao sistema"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Importação concluída"
+msgstr "Importação concluída"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Importação em curso"
+msgstr "Importação em curso"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Importação iniciada. Pode continuar a trabalhar."
+msgstr "Importação iniciada. Pode continuar a trabalhar."
+
+#: src/routes/_app/estudantes/index.tsx
+msgid "Importar"
+msgstr "Importar"
+
+#: src/routes/_app/estudantes/importar.tsx
+msgid "Importar estudantes"
+msgstr "Importar estudantes"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Importar outro ficheiro"
+msgstr "Importar outro ficheiro"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Importar só as {prontas} linhas sem erros. As {linhasComErro} com erros ficam de fora; corrija-as e importe-as depois."
+msgstr "Importar só as {prontas} linhas sem erros. As {linhasComErro} com erros ficam de fora; corrija-as e importe-as depois."
+
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "Imprimir"
 msgstr "Imprimir"
@@ -2637,6 +2780,10 @@ msgstr "Indique o parentesco."
 #: src/features/gerir-eventos/model/esquema.ts
 msgid "Indique o último dia."
 msgstr "Indique o último dia."
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Indique pelo menos nome e apelido."
+msgstr "Indique pelo menos nome e apelido."
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Indique pelo menos um encarregado."
@@ -2778,9 +2925,25 @@ msgstr "Limpar filtros"
 msgid "Limpar selecção"
 msgstr "Limpar selecção"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Linha"
+msgstr "Linha"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Linha {linha}"
+msgstr "Linha {linha}"
+
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "Linha {linha}: {mensagem}"
 msgstr "Linha {linha}: {mensagem}"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Linhas prontas"
+msgstr "Linhas prontas"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Linhas prontas (primeiras {mostradas} de {prontas})"
+msgstr "Linhas prontas (primeiras {mostradas} de {prontas})"
 
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "Lista nominal — {designacao}"
@@ -2933,6 +3096,10 @@ msgstr "Matrículas a renovar"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Matrículas confirmadas sem turma"
 msgstr "Matrículas confirmadas sem turma"
+
+#: src/routes/_app/estudantes/importar.tsx
+msgid "Matrículas em {designacao}"
+msgstr "Matrículas em {designacao}"
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Matrículas novas e transferências"
@@ -3104,6 +3271,7 @@ msgstr "Não tem permissão para esta acção."
 msgid "Não tem permissão para renovar matrículas."
 msgstr "Não tem permissão para renovar matrículas."
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nascimento"
@@ -3159,6 +3327,10 @@ msgstr "Nenhum utilizador corresponde à pesquisa."
 msgid "Nenhuma das matrículas escolhidas pode ser confirmada agora."
 msgstr "Nenhuma das matrículas escolhidas pode ser confirmada agora."
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Nenhuma linha está pronta. Corrija o ficheiro e escolha-o de novo."
+msgstr "Nenhuma linha está pronta. Corrija o ficheiro e escolha-o de novo."
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "Nenhuma matrícula com estes filtros."
 msgstr "Nenhuma matrícula com estes filtros."
@@ -3190,6 +3362,7 @@ msgstr "Noite"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/gerir-eventos/ui/folha-dia.tsx
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
 #: src/routes/_app/estudantes/index.tsx
@@ -3352,6 +3525,14 @@ msgstr "O estudante precisa de pelo menos um encarregado."
 msgid "O evento tem de terminar dentro do ano lectivo."
 msgstr "O evento tem de terminar dentro do ano lectivo."
 
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "O ficheiro está vazio."
+msgstr "O ficheiro está vazio."
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "O ficheiro só tem o cabeçalho."
+msgstr "O ficheiro só tem o cabeçalho."
+
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "O motivo fica no percurso do estudante."
 msgstr "O motivo fica no percurso do estudante."
@@ -3387,6 +3568,10 @@ msgstr "O registo original fica no percurso, marcado como rectificado. A rectifi
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "O resultado entra no percurso de cada estudante."
 msgstr "O resultado entra no percurso de cada estudante."
+
+#: src/routes/_app/estudantes/importar.tsx
+msgid "O seu perfil não permite importar estudantes."
+msgstr "O seu perfil não permite importar estudantes."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 msgid "O seu valor"
@@ -3719,6 +3904,10 @@ msgstr "principal"
 msgid "Principal"
 msgstr "Principal"
 
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Problema"
+msgstr "Problema"
+
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 #: src/routes/_app/matriculas/index.tsx
@@ -3784,6 +3973,10 @@ msgstr "professores"
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Professores"
 msgstr "Professores"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Progresso da importação"
+msgstr "Progresso da importação"
 
 #: src/entities/relatorio/api/queries.ts
 msgid "Pronto"
@@ -4021,6 +4214,10 @@ msgstr "Renovar em lote"
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Repete"
 msgstr "Repete"
+
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Repete a linha {valor} (mesmo nome e data de nascimento)."
+msgstr "Repete a linha {valor} (mesmo nome e data de nascimento)."
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Repetem"
@@ -4401,6 +4598,10 @@ msgstr "Tarefas em segundo plano"
 msgid "Telefone"
 msgstr "Telefone"
 
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Telefone inválido: 9 algarismos, a começar por 9."
+msgstr "Telefone inválido: 9 algarismos, a começar por 9."
+
 #: src/routes/_app/definicoes/index.tsx
 msgid "Tema"
 msgstr "Tema"
@@ -4607,6 +4808,14 @@ msgstr "Usar tema claro"
 msgid "Usar tema escuro"
 msgstr "Usar tema escuro"
 
+#: src/features/importar-estudantes/ui/mensagens.ts
+msgid "Use M ou F."
+msgstr "Use M ou F."
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Use o modelo: uma linha por estudante, separada por ponto e vírgula. Cada estudante fica com matrícula pendente em {designacaoAno}, sem turma, e os documentos em falta."
+msgstr "Use o modelo: uma linha por estudante, separada por ponto e vírgula. Cada estudante fica com matrícula pendente em {designacaoAno}, sem turma, e os documentos em falta."
+
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Utilização"
 msgstr "Utilização"
@@ -4644,6 +4853,10 @@ msgstr "Ver a rectificação"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Ver matrículas"
 msgstr "Ver matrículas"
+
+#: src/features/importar-estudantes/ui/importar-estudantes.tsx
+msgid "Ver matrículas pendentes"
+msgstr "Ver matrículas pendentes"
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Ver os resultados em falta por turma"

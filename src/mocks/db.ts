@@ -160,7 +160,7 @@ type Documento = S['DocumentoEstudanteDto'] & {
 }
 export interface Tarefa {
   id: string
-  tipo: S['TipoRelatorio'] | 'RENOVACAO' | 'DISTRIBUICAO'
+  tipo: S['TipoRelatorio'] | 'RENOVACAO' | 'DISTRIBUICAO' | 'IMPORTACAO' | 'DOCUMENTOS_LOTE'
   parametros: { anoLectivoId: string; turmaId?: string; classeId?: string }
   titulo: string
   utilizadorId: string | null

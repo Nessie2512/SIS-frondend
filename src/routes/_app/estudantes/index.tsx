@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Plus, Search, SlidersHorizontal } from 'lucide-react'
+import { FileUp, Plus, Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
@@ -248,12 +248,20 @@ function EcraEstudantes() {
           </p>
         </div>
         <Can permissao="matriculas:escrever">
-          <Button asChild variante="primario">
-            <Link to="/matriculas/nova" data-atalho="novo">
-              <Plus aria-hidden />
-              <Trans>Matricular estudante</Trans>
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild>
+              <Link to="/estudantes/importar">
+                <FileUp aria-hidden />
+                <Trans>Importar</Trans>
+              </Link>
+            </Button>
+            <Button asChild variante="primario">
+              <Link to="/matriculas/nova" data-atalho="novo">
+                <Plus aria-hidden />
+                <Trans>Matricular estudante</Trans>
+              </Link>
+            </Button>
+          </div>
         </Can>
       </div>
 

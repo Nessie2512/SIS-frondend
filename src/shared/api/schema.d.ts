@@ -496,6 +496,16 @@ export interface paths {
     }>
   }
 
+  // Importação de estudantes (guia 2.1, 5.7: o cliente valida, o servidor cria numa tarefa)
+  '/importacoes/estudantes': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['ImportarEstudantesDto']
+      ok: S['TarefaDto']
+      erros: 403 | 409 | 422
+    }>
+  }
+
   // Docentes da turma (guia 2.3: atribuir e substituir)
   '/turmas/{id}/docentes': {
     get: Op<{ path: { id: string }; ok: S['DocenteTurmaDto'][]; erros: 404 }>
@@ -1082,6 +1092,23 @@ export interface components {
     }
     ConteudoDocumentoDto: { titulo: string; paragrafos: string[] }
     AnularDocumentoDto: { motivo: string }
+
+    // Importação de estudantes
+    LinhaImportacaoDto: {
+      /** Linha no ficheiro original, para os avisos apontarem para ela */
+      linha: number
+      nome: string
+      sexo: 'M' | 'F'
+      /** Formato: date */
+      dataNascimento: string
+      documentoIdentificacao: string | null
+      classeId: string
+      encarregado: { nome: string; parentesco: string; telefone: string }
+    }
+    ImportarEstudantesDto: {
+      anoLectivoId: string
+      linhas: components['schemas']['LinhaImportacaoDto'][]
+    }
 
     // Distribuição automática
     /** Equilibrar a ocupação, encher por ordem alfabética das turmas, ou equilibrar rapazes e raparigas */
