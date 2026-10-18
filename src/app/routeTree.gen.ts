@@ -15,6 +15,7 @@ import { Route as AppIndexRouteImport } from './../routes/_app/index'
 import { Route as AppCalendarioRouteImport } from './../routes/_app/calendario'
 import { Route as AppCurriculoRouteImport } from './../routes/_app/curriculo'
 import { Route as AppDefinicoesRouteImport } from './../routes/_app/definicoes'
+import { Route as AppDocumentosRouteImport } from './../routes/_app/documentos'
 import { Route as AppRelatoriosRouteImport } from './../routes/_app/relatorios'
 import { Route as AppAnosLectivosIndexRouteImport } from './../routes/_app/anos-lectivos/index'
 import { Route as AppAnosLectivosAnoIdRouteImport } from './../routes/_app/anos-lectivos/$anoId'
@@ -65,6 +66,11 @@ const AppCurriculoRoute = AppCurriculoRouteImport.update({
 const AppDefinicoesRoute = AppDefinicoesRouteImport.update({
   id: '/definicoes',
   path: '/definicoes',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppDocumentosRoute = AppDocumentosRouteImport.update({
+  id: '/documentos',
+  path: '/documentos',
   getParentRoute: () => AppRoute,
 } as any)
 const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof AppCalendarioRoute
   '/curriculo': typeof AppCurriculoRouteWithChildren
   '/definicoes': typeof AppDefinicoesRouteWithChildren
+  '/documentos': typeof AppDocumentosRoute
   '/relatorios': typeof AppRelatoriosRoute
   '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
   '/curriculo/classes': typeof AppCurriculoClassesRoute
@@ -215,6 +222,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/calendario': typeof AppCalendarioRoute
+  '/documentos': typeof AppDocumentosRoute
   '/relatorios': typeof AppRelatoriosRoute
   '/': typeof AppIndexRoute
   '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/_app/calendario': typeof AppCalendarioRoute
   '/_app/curriculo': typeof AppCurriculoRouteWithChildren
   '/_app/definicoes': typeof AppDefinicoesRouteWithChildren
+  '/_app/documentos': typeof AppDocumentosRoute
   '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/': typeof AppIndexRoute
   '/_app/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
@@ -278,6 +287,7 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/curriculo'
     | '/definicoes'
+    | '/documentos'
     | '/relatorios'
     | '/anos-lectivos/$anoId'
     | '/curriculo/classes'
@@ -304,6 +314,7 @@ export interface FileRouteTypes {
   to:
     | '/entrar'
     | '/calendario'
+    | '/documentos'
     | '/relatorios'
     | '/'
     | '/anos-lectivos/$anoId'
@@ -334,6 +345,7 @@ export interface FileRouteTypes {
     | '/_app/calendario'
     | '/_app/curriculo'
     | '/_app/definicoes'
+    | '/_app/documentos'
     | '/_app/relatorios'
     | '/_app/'
     | '/_app/anos-lectivos/$anoId'
@@ -406,6 +418,13 @@ declare module '@tanstack/react-router' {
       path: '/definicoes'
       fullPath: '/definicoes'
       preLoaderRoute: typeof AppDefinicoesRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/documentos': {
+      id: '/_app/documentos'
+      path: '/documentos'
+      fullPath: '/documentos'
+      preLoaderRoute: typeof AppDocumentosRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/relatorios': {
@@ -603,6 +622,7 @@ interface AppRouteChildren {
   AppCalendarioRoute: typeof AppCalendarioRoute
   AppCurriculoRoute: typeof AppCurriculoRouteWithChildren
   AppDefinicoesRoute: typeof AppDefinicoesRouteWithChildren
+  AppDocumentosRoute: typeof AppDocumentosRoute
   AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAnosLectivosAnoIdRoute: typeof AppAnosLectivosAnoIdRoute
@@ -625,6 +645,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppCalendarioRoute: AppCalendarioRoute,
   AppCurriculoRoute: AppCurriculoRouteWithChildren,
   AppDefinicoesRoute: AppDefinicoesRouteWithChildren,
+  AppDocumentosRoute: AppDocumentosRoute,
   AppRelatoriosRoute: AppRelatoriosRoute,
   AppIndexRoute: AppIndexRoute,
   AppAnosLectivosAnoIdRoute: AppAnosLectivosAnoIdRoute,

@@ -330,6 +330,10 @@ msgstr "{titulo} falhou. Veja o relatório no quadro de tarefas."
 msgid "{titulo}: a gerar. Acompanhe no quadro de tarefas."
 msgstr "{titulo}: a gerar. Acompanhe no quadro de tarefas."
 
+#: src/routes/_app/documentos.tsx
+msgid "{total} documentos emitidos"
+msgstr "{total} documentos emitidos"
+
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "{total} estudantes"
@@ -410,6 +414,10 @@ msgstr "A carregar"
 #: src/routes/_app/professores/$professorId.tsx
 msgid "A carregar a ficha"
 msgstr "A carregar a ficha"
+
+#: src/routes/_app/documentos.tsx
+msgid "A carregar documentos"
+msgstr "A carregar documentos"
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "A carregar estudantes"
@@ -626,6 +634,7 @@ msgstr "Acção"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Acções"
 msgstr "Acções"
 
@@ -733,6 +742,7 @@ msgid "Ainda há pendências por resolver. Resolva-as antes de encerrar o ano."
 msgstr "Ainda há pendências por resolver. Resolva-as antes de encerrar o ano."
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Ainda não foram emitidos documentos oficiais."
 msgstr "Ainda não foram emitidos documentos oficiais."
 
@@ -866,6 +876,7 @@ msgstr "Anos lectivos"
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/routes/_app/definicoes/auditoria.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -883,15 +894,18 @@ msgstr "Anulada"
 
 #: src/entities/estudante/model/mapeadores.ts
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 msgid "Anulado"
 msgstr "Anulado"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Anular"
 msgstr "Anular"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Anular {titulo} {numero}"
 msgstr "Anular {titulo} {numero}"
 
@@ -1068,6 +1082,7 @@ msgstr "Cancelado."
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 #: src/features/editar-plano/ui/accoes-plano.tsx
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/features/emitir-documento/ui/emitir-global.tsx
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
@@ -1108,6 +1123,10 @@ msgstr "Catálogo"
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Certidão de nascimento"
 msgstr "Certidão de nascimento"
+
+#: src/routes/_app/documentos.tsx
+msgid "Certificado de habilitações"
+msgstr "Certificado de habilitações"
 
 #: src/entities/turma/ui/barra-ocupacao.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
@@ -1464,7 +1483,16 @@ msgstr "Dê um nome à vista."
 msgid "Declaração da escola anterior"
 msgstr "Declaração da escola anterior"
 
+#: src/routes/_app/documentos.tsx
+msgid "Declaração de frequência"
+msgstr "Declaração de frequência"
+
+#: src/routes/_app/documentos.tsx
+msgid "Declaração de matrícula"
+msgstr "Declaração de matrícula"
+
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Declarações, guias e certificados emitidos ficam aqui, com número e código de verificação."
 msgstr "Declarações, guias e certificados emitidos ficam aqui, com número e código de verificação."
 
@@ -1527,6 +1555,7 @@ msgid "Descarregar"
 msgstr "Descarregar"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Descarregar {titulo} {numero}"
 msgstr "Descarregar {titulo} {numero}"
 
@@ -1660,6 +1689,7 @@ msgstr "Docente"
 msgid "Docentes"
 msgstr "Docentes"
 
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento"
 msgstr "Documento"
@@ -1688,12 +1718,15 @@ msgstr "Documento emitido: {titulo}. Guarde o número e o código de verificaç�
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
+#: src/routes/-casca/menu-lateral.tsx
+#: src/routes/-casca/paleta-comandos.tsx
 msgid "Documentos"
 msgstr "Documentos"
 
@@ -1710,6 +1743,7 @@ msgid "Documentos em falta"
 msgstr "Documentos em falta"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Documentos emitidos"
 msgstr "Documentos emitidos"
 
@@ -1831,6 +1865,10 @@ msgstr "Email"
 msgid "Emitida em {emitida} por {autor}"
 msgstr "Emitida em {emitida} por {autor}"
 
+#: src/routes/_app/documentos.tsx
+msgid "Emitido"
+msgstr "Emitido"
+
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Emitido a {quando} por {quem}"
 msgstr "Emitido a {quando} por {quem}"
@@ -1844,6 +1882,7 @@ msgid "Emitir declaração"
 msgstr "Emitir declaração"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/features/emitir-documento/ui/emitir-global.tsx
 msgid "Emitir documento"
 msgstr "Emitir documento"
 
@@ -2139,6 +2178,7 @@ msgstr "Esta turma já está cheia. Escolha outra turma ou peça uma excepção.
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/matriculas/index.tsx
@@ -2200,13 +2240,19 @@ msgstr "Este professor não existe."
 msgid "estudante"
 msgstr "estudante"
 
+#: src/features/emitir-documento/ui/emitir-global.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 msgid "Estudante"
 msgstr "Estudante"
+
+#: src/routes/_app/documentos.tsx
+msgid "Estudante, processo, número ou código"
+msgstr "Estudante, processo, número ou código"
 
 #: src/shared/config/glossario.ts
 msgid "estudantes"
@@ -2223,6 +2269,10 @@ msgstr "Estudantes"
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "Estudantes da turma {designacao}"
 msgstr "Estudantes da turma {designacao}"
+
+#: src/features/emitir-documento/ui/emitir-global.tsx
+msgid "Estudantes encontrados"
+msgstr "Estudantes encontrados"
 
 #: src/routes/_app/index.tsx
 msgid "Estudantes sem turma"
@@ -2483,6 +2533,10 @@ msgstr "Guardar resultados"
 msgid "Guardar vista"
 msgstr "Guardar vista"
 
+#: src/routes/_app/documentos.tsx
+msgid "Guia de transferência"
+msgstr "Guia de transferência"
+
 #: src/shared/ui/aviso-ao-sair.tsx
 msgid "Há alterações por guardar"
 msgstr "Há alterações por guardar"
@@ -2713,6 +2767,7 @@ msgstr "Ligar ao estudante"
 msgid "Limpar"
 msgstr "Limpar"
 
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/shared/ui/etiquetas-filtro.tsx
@@ -3072,6 +3127,10 @@ msgstr "Navegar"
 msgid "Nenhum"
 msgstr "Nenhum"
 
+#: src/routes/_app/documentos.tsx
+msgid "Nenhum documento corresponde à pesquisa."
+msgstr "Nenhum documento corresponde à pesquisa."
+
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Nenhum encarregado registado."
 msgstr "Nenhum encarregado registado."
@@ -3079,6 +3138,10 @@ msgstr "Nenhum encarregado registado."
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nenhum estudante corresponde à pesquisa."
 msgstr "Nenhum estudante corresponde à pesquisa."
+
+#: src/features/emitir-documento/ui/emitir-global.tsx
+msgid "Nenhum estudante encontrado."
+msgstr "Nenhum estudante encontrado."
 
 #: src/routes/_app/professores/index.tsx
 msgid "Nenhum professor corresponde à pesquisa."
@@ -3157,6 +3220,10 @@ msgstr "Nome ou número de agente"
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nome ou número de processo"
 msgstr "Nome ou número de processo"
+
+#: src/features/emitir-documento/ui/emitir-global.tsx
+msgid "Nome ou número de processo."
+msgstr "Nome ou número de processo."
 
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "Nova classe"
@@ -3430,6 +3497,7 @@ msgid "Outra pessoa alterou este registo entretanto. Mostramos a versão actual.
 msgstr "Outra pessoa alterou este registo entretanto. Mostramos a versão actual."
 
 #: src/routes/_app/definicoes/auditoria.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -3438,6 +3506,7 @@ msgid "Página {pagina} de {totalPaginas}"
 msgstr "Página {pagina} de {totalPaginas}"
 
 #: src/routes/_app/definicoes/auditoria.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -3482,6 +3551,10 @@ msgstr "Para encerrar, todas as matrículas têm de estar resolvidas e com o res
 msgid "Para processos abertos por engano. As matrículas activas ficam anuladas e o estado passa a Anulado. Não pode ser desfeito."
 msgstr "Para processos abertos por engano. As matrículas activas ficam anuladas e o estado passa a Anulado. Não pode ser desfeito."
 
+#: src/features/emitir-documento/ui/emitir-global.tsx
+msgid "Para quem é o documento?"
+msgstr "Para quem é o documento?"
+
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Parentesco"
@@ -3498,6 +3571,10 @@ msgstr "Passo {numero} de 5: {nome}"
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Passos da matrícula"
 msgstr "Passos da matrícula"
+
+#: src/routes/_app/documentos.tsx
+msgid "PDF"
+msgstr "PDF"
 
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Pedagógica"
@@ -3543,6 +3620,7 @@ msgstr "Permissões do perfil {nome}"
 
 #: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Pesquisa"
@@ -3550,6 +3628,7 @@ msgstr "Pesquisa"
 
 #: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 #: src/shared/ui/selector.tsx
@@ -3664,6 +3743,11 @@ msgstr "Processo completo"
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "Processo de {nome} anulado."
 msgstr "Processo de {nome} anulado."
+
+#: src/features/emitir-documento/ui/emitir-global.tsx
+#: src/routes/_app/documentos.tsx
+msgid "Processo n.º {processo}"
+msgstr "Processo n.º {processo}"
 
 #: src/routes/_app/index.tsx
 msgid "Procurar estudante"
@@ -4093,6 +4177,7 @@ msgstr "Secretaria escolar"
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/routes/_app/definicoes/auditoria.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/matriculas/index.tsx
 #: src/routes/_app/professores/index.tsx
@@ -4341,6 +4426,7 @@ msgstr "Tio"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Tipo"
 msgstr "Tipo"
 
@@ -4373,6 +4459,7 @@ msgid "Todas as matrículas têm turma."
 msgstr "Todas as matrículas têm turma."
 
 #: src/routes/_app/definicoes/utilizadores.tsx
+#: src/routes/_app/documentos.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Todos"
@@ -4530,6 +4617,7 @@ msgid "Utilizadores"
 msgstr "Utilizadores"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/routes/_app/documentos.tsx
 msgid "Válido"
 msgstr "Válido"
 
@@ -4574,6 +4662,10 @@ msgstr "Verifique a ligação e tente de novo."
 #: src/routes/_app/professores/index.tsx
 msgid "Verifique o nome ou retire um filtro."
 msgstr "Verifique o nome ou retire um filtro."
+
+#: src/routes/_app/documentos.tsx
+msgid "Verifique o número ou retire um filtro."
+msgstr "Verifique o número ou retire um filtro."
 
 #: src/routes/_app/curriculo/index.tsx
 msgid "Versão {n} · {estado}"

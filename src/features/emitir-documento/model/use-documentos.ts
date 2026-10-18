@@ -21,8 +21,7 @@ export function useEmitirDocumento(estudanteId: string) {
       })
       return data!
     },
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: documentoOficialKeys.doEstudante(estudanteId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentoOficialKeys.todos }),
   })
 }
 
@@ -38,7 +37,6 @@ export function useAnularDocumento(estudanteId: string) {
       })
       return data!
     },
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: documentoOficialKeys.doEstudante(estudanteId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentoOficialKeys.todos }),
   })
 }

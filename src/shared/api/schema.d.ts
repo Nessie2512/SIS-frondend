@@ -460,6 +460,20 @@ export interface paths {
       erros: 403 | 404 | 422
     }>
   }
+  /** Todos os emitidos, de todos os estudantes (área Documentos, guia 2.5) */
+  '/documentos-oficiais': {
+    get: Op<{
+      query: {
+        pesquisa?: string
+        tipo?: S['TipoDocumentoOficial']
+        estado?: S['DocumentoOficialDto']['estado']
+        ordenar?: string
+        page?: number
+        pageSize?: number
+      }
+      ok: S['PaginaDocumentoOficialDto']
+    }>
+  }
   '/documentos-oficiais/{id}/anular': {
     post: Op<{
       path: { id: string }
@@ -1052,7 +1066,11 @@ export interface components {
       estado: 'VALIDO' | 'ANULADO'
       motivoAnulacao: string | null
       pdfUrl: string
+      estudanteId: string
+      estudanteNome: string
+      numeroProcesso: string
     }
+    PaginaDocumentoOficialDto: Pagina<components['schemas']['DocumentoOficialDto']>
     DocumentosOficiaisDto: {
       tipos: components['schemas']['TipoDisponivelDto'][]
       emitidos: components['schemas']['DocumentoOficialDto'][]

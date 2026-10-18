@@ -1,6 +1,6 @@
 import { http, HttpResponse } from 'msw'
 import { auditar } from './administracao'
-import { API, idempotente, problema, protegido, utilizadorDo, type S } from './apoio'
+import { API, idempotente, paginar, problema, protegido, utilizadorDo, type S } from './apoio'
 import { anosLectivos, classePorId, db, novoId, turmaPorId, type DocumentoOficial } from './db'
 
 /**
@@ -136,7 +136,11 @@ const codigoNovo = () =>
   ).join('')
 
 function paraDto(d: DocumentoOficial): S['DocumentoOficialDto'] {
+  const e = db.estudantes.find((x) => x.id === d.estudanteId)
   return {
+    estudanteId: d.estudanteId,
+    estudanteNome: e?.nome ?? '',
+    numeroProcesso: e?.numeroProcesso ?? '',
     id: d.id,
     tipo: d.tipo,
     titulo: TITULO[d.tipo],
@@ -202,6 +206,29 @@ function gerarPdf(linhas: string[]): Uint8Array {
 }
 
 export const handlersDocumentosOficiais = [
+  http.get(
+    `${API}/documentos-oficiais`,
+    protegido('estudantes:ler', ({ request }) => {
+      const url = new URL(request.url)
+      const q = url.searchParams.get('pesquisa')?.trim().toLowerCase()
+      const tipo = url.searchParams.get('tipo')
+      const estado = url.searchParams.get('estado')
+      const lista = db.documentosOficiais
+        .filter((d) => !tipo || d.tipo === tipo)
+        .filter((d) => !estado || d.estado === estado)
+        .map(paraDto)
+        .filter(
+          (d) =>
+            !q ||
+            [d.estudanteNome, d.numeroProcesso, d.numero, d.codigoVerificacao].some((v) =>
+              v.toLowerCase().includes(q),
+            ),
+        )
+        .sort((a, b) => b.emitidoEm.localeCompare(a.emitidoEm))
+      return HttpResponse.json(paginar(lista, url) satisfies S['PaginaDocumentoOficialDto'])
+    }),
+  ),
+
   http.get(
     `${API}/estudantes/:id/documentos-oficiais`,
     protegido('estudantes:ler', ({ params }) => {
