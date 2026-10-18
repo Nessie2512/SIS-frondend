@@ -54,6 +54,7 @@ export interface FiltrosProfessores {
   pesquisa?: string
   estado?: EstadoProfessor
   disciplinaId?: string
+  ordenar?: string
   page?: number
 }
 

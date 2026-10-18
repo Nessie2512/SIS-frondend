@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Link } from '@tanstack/react-router'
@@ -251,7 +252,13 @@ function MatriculaConcluida({
       </div>
       <EtiquetaEstado tom={matricula.estadoTom}>{matricula.estadoRotulo}</EtiquetaEstado>
       {emFalta > 0 && (
-        <Aviso tom="aviso">{t`Faltam ${emFalta} documentos obrigatórios. Pode marcá-los na ficha quando forem entregues.`}</Aviso>
+        <Aviso tom="aviso">
+          {plural(emFalta, {
+            one: 'Falta # documento obrigatório. Pode marcá-lo na ficha quando for entregue.',
+            other:
+              'Faltam # documentos obrigatórios. Pode marcá-los na ficha quando forem entregues.',
+          })}
+        </Aviso>
       )}
       <div className="flex gap-2">
         <Button asChild variante="primario">

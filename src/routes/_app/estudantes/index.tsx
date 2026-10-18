@@ -1,10 +1,13 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
-import { Plus, Search } from 'lucide-react'
+import { FileUp, Plus, Search, SlidersHorizontal } from 'lucide-react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
+import { EmitirEmLote } from '@/features/emitir-documento'
+import { ExportarSeleccao } from '@/features/exportar-estudantes'
 import { VistasGuardadas } from '@/features/guardar-vista'
 import {
   estudanteQuery,
@@ -15,14 +18,17 @@ import {
 } from '@/entities/estudante'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
+import { useCan } from '@/shared/lib/permissoes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
 import { formatarDataCivil } from '@/shared/lib/datas'
+import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import {
   Avatar,
   Button,
   Campo,
   colunasDe,
+  ControloSegmentado,
   Entrada,
   ErroDeRota,
   Esqueleto,
@@ -44,20 +50,39 @@ const pesquisaEstudantes = z.object({
   q: z.catch(z.optional(z.string()), undefined),
   classeId: z.catch(z.optional(z.string()), undefined),
   estado: z.catch(z.optional(z.enum(ESTADOS)), undefined),
+  // Filtros avançados (painel próprio, guia 7.1)
+  semTurma: z.catch(z.optional(z.boolean()), undefined),
+  documentosEmFalta: z.catch(z.optional(z.boolean()), undefined),
+  sexo: z.catch(z.optional(z.enum(['M', 'F'])), undefined),
+  ordem: z.catch(z.optional(z.string()), undefined),
   page: z.catch(z._default(z.int().check(z.minimum(1)), 1), 1),
   estudante: z.catch(z.optional(z.string()), undefined),
 })
+
+/** Colunas que ordenam no servidor e o campo da API correspondente */
+const CAMPOS_ORDEM: Record<string, string> = {
+  nome: 'nome',
+  numeroProcesso: 'numeroProcesso',
+  documentosEmFalta: 'documentosEmFalta',
+}
 
 export const Route = createFileRoute('/_app/estudantes/')({
   validateSearch: pesquisaEstudantes,
   // Sem loaderDeps: pesquisar ou filtrar não cria uma nova correspondência de rota nem esqueleto
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
-    const { q, estudante: _, ...resto } = pesquisaEstudantes.parse(location.search)
+    const { q, estudante: _, ordem, ...resto } = pesquisaEstudantes.parse(location.search)
     return esperarSoAoEntrar(
       cause,
       anoLectivoId
         ? Promise.all([
-            queryClient.ensureQueryData(estudantesQuery({ anoLectivoId, pesquisa: q, ...resto })),
+            queryClient.ensureQueryData(
+              estudantesQuery({
+                anoLectivoId,
+                pesquisa: q,
+                ordenar: ordemParaApi(ordem, CAMPOS_ORDEM),
+                ...resto,
+              }),
+            ),
             queryClient.ensureQueryData(classesQuery()),
           ])
         : null,
@@ -114,6 +139,7 @@ function useColunas(): ColunaTabela<EstudanteResumo>[] {
       }),
       c.accessor('estadoRotulo', {
         header: t`Estado`,
+        enableSorting: false,
         cell: (info) => <EtiquetaEstadoEstudante estudante={info.row.original} />,
       }),
     ]
@@ -123,8 +149,9 @@ function useColunas(): ColunaTabela<EstudanteResumo>[] {
 function EcraEstudantes() {
   const { t } = useLingui()
   const { anoLectivoId } = Route.useRouteContext()
-  const { estudante: aberto, q, ...filtros } = Route.useSearch()
+  const { estudante: aberto, q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const podeEmitir = useCan('documentos:emitir')
   const [texto, setTexto] = useState(q ?? '')
   // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
   // deixava temporizadores antigos por cancelar e o URL ficava com texto truncado
@@ -132,14 +159,27 @@ function EcraEstudantes() {
   useEffect(() => () => clearTimeout(espera.current), [])
   const { data: classes = [] } = useQuery(classesQuery())
   const { data, isPlaceholderData, isError, refetch } = useQuery({
-    ...estudantesQuery({ anoLectivoId: anoLectivoId ?? '', pesquisa: q, ...filtros }),
+    ...estudantesQuery({
+      anoLectivoId: anoLectivoId ?? '',
+      pesquisa: q,
+      ordenar: ordemParaApi(ordem, CAMPOS_ORDEM),
+      ...filtros,
+    }),
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
   const pagina = data?.page ?? filtros.page
   const totalPaginas = data?.totalPaginas ?? 1
   const total = data?.total ?? 0
-  const temFiltros = Boolean(q || filtros.classeId || filtros.estado)
+  const temFiltros = Boolean(
+    q ||
+    filtros.classeId ||
+    filtros.estado ||
+    filtros.semTurma ||
+    filtros.documentosEmFalta ||
+    filtros.sexo,
+  )
+  const [avancados, setAvancados] = useState(false)
 
   const opcoesEstado = [
     { valor: 'ACTIVO', rotulo: t`Activo` },
@@ -169,6 +209,13 @@ function EcraEstudantes() {
             valor: opcoesEstado.find((o) => o.valor === filtros.estado)?.rotulo ?? filtros.estado,
           },
         ]
+      : []),
+    ...(filtros.semTurma ? [{ chave: 'semTurma', nome: t`Turma`, valor: t`sem turma` }] : []),
+    ...(filtros.documentosEmFalta
+      ? [{ chave: 'documentosEmFalta', nome: t`Documentos`, valor: t`em falta` }]
+      : []),
+    ...(filtros.sexo
+      ? [{ chave: 'sexo', nome: t`Sexo`, valor: filtros.sexo === 'F' ? t`Feminino` : t`Masculino` }]
       : []),
   ]
 
@@ -202,16 +249,24 @@ function EcraEstudantes() {
             <Trans>Estudantes</Trans>
           </h1>
           <p className="tabular text-secundario text-texto-2" aria-live="polite">
-            {t`${total} estudantes`}
+            {plural(total, { one: '# estudante', other: '# estudantes' })}
           </p>
         </div>
         <Can permissao="matriculas:escrever">
-          <Button asChild variante="primario">
-            <Link to="/matriculas/nova" data-atalho="novo">
-              <Plus aria-hidden />
-              <Trans>Matricular estudante</Trans>
-            </Link>
-          </Button>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild>
+              <Link to="/estudantes/importar">
+                <FileUp aria-hidden />
+                <Trans>Importar</Trans>
+              </Link>
+            </Button>
+            <Button asChild variante="primario">
+              <Link to="/matriculas/nova" data-atalho="novo">
+                <Plus aria-hidden />
+                <Trans>Matricular estudante</Trans>
+              </Link>
+            </Button>
+          </div>
         </Can>
       </div>
 
@@ -265,6 +320,41 @@ function EcraEstudantes() {
         </Campo>
       </div>
 
+      <div className="-mt-3 flex">
+        <Button
+          tamanho="compacto"
+          variante="discreto"
+          aria-haspopup="dialog"
+          onClick={() => setAvancados(true)}
+        >
+          <SlidersHorizontal aria-hidden className="size-4 stroke-[1.5]" />
+          <Trans>Filtros avançados</Trans>
+        </Button>
+      </div>
+      {avancados && (
+        <FiltrosAvancados
+          aberta
+          aoFechar={() => setAvancados(false)}
+          valores={{
+            semTurma: filtros.semTurma ?? false,
+            documentosEmFalta: filtros.documentosEmFalta ?? false,
+            sexo: filtros.sexo,
+          }}
+          aoAplicar={(v) => {
+            setAvancados(false)
+            void navigate({
+              search: (s) => ({
+                ...s,
+                semTurma: v.semTurma || undefined,
+                documentosEmFalta: v.documentosEmFalta || undefined,
+                sexo: v.sexo,
+                page: 1,
+              }),
+            })
+          }}
+        />
+      )}
+
       <EtiquetasFiltro
         etiquetas={etiquetas}
         aoRemover={retirarFiltro}
@@ -296,7 +386,10 @@ function EcraEstudantes() {
       >
         <TabelaDados
           rotulo={t`Estudantes`}
-          semOrdenacao
+          ordenacao={ordenacaoDoUrl(ordem)}
+          aoMudarOrdenacao={(o) =>
+            void navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) })
+          }
           colunas={colunas}
           dados={data?.estudantes}
           idDaLinha={(e) => e.id}
@@ -305,6 +398,17 @@ function EcraEstudantes() {
           aoTentarDeNovo={() => void refetch()}
           idActiva={aberto}
           aoAbrir={(e) => void navigate({ search: (s) => ({ ...s, estudante: e.id }) })}
+          // Acções em lote (guia 6.3, 7.1): Espaço ou a caixa da linha; a barra flutua em baixo
+          seleccionavel
+          nomeDaLinha={(e) => e.nome}
+          accoesLote={(ids, limpar) => (
+            <>
+              <ExportarSeleccao ids={ids} />
+              {podeEmitir && anoLectivoId && (
+                <EmitirEmLote anoLectivoId={anoLectivoId} estudanteIds={ids} aoTerminar={limpar} />
+              )}
+            </>
+          )}
           vazio={
             temFiltros ? (
               <EstadoVazio
@@ -369,7 +473,7 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
   const { t } = useLingui()
   const { data: e } = useQuery({ ...estudanteQuery(id ?? ''), enabled: Boolean(id) })
   const processo = e?.numeroProcesso
-  const idade = e?.idade
+  const idade = e?.idade ?? 0
   const emFalta = e?.documentosEmFalta ?? 0
 
   return (
@@ -403,12 +507,20 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
             <dd>{e.matricula ?? '—'}</dd>
             <dt className="text-texto-2">{t`Nascimento`}</dt>
             <dd className="tabular">
-              {formatarDataCivil(e.dataNascimento)} · {t`${idade} anos`}
+              {formatarDataCivil(e.dataNascimento)} ·{' '}
+              {plural(idade, { one: '# ano', other: '# anos' })}
             </dd>
             <dt className="text-texto-2">{t`Telefone`}</dt>
             <dd className="tabular">{formatarTelefone(e.telefone) ?? '—'}</dd>
             <dt className="text-texto-2">{t`Documentos`}</dt>
-            <dd>{emFalta ? t`${emFalta} obrigatórios em falta` : t`Completos`}</dd>
+            <dd>
+              {emFalta
+                ? plural(emFalta, {
+                    one: '# obrigatório em falta',
+                    other: '# obrigatórios em falta',
+                  })
+                : t`Completos`}
+            </dd>
           </dl>
         </div>
       ) : (
@@ -430,5 +542,86 @@ function EstudantesEsqueleto() {
       <Esqueleto className="h-14 w-full" />
       <Esqueleto className="h-96 w-full" />
     </section>
+  )
+}
+
+interface ValoresAvancados {
+  semTurma: boolean
+  documentosEmFalta: boolean
+  sexo: 'M' | 'F' | undefined
+}
+
+/** Filtros avançados num painel próprio (guia 7.1); aplicam-se juntos e viram etiquetas. */
+function FiltrosAvancados({
+  aberta,
+  aoFechar,
+  valores,
+  aoAplicar,
+}: {
+  aberta: boolean
+  aoFechar: () => void
+  valores: ValoresAvancados
+  aoAplicar: (v: ValoresAvancados) => void
+}) {
+  const { t } = useLingui()
+  const [rascunho, setRascunho] = useState(valores)
+  return (
+    <Folha
+      aberta={aberta}
+      aoMudar={(v) => !v && aoFechar()}
+      titulo={t`Filtros avançados`}
+      rodape={
+        <>
+          <Button
+            onClick={() =>
+              setRascunho({ semTurma: false, documentosEmFalta: false, sexo: undefined })
+            }
+          >
+            <Trans>Limpar</Trans>
+          </Button>
+          <Button variante="primario" onClick={() => aoAplicar(rascunho)}>
+            <Trans>Aplicar</Trans>
+          </Button>
+        </>
+      }
+    >
+      <div className="flex flex-col gap-5">
+        <label className="flex cursor-pointer items-center gap-3">
+          <input
+            type="checkbox"
+            checked={rascunho.semTurma}
+            onChange={(e) => setRascunho((r) => ({ ...r, semTurma: e.target.checked }))}
+            className="size-4 accent-(--color-acento)"
+          />
+          <Trans>Matriculados sem turma</Trans>
+        </label>
+        <label className="flex cursor-pointer items-center gap-3">
+          <input
+            type="checkbox"
+            checked={rascunho.documentosEmFalta}
+            onChange={(e) => setRascunho((r) => ({ ...r, documentosEmFalta: e.target.checked }))}
+            className="size-4 accent-(--color-acento)"
+          />
+          <Trans>Com documentos obrigatórios em falta</Trans>
+        </label>
+        <div className="flex flex-col gap-1.5">
+          <span className="text-legenda text-texto-2">
+            <Trans>Sexo</Trans>
+          </span>
+          <ControloSegmentado
+            rotulo={t`Sexo`}
+            valor={rascunho.sexo ?? 'todos'}
+            aoMudar={(v) =>
+              setRascunho((r) => ({ ...r, sexo: v === 'todos' ? undefined : (v as 'M' | 'F') }))
+            }
+            opcoes={[
+              { valor: 'todos', rotulo: t`Todos` },
+              { valor: 'F', rotulo: t`Feminino` },
+              { valor: 'M', rotulo: t`Masculino` },
+            ]}
+          />
+        </div>
+      </div>
+    </Folha>
   )
 }

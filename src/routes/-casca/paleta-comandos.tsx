@@ -7,6 +7,7 @@ import {
   CalendarRange,
   ClipboardList,
   FileSpreadsheet,
+  FileText,
   Contrast,
   GraduationCap,
   Home,
@@ -191,6 +192,14 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
             aoEscolher={() => executar(() => void router.navigate({ to: '/anos-lectivos' }))}
           >
             <Trans>Anos lectivos</Trans>
+          </Item>
+          <Item
+            icone={<FileText />}
+            aoEscolher={() =>
+              executar(() => void router.navigate({ to: '/documentos', search: { page: 1 } }))
+            }
+          >
+            <Trans>Documentos</Trans>
           </Item>
           <Item
             icone={<FileSpreadsheet />}

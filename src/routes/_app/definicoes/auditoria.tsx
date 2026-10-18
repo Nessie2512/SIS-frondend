@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { i18n } from '@lingui/core'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
@@ -127,7 +128,7 @@ function EcraAuditoria() {
           <Trans>Auditoria</Trans>
         </h2>
         <p className="tabular text-secundario text-texto-2" aria-live="polite">
-          {t`${total} registos`}
+          {plural(total, { one: '# registo', other: '# registos' })}
         </p>
       </div>
 

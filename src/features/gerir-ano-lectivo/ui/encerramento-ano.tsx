@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
@@ -119,7 +120,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
           <span className={cn('text-secundario', resolvida ? 'text-texto-3' : 'text-texto-2')}>
             {resolvida
               ? t`Nenhuma. Está resolvido.`
-              : `${t`Faltam ${n}.`} ${AJUDA[pendencia.tipo]}`}
+              : `${plural(n, { one: 'Falta #.', other: 'Faltam #.' })} ${AJUDA[pendencia.tipo]}`}
           </span>
         </div>
         {!resolvida && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
@@ -154,10 +155,16 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
                 <Link
                   to="/turmas/$turmaId/resultados"
                   params={{ turmaId: turma.turmaId }}
-                  aria-label={t`Registar resultados da turma ${designacao}: faltam ${falta} de ${total}`}
-                  className="tabular text-acento hover:underline"
+                  aria-label={plural(falta, {
+                    one: `Registar resultados da turma ${designacao}: falta # de ${total}`,
+                    other: `Registar resultados da turma ${designacao}: faltam # de ${total}`,
+                  })}
+                  className="tabular inline-flex min-h-6 items-center text-acento hover:underline"
                 >
-                  {t`${designacao} (faltam ${falta})`}
+                  {plural(falta, {
+                    one: `${designacao} (falta #)`,
+                    other: `${designacao} (faltam #)`,
+                  })}
                 </Link>
               </li>
             )

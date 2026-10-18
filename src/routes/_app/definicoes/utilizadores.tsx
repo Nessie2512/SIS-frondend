@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
@@ -176,7 +177,7 @@ function EcraUtilizadores() {
           <Trans>Utilizadores</Trans>
         </h2>
         <p className="tabular text-secundario text-texto-2" aria-live="polite">
-          {t`${total} utilizadores`}
+          {plural(total, { one: '# utilizador', other: '# utilizadores' })}
         </p>
       </div>
 

@@ -19,6 +19,10 @@ export interface Turma {
   ocupacao: number
   turmaCheia: boolean
   encerrada: boolean
+  /** Director de turma (professor responsável) */
+  directorTurma: { professorId: string; nome: string } | null
+  /** Linha provisória enquanto o servidor cria a turma (semi-optimista) */
+  aGuardar?: boolean
 }
 
 export interface FiltrosTurma {
@@ -44,6 +48,8 @@ export interface Inscrito {
   nome: string
   numeroProcesso: string
   fotografiaUrl: string | null
+  /** Matrícula por confirmar: ainda não pode ser inscrita numa turma (guia 2.1) */
+  porConfirmar?: boolean
 }
 
 /** Disciplina do plano com o docente em vigor e o histórico de substituições (guia 2.3). */

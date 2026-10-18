@@ -80,7 +80,7 @@ export function Folha({
             <div className="flex-1">{children}</div>
           </div>
           {rodape && (
-            <footer className="flex justify-end gap-2 border-t border-linha px-6 py-4">
+            <footer className="flex flex-wrap justify-end gap-2 border-t border-linha px-6 py-4">
               {rodape}
             </footer>
           )}

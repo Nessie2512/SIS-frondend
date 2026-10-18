@@ -167,7 +167,7 @@ function LinhaDocumento({
   )
 }
 
-function FolhaEmitir({
+export function FolhaEmitir({
   estudanteId,
   nome,
   tipos,
@@ -456,7 +456,7 @@ function Emitido({ documento: d }: { documento: DocumentoOficial }) {
   )
 }
 
-function DialogoAnular({
+export function DialogoAnular({
   estudanteId,
   documento,
   aoFechar,

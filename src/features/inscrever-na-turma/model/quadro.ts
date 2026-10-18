@@ -53,6 +53,7 @@ export function quadroQuery(anoLectivoId: string, classeId: string) {
             nome: m.estudanteNome,
             numeroProcesso: m.numeroProcesso,
             fotografiaUrl: null,
+            porConfirmar: m.estado === 'PENDENTE',
           }))
           .sort(porNome),
       }

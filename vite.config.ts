@@ -33,7 +33,7 @@ export default defineConfig({
     }),
     react(),
     // Macros do Lingui e React Compiler na mesma passagem de Babel
-    babel({ presets: [linguiTransformerBabelPreset(), reactCompilerPreset()] }),
+    babel({ presets: [reactCompilerPreset(), linguiTransformerBabelPreset()] }),
     lingui(),
     tailwindcss(),
     // Casca da aplicação em cache e dados de referência para ligação fraca (guia 3.2, 5.8)

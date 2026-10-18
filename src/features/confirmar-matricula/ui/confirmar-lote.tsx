@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { CircleCheck } from 'lucide-react'
 import { useState } from 'react'
@@ -40,8 +41,11 @@ export function ConfirmarLote({ seleccionadas, aoTerminar }: Props) {
           const falhadas = recusadas.length
           const mensagem =
             falhadas === 0
-              ? t`${feitas} matrículas confirmadas.`
-              : t`${feitas} matrículas confirmadas; ${falhadas} ficaram por confirmar.`
+              ? plural(feitas, {
+                  one: '# matrícula confirmada.',
+                  other: '# matrículas confirmadas.',
+                })
+              : `${plural(feitas, { one: '# matrícula confirmada', other: '# matrículas confirmadas' })}; ${plural(falhadas, { one: '# ficou por confirmar.', other: '# ficaram por confirmar.' })}`
           notificar.sucesso(mensagem)
           anunciar.educado(mensagem)
           setAberta(false)
@@ -67,9 +71,10 @@ export function ConfirmarLote({ seleccionadas, aoTerminar }: Props) {
         descricao={
           n === 0
             ? t`Nenhuma das matrículas escolhidas pode ser confirmada agora.`
-            : n === 1
-              ? t`1 matrícula fica confirmada.`
-              : t`${n} matrículas ficam confirmadas.`
+            : plural(n, {
+                one: '# matrícula fica confirmada.',
+                other: '# matrículas ficam confirmadas.',
+              })
         }
         rodape={
           <>
@@ -78,7 +83,7 @@ export function ConfirmarLote({ seleccionadas, aoTerminar }: Props) {
             </Button>
             {n > 0 && (
               <Button variante="primario" aCarregar={lote.isPending} onClick={aplicar}>
-                {n === 1 ? t`Confirmar 1 matrícula` : t`Confirmar ${n} matrículas`}
+                {plural(n, { one: 'Confirmar # matrícula', other: 'Confirmar # matrículas' })}
               </Button>
             )}
           </>
@@ -106,9 +111,10 @@ export function ConfirmarLote({ seleccionadas, aoTerminar }: Props) {
           )}
           {jaConfirmadas > 0 && (
             <p className="text-texto-2">
-              {jaConfirmadas === 1
-                ? t`1 já estava confirmada e não muda.`
-                : t`${jaConfirmadas} já estavam confirmadas e não mudam.`}
+              {plural(jaConfirmadas, {
+                one: '# já estava confirmada e não muda.',
+                other: '# já estavam confirmadas e não mudam.',
+              })}
             </p>
           )}
         </div>

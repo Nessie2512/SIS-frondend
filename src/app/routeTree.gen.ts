@@ -15,10 +15,12 @@ import { Route as AppIndexRouteImport } from './../routes/_app/index'
 import { Route as AppCalendarioRouteImport } from './../routes/_app/calendario'
 import { Route as AppCurriculoRouteImport } from './../routes/_app/curriculo'
 import { Route as AppDefinicoesRouteImport } from './../routes/_app/definicoes'
+import { Route as AppDocumentosRouteImport } from './../routes/_app/documentos'
 import { Route as AppRelatoriosRouteImport } from './../routes/_app/relatorios'
 import { Route as AppAnosLectivosIndexRouteImport } from './../routes/_app/anos-lectivos/index'
 import { Route as AppAnosLectivosAnoIdRouteImport } from './../routes/_app/anos-lectivos/$anoId'
 import { Route as AppCurriculoIndexRouteImport } from './../routes/_app/curriculo/index'
+import { Route as AppCurriculoClassesRouteImport } from './../routes/_app/curriculo/classes'
 import { Route as AppCurriculoDisciplinasRouteImport } from './../routes/_app/curriculo/disciplinas'
 import { Route as AppDefinicoesIndexRouteImport } from './../routes/_app/definicoes/index'
 import { Route as AppDefinicoesAuditoriaRouteImport } from './../routes/_app/definicoes/auditoria'
@@ -26,6 +28,7 @@ import { Route as AppDefinicoesPerfisRouteImport } from './../routes/_app/defini
 import { Route as AppDefinicoesUtilizadoresRouteImport } from './../routes/_app/definicoes/utilizadores'
 import { Route as AppEstudantesIndexRouteImport } from './../routes/_app/estudantes/index'
 import { Route as AppEstudantesEstudanteIdRouteImport } from './../routes/_app/estudantes/$estudanteId'
+import { Route as AppEstudantesImportarRouteImport } from './../routes/_app/estudantes/importar'
 import { Route as AppMatriculasIndexRouteImport } from './../routes/_app/matriculas/index'
 import { Route as AppMatriculasNovaRouteImport } from './../routes/_app/matriculas/nova'
 import { Route as AppMatriculasRenovarRouteImport } from './../routes/_app/matriculas/renovar'
@@ -66,6 +69,11 @@ const AppDefinicoesRoute = AppDefinicoesRouteImport.update({
   path: '/definicoes',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDocumentosRoute = AppDocumentosRouteImport.update({
+  id: '/documentos',
+  path: '/documentos',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppRelatoriosRoute = AppRelatoriosRouteImport.update({
   id: '/relatorios',
   path: '/relatorios',
@@ -84,6 +92,11 @@ const AppAnosLectivosAnoIdRoute = AppAnosLectivosAnoIdRouteImport.update({
 const AppCurriculoIndexRoute = AppCurriculoIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AppCurriculoRoute,
+} as any)
+const AppCurriculoClassesRoute = AppCurriculoClassesRouteImport.update({
+  id: '/classes',
+  path: '/classes',
   getParentRoute: () => AppCurriculoRoute,
 } as any)
 const AppCurriculoDisciplinasRoute = AppCurriculoDisciplinasRouteImport.update({
@@ -123,6 +136,11 @@ const AppEstudantesEstudanteIdRoute =
     path: '/estudantes/$estudanteId',
     getParentRoute: () => AppRoute,
   } as any)
+const AppEstudantesImportarRoute = AppEstudantesImportarRouteImport.update({
+  id: '/estudantes/importar',
+  path: '/estudantes/importar',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppMatriculasIndexRoute = AppMatriculasIndexRouteImport.update({
   id: '/matriculas/',
   path: '/matriculas/',
@@ -183,13 +201,16 @@ export interface FileRoutesByFullPath {
   '/calendario': typeof AppCalendarioRoute
   '/curriculo': typeof AppCurriculoRouteWithChildren
   '/definicoes': typeof AppDefinicoesRouteWithChildren
+  '/documentos': typeof AppDocumentosRoute
   '/relatorios': typeof AppRelatoriosRoute
   '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/curriculo/classes': typeof AppCurriculoClassesRoute
   '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
   '/definicoes/perfis': typeof AppDefinicoesPerfisRoute
   '/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/estudantes/importar': typeof AppEstudantesImportarRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
   '/matriculas/renovar': typeof AppMatriculasRenovarRoute
   '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
@@ -208,14 +229,17 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/entrar': typeof EntrarRoute
   '/calendario': typeof AppCalendarioRoute
+  '/documentos': typeof AppDocumentosRoute
   '/relatorios': typeof AppRelatoriosRoute
   '/': typeof AppIndexRoute
   '/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/curriculo/classes': typeof AppCurriculoClassesRoute
   '/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
   '/definicoes/perfis': typeof AppDefinicoesPerfisRoute
   '/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/estudantes/importar': typeof AppEstudantesImportarRoute
   '/matriculas/nova': typeof AppMatriculasNovaRoute
   '/matriculas/renovar': typeof AppMatriculasRenovarRoute
   '/professores/$professorId': typeof AppProfessoresProfessorIdRoute
@@ -238,14 +262,17 @@ export interface FileRoutesById {
   '/_app/calendario': typeof AppCalendarioRoute
   '/_app/curriculo': typeof AppCurriculoRouteWithChildren
   '/_app/definicoes': typeof AppDefinicoesRouteWithChildren
+  '/_app/documentos': typeof AppDocumentosRoute
   '/_app/relatorios': typeof AppRelatoriosRoute
   '/_app/': typeof AppIndexRoute
   '/_app/anos-lectivos/$anoId': typeof AppAnosLectivosAnoIdRoute
+  '/_app/curriculo/classes': typeof AppCurriculoClassesRoute
   '/_app/curriculo/disciplinas': typeof AppCurriculoDisciplinasRoute
   '/_app/definicoes/auditoria': typeof AppDefinicoesAuditoriaRoute
   '/_app/definicoes/perfis': typeof AppDefinicoesPerfisRoute
   '/_app/definicoes/utilizadores': typeof AppDefinicoesUtilizadoresRoute
   '/_app/estudantes/$estudanteId': typeof AppEstudantesEstudanteIdRoute
+  '/_app/estudantes/importar': typeof AppEstudantesImportarRoute
   '/_app/matriculas/nova': typeof AppMatriculasNovaRoute
   '/_app/matriculas/renovar': typeof AppMatriculasRenovarRoute
   '/_app/professores/$professorId': typeof AppProfessoresProfessorIdRoute
@@ -269,13 +296,16 @@ export interface FileRouteTypes {
     | '/calendario'
     | '/curriculo'
     | '/definicoes'
+    | '/documentos'
     | '/relatorios'
     | '/anos-lectivos/$anoId'
+    | '/curriculo/classes'
     | '/curriculo/disciplinas'
     | '/definicoes/auditoria'
     | '/definicoes/perfis'
     | '/definicoes/utilizadores'
     | '/estudantes/$estudanteId'
+    | '/estudantes/importar'
     | '/matriculas/nova'
     | '/matriculas/renovar'
     | '/professores/$professorId'
@@ -294,14 +324,17 @@ export interface FileRouteTypes {
   to:
     | '/entrar'
     | '/calendario'
+    | '/documentos'
     | '/relatorios'
     | '/'
     | '/anos-lectivos/$anoId'
+    | '/curriculo/classes'
     | '/curriculo/disciplinas'
     | '/definicoes/auditoria'
     | '/definicoes/perfis'
     | '/definicoes/utilizadores'
     | '/estudantes/$estudanteId'
+    | '/estudantes/importar'
     | '/matriculas/nova'
     | '/matriculas/renovar'
     | '/professores/$professorId'
@@ -323,14 +356,17 @@ export interface FileRouteTypes {
     | '/_app/calendario'
     | '/_app/curriculo'
     | '/_app/definicoes'
+    | '/_app/documentos'
     | '/_app/relatorios'
     | '/_app/'
     | '/_app/anos-lectivos/$anoId'
+    | '/_app/curriculo/classes'
     | '/_app/curriculo/disciplinas'
     | '/_app/definicoes/auditoria'
     | '/_app/definicoes/perfis'
     | '/_app/definicoes/utilizadores'
     | '/_app/estudantes/$estudanteId'
+    | '/_app/estudantes/importar'
     | '/_app/matriculas/nova'
     | '/_app/matriculas/renovar'
     | '/_app/professores/$professorId'
@@ -396,6 +432,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDefinicoesRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/documentos': {
+      id: '/_app/documentos'
+      path: '/documentos'
+      fullPath: '/documentos'
+      preLoaderRoute: typeof AppDocumentosRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/relatorios': {
       id: '/_app/relatorios'
       path: '/relatorios'
@@ -422,6 +465,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/curriculo/'
       preLoaderRoute: typeof AppCurriculoIndexRouteImport
+      parentRoute: typeof AppCurriculoRoute
+    }
+    '/_app/curriculo/classes': {
+      id: '/_app/curriculo/classes'
+      path: '/classes'
+      fullPath: '/curriculo/classes'
+      preLoaderRoute: typeof AppCurriculoClassesRouteImport
       parentRoute: typeof AppCurriculoRoute
     }
     '/_app/curriculo/disciplinas': {
@@ -471,6 +521,13 @@ declare module '@tanstack/react-router' {
       path: '/estudantes/$estudanteId'
       fullPath: '/estudantes/$estudanteId'
       preLoaderRoute: typeof AppEstudantesEstudanteIdRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/_app/estudantes/importar': {
+      id: '/_app/estudantes/importar'
+      path: '/estudantes/importar'
+      fullPath: '/estudantes/importar'
+      preLoaderRoute: typeof AppEstudantesImportarRouteImport
       parentRoute: typeof AppRoute
     }
     '/_app/matriculas/': {
@@ -547,11 +604,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AppCurriculoRouteChildren {
+  AppCurriculoClassesRoute: typeof AppCurriculoClassesRoute
   AppCurriculoDisciplinasRoute: typeof AppCurriculoDisciplinasRoute
   AppCurriculoIndexRoute: typeof AppCurriculoIndexRoute
 }
 
 const AppCurriculoRouteChildren: AppCurriculoRouteChildren = {
+  AppCurriculoClassesRoute: AppCurriculoClassesRoute,
   AppCurriculoDisciplinasRoute: AppCurriculoDisciplinasRoute,
   AppCurriculoIndexRoute: AppCurriculoIndexRoute,
 }
@@ -582,10 +641,12 @@ interface AppRouteChildren {
   AppCalendarioRoute: typeof AppCalendarioRoute
   AppCurriculoRoute: typeof AppCurriculoRouteWithChildren
   AppDefinicoesRoute: typeof AppDefinicoesRouteWithChildren
+  AppDocumentosRoute: typeof AppDocumentosRoute
   AppRelatoriosRoute: typeof AppRelatoriosRoute
   AppIndexRoute: typeof AppIndexRoute
   AppAnosLectivosAnoIdRoute: typeof AppAnosLectivosAnoIdRoute
   AppEstudantesEstudanteIdRoute: typeof AppEstudantesEstudanteIdRoute
+  AppEstudantesImportarRoute: typeof AppEstudantesImportarRoute
   AppMatriculasNovaRoute: typeof AppMatriculasNovaRoute
   AppMatriculasRenovarRoute: typeof AppMatriculasRenovarRoute
   AppProfessoresProfessorIdRoute: typeof AppProfessoresProfessorIdRoute
@@ -604,10 +665,12 @@ const AppRouteChildren: AppRouteChildren = {
   AppCalendarioRoute: AppCalendarioRoute,
   AppCurriculoRoute: AppCurriculoRouteWithChildren,
   AppDefinicoesRoute: AppDefinicoesRouteWithChildren,
+  AppDocumentosRoute: AppDocumentosRoute,
   AppRelatoriosRoute: AppRelatoriosRoute,
   AppIndexRoute: AppIndexRoute,
   AppAnosLectivosAnoIdRoute: AppAnosLectivosAnoIdRoute,
   AppEstudantesEstudanteIdRoute: AppEstudantesEstudanteIdRoute,
+  AppEstudantesImportarRoute: AppEstudantesImportarRoute,
   AppMatriculasNovaRoute: AppMatriculasNovaRoute,
   AppMatriculasRenovarRoute: AppMatriculasRenovarRoute,
   AppProfessoresProfessorIdRoute: AppProfessoresProfessorIdRoute,

@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
@@ -57,7 +58,9 @@ function ListaNominal() {
         referencia={
           <>
             <p>{t`Ano lectivo ${ano}`}</p>
-            <p className="tabular">{t`${total} estudantes`}</p>
+            <p className="tabular">
+              {plural(total, { one: '# estudante', other: '# estudantes' })}
+            </p>
           </>
         }
       />

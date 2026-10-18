@@ -323,27 +323,34 @@ function Cartao({
 }) {
   const { t } = useLingui()
   const nome = cartao.nome
+  // Matrícula por confirmar: fica no quadro, mas não se arrasta nem se move (guia 2.1, 2.7)
+  const podeMover = podeEscrever && !cartao.porConfirmar
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: cartao.matriculaId,
     data: { cartao, origem: coluna },
-    disabled: !podeEscrever,
+    disabled: !podeMover,
   })
 
   return (
     <li ref={setNodeRef} className={cn('group relative', isDragging && 'opacity-30')}>
       <div className="flex items-center gap-1">
         <div
-          {...(podeEscrever ? { ...listeners, ...attributes } : {})}
-          aria-roledescription={podeEscrever ? t`cartão arrastável` : undefined}
-          aria-label={podeEscrever ? t`Arrastar ${nome}` : undefined}
+          {...(podeMover ? { ...listeners, ...attributes } : {})}
+          aria-roledescription={podeMover ? t`cartão arrastável` : undefined}
+          aria-label={podeMover ? t`Arrastar ${nome}` : undefined}
           className={cn(
             'min-w-0 flex-1 rounded-controlo outline-none focus-visible:ring-2 focus-visible:ring-acento',
-            podeEscrever && 'cursor-grab active:cursor-grabbing',
+            podeMover && 'cursor-grab active:cursor-grabbing',
           )}
         >
-          <CartaoVisual cartao={cartao} pega={podeEscrever} />
+          <CartaoVisual cartao={cartao} pega={podeMover} />
+          {podeEscrever && cartao.porConfirmar && (
+            <p className="px-2.5 pb-1.5 text-legenda text-aviso">
+              <Trans>Matrícula por confirmar: confirme-a antes de inscrever.</Trans>
+            </p>
+          )}
         </div>
-        {podeEscrever && (
+        {podeMover && (
           <DropdownMenu.Root>
             <DropdownMenu.Trigger
               aria-label={t`Mover ${nome} para…`}

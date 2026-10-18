@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
@@ -15,6 +16,7 @@ import {
 import { VistasGuardadas } from '@/features/guardar-vista'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
+import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import { cn } from '@/shared/lib/cn'
 import { formatarTelefone } from '@/shared/lib/formatar'
 import {
@@ -42,20 +44,36 @@ const pesquisaProfessores = z.object({
   q: z.catch(z.optional(z.string()), undefined),
   disciplinaId: z.catch(z.optional(z.string()), undefined),
   estado: z.catch(z.optional(z.enum(ESTADOS)), undefined),
+  ordem: z.catch(z.optional(z.string()), undefined),
   page: z.catch(z._default(z.int().check(z.minimum(1)), 1), 1),
   professor: z.catch(z.optional(z.string()), undefined),
 })
+
+/** Colunas que ordenam no servidor e o campo da API correspondente */
+const CAMPOS_ORDEM: Record<string, string> = {
+  nome: 'nome',
+  numeroAgente: 'numeroAgente',
+  cargaLectiva: 'cargaLectiva',
+  estadoRotulo: 'estado',
+}
 
 export const Route = createFileRoute('/_app/professores/')({
   validateSearch: pesquisaProfessores,
   // Sem loaderDeps: pesquisar ou filtrar mantém o ecrã e os resultados anteriores
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
-    const { q, professor: _, ...resto } = pesquisaProfessores.parse(location.search)
+    const { q, professor: _, ordem, ...resto } = pesquisaProfessores.parse(location.search)
     return esperarSoAoEntrar(
       cause,
       anoLectivoId
         ? Promise.all([
-            queryClient.ensureQueryData(professoresQuery({ anoLectivoId, pesquisa: q, ...resto })),
+            queryClient.ensureQueryData(
+              professoresQuery({
+                anoLectivoId,
+                pesquisa: q,
+                ordenar: ordemParaApi(ordem, CAMPOS_ORDEM),
+                ...resto,
+              }),
+            ),
             queryClient.ensureQueryData(disciplinasQuery()),
           ])
         : null,
@@ -92,6 +110,7 @@ function useColunas(): ColunaTabela<ProfessorResumo>[] {
       }),
       c.accessor('disciplinasTexto', {
         header: t`Disciplinas`,
+        enableSorting: false,
         cell: (info) => <span className="text-texto-2">{info.getValue()}</span>,
       }),
       c.accessor('cargaLectiva', {
@@ -112,14 +131,19 @@ function useColunas(): ColunaTabela<ProfessorResumo>[] {
 function EcraProfessores() {
   const { t } = useLingui()
   const { anoLectivoId } = Route.useRouteContext()
-  const { professor: aberto, q, ...filtros } = Route.useSearch()
+  const { professor: aberto, q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const [texto, setTexto] = useState(q ?? '')
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => () => clearTimeout(espera.current), [])
   const { data: disciplinas = [] } = useQuery(disciplinasQuery())
   const { data, isPlaceholderData, isError, refetch } = useQuery({
-    ...professoresQuery({ anoLectivoId: anoLectivoId ?? '', pesquisa: q, ...filtros }),
+    ...professoresQuery({
+      anoLectivoId: anoLectivoId ?? '',
+      pesquisa: q,
+      ordenar: ordemParaApi(ordem, CAMPOS_ORDEM),
+      ...filtros,
+    }),
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
@@ -188,7 +212,7 @@ function EcraProfessores() {
           <Trans>Professores</Trans>
         </h1>
         <p className="tabular text-secundario text-texto-2" aria-live="polite">
-          {t`${total} professores`}
+          {plural(total, { one: '# professor', other: '# professores' })}
         </p>
       </div>
 
@@ -275,7 +299,10 @@ function EcraProfessores() {
       >
         <TabelaDados
           rotulo={t`Professores`}
-          semOrdenacao
+          ordenacao={ordenacaoDoUrl(ordem)}
+          aoMudarOrdenacao={(o) =>
+            void navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) })
+          }
           colunas={colunas}
           dados={data?.professores}
           idDaLinha={(p) => p.id}

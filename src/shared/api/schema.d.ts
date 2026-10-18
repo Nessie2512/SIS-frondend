@@ -54,7 +54,35 @@ export interface paths {
   '/anos-lectivos/{id}/activar': {
     post: Op<{ path: { id: string }; ok: S['AnoLectivoDto']; erros: 403 | 404 | 409 }>
   }
-  '/classes': { get: Op<{ ok: S['ClasseDto'][] }> }
+  '/classes': {
+    get: Op<{ ok: S['ClasseDto'][] }>
+    post: Op<{
+      body: { cicloId: string; designacao: string }
+      ok: S['ClasseDto']
+      erros: 403 | 409 | 422
+    }>
+  }
+  '/classes/{id}': {
+    patch: Op<{
+      path: { id: string }
+      body: { designacao: string }
+      ok: S['ClasseDto']
+      erros: 403 | 404 | 422
+    }>
+    delete: Op<{ path: { id: string }; ok: S['VazioDto']; erros: 403 | 404 | 409 }>
+  }
+  '/classes/{id}/estado': {
+    post: Op<{
+      path: { id: string }
+      body: { estado: 'ACTIVA' | 'INACTIVA' }
+      ok: S['ClasseDto']
+      erros: 403 | 404
+    }>
+  }
+  '/ciclos': {
+    get: Op<{ ok: S['CicloDto'][] }>
+    post: Op<{ body: { designacao: string }; ok: S['CicloResumoDto']; erros: 403 | 422 }>
+  }
 
   // Painel e pesquisa
   '/painel': { get: Op<{ query: { anoLectivoId: string }; ok: S['PainelDto'] }> }
@@ -68,6 +96,12 @@ export interface paths {
         pesquisa?: string
         classeId?: string
         estado?: S['EstadoEstudante']
+        /** Filtros avançados */
+        semTurma?: boolean
+        documentosEmFalta?: boolean
+        sexo?: 'M' | 'F'
+        /** Campo do DTO, com «-» para descendente (ex.: -nome) */
+        ordenar?: string
         page?: number
         pageSize?: number
       }
@@ -106,7 +140,16 @@ export interface paths {
       erros: 403 | 409
     }>
   }
-  '/estudantes/{id}/encarregados': { get: Op<{ path: { id: string }; ok: S['EncarregadoDto'][] }> }
+  '/estudantes/{id}/encarregados': {
+    get: Op<{ path: { id: string }; ok: S['EncarregadoDto'][] }>
+    /** Liga um encarregado existente (encarregadoId) ou cria um novo (restantes campos) */
+    post: Op<{
+      path: { id: string }
+      body: S['AcrescentarEncarregadoDto']
+      ok: S['EncarregadoDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
   '/estudantes/{id}/ocorrencias': {
     get: Op<{ path: { id: string }; ok: S['OcorrenciaDto'][] }>
     post: Op<{
@@ -125,6 +168,7 @@ export interface paths {
         classeId?: string
         estado?: S['EstadoMatricula']
         semTurma?: boolean
+        ordenar?: string
         page?: number
         pageSize?: number
       }
@@ -164,8 +208,32 @@ export interface paths {
       }
       ok: S['PaginaTurmaDto']
     }>
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['NovaTurmaDto']
+      ok: S['TurmaDto']
+      erros: 403 | 409 | 422
+    }>
   }
-  '/turmas/{id}': { get: Op<{ path: { id: string }; ok: S['TurmaDto']; erros: 404 }> }
+  '/turmas/{id}/encerrar': {
+    post: Op<{
+      path: { id: string }
+      body: S['MotivoDto']
+      ok: S['TurmaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+  '/turmas/{id}': {
+    get: Op<{ path: { id: string }; ok: S['TurmaDto']; erros: 404 }>
+    /** Edição no sítio (guia 5.1): optimista, com If-Match; 412 se outra pessoa mudou */
+    patch: Op<{
+      path: { id: string }
+      header: { 'If-Match'?: string }
+      body: S['TurmaAlteracaoDto']
+      ok: S['TurmaDto']
+      erros: 403 | 404 | 409 | 412 | 422
+    }>
+  }
   '/turmas/{id}/inscritos': { get: Op<{ path: { id: string }; ok: S['InscritoDto'][] }> }
   '/turmas/{id}/inscricoes': {
     post: Op<{ path: { id: string }; body: S['InscreverDto']; ok: S['InscritoDto']; erros: 403 | 409 }>
@@ -197,6 +265,7 @@ export interface paths {
         pesquisa?: string
         estado?: S['EstadoProfessor']
         disciplinaId?: string
+        ordenar?: string
         page?: number
         pageSize?: number
       }
@@ -336,6 +405,42 @@ export interface paths {
     }>
   }
 
+  // Anular matrícula e mudar a situação do estudante (guia 2.2)
+  '/matriculas/{id}/anular': {
+    post: Op<{
+      path: { id: string }
+      body: S['MotivoDto']
+      ok: S['MatriculaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+  '/estudantes/{id}/situacao': {
+    post: Op<{
+      path: { id: string }
+      body: S['MudarSituacaoDto']
+      ok: S['EstudanteDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
+
+  // Encarregados (guia 2.1: pessoa partilhada por irmãos, nunca criada duas vezes)
+  '/encarregados': {
+    get: Op<{ query: { pesquisa: string }; ok: S['EncarregadoResumoDto'][] }>
+  }
+  '/estudantes/{id}/encarregados/{encarregadoId}': {
+    put: Op<{
+      path: { id: string; encarregadoId: string }
+      body: S['AcrescentarEncarregadoDto']
+      ok: S['EncarregadoDto']
+      erros: 403 | 404 | 422
+    }>
+    delete: Op<{
+      path: { id: string; encarregadoId: string }
+      ok: S['VazioDto']
+      erros: 403 | 404 | 409
+    }>
+  }
+
   // Transferência de saída (guia 2.3)
   '/estudantes/{id}/transferir': {
     post: Op<{
@@ -365,12 +470,61 @@ export interface paths {
       erros: 403 | 404 | 422
     }>
   }
+  /** Todos os emitidos, de todos os estudantes (área Documentos, guia 2.5) */
+  '/documentos-oficiais': {
+    get: Op<{
+      query: {
+        pesquisa?: string
+        tipo?: S['TipoDocumentoOficial']
+        estado?: S['DocumentoOficialDto']['estado']
+        ordenar?: string
+        page?: number
+        pageSize?: number
+      }
+      ok: S['PaginaDocumentoOficialDto']
+    }>
+  }
+  /** Emissão em lote para uma turma (guia 2.1, 5.7): primeiro o efeito, depois a tarefa */
+  '/documentos-oficiais/lote/simular': {
+    post: Op<{ body: S['PedidoLoteDto']; ok: S['SimulacaoLoteDto']; erros: 403 | 404 | 422 }>
+  }
+  '/documentos-oficiais/lote': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['PedidoLoteDto']
+      ok: S['TarefaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
   '/documentos-oficiais/{id}/anular': {
     post: Op<{
       path: { id: string }
       body: S['AnularDocumentoDto']
       ok: S['DocumentoOficialDto']
       erros: 403 | 404 | 409 | 422
+    }>
+  }
+
+  // Distribuição automática por turmas (guia 2.3: critério, simular, ajustar, confirmar)
+  '/distribuicoes/simular': {
+    post: Op<{ body: S['SimularDistribuicaoDto']; ok: S['DistribuicaoDto']; erros: 403 | 409 }>
+  }
+  '/distribuicoes/aplicar': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['AplicarDistribuicaoDto']
+      ok: S['TarefaDto']
+      erros: 403 | 409
+    }>
+  }
+
+  // Importação de estudantes (guia 2.1, 5.7: o cliente valida, o servidor cria numa tarefa)
+  '/importacoes/estudantes': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['ImportarEstudantesDto']
+      ok: S['TarefaDto']
+      erros: 403 | 409 | 422
     }>
   }
 
@@ -487,7 +641,25 @@ export interface components {
       anoEmCurso: string | null
     }
     DuplicarTurmasDto: { criadas: number; origem: string }
-    ClasseDto: { id: string; designacao: string; cicloDesignacao: string; ordem: number }
+    ClasseDto: {
+      id: string
+      designacao: string
+      cicloId: string
+      cicloDesignacao: string
+      /** Sequência: a classe seguinte é a de ordem + 1 (relação, nunca texto livre) */
+      ordem: number
+      estado: 'ACTIVA' | 'INACTIVA'
+    }
+    CicloResumoDto: { id: string; designacao: string; estado: 'ACTIVO' | 'INACTIVO' }
+    /** Classe com o uso que impede eliminá-la (guia 2.4: em uso, só se inactiva) */
+    ClasseGestaoDto: components['schemas']['ClasseDto'] & {
+      turmas: number
+      matriculas: number
+      planos: number
+    }
+    CicloDto: components['schemas']['CicloResumoDto'] & {
+      classes: components['schemas']['ClasseGestaoDto'][]
+    }
 
     // Turmas
     TurmaDto: {
@@ -500,6 +672,17 @@ export interface components {
       lotacaoMaxima: number
       inscritos: number
       estado: components['schemas']['EstadoTurma']
+      /** Professor responsável pela turma (director de turma) */
+      directorTurma: { professorId: string; nome: string } | null
+    }
+    TurmaAlteracaoDto: { sala?: string | null; directorTurmaId?: string | null }
+    /** A designação é gerada pelo servidor (letra seguinte livre na classe) */
+    NovaTurmaDto: {
+      anoLectivoId: string
+      classeId: string
+      turno: components['schemas']['Turno']
+      sala?: string
+      lotacaoMaxima: number
     }
     PaginaTurmaDto: Pagina<components['schemas']['TurmaDto']>
     InscritoDto: {
@@ -541,7 +724,14 @@ export interface components {
     }
     EstudanteAlteracaoDto: { nome?: string; telefone?: string | null; morada?: string | null }
     PaginaEstudanteDto: Pagina<components['schemas']['EstudanteResumoDto']>
-    TipoEventoPercurso: 'MATRICULA' | 'INSCRICAO' | 'MUDANCA_TURMA' | 'TRANSFERENCIA' | 'RESULTADO' | 'RECTIFICACAO'
+    TipoEventoPercurso:
+      | 'MATRICULA'
+      | 'INSCRICAO'
+      | 'MUDANCA_TURMA'
+      | 'TRANSFERENCIA'
+      | 'RESULTADO'
+      | 'RECTIFICACAO'
+      | 'SITUACAO'
     EventoPercursoDto: {
       id: string
       /** Formato: date-time */
@@ -640,6 +830,24 @@ export interface components {
       duplicadoIgnoradoJustificacao?: string
       /** Transferência de entrada: escola de origem e classes lá concluídas (guia 2.3) */
       transferenciaEntrada?: { escolaOrigem: string; classesConcluidas: string[] }
+    }
+    MotivoDto: { motivo: string }
+    EncarregadoResumoDto: { id: string; nome: string; telefone: string; educandos: string[] }
+    AcrescentarEncarregadoDto: {
+      encarregadoId?: string
+      nome?: string
+      parentesco?: string
+      telefone?: string
+      email?: string
+      principal: boolean
+    }
+    /** Desistência (ACTIVO→DESISTENTE), reingresso (DESISTENTE→ACTIVO), anulação (ACTIVO→ANULADO) */
+    AccaoSituacao: 'DESISTENCIA' | 'REINGRESSO' | 'ANULACAO'
+    MudarSituacaoDto: {
+      accao: components['schemas']['AccaoSituacao']
+      /** Formato: date */
+      data: string
+      motivo: string
     }
     TransferirEstudanteDto: {
       escolaDestino: string
@@ -893,7 +1101,11 @@ export interface components {
       estado: 'VALIDO' | 'ANULADO'
       motivoAnulacao: string | null
       pdfUrl: string
+      estudanteId: string
+      estudanteNome: string
+      numeroProcesso: string
     }
+    PaginaDocumentoOficialDto: Pagina<components['schemas']['DocumentoOficialDto']>
     DocumentosOficiaisDto: {
       tipos: components['schemas']['TipoDisponivelDto'][]
       emitidos: components['schemas']['DocumentoOficialDto'][]
@@ -904,7 +1116,71 @@ export interface components {
       finalidade?: string
     }
     ConteudoDocumentoDto: { titulo: string; paragrafos: string[] }
+    PedidoLoteDto: {
+      /** Só declarações (matrícula ou frequência) se emitem em lote */
+      tipo: 'DECLARACAO_MATRICULA' | 'DECLARACAO_FREQUENCIA'
+      /** Uma turma inteira, ou os estudantes seleccionados numa lista (um dos dois) */
+      turmaId?: string
+      estudanteIds?: string[]
+      finalidade?: string
+    }
+    EstudanteLoteDto: { estudanteId: string; nome: string; numeroProcesso: string }
+    SimulacaoLoteDto: {
+      incluidos: components['schemas']['EstudanteLoteDto'][]
+      /** Quem fica de fora e porquê (guia 5.1: mostrar o efeito antes de confirmar) */
+      excluidos: (components['schemas']['EstudanteLoteDto'] & { razao: string })[]
+    }
     AnularDocumentoDto: { motivo: string }
+
+    // Importação de estudantes
+    LinhaImportacaoDto: {
+      /** Linha no ficheiro original, para os avisos apontarem para ela */
+      linha: number
+      nome: string
+      sexo: 'M' | 'F'
+      /** Formato: date */
+      dataNascimento: string
+      documentoIdentificacao: string | null
+      classeId: string
+      encarregado: { nome: string; parentesco: string; telefone: string }
+    }
+    ImportarEstudantesDto: {
+      anoLectivoId: string
+      linhas: components['schemas']['LinhaImportacaoDto'][]
+    }
+
+    // Distribuição automática
+    /** Equilibrar a ocupação, encher por ordem alfabética das turmas, ou equilibrar rapazes e raparigas */
+    CriterioDistribuicao: 'EQUILIBRAR' | 'ALFABETICA' | 'SEXO'
+    SimularDistribuicaoDto: {
+      anoLectivoId: string
+      classeId: string
+      criterio: components['schemas']['CriterioDistribuicao']
+    }
+    DistribuicaoDto: {
+      criterio: components['schemas']['CriterioDistribuicao']
+      turmas: { turmaId: string; designacao: string; lotacao: number; inscritos: number }[]
+      propostas: {
+        matriculaId: string
+        estudanteId: string
+        nome: string
+        numeroProcesso: string
+        sexo: 'M' | 'F'
+        turmaId: string
+      }[]
+      excluidos: {
+        matriculaId: string
+        estudanteId: string
+        nome: string
+        numeroProcesso: string
+        motivo: 'MATRICULA_POR_CONFIRMAR' | 'SEM_VAGAS'
+      }[]
+    }
+    AplicarDistribuicaoDto: {
+      anoLectivoId: string
+      classeId: string
+      inscricoes: { matriculaId: string; turmaId: string }[]
+    }
 
     // Docentes da turma
     DocenteTurmaDto: {

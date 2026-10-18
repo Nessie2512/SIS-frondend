@@ -1,5 +1,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { documentoOficialKeys, type TipoDocumentoOficial } from '@/entities/documento-oficial'
+import {
+  documentoOficialKeys,
+  type PedidoLote,
+  type TipoDocumentoOficial,
+} from '@/entities/documento-oficial'
+import { paraTarefa, tarefaKeys, useTarefasAcompanhadas } from '@/entities/tarefa'
 import { api } from '@/shared/api'
 
 /**
@@ -21,8 +26,7 @@ export function useEmitirDocumento(estudanteId: string) {
       })
       return data!
     },
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: documentoOficialKeys.doEstudante(estudanteId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentoOficialKeys.todos }),
   })
 }
 
@@ -38,7 +42,30 @@ export function useAnularDocumento(estudanteId: string) {
       })
       return data!
     },
-    onSuccess: () =>
-      qc.invalidateQueries({ queryKey: documentoOficialKeys.doEstudante(estudanteId) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: documentoOficialKeys.todos }),
+  })
+}
+
+/**
+ * Emitir em lote (guia 2.1, 5.7): numera os documentos de uma vez e junta-os num PDF, gerado
+ * numa tarefa acompanhada no quadro; quem fica de fora vem nos avisos.
+ */
+export function useEmitirLote() {
+  const qc = useQueryClient()
+  const acompanhar = useTarefasAcompanhadas((e) => e.acompanhar)
+  return useMutation({
+    mutationKey: ['documentos-oficiais', 'lote'],
+    mutationFn: async ({ chave, ...pedido }: PedidoLote & { chave: string }) => {
+      const { data } = await api.POST('/documentos-oficiais/lote', {
+        params: { header: { 'Idempotency-Key': chave } },
+        body: pedido,
+      })
+      return paraTarefa(data!)
+    },
+    onSuccess: (tarefa) => {
+      qc.setQueryData(tarefaKeys.detalhe(tarefa.id), tarefa)
+      acompanhar(tarefa.id)
+      void qc.invalidateQueries({ queryKey: documentoOficialKeys.todos })
+    },
   })
 }

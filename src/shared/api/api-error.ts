@@ -27,6 +27,10 @@ export type CodigoErroDominio =
   | 'OUTRO_ANO_EM_CURSO'
   | 'ANO_PLANEADO_EXISTENTE'
   | 'RENOVACAO_APLICADA'
+  | 'TURMA_COM_INSCRITOS'
+  | 'MATRICULA_POR_CONFIRMAR'
+  | 'ENCARREGADO_EXISTENTE'
+  | 'ULTIMO_ENCARREGADO'
 
 export interface ErroDeCampo {
   campo: string

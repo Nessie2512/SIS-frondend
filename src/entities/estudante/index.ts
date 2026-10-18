@@ -14,6 +14,7 @@ export {
   formatarTelefone,
   paraEstudante,
   paraEstudanteResumo,
+  paraEncarregado,
   paraOcorrencia,
   TIPOS_OCORRENCIA,
 } from './model/mapeadores'

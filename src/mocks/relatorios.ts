@@ -185,7 +185,7 @@ export const handlersRelatorios = [
         db.tarefas
           .filter(
             (t) =>
-              t.tipo !== 'RENOVACAO' &&
+              CATALOGO.some((c) => c.tipo === t.tipo) &&
               t.utilizadorId === utilizador.id &&
               t.parametros.anoLectivoId === anoLectivoId,
           )

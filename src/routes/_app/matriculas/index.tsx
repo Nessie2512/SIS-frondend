@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
@@ -11,6 +12,7 @@ import { VistasGuardadas } from '@/features/guardar-vista'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
+import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import { cn } from '@/shared/lib/cn'
 import { useCan } from '@/shared/lib/permissoes'
 import { formatarInstante } from '@/shared/lib/datas'
@@ -37,18 +39,36 @@ const pesquisaMatriculas = z.object({
   classeId: z.catch(z.optional(z.string()), undefined),
   estado: z.catch(z.optional(z.enum(ESTADOS)), undefined),
   semTurma: z.catch(z.optional(z.boolean()), undefined),
+  ordem: z.catch(z.optional(z.string()), undefined),
   page: z.catch(z._default(z.int().check(z.minimum(1)), 1), 1),
 })
+
+/** Colunas que ordenam no servidor e o campo da API correspondente */
+const CAMPOS_ORDEM: Record<string, string> = {
+  estudanteNome: 'estudanteNome',
+  numeroProcesso: 'numeroProcesso',
+  classe: 'classeDesignacao',
+  turma: 'turmaDesignacao',
+  documentosEmFalta: 'documentosEmFalta',
+  estadoRotulo: 'estado',
+  criadaEm: 'criadaEm',
+}
 
 export const Route = createFileRoute('/_app/matriculas/')({
   validateSearch: pesquisaMatriculas,
   // Sem loaderDeps: mudar filtro ou página mantém o ecrã e os resultados anteriores
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
-    const filtros = pesquisaMatriculas.parse(location.search)
+    const { ordem, ...filtros } = pesquisaMatriculas.parse(location.search)
     return esperarSoAoEntrar(
       cause,
       anoLectivoId
-        ? queryClient.ensureQueryData(matriculasQuery({ anoLectivoId, ...filtros }))
+        ? queryClient.ensureQueryData(
+            matriculasQuery({
+              anoLectivoId,
+              ordenar: ordemParaApi(ordem, CAMPOS_ORDEM),
+              ...filtros,
+            }),
+          )
         : null,
     )
   },
@@ -130,11 +150,15 @@ function useColunas(): ColunaTabela<Matricula>[] {
 function EcraMatriculas() {
   const { t } = useLingui()
   const { anoLectivoId, soLeitura } = Route.useRouteContext()
-  const filtros = Route.useSearch()
+  const { ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: classes = [] } = useQuery(classesQuery())
   const { data, isPlaceholderData, isError, refetch } = useQuery({
-    ...matriculasQuery({ anoLectivoId: anoLectivoId ?? '', ...filtros }),
+    ...matriculasQuery({
+      anoLectivoId: anoLectivoId ?? '',
+      ordenar: ordemParaApi(ordem, CAMPOS_ORDEM),
+      ...filtros,
+    }),
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
@@ -173,7 +197,7 @@ function EcraMatriculas() {
             <Trans>Matrículas</Trans>
           </h1>
           <p className="tabular text-secundario text-texto-2" aria-live="polite">
-            {t`${total} matrículas`}
+            {plural(total, { one: '# matrícula', other: '# matrículas' })}
           </p>
         </div>
         <Can permissao="matriculas:escrever">
@@ -259,7 +283,10 @@ function EcraMatriculas() {
       >
         <TabelaDados
           rotulo={t`Matrículas`}
-          semOrdenacao
+          ordenacao={ordenacaoDoUrl(ordem)}
+          aoMudarOrdenacao={(o) =>
+            void navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) })
+          }
           colunas={colunas}
           dados={data?.matriculas}
           idDaLinha={(m) => m.id}

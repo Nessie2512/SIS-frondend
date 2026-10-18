@@ -24,9 +24,14 @@ test('administração: desactivar uma conta com Desfazer e ver o registo na audi
   await expect(page).toHaveURL(/\/definicoes\/auditoria/)
   await expect(page.getByRole('heading', { level: 2, name: 'Auditoria' })).toBeVisible()
   await page.getByLabel('Pesquisar').fill(nome)
+  await expect(page).toHaveURL(/[?&]q=/)
   const auditoria = page.getByRole('table', { name: 'Registo de auditoria' })
   await expect(auditoria.getByText(`${nome}: desactivado`)).toBeVisible()
   await expect(auditoria.getByText(`${nome}: activado`)).toBeVisible()
+  // Enquanto chega o resultado da pesquisa, a tabela fica translúcida: o axe mede-a depois
+  await expect(
+    auditoria.locator('xpath=ancestor::div[contains(@class, "transition-opacity")][1]'),
+  ).toHaveCSS('opacity', '1')
   await semViolacoes(page)
 })
 

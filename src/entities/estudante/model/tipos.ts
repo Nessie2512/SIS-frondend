@@ -31,7 +31,13 @@ export interface Estudante extends EstudanteResumo {
 }
 
 export type TipoEventoPercurso =
-  'MATRICULA' | 'INSCRICAO' | 'MUDANCA_TURMA' | 'TRANSFERENCIA' | 'RESULTADO' | 'RECTIFICACAO'
+  | 'MATRICULA'
+  | 'INSCRICAO'
+  | 'MUDANCA_TURMA'
+  | 'TRANSFERENCIA'
+  | 'RESULTADO'
+  | 'RECTIFICACAO'
+  | 'SITUACAO'
 
 export interface EventoPercurso {
   id: string
@@ -63,6 +69,8 @@ export interface Encarregado {
   email: string | null
   principal: boolean
   outrosEducandos: number
+  /** Linha provisória enquanto o servidor grava (semi-optimista) */
+  aGuardar?: boolean
 }
 
 export interface FiltrosEstudantes {
@@ -70,6 +78,10 @@ export interface FiltrosEstudantes {
   pesquisa?: string
   classeId?: string
   estado?: EstadoEstudante
+  semTurma?: boolean
+  documentosEmFalta?: boolean
+  sexo?: 'M' | 'F'
+  ordenar?: string
   page: number
 }
 

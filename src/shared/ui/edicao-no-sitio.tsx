@@ -4,6 +4,7 @@ import { useId, useRef, useState, type KeyboardEvent } from 'react'
 import { cn } from '@/shared/lib/cn'
 import { Dica } from './dica'
 import { IndicadorPontual } from './progresso'
+import { Selector, type OpcaoSelector } from './selector'
 
 interface Props {
   rotulo: string
@@ -17,6 +18,10 @@ interface Props {
   desactivadoPorque?: string
   inputMode?: 'text' | 'tel' | 'email' | 'numeric'
   autoComplete?: string
+  /** Marca este campo como o que a tecla E edita no ecrã (guia 7.5) */
+  atalhoEditar?: boolean
+  /** Escolha de uma lista em vez de texto (ex.: o director de turma); escolher guarda logo */
+  opcoes?: OpcaoSelector[]
 }
 
 /**
@@ -32,6 +37,8 @@ export function EdicaoNoSitio({
   desactivadoPorque,
   inputMode,
   autoComplete,
+  atalhoEditar,
+  opcoes,
 }: Props) {
   const { t } = useLingui()
   const id = useId()
@@ -55,8 +62,8 @@ export function EdicaoNoSitio({
     requestAnimationFrame(() => botao.current?.focus())
   }
 
-  async function guardar() {
-    const novo = rascunho.trim()
+  async function guardar(escolhido?: string) {
+    const novo = (escolhido ?? rascunho).trim()
     if (novo === (valor ?? '')) return fechar()
     const problema = validar?.(novo)
     if (problema) return setErro(problema)
@@ -91,7 +98,26 @@ export function EdicaoNoSitio({
       <label htmlFor={id} className="flex min-h-9 items-center text-texto-2">
         {rotulo}
       </label>
-      {aEditar ? (
+      {aEditar && opcoes ? (
+        <div className="flex max-w-sm flex-col gap-1">
+          <Selector
+            id={id}
+            abertoAoMontar
+            opcoes={opcoes}
+            valor={valor}
+            // Voltar a escolher o valor actual não muda nada; retirar é uma opção com valor ''
+            aoMudar={(v) => (v === null ? fechar() : void guardar(v))}
+            aoFechar={fechar}
+            aria-invalid={erro ? true : undefined}
+            aria-describedby={erro ? `${id}-erro` : undefined}
+          />
+          {erro && (
+            <p id={`${id}-erro`} className="text-secundario text-perigo">
+              {erro}
+            </p>
+          )}
+        </div>
+      ) : aEditar ? (
         <div className="flex flex-col gap-1">
           <input
             id={id}
@@ -133,6 +159,7 @@ export function EdicaoNoSitio({
               id={id}
               type="button"
               onClick={abrir}
+              data-atalho={atalhoEditar ? 'editar' : undefined}
               aria-label={t`Editar ${rotulo}: ${visivel}`}
               className={cn(
                 'group -mx-2 flex items-center gap-2 rounded-controlo px-2 py-1.5 text-left hover:bg-fundo',

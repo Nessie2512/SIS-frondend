@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { CheckCheck } from 'lucide-react'
 import { useState } from 'react'
@@ -63,8 +64,15 @@ export function TabelaResultados({ turmaId, designacao, linhas, soLeitura }: Pro
         onSuccess: () => {
           setAlteracoes({})
           const n = porGuardar
-          notificar.sucesso(t`${designacao}: ${n} resultados guardados.`)
-          anunciar.educado(t`${n} resultados guardados.`)
+          notificar.sucesso(
+            plural(n, {
+              one: `${designacao}: # resultado guardado.`,
+              other: `${designacao}: # resultados guardados.`,
+            }),
+          )
+          anunciar.educado(
+            plural(n, { one: '# resultado guardado.', other: '# resultados guardados.' }),
+          )
         },
         onError: (erro) => notificar.erro(mensagemDeErro(erro)),
       },
@@ -82,7 +90,10 @@ export function TabelaResultados({ turmaId, designacao, linhas, soLeitura }: Pro
             estado={emFalta === 0 ? 'concluido' : 'determinado'}
           />
           <p className="tabular text-secundario text-texto-2" aria-live="polite">
-            {t`${registados} de ${total} registados`}
+            {plural(total, {
+              one: `${registados} de # registado`,
+              other: `${registados} de # registados`,
+            })}
             {porGuardar > 0 && ` · ${t`${porGuardar} por guardar`}`}
           </p>
         </div>
@@ -91,7 +102,10 @@ export function TabelaResultados({ turmaId, designacao, linhas, soLeitura }: Pro
             {emFalta > 0 && (
               <Button onClick={marcarEmFaltaComoAprovados}>
                 <CheckCheck aria-hidden className="size-4 stroke-[1.5]" />
-                <Trans>Marcar os {emFalta} em falta como aprovados</Trans>
+                {plural(emFalta, {
+                  one: 'Marcar o # em falta como aprovado',
+                  other: 'Marcar os # em falta como aprovados',
+                })}
               </Button>
             )}
             <Button

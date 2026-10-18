@@ -78,17 +78,48 @@ const ANOS_INICIAIS: S['AnoLectivoDto'][] = [
 /** Anos lectivos (mutável: abrir, activar, encerrar e reabrir mudam esta lista). */
 export const anosLectivos: S['AnoLectivoDto'][] = ANOS_INICIAIS.map((a) => ({ ...a }))
 
-export const classes: S['ClasseDto'][] = [
-  { id: 'c7', designacao: '7.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 7 },
-  { id: 'c8', designacao: '8.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 8 },
-  { id: 'c9', designacao: '9.ª classe', cicloDesignacao: 'I ciclo do ensino secundário', ordem: 9 },
+/** Ciclos de ensino; as classes pertencem a um ciclo e têm sequência (ordem) */
+const CICLOS_INICIAIS: S['CicloResumoDto'][] = [
+  { id: 'ciclo-1', designacao: 'I ciclo do ensino secundário', estado: 'ACTIVO' },
+  { id: 'ciclo-2', designacao: 'II ciclo do ensino secundário', estado: 'ACTIVO' },
+]
+const CLASSES_INICIAIS: S['ClasseDto'][] = [
+  {
+    id: 'c7',
+    designacao: '7.ª classe',
+    cicloId: 'ciclo-1',
+    cicloDesignacao: 'I ciclo do ensino secundário',
+    ordem: 7,
+    estado: 'ACTIVA',
+  },
+  {
+    id: 'c8',
+    designacao: '8.ª classe',
+    cicloId: 'ciclo-1',
+    cicloDesignacao: 'I ciclo do ensino secundário',
+    ordem: 8,
+    estado: 'ACTIVA',
+  },
+  {
+    id: 'c9',
+    designacao: '9.ª classe',
+    cicloId: 'ciclo-1',
+    cicloDesignacao: 'I ciclo do ensino secundário',
+    ordem: 9,
+    estado: 'ACTIVA',
+  },
   {
     id: 'c10',
     designacao: '10.ª classe',
+    cicloId: 'ciclo-2',
     cicloDesignacao: 'II ciclo do ensino secundário',
     ordem: 10,
+    estado: 'ACTIVA',
   },
 ]
+/** Mutáveis (gestão de ciclos e classes), repostos com a base de dados */
+export const ciclos: S['CicloResumoDto'][] = CICLOS_INICIAIS.map((c) => ({ ...c }))
+export const classes: S['ClasseDto'][] = CLASSES_INICIAIS.map((c) => ({ ...c }))
 
 const TIPOS_DOCUMENTO = [
   { tipo: 'certidao-nascimento', designacao: 'Certidão de nascimento', obrigatorio: true },
@@ -103,8 +134,11 @@ export const TIPOS_DOCUMENTO_OBRIGATORIOS = TIPOS_DOCUMENTO.filter((d) => d.obri
 
 const TURNOS: S['Turno'][] = ['MANHA', 'TARDE', 'NOITE']
 
-interface Turma extends Omit<S['TurmaDto'], 'inscritos'> {
+interface Turma extends Omit<S['TurmaDto'], 'inscritos' | 'directorTurma'> {
   anoLectivoId: string
+  /** Para If-Match (edição no sítio); sem valor, versão 1 */
+  versao?: number
+  directorTurmaId?: string | null
 }
 interface Estudante extends Omit<S['EstudanteDto'], 'matriculaActual' | 'documentosEmFalta'> {
   versao: number
@@ -129,7 +163,7 @@ type Documento = S['DocumentoEstudanteDto'] & {
 }
 export interface Tarefa {
   id: string
-  tipo: S['TipoRelatorio'] | 'RENOVACAO'
+  tipo: S['TipoRelatorio'] | 'RENOVACAO' | 'DISTRIBUICAO' | 'IMPORTACAO' | 'DOCUMENTOS_LOTE'
   parametros: { anoLectivoId: string; turmaId?: string; classeId?: string }
   titulo: string
   utilizadorId: string | null
@@ -139,6 +173,8 @@ export interface Tarefa {
   /** Resultado já calculado (renovação): linhas do CSV e avisos por linha */
   linhas?: string[]
   avisos?: { linha: number; mensagem: string }[]
+  /** Emissão em lote: o resultado é um PDF com um documento por página */
+  documentoIds?: string[]
 }
 
 interface Estado {
@@ -341,6 +377,19 @@ function criar(): Estado {
     }
   })
 
+  // Dos 3 sem turma de cada classe, 2 já têm a matrícula confirmada (documentos entregues):
+  // podem ser inscritos; o terceiro fica por confirmar e o quadro não o deixa inscrever (guia 2.1).
+  // Ajuste feito depois de gerar, para não mudar a sequência aleatória dos restantes dados.
+  for (const classe of classes) {
+    const semTurma = matriculas.filter((m) => m.classeId === classe.id && !m.turmaId)
+    for (const m of semTurma.slice(0, 2)) {
+      m.estado = 'CONFIRMADA'
+      for (const d of documentos) {
+        if (d.estudanteId === m.estudanteId && d.obrigatorio) d.estado = 'ENTREGUE'
+      }
+    }
+  }
+
   return {
     turmas,
     estudantes,
@@ -402,6 +451,8 @@ export let db = criar()
 /** Volta ao estado inicial (usado entre testes). */
 export function reporBaseDeDados() {
   anosLectivos.splice(0, anosLectivos.length, ...ANOS_INICIAIS.map((a) => ({ ...a })))
+  ciclos.splice(0, ciclos.length, ...CICLOS_INICIAIS.map((c) => ({ ...c })))
+  classes.splice(0, classes.length, ...CLASSES_INICIAIS.map((c) => ({ ...c })))
   db = criar()
 }
 
@@ -414,8 +465,20 @@ const turmaPorId = (id: string | null) => (id ? db.turmas.find((t) => t.id === i
 export const contarInscritos = (turmaId: string) =>
   db.matriculas.filter((m) => m.turmaId === turmaId && m.estado !== 'ANULADA').length
 
-export function paraTurmaDto({ anoLectivoId: _, ...t }: Turma): S['TurmaDto'] {
-  return { ...t, inscritos: contarInscritos(t.id) }
+export function paraTurmaDto({
+  anoLectivoId: _,
+  versao: _v,
+  directorTurmaId,
+  ...t
+}: Turma): S['TurmaDto'] {
+  const director = directorTurmaId
+    ? db.professores.find((p) => p.id === directorTurmaId)
+    : undefined
+  return {
+    ...t,
+    inscritos: contarInscritos(t.id),
+    directorTurma: director ? { professorId: director.id, nome: director.nome } : null,
+  }
 }
 
 const documentosEmFalta = (estudanteId: string) =>

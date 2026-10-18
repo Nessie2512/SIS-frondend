@@ -4,9 +4,11 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
+import { DistribuirAutomaticamente } from '@/features/distribuir-turmas'
 import { QuadroTurmas } from '@/features/inscrever-na-turma'
 import { quadroQuery } from '@/features/inscrever-na-turma/model/quadro'
 import { TEMPOS } from '@/shared/config/constantes'
+import { useCan } from '@/shared/lib/permissoes'
 import { Aviso, Campo, ErroDeRota, Esqueleto, Selector } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/turmas/quadro')({
@@ -31,6 +33,7 @@ function EcraQuadro() {
   const { classeId } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: classes = [] } = useQuery(classesQuery())
+  const podeDistribuir = useCan('turmas:escrever')
 
   return (
     <section className="flex flex-col gap-6">
@@ -53,16 +56,25 @@ function EcraQuadro() {
             </Trans>
           </p>
         </div>
-        <Campo rotulo={t`Classe`} className="w-56">
-          {(c) => (
-            <Selector
-              {...c}
-              opcoes={classes.map((x) => ({ valor: x.id, rotulo: x.designacao }))}
-              valor={classeId}
-              aoMudar={(novo) => novo && void navigate({ search: { classeId: novo } })}
+        <div className="flex flex-wrap items-end gap-3">
+          {anoLectivoId && !soLeitura && podeDistribuir && (
+            <DistribuirAutomaticamente
+              anoLectivoId={anoLectivoId}
+              classeId={classeId}
+              classe={classes.find((c) => c.id === classeId)?.designacao ?? ''}
             />
           )}
-        </Campo>
+          <Campo rotulo={t`Classe`} className="w-56">
+            {(c) => (
+              <Selector
+                {...c}
+                opcoes={classes.map((x) => ({ valor: x.id, rotulo: x.designacao }))}
+                valor={classeId}
+                aoMudar={(novo) => novo && void navigate({ search: { classeId: novo } })}
+              />
+            )}
+          </Campo>
+        </div>
       </div>
       {soLeitura && (
         <Aviso tom="leitura">

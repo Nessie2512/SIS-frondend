@@ -31,6 +31,7 @@ const TIPO_EVENTO = {
   TRANSFERENCIA: msg`Transferência`,
   RESULTADO: msg`Resultado final`,
   RECTIFICACAO: msg`Rectificação`,
+  SITUACAO: msg`Situação`,
 } satisfies Record<TipoEventoPercurso, unknown>
 
 /** Idade a partir da data civil, sem conversão de fuso (guia 8.2). */

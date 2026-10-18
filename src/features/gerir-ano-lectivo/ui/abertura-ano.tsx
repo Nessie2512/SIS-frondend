@@ -1,3 +1,4 @@
+import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { Link, type LinkProps } from '@tanstack/react-router'
@@ -35,7 +36,10 @@ export function AberturaAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir: bo
           <Trans>Abertura do ano</Trans>
         </h2>
         <p className="tabular text-secundario text-texto-2">
-          {t`${feitas} de ${total} etapas feitas`}
+          {plural(total, {
+            one: `${feitas} de # etapa feita`,
+            other: `${feitas} de # etapas feitas`,
+          })}
         </p>
       </div>
       <ol
@@ -86,21 +90,29 @@ function LinhaEtapa({
   }
   const DETALHE: Record<Etapa['id'], string> = {
     CRIAR: t`Datas e designação definidas.`,
-    CALENDARIO: t`${n} trimestres gerados. Reveja feriados e datas-chave.`,
-    TURMAS: n ? t`${n} turmas preparadas.` : t`Duplique a estrutura do ano em curso.`,
+    CALENDARIO: plural(n, {
+      one: '# trimestre gerado. Reveja feriados e datas-chave.',
+      other: '# trimestres gerados. Reveja feriados e datas-chave.',
+    }),
+    TURMAS: n
+      ? plural(n, { one: '# turma preparada.', other: '# turmas preparadas.' })
+      : t`Duplique a estrutura do ano em curso.`,
     RENOVACAO: t`Simule, reveja os excluídos e confirme.`,
-    MATRICULAS: t`${n} matrículas neste ano. Etapa sem fim marcado.`,
+    MATRICULAS: plural(n, {
+      one: '# matrícula neste ano. Etapa sem fim marcado.',
+      other: '# matrículas neste ano. Etapa sem fim marcado.',
+    }),
     DISTRIBUICAO:
       etapa.quantidade === null
         ? t`Ainda não há matrículas neste ano.`
         : n
-          ? t`${n} matrículas sem turma.`
+          ? plural(n, { one: '# matrícula sem turma.', other: '# matrículas sem turma.' })
           : t`Todas as matrículas têm turma.`,
     DOCENTES:
       etapa.quantidade === null
         ? t`Prepare primeiro as turmas.`
         : n
-          ? t`${n} disciplinas sem docente.`
+          ? plural(n, { one: '# disciplina sem docente.', other: '# disciplinas sem docente.' })
           : t`Todas as disciplinas têm docente.`,
     ACTIVAR:
       etapa.estado === 'BLOQUEADA'
@@ -213,7 +225,6 @@ function AccaoEtapa({
 }
 
 function BotaoDuplicarTurmas({ ano }: { ano: AnoLectivo }) {
-  const { t } = useLingui()
   const duplicar = useDuplicarTurmas(ano.id)
   return (
     <Button
@@ -222,7 +233,10 @@ function BotaoDuplicarTurmas({ ano }: { ano: AnoLectivo }) {
       onClick={() =>
         duplicar.mutate(undefined, {
           onSuccess: ({ criadas, origem }) => {
-            const mensagem = t`${criadas} turmas criadas a partir de ${origem}.`
+            const mensagem = plural(criadas, {
+              one: `# turma criada a partir de ${origem}.`,
+              other: `# turmas criadas a partir de ${origem}.`,
+            })
             notificar.sucesso(mensagem)
             anunciar.educado(mensagem)
           },

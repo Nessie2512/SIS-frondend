@@ -21,7 +21,7 @@ describe('Professores', () => {
       expect(router.state.location.search).toMatchObject({ q: alvo.numeroAgente }),
     )
     expect(await screen.findByText(alvo.nome)).toBeInTheDocument()
-    expect(await screen.findByText('1 professores')).toBeInTheDocument()
+    expect(await screen.findByText('1 professor')).toBeInTheDocument()
   })
 
   it('a ficha mostra as atribuições do ano com o total igual à carga lectiva', async () => {

@@ -34,6 +34,8 @@ test('documentos oficiais: pré-visualizar, confirmar e emitir com número e có
       .getByRole('region', { name: 'Pré-visualização do documento' })
       .getByText(/frequenta nesta escola/),
   ).toBeVisible()
+  // A folha fica translúcida enquanto o texto chega: o axe mede-a já opaca
+  await expect(folha.locator('.papel')).toHaveCSS('opacity', '1')
   await semViolacoes(page)
   await folha.getByLabel(/Revi o documento/).check()
   await folha.getByRole('button', { name: 'Emitir declaração' }).click()
