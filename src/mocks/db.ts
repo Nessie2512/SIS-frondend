@@ -170,6 +170,8 @@ export interface Tarefa {
   /** Resultado já calculado (renovação): linhas do CSV e avisos por linha */
   linhas?: string[]
   avisos?: { linha: number; mensagem: string }[]
+  /** Emissão em lote: o resultado é um PDF com um documento por página */
+  documentoIds?: string[]
 }
 
 interface Estado {

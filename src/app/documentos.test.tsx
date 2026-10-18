@@ -82,3 +82,55 @@ describe('Área Documentos', () => {
     expect(screen.queryByRole('button', { name: 'Emitir documento' })).not.toBeInTheDocument()
   })
 })
+
+describe('Emissão em lote', () => {
+  it('mostra quem recebe e quem fica de fora, confirma e gera um PDF com um documento por página', async () => {
+    const daTurma = db.matriculas.filter(
+      (m) => m.turmaId === 'ano-2026-c7-A' && m.estado !== 'ANULADA',
+    )
+    const confirmadas = daTurma.filter((m) => m.estado === 'CONFIRMADA')
+    const fora = db.estudantes.find((e) => e.id === confirmadas[0]!.estudanteId)!
+    fora.estado = 'DESISTENTE'
+    // Recebem os activos com matrícula confirmada; os pendentes ficam de fora, com a razão
+    const n = confirmadas.filter(
+      (m) => db.estudantes.find((e) => e.id === m.estudanteId)!.estado === 'ACTIVO',
+    ).length
+
+    renderizarEm('/documentos')
+    const utilizador = userEvent.setup()
+    await utilizador.click(await screen.findByRole('button', { name: 'Emitir em lote' }))
+    const folha = await screen.findByRole('dialog', { name: 'Emitir em lote' })
+    expect(within(folha).getByText('Escolha a turma para ver quem recebe.')).toBeInTheDocument()
+    await utilizador.click(within(folha).getByRole('combobox', { name: /Turma/ }))
+    await utilizador.click(await screen.findByRole('option', { name: /^7\.ª A/ }))
+
+    const recebem = await within(folha).findByRole('list', { name: 'Recebem' })
+    expect(within(recebem).getAllByRole('listitem')).toHaveLength(n)
+    const deFora = within(folha).getByRole('list', { name: 'Ficam de fora' })
+    expect(deFora).toHaveTextContent(`${fora.nome}Não está activo.`)
+    expect(within(deFora).getAllByRole('listitem')).toHaveLength(daTurma.length - n)
+
+    const emitir = within(folha).getByRole('button', {
+      name: `Emitir ${n} declarações de frequência`,
+    })
+    expect(emitir).toBeDisabled()
+    await utilizador.click(within(folha).getByLabelText(/Revi quem recebe/))
+    await waitFor(() => expect(emitir).toBeEnabled())
+    await utilizador.click(emitir)
+
+    const pdf = await within(folha).findByRole('link', { name: 'Descarregar PDF' })
+    expect(db.documentosOficiais).toHaveLength(n)
+    expect(new Set(db.documentosOficiais.map((d) => d.numero)).size).toBe(n)
+    expect(within(folha).getByRole('list', { name: 'Sem documento' })).toHaveTextContent(
+      `${fora.nome}: Não está activo; sem documento.`,
+    )
+    const resposta = await fetch(new URL(pdf.getAttribute('href')!, location.origin))
+    expect(resposta.headers.get('Content-Type')).toBe('application/pdf')
+    const texto = await resposta.text()
+    expect(texto).toContain(`/Count ${n}`)
+    expect(texto).toContain(db.documentosOficiais[n - 1]!.codigo)
+
+    await utilizador.click(within(folha).getByRole('button', { name: 'Concluir' }))
+    expect(await screen.findByText(`${n} documentos emitidos`)).toBeInTheDocument()
+  })
+})

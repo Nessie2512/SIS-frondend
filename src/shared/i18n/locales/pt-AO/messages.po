@@ -138,6 +138,10 @@ msgstr "{idade} anos"
 msgid "{inscritos} de {lotacaoMaxima}"
 msgstr "{inscritos} de {lotacaoMaxima}"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "{inscritos} inscritos"
+msgstr "{inscritos} inscritos"
+
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "{jaConfirmadas} já estavam confirmadas e não mudam."
 msgstr "{jaConfirmadas} já estavam confirmadas e não mudam."
@@ -145,6 +149,14 @@ msgstr "{jaConfirmadas} já estavam confirmadas e não mudam."
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "{n, plural, one {# utilizador} other {# utilizadores}}"
 msgstr "{n, plural, one {# utilizador} other {# utilizadores}}"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "{n, plural, one {Emitir # declaração de frequência} other {Emitir # declarações de frequência}}"
+msgstr "{n, plural, one {Emitir # declaração de frequência} other {Emitir # declarações de frequência}}"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "{n, plural, one {Emitir # declaração de matrícula} other {Emitir # declarações de matrícula}}"
+msgstr "{n, plural, one {Emitir # declaração de matrícula} other {Emitir # declarações de matrícula}}"
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "{n, plural, one {Inscrever # estudante} other {Inscrever # estudantes}}"
@@ -516,6 +528,10 @@ msgstr "A escola de origem e as classes lá concluídas entram no percurso."
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
 msgstr "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "A gerar o PDF"
+msgstr "A gerar o PDF"
 
 #: src/shared/ui/edicao-no-sitio.tsx
 msgid "A guardar"
@@ -1128,6 +1144,7 @@ msgstr "Cancelado."
 #: src/features/editar-plano/ui/accoes-plano.tsx
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/emitir-documento/ui/emitir-global.tsx
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
@@ -1299,6 +1316,7 @@ msgid "Concluído"
 msgstr "Concluído"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Concluir"
 msgstr "Concluir"
 
@@ -1549,13 +1567,19 @@ msgstr "Dê um nome à vista."
 msgid "Declaração da escola anterior"
 msgstr "Declaração da escola anterior"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 #: src/routes/_app/documentos.tsx
 msgid "Declaração de frequência"
 msgstr "Declaração de frequência"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 #: src/routes/_app/documentos.tsx
 msgid "Declaração de matrícula"
 msgstr "Declaração de matrícula"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Declarações para uma turma inteira, num só PDF."
+msgstr "Declarações para uma turma inteira, num só PDF."
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/routes/_app/documentos.tsx
@@ -1630,6 +1654,7 @@ msgid "Descarregar modelo"
 msgstr "Descarregar modelo"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Descarregar PDF"
 msgstr "Descarregar PDF"
 
@@ -1763,6 +1788,7 @@ msgstr "Docente"
 msgid "Docentes"
 msgstr "Docentes"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 #: src/routes/_app/documentos.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento"
@@ -1874,6 +1900,10 @@ msgstr "Editar encarregado"
 msgid "Editar o item em foco"
 msgstr "Editar o item em foco"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Efeito da emissão"
+msgstr "Efeito da emissão"
+
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Eliminar"
@@ -1934,6 +1964,10 @@ msgstr "Em vigor desde {data}."
 msgid "Email"
 msgstr "Email"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Emissão em lote iniciada. Pode continuar a trabalhar."
+msgstr "Emissão em lote iniciada. Pode continuar a trabalhar."
+
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "Emitida em {emitida} por {autor}"
@@ -1963,6 +1997,10 @@ msgstr "Emitir documento"
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Emitir documentos oficiais"
 msgstr "Emitir documentos oficiais"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Emitir em lote"
+msgstr "Emitir em lote"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Emitir guia"
@@ -2123,6 +2161,10 @@ msgstr "Escola de origem"
 #: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "Escolha a classe."
 msgstr "Escolha a classe."
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Escolha a turma para ver quem recebe."
+msgstr "Escolha a turma para ver quem recebe."
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Escolha a turma."
@@ -2550,11 +2592,16 @@ msgstr "Feriados, datas-chave e interrupções"
 msgid "Fica na lista de estudantes sem turma, no quadro da distribuição."
 msgstr "Fica na lista de estudantes sem turma, no quadro da distribuição."
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Ficam de fora"
+msgstr "Ficam de fora"
+
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Ficam de fora ({n})"
 msgstr "Ficam de fora ({n})"
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Ficam de fora ({nExcluidos})"
 msgstr "Ficam de fora ({nExcluidos})"
 
@@ -3231,6 +3278,10 @@ msgstr "Não foi possível carregar esta página."
 msgid "Não foi possível concluir. Corrija estas linhas e tente de novo:"
 msgstr "Não foi possível concluir. Corrija estas linhas e tente de novo:"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Não foi possível gerar o PDF. Tente de novo."
+msgstr "Não foi possível gerar o PDF. Tente de novo."
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Não foi possível guardar. A sua alteração continua aqui."
 msgstr "Não foi possível guardar. A sua alteração continua aqui."
@@ -3342,6 +3393,10 @@ msgstr "Nenhuma. Está resolvido."
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Neste dia"
 msgstr "Neste dia"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Ninguém desta turma pode receber este documento."
+msgstr "Ninguém desta turma pode receber este documento."
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Ninguém encontrado. Escolha «Pessoa nova»."
@@ -3637,9 +3692,17 @@ msgstr "Opcional. Ex.: abono de família."
 msgid "Opcional. Ex.: mudança de residência."
 msgstr "Opcional. Ex.: mudança de residência."
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Opcional. Igual para todos."
+msgstr "Opcional. Igual para todos."
+
 #: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "Opcional. Sem turma, fica no quadro para distribuir."
 msgstr "Opcional. Sem turma, fica no quadro para distribuir."
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Os documentos já estão numerados; o PDF é gerado em segundo plano. Pode fechar e descarregar no quadro de tarefas."
+msgstr "Os documentos já estão numerados; o PDF é gerado em segundo plano. Pode fechar e descarregar no quadro de tarefas."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Os feriados nacionais vêm da lei e não se apagam."
@@ -3725,6 +3788,7 @@ msgid "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaç
 msgstr "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Para efeitos de"
 msgstr "Para efeitos de"
 
@@ -4040,6 +4104,14 @@ msgstr "Reactivar {designacao}"
 msgid "Reactivar {nome}"
 msgstr "Reactivar {nome}"
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Recebem"
+msgstr "Recebem"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Recebem ({nIncluidos})"
+msgstr "Recebem ({nIncluidos})"
+
 #: src/routes/-casca/menu-lateral.tsx
 msgid "Recolher"
 msgstr "Recolher"
@@ -4328,6 +4400,10 @@ msgstr "Rever trimestres e calendário"
 msgid "Revi o documento. Sei que emitir não se desfaz: um documento emitido só se anula, com motivo."
 msgstr "Revi o documento. Sei que emitir não se desfaz: um documento emitido só se anula, com motivo."
 
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Revi quem recebe. Sei que emitir não se desfaz: cada documento fica numerado e só se anula, com motivo."
+msgstr "Revi quem recebe. Sei que emitir não se desfaz: cada documento fica numerado e só se anula, com motivo."
+
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Revisão"
 msgstr "Revisão"
@@ -4413,6 +4489,10 @@ msgstr "Sem datas marcadas."
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Sem docente"
 msgstr "Sem docente"
+
+#: src/features/emitir-documento/ui/emitir-lote.tsx
+msgid "Sem documento"
+msgstr "Sem documento"
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Sem encarregados registados."
@@ -4717,6 +4797,7 @@ msgid "turma"
 msgstr "turma"
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
+#: src/features/emitir-documento/ui/emitir-lote.tsx
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx

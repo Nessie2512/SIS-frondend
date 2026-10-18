@@ -41,7 +41,7 @@ import { handlersRenovacoes } from './renovacoes'
 import { handlersDistribuicao } from './distribuicao'
 import { handlersImportacoes } from './importacoes'
 import { handlersClasses } from './classes'
-import { handlersDocumentosOficiais } from './documentos-oficiais'
+import { handlersDocumentosOficiais, pdfDoLote } from './documentos-oficiais'
 import { gerarCsv, handlersRelatorios } from './relatorios'
 
 /** Os mesmos handlers servem desenvolvimento, testes e Storybook (guia 3.2). */
@@ -1261,6 +1261,7 @@ export const handlers = [
   http.get(`${API}/tarefas/:id/resultado`, ({ params }) => {
     const tarefa = db.tarefas.find((t) => t.id === params.id)
     if (!tarefa) return problema(404, 'Resultado não encontrado')
+    if (tarefa.tipo === 'DOCUMENTOS_LOTE') return pdfDoLote(tarefa)
     const { nome, linhas } = gerarCsv(tarefa)
     return new HttpResponse(linhas.join('\n'), {
       headers: {

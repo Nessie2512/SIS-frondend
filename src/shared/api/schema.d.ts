@@ -474,6 +474,18 @@ export interface paths {
       ok: S['PaginaDocumentoOficialDto']
     }>
   }
+  /** Emissão em lote para uma turma (guia 2.1, 5.7): primeiro o efeito, depois a tarefa */
+  '/documentos-oficiais/lote/simular': {
+    post: Op<{ body: S['PedidoLoteDto']; ok: S['SimulacaoLoteDto']; erros: 403 | 404 | 422 }>
+  }
+  '/documentos-oficiais/lote': {
+    post: Op<{
+      header: { 'Idempotency-Key': string }
+      body: S['PedidoLoteDto']
+      ok: S['TarefaDto']
+      erros: 403 | 404 | 409 | 422
+    }>
+  }
   '/documentos-oficiais/{id}/anular': {
     post: Op<{
       path: { id: string }
@@ -1091,6 +1103,18 @@ export interface components {
       finalidade?: string
     }
     ConteudoDocumentoDto: { titulo: string; paragrafos: string[] }
+    PedidoLoteDto: {
+      /** Só declarações (matrícula ou frequência) se emitem em lote */
+      tipo: 'DECLARACAO_MATRICULA' | 'DECLARACAO_FREQUENCIA'
+      turmaId: string
+      finalidade?: string
+    }
+    EstudanteLoteDto: { estudanteId: string; nome: string; numeroProcesso: string }
+    SimulacaoLoteDto: {
+      incluidos: components['schemas']['EstudanteLoteDto'][]
+      /** Quem fica de fora e porquê (guia 5.1: mostrar o efeito antes de confirmar) */
+      excluidos: (components['schemas']['EstudanteLoteDto'] & { razao: string })[]
+    }
     AnularDocumentoDto: { motivo: string }
 
     // Importação de estudantes

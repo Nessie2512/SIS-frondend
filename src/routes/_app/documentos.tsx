@@ -10,7 +10,7 @@ import {
   type EstadoDocumentoOficial,
   type TipoDocumentoOficial,
 } from '@/entities/documento-oficial'
-import { DialogoAnular, EmitirDocumentoGlobal } from '@/features/emitir-documento'
+import { DialogoAnular, EmitirDocumentoGlobal, EmitirEmLote } from '@/features/emitir-documento'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
@@ -270,7 +270,12 @@ function EcraDocumentos() {
             {t`${total} documentos emitidos`}
           </p>
         </div>
-        {podeEmitir && anoLectivoId && <EmitirDocumentoGlobal anoLectivoId={anoLectivoId} />}
+        {podeEmitir && anoLectivoId && (
+          <div className="flex flex-wrap gap-2">
+            <EmitirEmLote anoLectivoId={anoLectivoId} />
+            <EmitirDocumentoGlobal anoLectivoId={anoLectivoId} />
+          </div>
+        )}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_16rem_12rem]">

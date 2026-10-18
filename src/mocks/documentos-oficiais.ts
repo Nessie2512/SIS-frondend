@@ -1,7 +1,16 @@
 import { http, HttpResponse } from 'msw'
 import { auditar } from './administracao'
 import { API, idempotente, paginar, problema, protegido, utilizadorDo, type S } from './apoio'
-import { anosLectivos, classePorId, db, novoId, turmaPorId, type DocumentoOficial } from './db'
+import {
+  anosLectivos,
+  classePorId,
+  db,
+  novoId,
+  paraTarefaDto,
+  turmaPorId,
+  type DocumentoOficial,
+  type Tarefa,
+} from './db'
 
 /**
  * Documentos oficiais (guia 2.1, 2.3): declarações, guia de transferência e certificado, com
@@ -156,9 +165,9 @@ function paraDto(d: DocumentoOficial): S['DocumentoOficialDto'] {
 }
 
 // ---------------------------------------------------------------------------
-// PDF mínimo (uma página A4, Helvetica, WinAnsi): chega para descarregar e imprimir
+// PDF mínimo (A4, Helvetica, WinAnsi; uma página por documento): chega para descarregar e imprimir
 // ---------------------------------------------------------------------------
-function gerarPdf(linhas: string[]): Uint8Array {
+function gerarPdf(paginas: string[][]): Uint8Array {
   const escapar = (texto: string) =>
     [...texto.replace(/[—–]/g, '-')]
       .map((ch) => {
@@ -180,17 +189,23 @@ function gerarPdf(linhas: string[]): Uint8Array {
     if (actual || !saida.length) saida.push(actual)
     return saida
   }
-  const fluxo = [
-    'BT /F1 11 Tf 15 TL 60 780 Td',
-    ...linhas.flatMap(partir).map((l) => `(${escapar(l)}) Tj T*`),
-    'ET',
-  ].join('\n')
+  // 1 catálogo, 2 páginas, 3 tipo de letra; depois, por página, a página e o conteúdo
+  const kids = paginas.map((_, i) => `${4 + i * 2} 0 R`).join(' ')
   const objectos = [
     '<< /Type /Catalog /Pages 2 0 R >>',
-    '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
-    '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+    `<< /Type /Pages /Kids [${kids}] /Count ${paginas.length} >>`,
     '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>',
-    `<< /Length ${fluxo.length} >>\nstream\n${fluxo}\nendstream`,
+    ...paginas.flatMap((linhas, i) => {
+      const fluxo = [
+        'BT /F1 11 Tf 15 TL 60 780 Td',
+        ...linhas.flatMap((l) => partir(l)).map((l) => `(${escapar(l)}) Tj T*`),
+        'ET',
+      ].join('\n')
+      return [
+        `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R >> >> /Contents ${5 + i * 2} 0 R >>`,
+        `<< /Length ${fluxo.length} >>\nstream\n${fluxo}\nendstream`,
+      ]
+    }),
   ]
   let pdf = '%PDF-1.4\n'
   const posicoes: number[] = []
@@ -204,6 +219,80 @@ function gerarPdf(linhas: string[]): Uint8Array {
   pdf += `trailer\n<< /Size ${objectos.length + 1} /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF\n`
   return Uint8Array.from(pdf, (c) => c.charCodeAt(0))
 }
+
+/** O que vai numa página: o mesmo para o PDF de um documento e para o PDF do lote. */
+function linhasDoDocumento(d: DocumentoOficial): string[] {
+  return [
+    'Secretaria escolar',
+    '',
+    d.conteudo.titulo.toUpperCase(),
+    `N.º ${d.numero}`,
+    '',
+    ...d.conteudo.paragrafos.flatMap((p) => [p, '']),
+    `Emitido a ${dataPorExtenso(d.emitidoEm)}, por ${d.emitidoPor}.`,
+    `Código de verificação: ${d.codigo}`,
+    ...(d.estado === 'ANULADO' ? ['', `ANULADO: ${d.motivoAnulacao}`] : []),
+  ]
+}
+
+/** Resultado da tarefa de emissão em lote: um PDF com um documento por página. */
+export function pdfDoLote(tarefa: Tarefa): Response {
+  const documentos = (tarefa.documentoIds ?? [])
+    .map((id) => db.documentosOficiais.find((d) => d.id === id))
+    .filter((d) => d !== undefined)
+  return new HttpResponse(gerarPdf(documentos.map(linhasDoDocumento)), {
+    headers: {
+      'Content-Type': 'application/pdf',
+      'Content-Disposition': `attachment; filename="documentos-${tarefa.id}.pdf"`,
+    },
+  })
+}
+
+/** Cria e numera um documento (a mesma regra na emissão individual e no lote). */
+function criarDocumento(
+  estudanteId: string,
+  tipo: S['TipoDocumentoOficial'],
+  finalidade: string | undefined,
+  quem: string,
+): DocumentoOficial {
+  const ano = new Date().getFullYear()
+  const doTipo = db.documentosOficiais.filter((d) => d.tipo === tipo).length + 1
+  const documento: DocumentoOficial = {
+    id: novoId('doc'),
+    estudanteId,
+    tipo,
+    numero: `${SIGLA[tipo]}-${ano}/${String(doTipo).padStart(5, '0')}`,
+    codigo: codigoNovo(),
+    emitidoEm: new Date().toISOString(),
+    emitidoPor: quem,
+    finalidade: finalidade?.trim() || null,
+    estado: 'VALIDO',
+    motivoAnulacao: null,
+    conteudo: conteudoDe(estudanteId, tipo, finalidade ?? ''),
+  }
+  db.documentosOficiais.push(documento)
+  return documento
+}
+
+/** Quem da turma recebe o documento e quem fica de fora, com a razão. */
+function simularLote(pedido: S['PedidoLoteDto']): S['SimulacaoLoteDto'] {
+  const incluidos: S['SimulacaoLoteDto']['incluidos'] = []
+  const excluidos: S['SimulacaoLoteDto']['excluidos'] = []
+  const daTurma = db.matriculas
+    .filter((m) => m.turmaId === pedido.turmaId && m.estado !== 'ANULADA')
+    .map((m) => db.estudantes.find((e) => e.id === m.estudanteId)!)
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
+  for (const e of daTurma) {
+    const linha = { estudanteId: e.id, nome: e.nome, numeroProcesso: e.numeroProcesso }
+    const tipo = tiposDisponiveis(e.id).find((t) => t.tipo === pedido.tipo)!
+    if (e.estado !== 'ACTIVO') excluidos.push({ ...linha, razao: 'Não está activo.' })
+    else if (!tipo.disponivel) excluidos.push({ ...linha, razao: tipo.razao ?? '' })
+    else incluidos.push(linha)
+  }
+  return { incluidos, excluidos }
+}
+
+const TIPOS_LOTE = ['DECLARACAO_MATRICULA', 'DECLARACAO_FREQUENCIA']
 
 export const handlersDocumentosOficiais = [
   http.get(
@@ -273,23 +362,8 @@ export const handlersDocumentosOficiais = [
             errors: [{ campo: 'tipo', mensagem: disponivel?.razao ?? 'Tipo desconhecido.' }],
           })
         }
-        const ano = new Date().getFullYear()
-        const doTipo = db.documentosOficiais.filter((d) => d.tipo === tipo).length + 1
         const quem = utilizadorDo(request)!.nome
-        const documento: DocumentoOficial = {
-          id: novoId('doc'),
-          estudanteId: e.id,
-          tipo,
-          numero: `${SIGLA[tipo]}-${ano}/${String(doTipo).padStart(5, '0')}`,
-          codigo: codigoNovo(),
-          emitidoEm: new Date().toISOString(),
-          emitidoPor: quem,
-          finalidade: finalidade?.trim() || null,
-          estado: 'VALIDO',
-          motivoAnulacao: null,
-          conteudo: conteudoDe(e.id, tipo, finalidade ?? ''),
-        }
-        db.documentosOficiais.push(documento)
+        const documento = criarDocumento(e.id, tipo, finalidade, quem)
         auditar(
           quem,
           'CRIAR',
@@ -297,6 +371,71 @@ export const handlersDocumentosOficiais = [
           `${TITULO[tipo]} ${documento.numero}: ${e.nome}`,
         )
         return HttpResponse.json(paraDto(documento), { status: 201 })
+      })
+    }),
+  ),
+
+  http.post(
+    `${API}/documentos-oficiais/lote/simular`,
+    protegido('documentos:emitir', async ({ request }) => {
+      const pedido = (await request.json()) as S['PedidoLoteDto']
+      if (!TIPOS_LOTE.includes(pedido.tipo)) {
+        return problema(422, 'Dados inválidos', {
+          errors: [{ campo: 'tipo', mensagem: 'Só as declarações se emitem em lote.' }],
+        })
+      }
+      if (!db.turmas.some((t) => t.id === pedido.turmaId))
+        return problema(404, 'Turma não encontrada')
+      return HttpResponse.json(simularLote(pedido))
+    }),
+  ),
+
+  http.post(
+    `${API}/documentos-oficiais/lote`,
+    protegido('documentos:emitir', async ({ request }) => {
+      const pedido = (await request.json()) as S['PedidoLoteDto']
+      const quem = utilizadorDo(request)!
+      return idempotente(request, () => {
+        const turma = db.turmas.find((t) => t.id === pedido.turmaId)
+        if (!turma) return problema(404, 'Turma não encontrada')
+        if (!TIPOS_LOTE.includes(pedido.tipo)) {
+          return problema(422, 'Dados inválidos', {
+            errors: [{ campo: 'tipo', mensagem: 'Só as declarações se emitem em lote.' }],
+          })
+        }
+        const { incluidos, excluidos } = simularLote(pedido)
+        if (!incluidos.length) {
+          return problema(409, 'Ninguém para emitir', {
+            detail: 'Nenhum estudante da turma pode receber este documento.',
+          })
+        }
+        const documentos = incluidos.map((x) =>
+          criarDocumento(x.estudanteId, pedido.tipo, pedido.finalidade, quem.nome),
+        )
+        const n = documentos.length
+        const tarefa: Tarefa = {
+          id: novoId('t'),
+          tipo: 'DOCUMENTOS_LOTE',
+          parametros: { anoLectivoId: turma.anoLectivoId, turmaId: turma.id },
+          titulo: `${TITULO[pedido.tipo]}, ${turma.designacao}: ${n} ${n === 1 ? 'documento' : 'documentos'}`,
+          utilizadorId: quem.id,
+          inicio: Date.now(),
+          duracao: import.meta.env.MODE === 'test' ? 0 : 4000,
+          falha: false,
+          documentoIds: documentos.map((d) => d.id),
+          avisos: excluidos.map((x, i) => ({
+            linha: i + 1,
+            mensagem: `${x.nome}: ${x.razao.replace(/\.$/, '')}; sem documento.`,
+          })),
+        }
+        db.tarefas.push(tarefa)
+        auditar(
+          quem.nome,
+          'CRIAR',
+          'Documento oficial',
+          `${TITULO[pedido.tipo]} em lote, ${turma.designacao}: ${documentos[0]!.numero} a ${documentos[n - 1]!.numero}`,
+        )
+        return HttpResponse.json(paraTarefaDto(tarefa), { status: 202 })
       })
     }),
   ),
@@ -331,18 +470,7 @@ export const handlersDocumentosOficiais = [
   http.get(`${API}/documentos-oficiais/:id/pdf`, ({ params }) => {
     const d = db.documentosOficiais.find((x) => x.id === params.id)
     if (!d) return problema(404, 'Documento não encontrado')
-    const linhas = [
-      'Secretaria escolar',
-      '',
-      d.conteudo.titulo.toUpperCase(),
-      `N.º ${d.numero}`,
-      '',
-      ...d.conteudo.paragrafos.flatMap((p) => [p, '']),
-      `Emitido a ${dataPorExtenso(d.emitidoEm)}, por ${d.emitidoPor}.`,
-      `Código de verificação: ${d.codigo}`,
-      ...(d.estado === 'ANULADO' ? ['', `ANULADO: ${d.motivoAnulacao}`] : []),
-    ]
-    return new HttpResponse(gerarPdf(linhas), {
+    return new HttpResponse(gerarPdf([linhasDoDocumento(d)]), {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="${d.numero.replace('/', '-')}.pdf"`,
