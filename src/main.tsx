@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './app/app'
+import { prepararCache } from './app/instancias'
 import { sincronizarPreferencias } from './shared/lib/preferencias'
 import './shared/styles/tokens.css'
 
@@ -41,7 +42,7 @@ function manterSimulacaoActiva() {
 
 sincronizarPreferencias()
 
-void prepararApiSimulada().then(() => {
+void Promise.all([prepararApiSimulada(), prepararCache()]).then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <App />
