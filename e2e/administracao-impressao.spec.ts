@@ -27,6 +27,12 @@ test('administração: desactivar uma conta com Desfazer e ver o registo na audi
   const auditoria = page.getByRole('table', { name: 'Registo de auditoria' })
   await expect(auditoria.getByText(`${nome}: desactivado`)).toBeVisible()
   await expect(auditoria.getByText(`${nome}: activado`)).toBeVisible()
+  // Enquanto chega o resultado da pesquisa, a tabela fica translúcida: o axe mede-a depois
+  await expect
+    .poll(() =>
+      auditoria.evaluate((el) => getComputedStyle(el.closest('.transition-opacity')!).opacity),
+    )
+    .toBe('1')
   await semViolacoes(page)
 })
 
