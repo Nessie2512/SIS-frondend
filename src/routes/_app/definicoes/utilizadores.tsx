@@ -17,6 +17,7 @@ import { BotaoEstadoUtilizador } from '@/features/alterar-estado-utilizador'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
+import { useFiltrarEmTransicao } from '@/shared/lib/transicoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import { useCan } from '@/shared/lib/permissoes'
 import {
@@ -125,6 +126,7 @@ function EcraUtilizadores() {
   const { t } = useLingui()
   const { q, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const [texto, setTexto] = useState(q ?? '')
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => () => clearTimeout(espera.current), [])
@@ -165,7 +167,9 @@ function EcraUtilizadores() {
     clearTimeout(espera.current)
     espera.current = setTimeout(
       () =>
-        void navigate({ search: (s) => ({ ...s, q: valor.trim() || undefined }), replace: true }),
+        filtrar(() =>
+          navigate({ search: (s) => ({ ...s, q: valor.trim() || undefined }), replace: true }),
+        ),
       TEMPOS.pesquisaEspera,
     )
   }
@@ -203,7 +207,9 @@ function EcraUtilizadores() {
               opcoes={perfis.map((p) => ({ valor: p.id, rotulo: p.nome }))}
               valor={filtros.perfilId ?? null}
               aoMudar={(perfilId) =>
-                void navigate({ search: (s) => ({ ...s, perfilId: perfilId ?? undefined }) })
+                filtrar(() =>
+                  navigate({ search: (s) => ({ ...s, perfilId: perfilId ?? undefined }) }),
+                )
               }
             />
           )}
@@ -216,12 +222,14 @@ function EcraUtilizadores() {
               opcoes={opcoesEstado}
               valor={filtros.estado ?? null}
               aoMudar={(estado) =>
-                void navigate({
-                  search: (s) => ({
-                    ...s,
-                    estado: (estado ?? undefined) as EstadoUtilizador | undefined,
+                filtrar(() =>
+                  navigate({
+                    search: (s) => ({
+                      ...s,
+                      estado: (estado ?? undefined) as EstadoUtilizador | undefined,
+                    }),
                   }),
-                })
+                )
               }
             />
           )}
@@ -232,19 +240,20 @@ function EcraUtilizadores() {
         etiquetas={etiquetas}
         aoRemover={(chave) => {
           if (chave === 'q') limparTexto()
-          void navigate({ search: (s) => ({ ...s, [chave]: undefined }) })
+          filtrar(() => navigate({ search: (s) => ({ ...s, [chave]: undefined }) }))
         }}
         aoLimpar={() => {
           limparTexto()
-          void navigate({ search: {} })
+          filtrar(() => navigate({ search: {} }))
         }}
         className="-mt-3"
       />
 
       <div
+        aria-busy={isPlaceholderData || aFiltrar || undefined}
         className={cn(
           'transition-opacity duration-(--duracao-padrao)',
-          isPlaceholderData && 'opacity-60',
+          (isPlaceholderData || aFiltrar) && 'opacity-60',
         )}
       >
         <TabelaDados

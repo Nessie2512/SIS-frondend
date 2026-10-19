@@ -18,6 +18,7 @@ import { ListaDocumentos } from '@/features/marcar-documento'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
 import { useCan } from '@/shared/lib/permissoes'
+import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import {
   Avatar,
   Button,
@@ -91,7 +92,11 @@ function FichaEstudante() {
         <Trans>Estudantes</Trans>
       </Link>
 
-      <header className="flex flex-wrap items-center gap-5">
+      {/* Destino da transição partilhada: a linha ou o painel expandem-se aqui (guia 5.6) */}
+      <header
+        className="flex flex-wrap items-center gap-5"
+        style={{ viewTransitionName: NOME_TRANSICAO_FICHA }}
+      >
         <Avatar nome={e.nome} fotografia={e.fotografiaUrl} tamanho="grande" />
         <div className="flex min-w-48 flex-1 flex-col gap-1">
           <h1 className="text-titulo-pagina">{e.nome}</h1>

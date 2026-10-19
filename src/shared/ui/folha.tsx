@@ -19,6 +19,8 @@ interface PropsBase {
 interface PropsFolha extends PropsBase {
   /** Folha larga (960 px), para formulário e pré-visualização lado a lado (guia 6.3) */
   larga?: boolean
+  /** Painel de resumo: nome da transição partilhada com a linha e a ficha (guia 5.6, 6.3) */
+  nomeTransicao?: string
 }
 
 const classesSobreposicao =
@@ -61,6 +63,7 @@ export function Folha({
   rodape,
   pendente,
   larga,
+  nomeTransicao,
 }: PropsFolha) {
   return (
     <Dialog.Root open={aberta} onOpenChange={(v) => !pendente && aoMudar(v)}>
@@ -68,6 +71,8 @@ export function Folha({
         <Dialog.Overlay className={classesSobreposicao} />
         <Dialog.Content
           aria-busy={pendente || undefined}
+          // Também ao sair: o navegador fotografa o painel antes de ele desaparecer (abrir a ficha)
+          style={nomeTransicao ? { viewTransitionName: nomeTransicao } : undefined}
           className={cn(
             'fixed inset-y-0 right-0 z-50 flex w-full flex-col',
             larga ? 'max-w-[960px]' : 'max-w-[480px]',

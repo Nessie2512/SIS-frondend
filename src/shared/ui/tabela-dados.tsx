@@ -20,7 +20,9 @@ import {
   type KeyboardEvent,
   type ReactNode,
 } from 'react'
+import { flushSync } from 'react-dom'
 import { cn } from '@/shared/lib/cn'
+import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import { Button } from './button'
 import { Esqueleto } from './esqueleto'
 import { recursosTabela, type ColunaTabela, type Recursos } from './tabela-recursos'
@@ -148,6 +150,19 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
     )
   }
 
+  // Transição partilhada (guia 5.6, 6.3): a linha clicada tem o nome «ficha» até o painel ou a
+  // ficha o receberem, e a transição faz a linha expandir-se nele. O nome tem de estar no DOM
+  // antes de a navegação começar (o navegador fotografa o estado antigo), daí o flushSync
+  const [origem, setOrigem] = useState<string>()
+  function abrir(linha: Row<Recursos, T>) {
+    if (!aoAbrir) return
+    flushSync(() => setOrigem(linha.id))
+    aoAbrir(linha.original)
+    // Depois da transição, a linha larga o nome: o painel fica com ele até fechar, e dois
+    // elementos com o mesmo nome anulariam a transição seguinte
+    setTimeout(() => setOrigem(undefined), 1_000)
+  }
+
   function aoTeclar(e: KeyboardEvent, linha: Row<Recursos, T>, indice: number) {
     if ((e.target as HTMLElement).tagName === 'INPUT') return
     const passo = { ArrowDown: 1, ArrowUp: -1, PageDown: 10, PageUp: -10 }[e.key]
@@ -159,7 +174,7 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
       focarLinha(e.key === 'Home' ? 0 : linhas.length - 1)
     } else if (e.key === 'Enter' && aoAbrir) {
       e.preventDefault()
-      aoAbrir(linha.original)
+      abrir(linha)
     } else if (e.key === ' ' && seleccionavel) {
       e.preventDefault()
       linha.toggleSelected()
@@ -276,12 +291,17 @@ export function TabelaDados<T extends RowData>(props: Props<T>) {
                     tabIndex={indice === activa ? 0 : -1}
                     aria-selected={seleccionavel ? linha.getIsSelected() : undefined}
                     aria-current={linha.id === idActiva ? 'true' : undefined}
+                    style={
+                      origem === linha.id && linha.id !== idActiva
+                        ? { viewTransitionName: NOME_TRANSICAO_FICHA }
+                        : undefined
+                    }
                     onKeyDown={(e) => aoTeclar(e, linha, indice)}
                     onFocus={() => setActiva(indice)}
                     onClick={(e) => {
                       // A etiqueta da caixa de selecção não abre a linha
                       if ((e.target as HTMLElement).closest('label[data-seleccao]')) return
-                      aoAbrir?.(linha.original)
+                      abrir(linha)
                     }}
                     className={cn(
                       'h-linha outline-none focus-visible:bg-acento/5 focus-visible:shadow-[inset_2px_0_0_var(--color-acento)]',

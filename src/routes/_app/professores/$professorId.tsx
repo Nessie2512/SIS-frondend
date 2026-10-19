@@ -9,6 +9,7 @@ import { MenuEstadoProfessor } from '@/features/alterar-estado-professor'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
+import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { formatarTelefone } from '@/shared/lib/formatar'
 import {
@@ -68,7 +69,11 @@ function FichaProfessor() {
         <Trans>Professores</Trans>
       </Link>
 
-      <header className="flex flex-wrap items-center gap-5">
+      {/* Destino da transição partilhada: a linha ou o painel expandem-se aqui (guia 5.6) */}
+      <header
+        className="flex flex-wrap items-center gap-5"
+        style={{ viewTransitionName: NOME_TRANSICAO_FICHA }}
+      >
         <Avatar nome={p.nome} fotografia={p.fotografiaUrl} tamanho="grande" />
         <div className="flex min-w-0 flex-1 flex-col gap-1">
           <h1 className="truncate text-titulo-pagina">{p.nome}</h1>

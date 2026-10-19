@@ -1,11 +1,7 @@
 import { RouterProvider } from '@tanstack/react-router'
 import { Toaster } from 'sonner'
+import { queryClient, router } from './instancias'
 import { Providers } from './providers'
-import { criarQueryClient } from './query-client'
-import { criarRouter } from './router'
-
-const queryClient = criarQueryClient()
-const router = criarRouter(queryClient)
 
 export function App() {
   return (
