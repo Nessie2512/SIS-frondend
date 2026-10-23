@@ -6,46 +6,51 @@ import { db } from '@/mocks/db'
 import { desfazerUltima } from '@/shared/ui'
 import { renderizarEm } from '@/test/renderizar'
 
+/**
+ * Dia da grelha pelo início do rótulo. A grelha tem um botão por dia do ano: getByRole com nome
+ * calcula o nome acessível de centenas de botões e, numa máquina lenta, passa dos 30 s. O
+ * rótulo está no aria-label, por isso um selector CSS chega e é imediato.
+ */
+const dia = (inicio: string) =>
+  document.querySelector<HTMLButtonElement>(`button[aria-label^="${inicio}"]`)
+const encontrarDia = (inicio: string) =>
+  waitFor(() => {
+    const botao = dia(inicio)
+    if (!botao) throw new Error(`Sem o dia «${inicio}» na grelha`)
+    return botao
+  })
+
 describe('Calendário do ano lectivo', () => {
   it('cada dia diz a data por extenso, o trimestre e o que acontece', async () => {
     renderizarEm('/calendario')
     expect(await screen.findByRole('heading', { name: 'Calendário 2026/2027' })).toBeInTheDocument()
-    expect(
-      screen.getByRole('button', {
-        name: 'quarta-feira, 11 de novembro de 2026, 1.º trimestre e Feriado: Dia da Independência Nacional',
-      }),
-    ).toBeInTheDocument()
+    expect(await encontrarDia('quarta-feira, 11 de novembro de 2026')).toHaveAttribute(
+      'aria-label',
+      'quarta-feira, 11 de novembro de 2026, 1.º trimestre e Feriado: Dia da Independência Nacional',
+    )
     expect(screen.getByRole('heading', { name: 'novembro de 2026' })).toBeInTheDocument()
   })
 
   it('navega com o teclado: setas mudam de dia, PageDown muda de mês', async () => {
     renderizarEm('/calendario')
     const utilizador = userEvent.setup()
-    const dia = await screen.findByRole('button', { name: /^quarta-feira, 11 de novembro de 2026/ })
-    dia.focus()
-    await waitFor(() => expect(dia).toHaveAttribute('tabindex', '0'))
+    const inicial = await encontrarDia('quarta-feira, 11 de novembro de 2026')
+    inicial.focus()
+    await waitFor(() => expect(inicial).toHaveAttribute('tabindex', '0'))
     await utilizador.keyboard('{ArrowRight}')
-    expect(
-      screen.getByRole('button', { name: /^quinta-feira, 12 de novembro de 2026/ }),
-    ).toHaveFocus()
+    expect(dia('quinta-feira, 12 de novembro de 2026')).toHaveFocus()
     await utilizador.keyboard('{ArrowDown}')
-    expect(
-      screen.getByRole('button', { name: /^quinta-feira, 19 de novembro de 2026/ }),
-    ).toHaveFocus()
+    expect(dia('quinta-feira, 19 de novembro de 2026')).toHaveFocus()
     await utilizador.keyboard('{PageDown}')
-    expect(screen.getByRole('button', { name: /^sábado, 19 de dezembro de 2026/ })).toHaveFocus()
+    expect(dia('sábado, 19 de dezembro de 2026')).toHaveFocus()
     // Só um dia está na ordem do Tab de cada vez
-    expect(
-      screen.getAllByRole('button').filter((b) => b.getAttribute('tabindex') === '0'),
-    ).toHaveLength(1)
+    expect(document.querySelectorAll('button[aria-label][tabindex="0"]')).toHaveLength(1)
   })
 
   it('escolher um dia abre a folha e permite acrescentar um evento', async () => {
     const { router } = renderizarEm('/calendario')
     const utilizador = userEvent.setup()
-    await utilizador.click(
-      await screen.findByRole('button', { name: /^segunda-feira, 19 de outubro de 2026/ }),
-    )
+    await utilizador.click(await encontrarDia('segunda-feira, 19 de outubro de 2026'))
     await waitFor(() => expect(router.state.location.search).toMatchObject({ dia: '2026-10-19' }))
     const folha = await screen.findByRole('dialog', {
       name: 'segunda-feira, 19 de outubro de 2026',
@@ -80,9 +85,7 @@ describe('Calendário do ano lectivo', () => {
     await waitFor(() => expect(existe()).toBe(true))
 
     await utilizador.keyboard('{Escape}')
-    await utilizador.click(
-      await screen.findByRole('button', { name: /^quarta-feira, 11 de novembro de 2026/ }),
-    )
+    await utilizador.click(await encontrarDia('quarta-feira, 11 de novembro de 2026'))
     const feriado = await screen.findByRole('dialog', {
       name: 'quarta-feira, 11 de novembro de 2026',
     })
