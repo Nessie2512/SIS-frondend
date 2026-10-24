@@ -1,21 +1,34 @@
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
-import { toast } from 'sonner'
 import { TEMPOS } from '@/shared/config/constantes'
+
+type Sonner = typeof import('sonner')
+let modulo: Promise<Sonner> | undefined
+
+/**
+ * O Sonner fica fora do JavaScript inicial (guia 1.2, 3.2): nenhuma notificação aparece antes
+ * de um gesto, por isso carrega-se logo a seguir à primeira pintura (RegiaoNotificacoes) e,
+ * no pior caso, na primeira notificação. É sempre o mesmo módulo, e por isso o mesmo estado.
+ */
+export const carregarNotificacoes = () => (modulo ??= import('sonner'))
+
+const comToast = (mostrar: (toast: Sonner['toast']) => void) =>
+  void carregarNotificacoes().then((m) => mostrar(m.toast))
 
 /**
  * Notificações (guia 5.4, 6.2). Frases curtas e calmas, sem exclamações.
  * A pausa em hover e foco e a gestão de foco vêm do Sonner.
  */
 export const notificar = {
-  sucesso: (mensagem: string) => toast.success(mensagem),
-  info: (mensagem: string) => toast(mensagem),
-  erro: (mensagem: string, tentarDeNovo?: () => void) =>
-    toast.error(mensagem, {
-      action: tentarDeNovo
-        ? { label: i18n._(msg`Tentar de novo`), onClick: tentarDeNovo }
-        : undefined,
-    }),
+  sucesso: (mensagem: string) => comToast((toast) => toast.success(mensagem)),
+  info: (mensagem: string) => comToast((toast) => toast(mensagem)),
+  erro: (mensagem: string, tentarDeNovo?: () => void) => {
+    // A etiqueta traduz-se já, no mesmo passo que a mensagem
+    const accao = tentarDeNovo
+      ? { label: i18n._(msg`Tentar de novo`), onClick: tentarDeNovo }
+      : undefined
+    comToast((toast) => toast.error(mensagem, { action: accao }))
+  },
 }
 
 let ultimoDesfazer: (() => void) | null = null
@@ -32,15 +45,19 @@ export function notificarComDesfazer(mensagem: string, aoDesfazer: () => void) {
     ultimoDesfazer = null
     aoDesfazer()
   }
+  // Fica disponível já para ⌘Z, mesmo antes de a notificação aparecer
   ultimoDesfazer = desfazer
-  const id = toast(mensagem, {
-    duration: TEMPOS.desfazer,
-    action: { label: i18n._(msg`Desfazer`), onClick: desfazer },
-    onAutoClose: () => {
-      if (ultimoDesfazer === desfazer) ultimoDesfazer = null
-    },
-  })
-  return { id, desfazer }
+  const etiqueta = i18n._(msg`Desfazer`)
+  comToast((toast) =>
+    toast(mensagem, {
+      duration: TEMPOS.desfazer,
+      action: { label: etiqueta, onClick: desfazer },
+      onAutoClose: () => {
+        if (ultimoDesfazer === desfazer) ultimoDesfazer = null
+      },
+    }),
+  )
+  return { desfazer }
 }
 
 /** Devolve true se havia uma acção para desfazer. */

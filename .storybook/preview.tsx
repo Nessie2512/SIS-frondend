@@ -3,6 +3,7 @@ import { useEffect, type ReactNode } from 'react'
 import { Toaster } from 'sonner'
 import { Providers } from '../src/app/providers'
 import { criarQueryClient } from '../src/app/query-client'
+import { activarLingua } from '../src/shared/i18n'
 import '../src/shared/styles/tokens.css'
 import { iniciarSimulacao } from './simulacao'
 
@@ -45,6 +46,10 @@ const preview: Preview = {
   decorators: [comTema, comProviders],
   // API simulada (MSW) para as histórias de componentes que pedem dados
   loaders: [iniciarSimulacao],
+  // O catálogo de mensagens carrega à parte, como na aplicação
+  beforeAll: async () => {
+    await activarLingua()
+  },
   globalTypes: {
     tema: {
       description: 'Tema',
