@@ -6,10 +6,42 @@ import { tanstackRouter } from '@tanstack/router-plugin/vite'
 import { lingui, linguiTransformerBabelPreset } from '@lingui/vite-plugin'
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin'
 import { playwright } from '@vitest/browser-playwright'
-import { defineConfig } from 'vite'
+import { defineConfig, type Plugin } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 import { rmSync } from 'node:fs'
 import { fileURLToPath, URL } from 'node:url'
+
+/**
+ * O catálogo de mensagens carrega à parte (src/shared/i18n), mas a aplicação só se mostra com
+ * ele: um modulepreload no index.html descarrega-o em paralelo com a entrada, sem esperar que
+ * esta corra para o pedir.
+ */
+function preCarregarCatalogo(): Plugin {
+  let base = '/'
+  return {
+    name: 'pre-carregar-catalogo',
+    apply: 'build',
+    configResolved(config) {
+      base = config.base
+    },
+    transformIndexHtml: {
+      order: 'post',
+      handler(_html, { bundle }) {
+        const catalogo = Object.values(bundle ?? {}).find(
+          (f) => f.type === 'chunk' && f.facadeModuleId?.endsWith('messages.po'),
+        )
+        if (!catalogo) return []
+        return [
+          {
+            tag: 'link',
+            attrs: { rel: 'modulepreload', crossorigin: '', href: `${base}${catalogo.fileName}` },
+            injectTo: 'head',
+          },
+        ]
+      },
+    },
+  }
+}
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -35,6 +67,7 @@ export default defineConfig({
     // Macros do Lingui e React Compiler na mesma passagem de Babel
     babel({ presets: [reactCompilerPreset(), linguiTransformerBabelPreset()] }),
     lingui(),
+    preCarregarCatalogo(),
     tailwindcss(),
     // Casca da aplicação em cache e dados de referência para ligação fraca (guia 3.2, 5.8)
     VitePWA({

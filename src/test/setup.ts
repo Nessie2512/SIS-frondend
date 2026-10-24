@@ -9,7 +9,9 @@ import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
 import { usePermissoesStore } from '@/shared/lib/permissoes'
 import { usePreferencias } from '@/shared/lib/preferencias'
-import '@/shared/i18n'
+import { activarLingua } from '@/shared/i18n'
+
+await activarLingua()
 
 // Máquinas mais lentas (ou o primeiro teste, a frio) levam vários segundos a montar o router e as queries
 configure({ asyncUtilTimeout: 10_000 })

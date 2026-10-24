@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { App } from './app/app'
 import { prepararCache } from './app/instancias'
+import { activarLingua } from './shared/i18n'
 import { sincronizarPreferencias } from './shared/lib/preferencias'
 import './shared/styles/tokens.css'
 
@@ -42,7 +43,8 @@ function manterSimulacaoActiva() {
 
 sincronizarPreferencias()
 
-void Promise.all([prepararApiSimulada(), prepararCache()]).then(() => {
+// O catálogo de mensagens, a API simulada e a cache em disco preparam-se em paralelo
+void Promise.all([activarLingua(), prepararApiSimulada(), prepararCache()]).then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>
       <App />
