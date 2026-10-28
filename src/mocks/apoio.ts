@@ -1,5 +1,7 @@
 import { delay, HttpResponse, type DefaultBodyType, type StrictRequest } from 'msw'
 import type { components } from '@/shared/api'
+import { permissoesDoPapel } from '@/shared/config/papeis'
+import { lerJwt, textoDe } from '@/shared/lib/jwt'
 import { anosLectivos, db, UTILIZADORES } from './db'
 
 /** Auxiliares partilhados pelos handlers do MSW. */
@@ -29,7 +31,25 @@ export function problema(
 export function utilizadorDo(request: Request) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
   const id = token?.startsWith('tk-') ? token.slice(3) : undefined
-  return UTILIZADORES.find((u) => u.id === id)
+  return UTILIZADORES.find((u) => u.id === id) ?? utilizadorDoJwt(token)
+}
+
+/**
+ * Modo híbrido (pnpm dev:hibrido): a sessão vem do backend SIS real e o token é um JWT. As
+ * áreas ainda simuladas aceitam-no e dão as permissões do papel (a assinatura não se verifica).
+ */
+function utilizadorDoJwt(token: string | undefined) {
+  const claims = token ? lerJwt(token) : null
+  if (!claims) return undefined
+  if (claims.exp && claims.exp * 1000 < Date.now()) return undefined
+  const papel = textoDe(claims, 'role', 'papel')
+  return {
+    id: textoDe(claims, 'sub', 'uuid', 'id') ?? 'sis',
+    nome: textoDe(claims, 'name', 'nome', 'email') ?? 'Utilizador',
+    email: textoDe(claims, 'email') ?? '',
+    palavraPasse: '',
+    permissoes: permissoesDoPapel(papel),
+  }
 }
 
 export type Contexto = {

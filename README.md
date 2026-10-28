@@ -7,8 +7,9 @@ SPA em React 19 + TypeScript (strict) + Vite, segundo o
 
 ```powershell
 pnpm install
-pnpm dev:mock   # API simulada pelo MSW (enquanto não há backend/OpenAPI)
-pnpm dev        # API real em http://localhost:3000 via proxy /api
+pnpm dev:mock     # API simulada pelo MSW
+pnpm dev:hibrido  # sessão no backend SIS real; o resto no MSW (ligação faseada)
+pnpm dev          # sem simulação (só as áreas em VITE_API_REAL funcionam)
 ```
 
 ## Scripts
@@ -26,7 +27,9 @@ pnpm dev        # API real em http://localhost:3000 via proxy /api
 | `pnpm contraste`              | Verifica o contraste dos tokens e actualiza `docs/contraste.md`                                     |
 | `pnpm i18n:extrair`           | Actualiza o catálogo de mensagens pt-AO                                                             |
 | `pnpm deps:check`             | dependency-cruiser: camadas do guia 4.1                                                             |
-| `pnpm api:gen`                | Gera `src/shared/api/schema.d.ts` a partir de `./openapi.json`                                      |
+| `pnpm api:baixar`             | Descarrega o `openapi.json` do backend SIS (`SIS_URL` muda o servidor)                              |
+| `pnpm api:gen`                | Gera `src/shared/api/sis/schema.d.ts` a partir de `./openapi.json` (o CI confirma que estão iguais) |
+| `pnpm api:amostras`           | Recolhe respostas reais para `amostras-api/` (pede credenciais; pasta fora do Git)                  |
 | `pnpm format`                 | Prettier (ordena também as classes Tailwind)                                                        |
 | `pnpm fontes`                 | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
 
@@ -51,17 +54,40 @@ src/
 
 Cada camada só importa das de baixo; as features não se importam entre si (`pnpm deps:check`).
 
-## Contrato com a API: estado actual
+## Contrato com a API: ligação faseada (guia 4.3)
 
-O `src/shared/api/schema.d.ts` é **provisório**: foi escrito à mão no formato do
-`openapi-typescript`, com os endpoints que os ecrãs já usam. Quando o backend publicar o OpenAPI:
+Há dois contratos lado a lado enquanto a ligação ao backend SIS avança:
 
-1. Exportar `openapi.json` do NestJS para a raiz deste projecto (ou ajustar o caminho em `api:gen`).
-2. `pnpm api:gen` substitui o ficheiro provisório.
-3. `pnpm typecheck` mostra as diferenças; corrigem-se só os mapeadores em `entities/*/model/`.
+- `src/shared/api/sis/schema.d.ts` — **real**, gerado do `openapi.json` publicado pelo backend
+  (`pnpm api:baixar && pnpm api:gen`). Cliente `apiSis`, base `/sis`.
+- `src/shared/api/schema.d.ts` — **provisório**, escrito à mão, para as áreas que o backend
+  ainda não tem. Cliente `api`, base `/api/v1`, servido pelo MSW.
 
-Regras enquanto for provisório: tipos de API só em `schema.d.ts`; componentes recebem o modelo
-de vista, nunca o DTO; dados simulados só em `src/mocks/`.
+Cada área passa para a API real com `VITE_API_REAL` (lista separada por vírgulas, ou `todas`):
+`sessao`, `anos`, `curriculo`, `turmas`, `estudantes`, `professores`, `utilizadores`. As queries
+de cada entidade escolhem o cliente com `eReal(area)` e convertem o DTO real no mesmo modelo de
+vista, por isso os ecrãs não mudam. Acções que o backend ainda não suporta ficam desactivadas
+com o motivo.
+
+| Modo     | Como                                  | Áreas reais         | Resto     |
+| -------- | ------------------------------------- | ------------------- | --------- |
+| Simulado | `pnpm dev:mock`                       | nenhuma             | MSW       |
+| Híbrido  | `pnpm dev:hibrido` (`.env.hibrido`)   | as de VITE_API_REAL | MSW       |
+| Real     | `VITE_API_REAL=todas` em `.env.local` | todas               | sem dados |
+
+Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
+
+- **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis`
+  (`SIS_URL` muda o destino); no Render, a reescrita `/sis/*` em `render.yaml`.
+- **Sessão**: `POST /auth/login` devolve só o token. Quem entrou e o papel lêem-se do JWT; as
+  permissões saem do papel (`shared/config/papeis.ts`, provisório). Não há renovação: recarregar
+  a página pede a entrada de novo, e um 401 a meio do trabalho abre o diálogo de sessão terminada.
+- **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
+  `ApiError` (mensagens do class-validator → erros por campo).
+- No modo híbrido, o MSW aceita o JWT real e dá as permissões do papel às áreas simuladas.
+
+Regras: tipos de API só nos `schema.d.ts`; componentes recebem o modelo de vista, nunca o DTO;
+dados simulados só em `src/mocks/`.
 
 ## Regras do dia a dia
 

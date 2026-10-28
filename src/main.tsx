@@ -16,6 +16,8 @@ async function prepararApiSimulada() {
     MODO_SIMULADO || (import.meta.env.DEV && import.meta.env.VITE_API_MOCK === 'true')
   if (simulada) {
     const { worker } = await import('./mocks/browser')
+    // 'bypass': no modo híbrido (pnpm dev:hibrido), os pedidos ao backend SIS real (/sis)
+    // não têm handler e seguem para a rede, pelo proxy do Vite
     await worker.start({ onUnhandledFrame: 'bypass', quiet: import.meta.env.PROD })
     manterSimulacaoActiva()
   }
