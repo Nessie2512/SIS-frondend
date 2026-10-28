@@ -36,9 +36,10 @@ jobs:
         run: pnpm contraste && git diff --exit-code docs/contraste.md
       - name: Catálogo de mensagens actualizado
         run: pnpm i18n:extrair && git diff --exit-code src/shared/i18n
-      # Desvio de contrato com a API (guia 4.3): activar quando o backend publicar o OpenAPI
-      # - name: Contrato da API
-      #   run: pnpm api:gen && git diff --exit-code src/shared/api/schema.d.ts
+      # Desvio de contrato com a API (guia 4.3): os tipos gerados têm de corresponder ao
+      # openapi.json do repositório (actualizado com pnpm api:baixar && pnpm api:gen)
+      - name: Contrato da API
+        run: pnpm api:gen && git diff --exit-code src/shared/api/sis/schema.d.ts
       - name: Build
         run: pnpm build
       - name: Orçamento de peso

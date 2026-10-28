@@ -4,6 +4,9 @@ pnpm-lock.yaml
 public/mockServiceWorker.js
 src/app/routeTree.gen.ts
 src/shared/api/schema.d.ts
+src/shared/api/sis/schema.d.ts
+# Contrato do backend tal como o servidor o publica (pnpm api:baixar)
+openapi.json
 *.pdf
 storybook-static
 docs/contraste.md
