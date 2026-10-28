@@ -1,5 +1,6 @@
 import { delay, HttpResponse, type DefaultBodyType, type StrictRequest } from 'msw'
 import type { components } from '@/shared/api'
+import { FUSO_HORARIO } from '@/shared/config/constantes'
 import { permissoesDoPapel } from '@/shared/config/papeis'
 import { lerJwt, textoDe } from '@/shared/lib/jwt'
 import { anosLectivos, db, UTILIZADORES } from './db'
@@ -7,6 +8,18 @@ import { anosLectivos, db, UTILIZADORES } from './db'
 /** Auxiliares partilhados pelos handlers do MSW. */
 export type S = components['schemas']
 export const API = '/api/v1'
+
+/**
+ * Data civil de hoje em Angola (AAAA-MM-DD), como o servidor a deve ver. Não usar
+ * toISOString(): entre as 00:00 e a 01:00 de Luanda ainda é ontem em UTC.
+ */
+export const hojeEmAngola = (agora = new Date()) =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: FUSO_HORARIO,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(agora)
 
 /** Latência simulada só no navegador; nos testes responde de imediato. */
 export const latencia = (ms: number) => delay(import.meta.env.MODE === 'test' ? 0 : ms)

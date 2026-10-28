@@ -23,6 +23,7 @@ import {
 } from './db'
 
 import {
+  hojeEmAngola,
   anoEncerrado,
   API,
   etag,
@@ -346,7 +347,7 @@ export const handlers = [
       if (!e) return problema(404, 'Estudante não encontrado')
       const corpo = (await request.json()) as S['NovaOcorrenciaDto']
       const descricao = corpo.descricao?.trim() ?? ''
-      const hoje = new Date().toISOString().slice(0, 10)
+      const hoje = hojeEmAngola()
       const erros = [
         ...(descricao.length < 10
           ? [
@@ -816,7 +817,7 @@ export const handlers = [
           ],
         })
       }
-      const hoje = new Date().toISOString().slice(0, 10)
+      const hoje = hojeEmAngola()
       for (const a of db.atribuicoes) {
         if (a.turmaId === turma.id && a.ate === null) {
           a.ate = hoje
@@ -1146,7 +1147,7 @@ export const handlers = [
           detail: 'Esta mudança não se aplica à situação actual do estudante.',
         })
       }
-      const hoje = new Date().toISOString().slice(0, 10)
+      const hoje = hojeEmAngola()
       const erros = [
         ...(!data || data > hoje
           ? [{ campo: 'data', mensagem: 'A data não pode ser no futuro.' }]
@@ -1206,7 +1207,7 @@ export const handlers = [
       }
       const corpo = (await request.json()) as S['TransferirEstudanteDto']
       const escola = corpo.escolaDestino?.trim() ?? ''
-      const hoje = new Date().toISOString().slice(0, 10)
+      const hoje = hojeEmAngola()
       const erros = [
         ...(escola.length < 3
           ? [{ campo: 'escolaDestino', mensagem: 'Indique a escola de destino.' }]
