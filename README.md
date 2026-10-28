@@ -79,7 +79,7 @@ Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do back
 
 - **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis`
   (`SIS_URL` muda o destino); no Render, a reescrita `/sis/*` em `render.yaml`.
-- **Sessão**: `POST /auth/login` devolve só o token. Quem entrou e o papel lêem-se do JWT; as
+- **Sessão**: `POST /auth/login` devolve só o token, e o JWT só traz `sub` e `exp`. Nome, email e papel vêm de `GET /users/{sub}` (sem acesso: entra-se sem permissões de escrita); as
   permissões saem do papel (`shared/config/papeis.ts`, provisório). Não há renovação: recarregar
   a página pede a entrada de novo, e um 401 a meio do trabalho abre o diálogo de sessão terminada.
 - **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em

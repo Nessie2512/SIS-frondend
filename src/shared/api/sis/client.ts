@@ -9,6 +9,9 @@ import type { components, paths } from './schema'
 /** Caminhos que tratam o seu próprio 401 (credenciais erradas não são sessão expirada). */
 const CAMINHOS_DE_SESSAO = ['/auth/login']
 
+/** Cabeçalho local (não sai do cliente com significado): este pedido trata o seu próprio 403. */
+export const SEM_AVISO_403 = 'X-Sem-Aviso-403'
+
 function caminhoRelativo(url: string) {
   const caminho = new URL(url, window.location.origin).pathname
   const base = new URL(SIS_URL).pathname.replace(/\/$/, '')
@@ -26,7 +29,10 @@ const comContexto: Middleware = {
   async onResponse({ request, response }) {
     if (response.ok) return desembrulhar(response)
 
-    if (response.status === 403) eventosApi.emitirPermissaoNegada()
+    // O pedido do perfil trata o seu próprio 403 (avisar faria pedir o perfil outra vez, sem fim)
+    if (response.status === 403 && !request.headers.has(SEM_AVISO_403)) {
+      eventosApi.emitirPermissaoNegada()
+    }
 
     // Sem renovação no backend: um 401 fora da entrada é sessão expirada (pede credenciais de novo)
     const pedidoDeSessao = CAMINHOS_DE_SESSAO.includes(caminhoRelativo(request.url))

@@ -1,5 +1,5 @@
 import { delay, HttpResponse, type DefaultBodyType, type StrictRequest } from 'msw'
-import type { components } from '@/shared/api'
+import { sessao, type components } from '@/shared/api'
 import { FUSO_HORARIO } from '@/shared/config/constantes'
 import { permissoesDoPapel } from '@/shared/config/papeis'
 import { lerJwt, textoDe } from '@/shared/lib/jwt'
@@ -55,7 +55,8 @@ function utilizadorDoJwt(token: string | undefined) {
   const claims = token ? lerJwt(token) : null
   if (!claims) return undefined
   if (claims.exp && claims.exp * 1000 < Date.now()) return undefined
-  const papel = textoDe(claims, 'role', 'papel')
+  // O token do SIS não traz o papel: usa-se o que o frontend leu do perfil (GET /users/{sub})
+  const papel = textoDe(claims, 'role', 'papel') ?? sessao.papel() ?? undefined
   return {
     id: textoDe(claims, 'sub', 'uuid', 'id') ?? 'sis',
     nome: textoDe(claims, 'name', 'nome', 'email') ?? 'Utilizador',

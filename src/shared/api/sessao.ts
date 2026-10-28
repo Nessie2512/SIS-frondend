@@ -12,6 +12,8 @@ import { eReal } from '@/shared/config/ligacao'
 const caminhoRenovar = () => new URL('/api/v1/auth/refresh', window.location.origin).href
 
 let tokenAcesso: string | null = null
+/** Papel de quem entrou (backend SIS): o modo híbrido dá às áreas simuladas as permissões dele. */
+let papel: string | null = null
 let renovacaoEmCurso: Promise<boolean> | null = null
 
 const canal = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('sessao')
@@ -26,6 +28,7 @@ canal?.addEventListener('message', (evento: MessageEvent<{ tipo: string }>) => {
 
 function terminarLocalmente(motivo: MotivoFimSessao) {
   tokenAcesso = null
+  papel = null
   ouvintesSaida.forEach((ouvinte) => ouvinte(motivo))
 }
 
@@ -34,6 +37,13 @@ export const sessao = {
 
   definirToken(token: string | null) {
     tokenAcesso = token
+    if (!token) papel = null
+  },
+
+  papel: () => papel,
+
+  definirPapel(valor: string | null) {
+    papel = valor
   },
 
   /** Renova o token uma só vez, mesmo que várias chamadas recebam 401 ao mesmo tempo. */
