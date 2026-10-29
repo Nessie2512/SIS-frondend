@@ -3,6 +3,10 @@
 
 interface ImportMetaEnv {
   readonly VITE_API_MOCK?: 'true' | 'false'
+  /** Áreas ligadas ao backend SIS real, separadas por vírgulas, ou `todas` (shared/config/ligacao) */
+  readonly VITE_API_REAL?: string
+  /** Caminho do backend SIS na mesma origem (por omissão /sis, servido por proxy ou reescrita) */
+  readonly VITE_SIS_BASE?: string
   /** Sentry: sem DSN, nada é enviado */
   readonly VITE_SENTRY_DSN?: string
   readonly VITE_VERSAO?: string

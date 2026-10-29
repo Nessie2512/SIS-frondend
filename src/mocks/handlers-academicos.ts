@@ -2,6 +2,7 @@ import { http, HttpResponse } from 'msw'
 import { emVigor, TIPOS_DOCUMENTO_PROFESSOR, type Plano, type Professor } from './academico'
 import { auditar } from './administracao'
 import {
+  hojeEmAngola,
   anoEncerrado,
   API,
   etag,
@@ -228,7 +229,7 @@ export const handlersAcademicos = [
         (a) => emVigor(a) && a.turmaId === turma.id && a.disciplinaId === linha.disciplinaId,
       )
       const ano = anosLectivos.find((a) => a.id === turma.anoLectivoId)!
-      const hoje = new Date().toISOString().slice(0, 10)
+      const hoje = hojeEmAngola()
       const desde = corpo.desde || (hoje < ano.dataInicio ? ano.dataInicio : hoje)
       const motivo = corpo.motivo?.trim() ?? ''
       const erro = (campo: string, mensagem: string, code?: string) =>
@@ -529,7 +530,7 @@ export const handlersAcademicos = [
           outro.estado = 'ARQUIVADO'
       }
       plano.estado = 'VIGENTE'
-      plano.publicadoEm = new Date().toISOString().slice(0, 10)
+      plano.publicadoEm = hojeEmAngola()
       plano.revisao++
       auditar(utilizadorDo(request)!.nome, 'PUBLICAR', 'Plano curricular', `Versão ${plano.versao}`)
       return respostaPlano(plano)

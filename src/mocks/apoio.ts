@@ -1,10 +1,25 @@
 import { delay, HttpResponse, type DefaultBodyType, type StrictRequest } from 'msw'
-import type { components } from '@/shared/api'
+import { sessao, type components } from '@/shared/api'
+import { FUSO_HORARIO } from '@/shared/config/constantes'
+import { permissoesDoPapel } from '@/shared/config/papeis'
+import { lerJwt, textoDe } from '@/shared/lib/jwt'
 import { anosLectivos, db, UTILIZADORES } from './db'
 
 /** Auxiliares partilhados pelos handlers do MSW. */
 export type S = components['schemas']
 export const API = '/api/v1'
+
+/**
+ * Data civil de hoje em Angola (AAAA-MM-DD), como o servidor a deve ver. Não usar
+ * toISOString(): entre as 00:00 e a 01:00 de Luanda ainda é ontem em UTC.
+ */
+export const hojeEmAngola = (agora = new Date()) =>
+  new Intl.DateTimeFormat('en-CA', {
+    timeZone: FUSO_HORARIO,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(agora)
 
 /** Latência simulada só no navegador; nos testes responde de imediato. */
 export const latencia = (ms: number) => delay(import.meta.env.MODE === 'test' ? 0 : ms)
@@ -29,7 +44,26 @@ export function problema(
 export function utilizadorDo(request: Request) {
   const token = request.headers.get('Authorization')?.replace('Bearer ', '')
   const id = token?.startsWith('tk-') ? token.slice(3) : undefined
-  return UTILIZADORES.find((u) => u.id === id)
+  return UTILIZADORES.find((u) => u.id === id) ?? utilizadorDoJwt(token)
+}
+
+/**
+ * Modo híbrido (pnpm dev:hibrido): a sessão vem do backend SIS real e o token é um JWT. As
+ * áreas ainda simuladas aceitam-no e dão as permissões do papel (a assinatura não se verifica).
+ */
+function utilizadorDoJwt(token: string | undefined) {
+  const claims = token ? lerJwt(token) : null
+  if (!claims) return undefined
+  if (claims.exp && claims.exp * 1000 < Date.now()) return undefined
+  // O token do SIS não traz o papel: usa-se o que o frontend leu do perfil (GET /users/{sub})
+  const papel = textoDe(claims, 'role', 'papel') ?? sessao.papel() ?? undefined
+  return {
+    id: textoDe(claims, 'sub', 'uuid', 'id') ?? 'sis',
+    nome: textoDe(claims, 'name', 'nome', 'email') ?? 'Utilizador',
+    email: textoDe(claims, 'email') ?? '',
+    palavraPasse: '',
+    permissoes: permissoesDoPapel(papel),
+  }
 }
 
 export type Contexto = {

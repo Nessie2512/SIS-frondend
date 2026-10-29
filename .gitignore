@@ -31,3 +31,6 @@ test-results
 *.njsproj
 *.sln
 *.sw?
+
+# Amostras de respostas reais da API (pnpm api:amostras): têm dados pessoais de teste
+amostras-api/
