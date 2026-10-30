@@ -1,46 +1,43 @@
 import { http, HttpResponse } from 'msw'
-import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { server } from '@/mocks/node'
-import { ApiError, eventosApi, sessao } from '@/shared/api'
-import type { DtoSis } from '@/shared/api/sis'
+import { ApiError, sessao } from '@/shared/api'
+import { apiSis, type DtoSis } from '@/shared/api/sis'
+import { definirAreasReais } from '@/shared/config/ligacao'
 import { jwtDeTeste } from '@/test/jwt'
 import { entrar, garantirSessao, meQuery, sair } from './queries'
 
-// Área "sessao" ligada ao backend SIS real; as outras ficam no MSW (modo híbrido)
-vi.mock('@/shared/config/ligacao', async (original) => ({
-  ...(await original<typeof import('@/shared/config/ligacao')>()),
-  eReal: (area: string) => area === 'sessao',
-}))
+const token = (n = 1) =>
+  jwtDeTeste({ sub: 'u-chefe', n, exp: Math.floor(Date.now() / 1000) + 3600 })
 
-const daquiAUmaHora = () => Math.floor(Date.now() / 1000) + 3600
-
-/** Forma observada do token do SIS (amostras de 28/10): só sub e exp. */
-const tokenSis = (sub: string) => jwtDeTeste({ sub, exp: daquiAUmaHora() })
-
-const perfil = (dados: Partial<DtoSis<'UserOutputDto'>>): DtoSis<'UserOutputDto'> => ({
+const me = (dados: Partial<DtoSis<'MeResponseDto'>> = {}): DtoSis<'MeResponseDto'> => ({
   uuid: 'u-chefe',
+  name: 'Domingas Chefe',
   email: 'chefe@escola.ao',
   role: 'CHEFE_SECRETARIA',
-  employeeNumber: 'BMA2026001',
-  name: 'Domingas Chefe',
-  sex: 'F',
-  birthDate: '1985-01-01T00:00:00.000Z',
-  address: 'Luanda',
-  nationality: 'Angolana',
-  isActive: true,
+  permissions: ['students:read', 'student-entry:write', 'academic-years:write'],
   ...dados,
 })
 
-function backend(sub: string, respostaPerfil: () => Response) {
-  const pedidos: unknown[] = []
+const erroNest = (status: number, message: string) =>
+  HttpResponse.json({ statusCode: status, error: { message, statusCode: status } }, { status })
+
+function backend(perfil = me()) {
+  const pedidos: { caminho: string; corpo?: unknown }[] = []
   server.use(
     http.post('/sis/auth/login', async ({ request }) => {
-      pedidos.push(await request.json())
-      return HttpResponse.json({ accessToken: tokenSis(sub), tokenType: 'Bearer', expiresIn: 3600 })
+      pedidos.push({ caminho: 'login', corpo: await request.json() })
+      return HttpResponse.json({ accessToken: token(), tokenType: 'Bearer', expiresIn: 3600 })
     }),
-    http.get('/sis/users/:uuid', ({ params }) =>
-      params.uuid === sub ? respostaPerfil() : HttpResponse.json({}, { status: 404 }),
+    http.get('/sis/auth/me', ({ request }) =>
+      request.headers.get('Authorization')?.startsWith('Bearer ')
+        ? HttpResponse.json(perfil)
+        : erroNest(401, 'A bearer access token is required.'),
     ),
+    http.post('/sis/auth/logout', () => {
+      pedidos.push({ caminho: 'logout' })
+      return new HttpResponse(null, { status: 204 })
+    }),
   )
   return pedidos
 }
@@ -50,71 +47,103 @@ const meAgora = () =>
     signal: new AbortController().signal,
   })
 
+// Área "sessao" ligada ao backend SIS real; as outras ficam no MSW (modo híbrido).
 // O setup dos testes abre uma sessão simulada (tk-u1); aqui começa-se sem nenhuma
-beforeEach(() => sessao.definirToken(null))
+beforeEach(() => {
+  definirAreasReais(['sessao'])
+  sessao.definirToken(null)
+})
+afterEach(() => definirAreasReais([]))
 
 describe('sessão no backend SIS', () => {
-  it('entra com { email, password } e lê nome e papel do perfil (GET /users/{sub})', async () => {
-    const pedidos = backend('u-chefe', () => HttpResponse.json(perfil({})))
+  it('entra com { email, password } e lê o utilizador de /auth/me', async () => {
+    const pedidos = backend()
     const eu = await entrar({ email: 'chefe@escola.ao', palavraPasse: 'segredo' })
 
-    expect(pedidos).toEqual([{ email: 'chefe@escola.ao', password: 'segredo' }])
+    expect(pedidos[0]).toEqual({
+      caminho: 'login',
+      corpo: { email: 'chefe@escola.ao', password: 'segredo' },
+    })
     expect(eu).toMatchObject({ id: 'u-chefe', nome: 'Domingas Chefe', primeiroNome: 'Domingas' })
-    expect(eu.permissoes).toContain('anos:gerir')
+    expect(eu.permissoes).toEqual(
+      expect.arrayContaining(['estudantes:ler', 'matriculas:escrever', 'anos:gerir']),
+    )
+    expect(eu.permissoes).not.toContain('estudantes:escrever')
     expect(sessao.papel()).toBe('CHEFE_SECRETARIA')
     await expect(meAgora()).resolves.toEqual(eu)
   })
 
-  it('o secretário não ganha permissões de chefia', async () => {
-    backend('u-sec', () => HttpResponse.json(perfil({ uuid: 'u-sec', role: 'SECRETARIO' })))
+  it('permissões que o frontend não conhece: vale a tabela do papel', async () => {
+    backend(me({ role: 'SECRETARIO', permissions: ['coisa-nova:read'] }))
     const eu = await entrar({ email: 's@escola.ao', palavraPasse: 'x' })
     expect(eu.permissoes).toContain('matriculas:escrever')
     expect(eu.permissoes).not.toContain('turmas:escrever')
   })
 
-  it('sem acesso ao perfil (403): entra sem permissões e não pede o perfil sem fim', async () => {
-    const aviso = vi.fn()
-    const desligar = eventosApi.aoPermissaoNegada(aviso)
-    backend('u-sec', () =>
-      HttpResponse.json({ statusCode: 403, error: { message: 'Forbidden' } }, { status: 403 }),
-    )
-    const eu = await entrar({ email: ' S@Escola.ao ', palavraPasse: 'x' })
-    expect(eu).toMatchObject({ id: 'u-sec', email: 's@escola.ao', permissoes: [] })
-    expect(sessao.papel()).toBeNull()
-    expect(aviso).not.toHaveBeenCalled()
-    desligar()
-  })
-
-  it('credenciais erradas: 401 sem guardar token', async () => {
-    server.use(
-      http.post('/sis/auth/login', () =>
-        HttpResponse.json(
-          { statusCode: 401, error: { message: 'Invalid credentials', statusCode: 401 } },
-          { status: 401 },
-        ),
-      ),
-    )
+  it('credenciais erradas: 401 com código próprio e sem guardar token', async () => {
+    server.use(http.post('/sis/auth/login', () => erroNest(401, 'Invalid credentials')))
     const erro = (await entrar({ email: 'a@b.ao', palavraPasse: 'x' }).catch(
       (e: unknown) => e,
     )) as ApiError
     expect(erro.status).toBe(401)
+    expect(erro.temCodigo('CREDENCIAIS_INVALIDAS')).toBe(true)
     expect(sessao.tokenAcesso()).toBeNull()
   })
 
-  it('sem renovação: sem token em memória não há sessão', async () => {
+  it('ao abrir a aplicação recupera a sessão pelo cookie de renovação', async () => {
+    server.use(
+      http.post('/sis/auth/refresh', () =>
+        HttpResponse.json({ accessToken: token(2), tokenType: 'Bearer', expiresIn: 3600 }),
+      ),
+    )
+    await expect(garantirSessao()).resolves.toBe(true)
+    expect(sessao.tokenAcesso()).toBe(token(2))
+  })
+
+  it('sem cookie válido, não há sessão', async () => {
+    server.use(http.post('/sis/auth/refresh', () => erroNest(401, 'Invalid refresh token')))
     await expect(garantirSessao()).resolves.toBe(false)
-    await expect(meAgora()).rejects.toBeInstanceOf(ApiError)
   })
 
-  it('token expirado não conta como sessão', async () => {
-    sessao.definirToken(jwtDeTeste({ sub: 'x', exp: Math.floor(Date.now() / 1000) - 10 }))
-    await expect(meAgora()).rejects.toMatchObject({ status: 401 })
+  it('401 a meio do trabalho: renova uma vez e repete o pedido', async () => {
+    sessao.definirToken('vencido')
+    const vistos: (string | null)[] = []
+    server.use(
+      http.post('/sis/auth/refresh', () =>
+        HttpResponse.json({ accessToken: 'novo', tokenType: 'Bearer', expiresIn: 3600 }),
+      ),
+      http.get('/sis/academic-years', ({ request }) => {
+        const autorizacao = request.headers.get('Authorization')
+        vistos.push(autorizacao)
+        return autorizacao === 'Bearer novo'
+          ? HttpResponse.json([])
+          : erroNest(401, 'A bearer access token is required.')
+      }),
+    )
+    const { data } = await apiSis.GET('/academic-years')
+    expect(data).toEqual([])
+    expect(vistos).toEqual(['Bearer vencido', 'Bearer novo'])
   })
 
-  it('sair esquece o token e o papel sem chamar o servidor', async () => {
-    sessao.definirToken(tokenSis('x'))
+  it('401 e a renovação também falha: a sessão termina como expirada', async () => {
+    sessao.definirToken('vencido')
+    const fim = vi.fn()
+    const desligar = sessao.aoTerminar(fim)
+    server.use(
+      http.post('/sis/auth/refresh', () => erroNest(401, 'Invalid refresh token')),
+      http.get('/sis/academic-years', () => erroNest(401, 'Unauthorized')),
+    )
+    await apiSis.GET('/academic-years').catch(() => undefined)
+    expect(fim).toHaveBeenCalledWith('expirada')
+    desligar()
+  })
+
+  it('sair anula o cookie no servidor e esquece token e papel', async () => {
+    const pedidos = backend()
+    sessao.definirToken(token())
     sessao.definirPapel('SECRETARIO')
     await sair()
+    expect(pedidos.map((p) => p.caminho)).toEqual(['logout'])
     expect(sessao.tokenAcesso()).toBeNull()
     expect(sessao.papel()).toBeNull()
   })

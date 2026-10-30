@@ -1,6 +1,9 @@
-import { keepPreviousData, queryOptions } from '@tanstack/react-query'
+import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 import { api } from '@/shared/api'
+import { apiSis, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
+import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
 import {
   paraDocumento,
   paraEncarregado,
@@ -8,9 +11,10 @@ import {
   paraEstudanteResumo,
   paraEventoPercurso,
   paraOcorrencia,
+  paraEstudanteDoSis,
   paraPaginaEstudantes,
 } from '../model/mapeadores'
-import type { FiltrosEstudantes } from '../model/tipos'
+import type { FiltrosEstudantes, PaginaEstudantes } from '../model/tipos'
 
 export const estudanteKeys = {
   todos: ['estudantes'] as const,
@@ -27,7 +31,8 @@ export const estudanteKeys = {
 export function estudantesQuery(filtros: FiltrosEstudantes) {
   return queryOptions({
     queryKey: estudanteKeys.lista(filtros),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('estudantes')) return paginaDoSis(client, filtros)
       const { data } = await api.GET('/estudantes', {
         params: { query: { ...filtros, pageSize: PAGINACAO.porPagina } },
         signal,
@@ -44,6 +49,13 @@ export function estudanteQuery(id: string) {
   return queryOptions({
     queryKey: estudanteKeys.detalhe(id),
     queryFn: async ({ signal }) => {
+      if (eReal('estudantes')) {
+        const { data } = await apiSis.GET('/students/{uuid}', {
+          params: { path: { uuid: id } },
+          signal,
+        })
+        return paraEstudanteDoSis(data!)
+      }
       const { data } = await api.GET('/estudantes/{id}', { params: { path: { id } }, signal })
       return paraEstudante(data!)
     },
@@ -121,4 +133,30 @@ export function ocorrenciasQuery(id: string) {
     },
     staleTime: FRESCURA.lista,
   })
+}
+
+/**
+ * Backend SIS: lista inteira, sem matrículas. Filtra-se aqui o que o estudante tem (pesquisa por
+ * nome, número de processo ou documento; estado; sexo); os filtros de matrícula (classe, sem
+ * turma, documentos em falta) não têm dados e devolvem a lista vazia em vez de enganar.
+ */
+async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<PaginaEstudantes> {
+  const todos = (await client.fetchQuery(referenciaSis.estudantes())).map(paraEstudanteDoSis)
+  const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
+  const semDadosDeMatricula = Boolean(f.classeId || f.semTurma || f.documentosEmFalta)
+  const filtrados = semDadosDeMatricula
+    ? []
+    : todos
+        .filter(
+          (e) =>
+            !termo ||
+            normalizarTexto(e.nome).includes(termo) ||
+            normalizarTexto(e.numeroProcesso).includes(termo) ||
+            normalizarTexto(e.documentoIdentificacao ?? '').includes(termo),
+        )
+        .filter((e) => !f.estado || e.estado === f.estado)
+        .filter((e) => !f.sexo || e.sexo === f.sexo)
+  const ordenados = ordenarLocal(filtrados, f.ordenar ?? 'nome')
+  const { itens, total, page, totalPaginas } = paginarLocal(ordenados, f.page, PAGINACAO.porPagina)
+  return { estudantes: itens, total, page, totalPaginas }
 }

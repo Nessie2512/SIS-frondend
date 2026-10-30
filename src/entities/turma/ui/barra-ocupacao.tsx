@@ -10,6 +10,14 @@ export function BarraOcupacao({
 }) {
   const { t } = useLingui()
   const { inscritos, lotacaoMaxima } = turma
+  // Backend SIS: ainda sem lotação nem inscritos por turma
+  if (lotacaoMaxima === 0) {
+    return (
+      <span className="text-secundario text-texto-2">
+        <Trans>Ocupação por publicar no servidor</Trans>
+      </span>
+    )
+  }
   return (
     <div className="flex items-center gap-3">
       <div

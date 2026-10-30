@@ -1,7 +1,9 @@
 import { queryOptions } from '@tanstack/react-query'
 import { api, type components } from '@/shared/api'
 import { FRESCURA } from '@/shared/config/constantes'
-import { paraAnoLectivo } from '../model/mapeadores'
+import { referenciaSis } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
+import { paraAnoLectivo, paraAnoLectivoDoSis } from '../model/mapeadores'
 
 export const anoLectivoKeys = {
   todos: ['anos-lectivos'] as const,
@@ -12,7 +14,14 @@ export const anoLectivoKeys = {
 export function anosLectivosQuery() {
   return queryOptions({
     queryKey: anoLectivoKeys.todos,
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('anos')) {
+        const anos = await client.fetchQuery(referenciaSis.anos())
+        // Por ordem cronológica, como no contrato provisório
+        return anos
+          .map(paraAnoLectivoDoSis)
+          .sort((a, b) => a.dataInicio.localeCompare(b.dataInicio))
+      }
       const { data } = await api.GET('/anos-lectivos', { signal })
       return data!.map(paraAnoLectivo)
     },

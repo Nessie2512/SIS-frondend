@@ -1,7 +1,7 @@
 import type { components } from '@/shared/api'
 
 /** Modelo de vista da turma: é isto que os componentes recebem, nunca o DTO (guia 4.3). */
-export type Turno = 'MANHA' | 'TARDE' | 'NOITE'
+export type Turno = 'MANHA' | 'TARDE' | 'NOITE' | 'INTEGRAL'
 export type EstadoTurma = 'ACTIVA' | 'ENCERRADA'
 
 export interface Turma {
@@ -12,6 +12,7 @@ export interface Turma {
   turno: Turno
   turnoRotulo: string
   sala: string | null
+  /** 0 = desconhecida (o backend SIS ainda não tem lotação nem inscritos) */
   lotacaoMaxima: number
   inscritos: number
   vagas: number

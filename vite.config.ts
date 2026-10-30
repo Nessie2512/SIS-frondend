@@ -188,6 +188,9 @@ export default defineConfig({
         target: process.env.SIS_URL ?? 'https://sis-backend-vp7g.onrender.com',
         changeOrigin: true,
         rewrite: (caminho) => caminho.replace(/^\/sis/, ''),
+        // Cookie de renovação: o navegador vê /sis/auth/refresh, não /auth/refresh
+        cookiePathRewrite: { '*': '/sis' },
+        cookieDomainRewrite: { '*': '' },
       },
     },
   },

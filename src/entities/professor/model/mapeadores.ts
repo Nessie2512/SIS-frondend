@@ -1,7 +1,9 @@
 import { i18n, type MessageDescriptor } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
+import type { DtoSis, ProfessorSis } from '@/shared/api/sis'
 import type {
+  Atribuicao,
   EstadoProfessor,
   PaginaProfessores,
   Professor,
@@ -75,5 +77,68 @@ export function paraPaginaProfessores(dto: Dto<'PaginaProfessorDto'>): PaginaPro
     total: dto.total,
     page: dto.page,
     totalPaginas: Math.max(1, Math.ceil(dto.total / dto.pageSize)),
+  }
+}
+
+/**
+ * Backend SIS: o professor não traz contactos, carga lectiva nem disciplinas habilitadas; a área
+ * de formação (teacherField) faz de texto das disciplinas. Inactivo = desligado.
+ */
+export function paraProfessorResumoDoSis(dto: ProfessorSis): ProfessorResumo {
+  return comEstado(
+    {
+      id: dto.uuid,
+      numeroAgente: dto.teacherCode,
+      nome: dto.name,
+      estado: 'ACTIVO',
+      estadoRotulo: '',
+      estadoTom: 'neutra',
+      disponivel: false,
+      disciplinas: [],
+      disciplinasTexto: dto.teacherField,
+      cargaLectiva: 0,
+      cargaMaxima: 0,
+      ocupacao: 0,
+      telefone: null,
+      email: null,
+      fotografiaUrl: null,
+    },
+    dto.isActive ? 'ACTIVO' : 'DESLIGADO',
+  )
+}
+
+/** Referências já resolvidas (turma, classe, disciplina) para as atribuições do backend SIS. */
+export interface ReferenciasAtribuicao {
+  turma: (id: number) => { uuid: string; nome: string; classe: string } | undefined
+  disciplina: (id: number) => { uuid: string; nome: string } | undefined
+}
+
+export function paraProfessorDoSis(
+  dto: ProfessorSis,
+  atribuicoes: DtoSis<'TeacherAssignmentOutputDto'>[],
+  ref: ReferenciasAtribuicao,
+): Professor {
+  return {
+    ...paraProfessorResumoDoSis(dto),
+    habilitacao: dto.educationalAttainment,
+    dataAdmissao: '',
+    atribuicoes: atribuicoes
+      .filter((a) => a.isActive)
+      .map((a): Atribuicao => {
+        const turma = ref.turma(a.classId)
+        const disciplina = ref.disciplina(a.subjectId)
+        return {
+          id: a.uuid,
+          turmaId: turma?.uuid ?? '',
+          turma: turma?.nome ?? '',
+          classe: turma?.classe ?? '',
+          disciplinaId: disciplina?.uuid ?? '',
+          disciplina: disciplina?.nome ?? '',
+          horasSemanais: 0,
+          desde: '',
+        }
+      }),
+    documentos: [],
+    documentosEmFalta: 0,
   }
 }

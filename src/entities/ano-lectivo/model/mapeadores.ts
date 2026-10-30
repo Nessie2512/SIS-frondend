@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
+import type { AnoSis } from '@/shared/api/sis'
 import type { AnoLectivo, EstadoAnoLectivo } from './tipos'
 
 const ROTULO = {
@@ -18,6 +19,27 @@ export function paraAnoLectivo(dto: Dto<'AnoLectivoDto'>): AnoLectivo {
     estado: dto.estado,
     estadoRotulo: i18n._(ROTULO[dto.estado]),
     soLeitura: dto.estado === 'ENCERRADO',
+  }
+}
+
+/**
+ * Backend SIS: o ano só tem startYear. As datas seguem a convenção da designação "2026/2027"
+ * (1 de Setembro a 31 de Julho) até o backend as publicar; servem de limites aos selectores.
+ */
+export function paraAnoLectivoDoSis(dto: AnoSis): AnoLectivo {
+  const estado: EstadoAnoLectivo = dto.isClosed
+    ? 'ENCERRADO'
+    : dto.isActive
+      ? 'EM_CURSO'
+      : 'PLANEADO'
+  return {
+    id: dto.uuid,
+    designacao: dto.label,
+    dataInicio: `${dto.startYear}-09-01`,
+    dataFim: `${dto.startYear + 1}-07-31`,
+    estado,
+    estadoRotulo: i18n._(ROTULO[estado]),
+    soLeitura: estado === 'ENCERRADO',
   }
 }
 

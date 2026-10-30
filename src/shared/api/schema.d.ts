@@ -586,7 +586,8 @@ export interface components {
     MeDto: { id: string; nome: string; email: string; permissoes: string[] }
 
     // Referência
-    Turno: 'MANHA' | 'TARDE' | 'NOITE'
+    /** INTEGRAL: só o backend SIS tem (manhã e tarde) */
+    Turno: 'MANHA' | 'TARDE' | 'NOITE' | 'INTEGRAL'
     EstadoTurma: 'ACTIVA' | 'ENCERRADA'
     EstadoAnoLectivo: 'PLANEADO' | 'EM_CURSO' | 'ENCERRADO'
     AnoLectivoDto: {

@@ -7,10 +7,7 @@ import { problemaDoSis } from './erros'
 import type { components, paths } from './schema'
 
 /** Caminhos que tratam o seu próprio 401 (credenciais erradas não são sessão expirada). */
-const CAMINHOS_DE_SESSAO = ['/auth/login']
-
-/** Cabeçalho local (não sai do cliente com significado): este pedido trata o seu próprio 403. */
-export const SEM_AVISO_403 = 'X-Sem-Aviso-403'
+const CAMINHOS_DE_SESSAO = ['/auth/login', '/auth/refresh', '/auth/logout']
 
 function caminhoRelativo(url: string) {
   const caminho = new URL(url, window.location.origin).pathname
@@ -29,24 +26,23 @@ const comContexto: Middleware = {
   async onResponse({ request, response }) {
     if (response.ok) return desembrulhar(response)
 
-    // O pedido do perfil trata o seu próprio 403 (avisar faria pedir o perfil outra vez, sem fim)
-    if (response.status === 403 && !request.headers.has(SEM_AVISO_403)) {
-      eventosApi.emitirPermissaoNegada()
-    }
+    if (response.status === 403) eventosApi.emitirPermissaoNegada()
 
-    // Sem renovação no backend: um 401 fora da entrada é sessão expirada (pede credenciais de novo)
-    const pedidoDeSessao = CAMINHOS_DE_SESSAO.includes(caminhoRelativo(request.url))
-    if (response.status === 401 && !pedidoDeSessao && sessao.tokenAcesso()) {
-      sessao.terminar('expirada')
+    // 401 a meio do trabalho: renova uma vez (cookie) e repete; se falhar, a sessão expirou
+    const caminho = caminhoRelativo(request.url)
+    const pedidoDeSessao = CAMINHOS_DE_SESSAO.includes(caminho)
+    if (response.status === 401 && !pedidoDeSessao && !request.headers.has('X-Repeticao')) {
+      if (await sessao.renovarUmaVez()) {
+        const repeticao = new Request(request, { headers: new Headers(request.headers) })
+        repeticao.headers.set('X-Repeticao', '1')
+        repeticao.headers.set('Authorization', `Bearer ${sessao.tokenAcesso()}`)
+        const segunda = await globalThis.fetch(repeticao)
+        if (segunda.ok) return desembrulhar(segunda)
+        return lancarErro(segunda, caminho)
+      }
+      if (sessao.tokenAcesso()) sessao.terminar('expirada')
     }
-
-    const corpo = await response
-      .clone()
-      .json()
-      .catch(() => null)
-    const problema = problemaDoSis(response.status, corpo)
-    if (response.status === 401 && pedidoDeSessao) problema.code = 'CREDENCIAIS_INVALIDAS'
-    throw new ApiError(response.status, problema)
+    return lancarErro(response, caminho)
   },
 
   onError({ error }) {
@@ -55,9 +51,22 @@ const comContexto: Middleware = {
   },
 }
 
+async function lancarErro(response: Response, caminho: string): Promise<never> {
+  const corpo = await response
+    .clone()
+    .json()
+    .catch(() => null)
+  const problema = problemaDoSis(response.status, corpo)
+  // Só a entrada tem credenciais; 401 na renovação ou na saída é só sessão inexistente
+  if (response.status === 401 && caminho === '/auth/login') {
+    problema.code = 'CREDENCIAIS_INVALIDAS'
+  }
+  throw new ApiError(response.status, problema)
+}
+
 /**
- * Algumas rotas (níveis académicos, disciplinas) respondem { success, data }: entrega-se só
- * `data`, para os tipos e os mapeadores verem o recurso. As outras passam intactas.
+ * Até 28/10 as disciplinas respondiam { success, data }; o contrato de 30/10 já não o declara.
+ * Fica a protecção: se voltar, entrega-se só `data`. As outras respostas passam intactas.
  */
 async function desembrulhar(response: Response): Promise<Response> {
   if (!response.headers.get('content-type')?.includes('json')) return response

@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import { estudanteKeys, estudanteQuery, paraEstudante, type Estudante } from '@/entities/estudante'
 import { api, eApiError, type Dto } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 
@@ -29,6 +31,8 @@ export function useEditarEstudante(estudanteId: string) {
     mutationKey: ['editar-estudante'],
     scope: { id: `estudante:${estudanteId}` }, // mutações do mesmo estudante correm em série
     mutationFn: async (alteracao: Dto<'EstudanteAlteracaoDto'>) => {
+      // Backend SIS: só o documento de identidade se altera (PUT /students/{uuid}/identity)
+      if (eReal('estudantes')) naoDisponivel('EDITAR_ESTUDANTE')
       const { data } = await api.PATCH('/estudantes/{id}', {
         params: { path: { id: estudanteId }, header: {} },
         body: alteracao,

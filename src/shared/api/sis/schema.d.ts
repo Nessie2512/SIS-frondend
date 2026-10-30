@@ -22,25 +22,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/subjects/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Get subject details by unique ID */
-        get: operations["SubjectController_findById"];
-        /** Update academic subject parameters */
-        put: operations["SubjectController_update"];
-        post?: never;
-        /** Desativar uma disciplina da matriz curricular */
-        delete: operations["SubjectController_delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/subjects/code/{code}": {
         parameters: {
             query?: never;
@@ -58,6 +39,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/subjects/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get subject details by unique ID */
+        get: operations["SubjectController_findById"];
+        /** Update academic subject parameters */
+        put: operations["SubjectController_update"];
+        post?: never;
+        /** Desativar uma disciplina da matriz curricular */
+        delete: operations["SubjectController_delete"];
+        options?: never;
+        head?: never;
+        /** Update or activate/deactivate an academic subject */
+        patch: operations["SubjectController_patch"];
+        trace?: never;
+    };
     "/subjects/{id}/deactivate": {
         parameters: {
             query?: never;
@@ -67,26 +68,9 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post?: never;
-        /** Logically decommission a subject from the curriculum matrix */
-        delete: operations["SubjectController_decommission"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/subjects/{id}/deativate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /** Legacy alias for subject deactivation */
-        delete: operations["SubjectController_decommissionLegacy"];
+        /** Logically decommission a subject */
+        post: operations["SubjectController_deactivate"];
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -99,8 +83,10 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Listar os níveis académicos */
         get: operations["AcademicLevelController_findAll"];
         put?: never;
+        /** Criar um nível académico */
         post: operations["AcademicLevelController_create"];
         delete?: never;
         options?: never;
@@ -115,12 +101,14 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Obter um nível académico por ID */
         get: operations["AcademicLevelController_findById"];
         put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
+        /** Atualizar um nível académico */
         patch: operations["AcademicLevelController_update"];
         trace?: never;
     };
@@ -131,6 +119,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** Pesquisar um nível académico pelo nome */
         get: operations["AcademicLevelController_findByName"];
         put?: never;
         post?: never;
@@ -176,7 +165,25 @@ export interface paths {
         patch: operations["GradeController_update"];
         trace?: never;
     };
-    "/grades/{id}/subjects": {
+    "/grades/{gradeId}/subjects": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Listar disciplinas associadas a uma grade */
+        get: operations["GradeController_findSubjectsByGrade"];
+        put?: never;
+        /** Associar disciplinas à grelha curricular da grade */
+        post: operations["GradeController_connectSubjects"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/grades/{gradeId}/subjects/{subjectId}": {
         parameters: {
             query?: never;
             header?: never;
@@ -185,9 +192,9 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Vincular uma disciplina à grelha curricular da classe */
-        post: operations["GradeController_attachSubject"];
-        delete?: never;
+        post?: never;
+        /** Remover uma disciplina da grelha curricular da grade */
+        delete: operations["GradeController_disconnectSubject"];
         options?: never;
         head?: never;
         patch?: never;
@@ -849,6 +856,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/auth/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Renovar o token de acesso usando o cookie de renovação */
+        post: operations["AuthController_refresh"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/logout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Terminar a sessão e remover o cookie de renovação */
+        post: operations["AuthController_logout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Devolver o utilizador autenticado com as suas permissões */
+        get: operations["AuthController_me"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -865,6 +923,36 @@ export interface components {
              */
             code: string;
         };
+        SubjectResponseDto: {
+            /**
+             * @description ID numérico interno da disciplina
+             * @example 3
+             */
+            id: number;
+            /** @example d34ed550-36e5-4db4-bbb6-b28553a6af13 */
+            uuid: string;
+            /** @example Mathematics */
+            name: string;
+            /** @example MAT-10 */
+            code: string;
+            /** @example true */
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            editedAt?: string;
+        };
+        UpdateSubjectDto: {
+            /** @example Mathematics */
+            name?: string;
+            /** @example MAT-10 */
+            code?: string;
+            /**
+             * @description Ativa ou desativa logicamente a disciplina
+             * @example false
+             */
+            isActive?: boolean;
+        };
         CreateAcademicLevelDto: {
             /**
              * @description O nome do nível académico (máx. 7 caracteres)
@@ -876,6 +964,22 @@ export interface components {
              * @example Ensino Primário Obrigatório
              */
             description?: string;
+        };
+        AcademicLevelResponseDto: {
+            /**
+             * @description ID numérico interno do nível académico (usar nas relações)
+             * @example 2
+             */
+            id: number;
+            /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
+            uuid: string;
+            name: string;
+            description?: string;
+            isActive: boolean;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            editedAt?: string;
         };
         UpdateAcademicLevelDto: {
             /**
@@ -907,8 +1011,13 @@ export interface components {
             subjectIds?: number[];
         };
         GradeResponseDto: {
+            /**
+             * @description ID numérico interno da grade (usar nas relações)
+             * @example 1
+             */
+            id: number;
             /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
-            id: string;
+            uuid: string;
             /** @example 10ª Classe */
             name: string;
             /** @example 2 */
@@ -944,12 +1053,40 @@ export interface components {
              */
             subjectIds?: number[];
         };
-        AttachSubjectDto: {
+        ConnectSubjectToGradeDto: {
             /**
-             * @description ID da disciplina
-             * @example 3
+             * @description IDs numéricos das disciplinas a associar à grade
+             * @example [
+             *       3,
+             *       5
+             *     ]
              */
+            subjectIds: number[];
+        };
+        GradeSubjectItemDto: {
+            /** @example 3 */
+            id: number;
+            /** @example d34ed550-36e5-4db4-bbb6-b28553a6af13 */
+            uuid: string;
+            /** @example Matemática */
+            name: string;
+            /** @example MAT-10 */
+            code: string;
+            /** @example true */
+            isActive: boolean;
+        };
+        GradeSubjectsResponseDto: {
+            /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
+            gradeId: string;
+            subjects: components["schemas"]["GradeSubjectItemDto"][];
+        };
+        GradeSubjectRemovedResponseDto: {
+            /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
+            gradeId: string;
+            /** @example 3 */
             subjectId: number;
+            /** @example true */
+            removed: boolean;
         };
         CreateClassDto: {
             /**
@@ -976,10 +1113,15 @@ export interface components {
         };
         ClassOutputDto: {
             /**
+             * @description ID numérico interno da turma (usar nas relações)
+             * @example 1
+             */
+            id: number;
+            /**
              * @description Identificador único (UUID) da turma
              * @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d
              */
-            id: string;
+            uuid: string;
             /**
              * @description Nome da turma
              * @example Turma A
@@ -1020,6 +1162,11 @@ export interface components {
             startYear: number;
         };
         AcademicYearOutputDto: {
+            /**
+             * @description ID numérico interno do ano letivo (usar nas relações)
+             * @example 3
+             */
+            id: number;
             uuid: string;
             label: string;
             startYear: number;
@@ -1096,6 +1243,11 @@ export interface components {
             familyPrefix: string;
         };
         StudentOutputDto: {
+            /**
+             * @description ID numérico interno do estudante (usar nas relações)
+             * @example 12
+             */
+            id: number;
             /** @example e3b0c442-98fc-4c14-951b-2424262d4685 */
             uuid: string;
             /** @example SCH-2026-8941 */
@@ -1166,16 +1318,6 @@ export interface components {
              * @example 20
              */
             academicYearId: number;
-            /**
-             * @description Rótulo do ano académico
-             * @example 2026/2027
-             */
-            academicYearLabel: string;
-            /**
-             * @description Ano civil de início do ano académico
-             * @example 2026
-             */
-            startYear: number;
         };
         ConfirmEnrollmentInputDto: {
             /**
@@ -1183,26 +1325,6 @@ export interface components {
              * @example c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f
              */
             confirmationUuid: string;
-            /**
-             * @description UUID ou identificador do Operador da secretaria
-             * @example op-999-sec
-             */
-            operatorUuid: string;
-            /**
-             * @description ID Numérico interno do Estudante
-             * @example 12
-             */
-            studentIdNumeric: number;
-            /**
-             * @description Rótulo do próximo Ano Letivo
-             * @example 2026/2027
-             */
-            academicYearLabel: string;
-            /**
-             * @description Ano civil de início do próximo ciclo
-             * @example 2026
-             */
-            startYear: number;
         };
         TeacherAddressDto: {
             /** @example Centralidade do Sequele, Bloco 8 */
@@ -1256,6 +1378,11 @@ export interface components {
             educationalAttainment: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
         };
         TeacherOutputDto: {
+            /**
+             * @description ID numérico interno do professor (usar nas relações)
+             * @example 5
+             */
+            id: number;
             /** @example b8c442e3-98fc-4c14-951b-2424262d4685 */
             uuid: string;
             /**
@@ -1308,10 +1435,25 @@ export interface components {
             academicYearId: number;
         };
         TeacherAssignmentOutputDto: {
+            /**
+             * @description ID numérico interno da alocação
+             * @example 1
+             */
+            id: number;
+            /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
             uuid: string;
-            teacherId: string;
+            /**
+             * @description ID numérico interno do professor
+             * @example 5
+             */
+            teacherId: number;
+            /** @example b8c442e3-98fc-4c14-951b-2424262d4685 */
+            teacherUuid: string;
+            /** @example 12 */
             classId: number;
+            /** @example 3 */
             subjectId: number;
+            /** @example 4 */
             academicYearId: number;
             isActive: boolean;
         };
@@ -1344,7 +1486,7 @@ export interface components {
              * @example SECRETARIO
              * @enum {string}
              */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
             /**
              * @description Password com 12 a 128 caracteres; é armazenado como hash.
              * @example Uma frase-senha segura com 12+ caracteres
@@ -1357,7 +1499,7 @@ export interface components {
             /** @example maria@bma.com */
             email: string;
             /** @enum {string} */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
             /** @example EMP-2026-0123 */
             employeeNumber: string;
             /** @example Maria António Manuel */
@@ -1380,7 +1522,7 @@ export interface components {
             /** @example maria@bma.com */
             email?: string;
             /** @enum {string} */
-            role?: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI";
+            role?: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
             /**
              * @description Novo password com 12 a 128 caracteres.
              * @example Uma nova frase-senha com pelo menos 12 caracteres
@@ -1400,6 +1542,26 @@ export interface components {
             tokenType: string;
             /** @example 3600 */
             expiresIn: number;
+        };
+        MeResponseDto: {
+            /** @example a90b725f-fbda-4759-b723-c41a31a64143 */
+            uuid: string;
+            /** @example Maria António Manuel */
+            name: string;
+            /** @example maria@bma.com */
+            email: string;
+            /**
+             * @example SECRETARIO
+             * @enum {string}
+             */
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            /**
+             * @example [
+             *       "students:read",
+             *       "student-entry:write"
+             *     ]
+             */
+            permissions: string[];
         };
     };
     responses: never;
@@ -1423,7 +1585,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["SubjectResponseDto"][];
+                };
             };
         };
     };
@@ -1440,13 +1604,33 @@ export interface operations {
             };
         };
         responses: {
-            /** @description Subject created successfully. */
             201: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": unknown;
+                    "application/json": components["schemas"]["SubjectResponseDto"];
+                };
+            };
+        };
+    };
+    SubjectController_findByCode: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                code: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SubjectResponseDto"];
                 };
             };
         };
@@ -1467,7 +1651,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["SubjectResponseDto"];
+                };
             };
         };
     };
@@ -1482,7 +1668,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["CreateSubjectDto"];
+                "application/json": components["schemas"]["UpdateSubjectDto"];
             };
         };
         responses: {
@@ -1490,7 +1676,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["SubjectResponseDto"];
+                };
             };
         };
     };
@@ -1513,26 +1701,32 @@ export interface operations {
             };
         };
     };
-    SubjectController_findByCode: {
+    SubjectController_patch: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                code: string;
+                id: string;
             };
             cookie?: never;
         };
-        requestBody?: never;
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateSubjectDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["SubjectResponseDto"];
+                };
             };
         };
     };
-    SubjectController_decommission: {
+    SubjectController_deactivate: {
         parameters: {
             query?: never;
             header?: never;
@@ -1547,26 +1741,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
-            };
-        };
-    };
-    SubjectController_decommissionLegacy: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            200: {
-                headers: {
-                    [name: string]: unknown;
+                content: {
+                    "application/json": components["schemas"]["SubjectResponseDto"];
                 };
-                content?: never;
             };
         };
     };
@@ -1583,7 +1760,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AcademicLevelResponseDto"][];
+                };
             };
         };
     };
@@ -1604,7 +1783,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AcademicLevelResponseDto"];
+                };
             };
         };
     };
@@ -1623,7 +1804,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AcademicLevelResponseDto"];
+                };
             };
         };
     };
@@ -1646,7 +1829,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AcademicLevelResponseDto"];
+                };
             };
         };
     };
@@ -1665,7 +1850,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["AcademicLevelResponseDto"];
+                };
             };
         };
     };
@@ -1789,38 +1976,92 @@ export interface operations {
             };
         };
     };
-    GradeController_attachSubject: {
+    GradeController_findSubjectsByGrade: {
         parameters: {
             query?: never;
             header?: never;
             path: {
-                /** @description Identificador público universal (UUID) da classe curricular */
-                id: string;
+                /** @description UUID da grade */
+                gradeId: string;
             };
             cookie?: never;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AttachSubjectDto"];
-            };
-        };
+        requestBody?: never;
         responses: {
-            /** @description Disciplina acoplada com sucesso à grelha curricular da classe. */
-            201: {
+            200: {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": components["schemas"]["GradeSubjectsResponseDto"];
+                };
             };
-            /** @description Classe curricular ou disciplina não encontrada. */
+            /** @description Grade não encontrada. */
             404: {
                 headers: {
                     [name: string]: unknown;
                 };
                 content?: never;
             };
-            /** @description A disciplina já se encontra vinculada a esta classe. */
-            422: {
+        };
+    };
+    GradeController_connectSubjects: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID da grade */
+                gradeId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ConnectSubjectToGradeDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GradeSubjectsResponseDto"];
+                };
+            };
+            /** @description Grade ou disciplina não encontrada. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    GradeController_disconnectSubject: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description UUID da grade */
+                gradeId: string;
+                /** @description ID numérico da disciplina */
+                subjectId: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GradeSubjectRemovedResponseDto"];
+                };
+            };
+            /** @description Grade, disciplina ou associação não encontrada. */
+            404: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -2271,11 +2512,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2301,11 +2542,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2331,11 +2572,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2361,11 +2602,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2391,11 +2632,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2421,11 +2662,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2451,11 +2692,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2481,11 +2722,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2511,11 +2752,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2541,11 +2782,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
                 /** @description Sexo dos estudantes */
@@ -2713,11 +2954,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
             };
@@ -2741,11 +2982,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
             };
@@ -2769,11 +3010,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
             };
@@ -2797,11 +3038,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
             };
@@ -2825,11 +3066,11 @@ export interface operations {
         parameters: {
             query: {
                 /** @description ID numérico do ano lectivo */
-                academicYearId: string;
-                /** @description ID do ciclo (AcademicLevel) associado à grade da turma */
-                academicLevelId?: string;
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
                 /** @description ID numérico da turma */
-                classId?: string;
+                classId?: number;
                 /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
                 nationality?: string;
             };
@@ -3069,6 +3310,75 @@ export interface operations {
                 };
             };
             /** @description Credenciais inválidas ou conta inactiva. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_refresh: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LoginResponseDto"];
+                };
+            };
+            /** @description Cookie de renovação inválido. */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_logout: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    AuthController_me: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MeResponseDto"];
+                };
+            };
+            /** @description Sessão inválida ou expirada. */
             401: {
                 headers: {
                     [name: string]: unknown;
