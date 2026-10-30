@@ -1,13 +1,47 @@
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
+import type { ClasseSis, TurmaSis } from '@/shared/api/sis'
 import type { Inscrito, PaginaTurmas, Turma, Turno } from './tipos'
 
 const ROTULO_TURNO = {
   MANHA: msg`Manhã`,
   TARDE: msg`Tarde`,
   NOITE: msg`Noite`,
+  INTEGRAL: msg`Integral`,
 } satisfies Record<Turno, unknown>
+
+const TURNO_DO_SIS = {
+  MORNING: 'MANHA',
+  AFTERNOON: 'TARDE',
+  NIGHT: 'NOITE',
+  INTEGRAL: 'INTEGRAL',
+} satisfies Record<TurmaSis['period'], Turno>
+
+/**
+ * Backend SIS: a turma refere a classe pelo id numérico. Sem sala, lotação, inscritos nem
+ * director de turma no contrato: a ocupação mostra-se como "por publicar" (lotação 0).
+ * Turma inactiva = encerrada.
+ */
+export function paraTurmaDoSis(dto: TurmaSis, classe: ClasseSis | undefined): Turma {
+  const turno = TURNO_DO_SIS[dto.period]
+  return {
+    id: dto.uuid,
+    designacao: dto.name,
+    classeId: classe?.uuid ?? '',
+    classe: classe?.name ?? '',
+    turno,
+    turnoRotulo: i18n._(ROTULO_TURNO[turno]),
+    sala: null,
+    lotacaoMaxima: 0,
+    inscritos: 0,
+    vagas: 0,
+    ocupacao: 0,
+    turmaCheia: false,
+    encerrada: !dto.isActive,
+    directorTurma: null,
+  }
+}
 
 /** DTO → modelo de vista. Único sítio que conhece a forma da API (guia 4.3). */
 export function paraTurma(dto: Dto<'TurmaDto'>): Turma {

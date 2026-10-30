@@ -1,5 +1,6 @@
 // shared/api/client.ts — um único cliente gerado, com middleware (guia 4.5)
 import createClient, { type Middleware } from 'openapi-fetch'
+import { eSoApiReal } from '@/shared/config/ligacao'
 import { ApiError } from './api-error'
 import type { paths } from './schema'
 import { eventosApi, sessao } from './sessao'
@@ -14,6 +15,14 @@ const METODOS_DE_ESCRITA = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
 const comContexto: Middleware = {
   async onRequest({ request }) {
+    // Staging só com a API real: o contrato provisório não tem servidor (iria dar o index.html)
+    if (eSoApiReal()) {
+      throw new ApiError(501, {
+        title: 'NAO_DISPONIVEL',
+        code: 'NAO_DISPONIVEL',
+        detail: `${request.method} ${new URL(request.url).pathname}`,
+      })
+    }
     request.headers.set('X-Request-Id', crypto.randomUUID())
     const token = sessao.tokenAcesso()
     if (token) request.headers.set('Authorization', `Bearer ${token}`)

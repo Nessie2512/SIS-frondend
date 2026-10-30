@@ -1,8 +1,17 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
-import { api } from '@/shared/api'
+import type { QueryClient } from '@tanstack/react-query'
+import { api, ApiError } from '@/shared/api'
+import { porId, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
-import { paraInscrito, paraPaginaTurmas, paraTurma } from '../model/mapeadores'
-import type { DocenteTurma, FiltrosTurma, ResultadoFinal } from '../model/tipos'
+import { eReal } from '@/shared/config/ligacao'
+import { paraInscrito, paraPaginaTurmas, paraTurma, paraTurmaDoSis } from '../model/mapeadores'
+import type {
+  DocenteTurma,
+  FiltrosTurma,
+  PaginaTurmas,
+  ResultadoFinal,
+  Turma,
+} from '../model/tipos'
 
 // Chaves organizadas e previsíveis (guia 4.6)
 export const turmaKeys = {
@@ -17,7 +26,8 @@ export const turmaKeys = {
 export function turmasQuery(filtros: FiltrosTurma) {
   return queryOptions({
     queryKey: turmaKeys.lista(filtros),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('turmas')) return paginaDoSis(client, filtros)
       const { data } = await api.GET('/turmas', {
         params: { query: { ...filtros, pageSize: PAGINACAO.porPagina } },
         signal,
@@ -32,7 +42,12 @@ export function turmasQuery(filtros: FiltrosTurma) {
 export function turmaQuery(id: string) {
   return queryOptions({
     queryKey: turmaKeys.detalhe(id),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('turmas')) {
+        const turma = (await turmasDoSis(client)).find((t) => t.id === id)
+        if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
+        return turma
+      }
       const { data } = await api.GET('/turmas/{id}', { params: { path: { id } }, signal })
       return paraTurma(data!)
     },
@@ -82,4 +97,40 @@ export function resultadosQuery(turmaId: string) {
     },
     staleTime: 0,
   })
+}
+
+/** Backend SIS: todas as turmas, já com a classe e o ano (uuid) de cada uma. */
+async function turmasDoSis(client: QueryClient): Promise<(Turma & { anoLectivoId: string })[]> {
+  const [turmas, classes, anos] = await Promise.all([
+    client.fetchQuery(referenciaSis.turmas()),
+    client.fetchQuery(referenciaSis.classes()),
+    client.fetchQuery(referenciaSis.anos()),
+  ])
+  const classePorId = porId(classes)
+  const anoPorId = porId(anos)
+  return turmas.map((t) => ({
+    ...paraTurmaDoSis(t, classePorId.get(t.gradeId)),
+    anoLectivoId: anoPorId.get(t.academicYearId)?.uuid ?? '',
+  }))
+}
+
+/** Sem filtros nem páginas no backend: filtra-se e pagina-se aqui, com as mesmas regras. */
+async function paginaDoSis(client: QueryClient, filtros: FiltrosTurma): Promise<PaginaTurmas> {
+  const todas = (await turmasDoSis(client))
+    .filter((t) => t.anoLectivoId === filtros.anoLectivoId)
+    .filter((t) => !filtros.classeId || t.classeId === filtros.classeId)
+    .filter((t) => !filtros.turno || t.turno === filtros.turno)
+    .filter((t) => t.encerrada === (filtros.estado === 'ENCERRADA'))
+    .sort((a, b) => a.designacao.localeCompare(b.designacao, 'pt', { numeric: true }))
+  const porPagina = PAGINACAO.porPagina
+  const totalPaginas = Math.max(1, Math.ceil(todas.length / porPagina))
+  const page = Math.min(Math.max(1, filtros.page), totalPaginas)
+  return {
+    turmas: todas
+      .slice((page - 1) * porPagina, page * porPagina)
+      .map(({ anoLectivoId: _, ...t }) => t),
+    total: todas.length,
+    page,
+    totalPaginas,
+  }
 }

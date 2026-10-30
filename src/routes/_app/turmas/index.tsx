@@ -38,7 +38,7 @@ import {
 // Filtros, página e turma aberta vivem no URL; valores inválidos regressam ao padrão (guia 4.6, 7.1)
 const pesquisaTurmas = z.object({
   classeId: z.catch(z.optional(z.string()), undefined),
-  turno: z.catch(z.optional(z.enum(['MANHA', 'TARDE', 'NOITE'])), undefined),
+  turno: z.catch(z.optional(z.enum(['MANHA', 'TARDE', 'NOITE', 'INTEGRAL'])), undefined),
   estado: z.catch(z._default(z.enum(['ACTIVA', 'ENCERRADA']), 'ACTIVA'), 'ACTIVA'),
   page: z.catch(z._default(z.int().check(z.minimum(1)), 1), 1),
   /** Turma aberta no painel lateral */

@@ -804,6 +804,14 @@ msgstr "Acções rápidas"
 msgid "Acesso"
 msgstr "Acesso"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Acesso total."
+msgstr "Acesso total."
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Acompanha toda a escola e gere as contas."
+msgstr "Acompanha toda a escola e gere as contas."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/shared/ui/edicao-no-sitio.tsx
@@ -868,6 +876,10 @@ msgstr "Actualizar"
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Administração"
 msgstr "Administração"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Administrador"
+msgstr "Administrador"
 
 #: src/routes/_app/professores/$professorId.tsx
 msgid "Admitido em"
@@ -1089,6 +1101,10 @@ msgstr "Apagar «{titulo}»"
 msgid "Apagar a vista «{nome}»"
 msgstr "Apagar a vista «{nome}»"
 
+#: src/shared/ui/erro-de-rota.tsx
+msgid "Aparece aqui quando o backend a publicar. O resto da aplicação continua a funcionar."
+msgstr "Aparece aqui quando o backend a publicar. O resto da aplicação continua a funcionar."
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Aplicar"
 msgstr "Aplicar"
@@ -1297,6 +1313,10 @@ msgstr "Certidão de nascimento"
 msgid "Certificado de habilitações"
 msgstr "Certificado de habilitações"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Chefe da secretaria"
+msgstr "Chefe da secretaria"
+
 #: src/entities/turma/ui/barra-ocupacao.tsx
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "cheia"
@@ -1469,6 +1489,10 @@ msgstr "Confirmou"
 msgid "Confortável"
 msgstr "Confortável"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Consulta da secretaria."
+msgstr "Consulta da secretaria."
+
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Consultar e alterar"
 msgstr "Consultar e alterar"
@@ -1480,6 +1504,10 @@ msgstr "Conta"
 #: src/routes/-casca/menu-utilizador.tsx
 msgid "Conta de {nome}"
 msgstr "Conta de {nome}"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Contas de utilizador e auditoria."
+msgstr "Contas de utilizador e auditoria."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Contínua"
@@ -1817,6 +1845,14 @@ msgstr "Diga porque muda de docente (pelo menos 5 caracteres)."
 #: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Director de turma"
 msgstr "Director de turma"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Director geral"
+msgstr "Director geral"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Director pedagógico"
+msgstr "Director pedagógico"
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
@@ -2398,6 +2434,14 @@ msgstr "Está em uso: mantém turmas, matrículas e planos; só deixa de ser ofe
 msgid "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
 msgstr "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
 
+#: src/shared/ui/erro-de-rota.tsx
+msgid "Esta parte ainda não está disponível no servidor."
+msgstr "Esta parte ainda não está disponível no servidor."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Esta parte ainda não está disponível no servidor. Aparece aqui quando o backend a publicar."
+msgstr "Esta parte ainda não está disponível no servidor. Aparece aqui quando o backend a publicar."
+
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "Esta tarefa já não está disponível."
 msgstr "Esta tarefa já não está disponível."
@@ -2509,6 +2553,10 @@ msgstr "Estudantes encontrados"
 #: src/routes/_app/index.tsx
 msgid "Estudantes sem turma"
 msgstr "Estudantes sem turma"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Estudantes, matrículas e documentos."
+msgstr "Estudantes, matrículas e documentos."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Etapas da abertura"
@@ -2729,6 +2777,10 @@ msgstr "Filtros avançados"
 msgid "Fim"
 msgstr "Fim"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Financeiro"
+msgstr "Financeiro"
+
 #: src/routes/-casca/ajuda-atalhos.tsx
 msgid "Foco na pesquisa da lista"
 msgstr "Foco na pesquisa da lista"
@@ -2748,6 +2800,10 @@ msgstr "Gerar lista nominal"
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 msgid "Gerar: {titulo}"
 msgstr "Gerar: {titulo}"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Gestor de TI"
+msgstr "Gestor de TI"
 
 #: src/shared/ui/edicao-no-sitio.tsx
 msgid "Guardado"
@@ -2958,6 +3014,11 @@ msgstr "Inscrição na turma"
 #: src/shared/config/glossario.ts
 msgid "inscrições"
 msgstr "inscrições"
+
+#: src/entities/turma/model/mapeadores.ts
+#: src/features/gerir-turmas/ui/nova-turma.tsx
+msgid "Integral"
+msgstr "Integral"
 
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Interrupção"
@@ -3760,6 +3821,10 @@ msgstr "Ocupação da turma"
 msgid "Ocupação das turmas depois da distribuição"
 msgstr "Ocupação das turmas depois da distribuição"
 
+#: src/entities/turma/ui/barra-ocupacao.tsx
+msgid "Ocupação por publicar no servidor"
+msgstr "Ocupação por publicar no servidor"
+
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 #: src/features/matricular-estudante/ui/passo-documentos.tsx
 msgid "opcional"
@@ -3991,6 +4056,10 @@ msgstr "Planeado"
 #: src/routes/_app/curriculo/index.tsx
 msgid "Plano da {designacao}"
 msgstr "Plano da {designacao}"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Planos curriculares, calendário e corpo docente."
+msgstr "Planos curriculares, calendário e corpo docente."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Pode já existir um processo para este estudante. Confirme antes de continuar."
@@ -4539,6 +4608,10 @@ msgstr "Secretaria"
 msgid "Secretaria escolar"
 msgstr "Secretaria escolar"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Secretário"
+msgstr "Secretário"
+
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/routes/_app/definicoes/auditoria.tsx
 #: src/routes/_app/documentos.tsx
@@ -4816,6 +4889,10 @@ msgstr "Tipo de evento"
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Tipo de ocorrência"
 msgstr "Tipo de ocorrência"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Toda a secretaria, incluindo anos lectivos, turmas e currículo."
+msgstr "Toda a secretaria, incluindo anos lectivos, turmas e currículo."
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/routes/_app/definicoes/auditoria.tsx

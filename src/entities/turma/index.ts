@@ -9,7 +9,7 @@ export type {
   DocenteTurma,
   ResultadoFinal,
 } from './model/tipos'
-export { paraTurma, paraPaginaTurmas, paraInscrito } from './model/mapeadores'
+export { paraTurma, paraTurmaDoSis, paraPaginaTurmas, paraInscrito } from './model/mapeadores'
 export {
   turmaKeys,
   turmasQuery,

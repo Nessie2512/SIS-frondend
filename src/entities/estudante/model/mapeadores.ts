@@ -2,6 +2,7 @@ import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import { differenceInYears } from 'date-fns'
 import type { Dto } from '@/shared/api'
+import type { EstudanteSis } from '@/shared/api/sis'
 import type {
   DocumentoEstudante,
   Encarregado,
@@ -114,4 +115,47 @@ export const TIPOS_OCORRENCIA = {
 
 export function paraOcorrencia(dto: Dto<'OcorrenciaDto'>): Ocorrencia {
   return { ...dto, tipoRotulo: i18n._(TIPOS_OCORRENCIA[dto.tipo]) }
+}
+
+/** Backend SIS: datas de nascimento em "dd/mm/aaaa" (observado) ou ISO → "aaaa-mm-dd". */
+export function dataCivilDoSis(valor: string): string {
+  const dma = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor.trim())
+  if (dma) return `${dma[3]}-${dma[2]}-${dma[1]}`
+  return valor.slice(0, 10)
+}
+
+/**
+ * Backend SIS: o estudante não traz matrícula, documentos nem fotografia (ainda sem endpoints).
+ * Inactivo = processo anulado (DELETE /students/{uuid} desactiva-o). O contacto mostrado é o do
+ * encarregado principal.
+ */
+export function paraEstudanteDoSis(dto: EstudanteSis): Estudante {
+  const estado: EstadoEstudante = dto.isActive ? 'ACTIVO' : 'ANULADO'
+  const rotulo = ESTADO[estado]
+  const dataNascimento = dataCivilDoSis(dto.birthDate)
+  return {
+    id: dto.uuid,
+    numeroProcesso: dto.studentCode,
+    nome: dto.name,
+    dataNascimento,
+    idade: Number.isFinite(dto.age) ? dto.age : idade(dataNascimento),
+    fotografiaUrl: null,
+    estado,
+    estadoRotulo: i18n._(rotulo.rotulo),
+    estadoTom: rotulo.tom,
+    matricula: null,
+    semTurma: false,
+    matriculaId: null,
+    turmaId: null,
+    matriculaPendente: false,
+    documentosEmFalta: 0,
+    sexo: dto.sex === 'F' ? 'F' : 'M',
+    documentoIdentificacao:
+      dto.documentType && dto.documentType !== 'N/A' && dto.documentNumber
+        ? `${dto.documentType} ${dto.documentNumber}`
+        : null,
+    telefone: dto.primaryGuardian || dto.motherContact || dto.fatherContact || null,
+    morada: dto.address || null,
+    naturalidade: dto.nationality || null,
+  }
 }

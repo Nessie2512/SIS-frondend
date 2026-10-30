@@ -7,8 +7,9 @@ SPA em React 19 + TypeScript (strict) + Vite, segundo o
 
 ```powershell
 pnpm install
-pnpm dev:mock   # API simulada pelo MSW (enquanto não há backend/OpenAPI)
-pnpm dev        # API real em http://localhost:3000 via proxy /api
+pnpm dev:mock     # API simulada pelo MSW
+pnpm dev:hibrido  # sessão no backend SIS real; o resto no MSW (ligação faseada)
+pnpm dev          # sem simulação (só as áreas em VITE_API_REAL funcionam)
 ```
 
 ## Scripts
@@ -26,7 +27,9 @@ pnpm dev        # API real em http://localhost:3000 via proxy /api
 | `pnpm contraste`              | Verifica o contraste dos tokens e actualiza `docs/contraste.md`                                     |
 | `pnpm i18n:extrair`           | Actualiza o catálogo de mensagens pt-AO                                                             |
 | `pnpm deps:check`             | dependency-cruiser: camadas do guia 4.1                                                             |
-| `pnpm api:gen`                | Gera `src/shared/api/schema.d.ts` a partir de `./openapi.json`                                      |
+| `pnpm api:baixar`             | Descarrega o `openapi.json` do backend SIS (`SIS_URL` muda o servidor)                              |
+| `pnpm api:gen`                | Gera `src/shared/api/sis/schema.d.ts` a partir de `./openapi.json` (o CI confirma que estão iguais) |
+| `pnpm api:amostras`           | Recolhe respostas reais para `amostras-api/` (pede credenciais; pasta fora do Git)                  |
 | `pnpm format`                 | Prettier (ordena também as classes Tailwind)                                                        |
 | `pnpm fontes`                 | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
 
@@ -51,17 +54,71 @@ src/
 
 Cada camada só importa das de baixo; as features não se importam entre si (`pnpm deps:check`).
 
-## Contrato com a API: estado actual
+## Contrato com a API: ligação faseada (guia 4.3)
 
-O `src/shared/api/schema.d.ts` é **provisório**: foi escrito à mão no formato do
-`openapi-typescript`, com os endpoints que os ecrãs já usam. Quando o backend publicar o OpenAPI:
+Há dois contratos lado a lado enquanto a ligação ao backend SIS avança:
 
-1. Exportar `openapi.json` do NestJS para a raiz deste projecto (ou ajustar o caminho em `api:gen`).
-2. `pnpm api:gen` substitui o ficheiro provisório.
-3. `pnpm typecheck` mostra as diferenças; corrigem-se só os mapeadores em `entities/*/model/`.
+- `src/shared/api/sis/schema.d.ts` — **real**, gerado do `openapi.json` publicado pelo backend
+  (`pnpm api:baixar && pnpm api:gen`). Cliente `apiSis`, base `/sis`.
+- `src/shared/api/schema.d.ts` — **provisório**, escrito à mão, para as áreas que o backend
+  ainda não tem. Cliente `api`, base `/api/v1`, servido pelo MSW.
 
-Regras enquanto for provisório: tipos de API só em `schema.d.ts`; componentes recebem o modelo
-de vista, nunca o DTO; dados simulados só em `src/mocks/`.
+Cada área passa para a API real com `VITE_API_REAL` (lista separada por vírgulas, ou `todas`):
+`sessao`, `anos`, `curriculo`, `turmas`, `estudantes`, `professores`, `utilizadores`. As queries
+de cada entidade escolhem o cliente com `eReal(area)` e convertem o DTO real no mesmo modelo de
+vista, por isso os ecrãs não mudam. Acções que o backend ainda não suporta ficam desactivadas
+com o motivo.
+
+| Modo     | Como                                             | Áreas reais         | Resto            |
+| -------- | ------------------------------------------------ | ------------------- | ---------------- |
+| Simulado | `pnpm dev:mock`                                  | nenhuma             | MSW              |
+| Híbrido  | `pnpm dev:hibrido` (`.env.hibrido`)              | as de VITE_API_REAL | MSW              |
+| Real     | `VITE_API_REAL=todas` (staging, ou `.env.local`) | todas               | «não disponível» |
+
+No modo real, o que o backend ainda não tem (cliente `/api/v1`) responde logo com
+`NAO_DISPONIVEL` (501), sem ir à rede: o ecrã diz «Esta parte ainda não está disponível no
+servidor» e não oferece «Tentar de novo».
+
+### Staging no Render (serviço do ramo Dev)
+
+1. **Environment** → `VITE_API_REAL=todas` (é lida na build: depois de a mudar, fazer novo deploy).
+2. **Redirects/Rewrites** → acima da regra `/*` → `/index.html`, acrescentar
+   `/sis/*` → `https://sis-backend-vp7g.onrender.com/*`, acção **Rewrite**. O `render.yaml` já a
+   tem, mas um serviço criado à mão no painel não lê as rotas do ficheiro.
+3. Confirmar: abrir `https://<staging>/sis/docs-json` deve devolver o contrato, não a aplicação.
+
+Produção (ramo main) fica como está enquanto não houver backend de produção: sem `VITE_API_REAL`.
+
+O que o staging faz com o contrato de 30/10:
+
+| Área          | Ler                                  | Escrever                                                                                    |
+| ------------- | ------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Sessão        | `/auth/me`, renovação por cookie     | entrar, sair                                                                                |
+| Anos lectivos | lista e estado                       | criar, activar (encerrar, reabrir, duplicar: não)                                           |
+| Currículo     | ciclos, classes, disciplinas         | criar ciclo e classe, renomear e desactivar classe; criar, inactivar e reactivar disciplina |
+| Turmas        | lista, filtros, ficha (sem ocupação) | criar (nome automático), encerrar                                                           |
+| Estudantes    | lista com pesquisa, ficha            | — (editar dados: não)                                                                       |
+| Professores   | lista, ficha com atribuições do ano  | —                                                                                           |
+| Contas        | contas e perfis                      | —                                                                                           |
+
+Matrículas, encarregados, documentos, percurso, ocorrências, calendário, planos, renovação,
+transferências, importação, relatórios, tarefas, auditoria e painel: «não disponível».
+
+Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
+
+- **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis`
+  (`SIS_URL` muda o destino); no Render, a reescrita `/sis/*` em `render.yaml`.
+- **Sessão**: `POST /auth/login` dá o token (só em memória) e o cookie de renovação; `GET /auth/me`
+  dá nome, papel e permissões, traduzidas para as da interface (`shared/config/papeis.ts`). Um 401
+  a meio do trabalho renova uma vez por `POST /auth/refresh` e repete o pedido; recarregar a página
+  recupera a sessão pelo mesmo cookie. O proxy do Vite reescreve o caminho do cookie para `/sis`;
+  a reescrita do Render não o faz, por isso o backend deve emitir o cookie com `Path=/`.
+- **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
+  `ApiError` (mensagens do class-validator → erros por campo).
+- No modo híbrido, o MSW aceita o JWT real e dá as permissões do papel às áreas simuladas.
+
+Regras: tipos de API só nos `schema.d.ts`; componentes recebem o modelo de vista, nunca o DTO;
+dados simulados só em `src/mocks/`.
 
 ## Regras do dia a dia
 

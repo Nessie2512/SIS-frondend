@@ -4,14 +4,12 @@ services:
     runtime: static
     buildCommand: pnpm install --frozen-lockfile && pnpm build
     staticPublishPath: ./dist
-    envVars:
-      - key: VITE_API_MOCK
-        value: "false"
-      - key: NODE_VERSION
-        value: "22.0.0" # Garante a versão do Node exigida no seu package.json
-      - key: VITE_API_URL
-        value: "https://sis-backend-vp7g.onrender.com" # ⚠️ SUBSTITUA PELO URL REAL DO SEU BACKEND NO RENDER
+    # A ordem conta: o backend SIS antes da regra da SPA (o SIS não aceita CORS)
+    # TODO(producao): apontar para o backend de produção quando existir; este é o de teste
     routes:
+      - type: rewrite
+        source: /sis/*
+        destination: https://sis-backend-vp7g.onrender.com/*
       - type: rewrite
         source: /*
         destination: /index.html

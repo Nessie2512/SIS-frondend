@@ -15,6 +15,7 @@
   "scripts": {
     "dev": "vite",
     "dev:mock": "vite --mode mock",
+    "dev:hibrido": "vite --mode hibrido",
     "build": "tsc -b && vite build && node scripts/mensagens-compiladas.mjs dist",
     "preview": "vite preview",
     "typecheck": "tsc -b",
@@ -29,7 +30,9 @@
     "storybook": "storybook dev -p 6006",
     "storybook:build": "storybook build",
     "deps:check": "depcruise src",
-    "api:gen": "openapi-typescript ./openapi.json -o src/shared/api/schema.d.ts",
+    "api:baixar": "node scripts/baixar-openapi.mjs",
+    "api:gen": "openapi-typescript ./openapi.json -o src/shared/api/sis/schema.d.ts",
+    "api:amostras": "node scripts/amostras-api.mjs",
     "check": "pnpm typecheck && pnpm lint && pnpm test:run && pnpm deps:check && pnpm contraste",
     "contraste": "node scripts/contraste.mjs",
     "tamanho": "size-limit",

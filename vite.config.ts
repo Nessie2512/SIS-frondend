@@ -97,7 +97,7 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         globIgnores: ['mockServiceWorker.js'],
         navigateFallback: '/index.html',
-        navigateFallbackDenylist: [/^\/api\//],
+        navigateFallbackDenylist: [/^\/api\//, /^\/sis\//],
         runtimeCaching: [
           {
             // Só dados de referência; dados pessoais nunca ficam em cache (guia 5.8)
@@ -182,6 +182,16 @@ export default defineConfig({
     // Mesma origem que a API: necessário para o cookie de renovação SameSite=Strict (guia 4.4)
     proxy: {
       '/api': { target: 'http://localhost:3000', changeOrigin: true },
+      // Backend SIS (guia 4.3): não aceita CORS, por isso fala-se com ele na mesma origem.
+      // SIS_URL muda o destino (ex.: backend local); em produção é a reescrita em render.yaml
+      '/sis': {
+        target: process.env.SIS_URL ?? 'https://sis-backend-vp7g.onrender.com',
+        changeOrigin: true,
+        rewrite: (caminho) => caminho.replace(/^\/sis/, ''),
+        // Cookie de renovação: o navegador vê /sis/auth/refresh, não /auth/refresh
+        cookiePathRewrite: { '*': '/sis' },
+        cookieDomainRewrite: { '*': '' },
+      },
     },
   },
   test: {

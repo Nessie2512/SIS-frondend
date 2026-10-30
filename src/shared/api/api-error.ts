@@ -31,6 +31,8 @@ export type CodigoErroDominio =
   | 'MATRICULA_POR_CONFIRMAR'
   | 'ENCARREGADO_EXISTENTE'
   | 'ULTIMO_ENCARREGADO'
+  /** Staging só com a API real: o backend SIS ainda não tem este endpoint */
+  | 'NAO_DISPONIVEL'
 
 export interface ErroDeCampo {
   campo: string
@@ -73,7 +75,8 @@ export class ApiError extends Error {
 
   /** Falha de rede ou 5xx: o estado optimista deve ser revertido e oferecido Tentar de novo. */
   get eTransitorio(): boolean {
-    return this.status === 0 || this.status >= 500 || this.status === 429
+    // 501: o servidor não tem esta função; repetir não ajuda
+    return this.status === 0 || (this.status >= 500 && this.status !== 501) || this.status === 429
   }
 }
 
