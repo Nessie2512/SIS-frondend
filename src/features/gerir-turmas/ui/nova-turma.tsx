@@ -161,6 +161,7 @@ export function NovaTurma({
                 { valor: 'MANHA', rotulo: t`Manhã` },
                 { valor: 'TARDE', rotulo: t`Tarde` },
                 { valor: 'NOITE', rotulo: t`Noite` },
+                { valor: 'INTEGRAL', rotulo: t`Integral` },
               ]}
             />
           </div>
