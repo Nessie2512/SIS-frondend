@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { permissoesDoPapel } from '@/shared/config/papeis'
+import { permissoesDoPapel, permissoesDoSis } from '@/shared/config/papeis'
 import { jwtDeTeste } from '@/test/jwt'
 import { lerJwt, textoDe } from './jwt'
 
@@ -30,5 +30,29 @@ describe('permissoesDoPapel', () => {
 
   it('papel desconhecido não ganha permissões', () => {
     expect(permissoesDoPapel('OUTRO')).toEqual([])
+  })
+})
+
+describe('permissoesDoSis', () => {
+  it('traduz o vocabulário do backend para o da interface', () => {
+    const p = permissoesDoSis(['students:read', 'student-entry:write', 'academic-years:write'], 'X')
+    expect(p).toEqual(
+      expect.arrayContaining([
+        'estudantes:ler',
+        'matriculas:ler',
+        'matriculas:escrever',
+        'anos:gerir',
+      ]),
+    )
+    expect(p).not.toContain('estudantes:escrever')
+  })
+
+  it('quem escreve turmas também pode pedir a excepção à lotação', () => {
+    expect(permissoesDoSis(['classes:write'], undefined)).toContain('inscricoes:excepcao')
+  })
+
+  it('sem nenhuma reconhecida, vale a tabela do papel', () => {
+    expect(permissoesDoSis(['xpto:read'], 'SECRETARIO')).toEqual(permissoesDoPapel('SECRETARIO'))
+    expect(permissoesDoSis([], 'ADMIN')).toContain('administracao:escrever')
   })
 })
