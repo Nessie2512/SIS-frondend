@@ -41,6 +41,30 @@ describe('problemaDoSis', () => {
     expect(problemaDoSis(500, null).title).toBe('Pedido falhou (500)')
   })
 
+  it('lê problem+json (formato de 30/10), com código de negócio e erros por campo', () => {
+    const problema = problemaDoSis(409, {
+      type: 'about:blank',
+      title: 'Conflict',
+      status: 409,
+      detail: 'Student already enrolled',
+      code: 'DUPLICATE_ENROLLMENT',
+      requestId: 'r-1',
+      errors: [{ field: 'studentId', message: 'already enrolled' }, 'classId must be an integer'],
+    })
+    expect(problema).toMatchObject({
+      title: 'Conflict',
+      detail: 'Student already enrolled',
+      code: 'DUPLICATE_ENROLLMENT',
+      requestId: 'r-1',
+    })
+    expect(problema.errors.map((e) => e.campo)).toEqual(['studentId', 'classId'])
+  })
+
+  it('códigos genéricos do problem+json (FORBIDDEN) ficam pelo estado HTTP', () => {
+    const problema = problemaDoSis(403, { title: 'Forbidden', status: 403, code: 'FORBIDDEN' })
+    expect(problema.code).toBe('PERMISSAO_NEGADA')
+  })
+
   it('lê campos compostos', () => {
     expect(paraErroDeCampo('address.city should not be empty').campo).toBe('address.city')
     expect(paraErroDeCampo('Algo falhou').campo).toBe('Algo')
