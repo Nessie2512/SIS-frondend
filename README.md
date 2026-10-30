@@ -69,11 +69,25 @@ de cada entidade escolhem o cliente com `eReal(area)` e convertem o DTO real no 
 vista, por isso os ecrãs não mudam. Acções que o backend ainda não suporta ficam desactivadas
 com o motivo.
 
-| Modo     | Como                                  | Áreas reais         | Resto     |
-| -------- | ------------------------------------- | ------------------- | --------- |
-| Simulado | `pnpm dev:mock`                       | nenhuma             | MSW       |
-| Híbrido  | `pnpm dev:hibrido` (`.env.hibrido`)   | as de VITE_API_REAL | MSW       |
-| Real     | `VITE_API_REAL=todas` em `.env.local` | todas               | sem dados |
+| Modo     | Como                                             | Áreas reais         | Resto            |
+| -------- | ------------------------------------------------ | ------------------- | ---------------- |
+| Simulado | `pnpm dev:mock`                                  | nenhuma             | MSW              |
+| Híbrido  | `pnpm dev:hibrido` (`.env.hibrido`)              | as de VITE_API_REAL | MSW              |
+| Real     | `VITE_API_REAL=todas` (staging, ou `.env.local`) | todas               | «não disponível» |
+
+No modo real, o que o backend ainda não tem (cliente `/api/v1`) responde logo com
+`NAO_DISPONIVEL` (501), sem ir à rede: o ecrã diz «Esta parte ainda não está disponível no
+servidor» e não oferece «Tentar de novo».
+
+### Staging no Render (serviço do ramo Dev)
+
+1. **Environment** → `VITE_API_REAL=todas` (é lida na build: depois de a mudar, fazer novo deploy).
+2. **Redirects/Rewrites** → acima da regra `/*` → `/index.html`, acrescentar
+   `/sis/*` → `https://sis-backend-vp7g.onrender.com/*`, acção **Rewrite**. O `render.yaml` já a
+   tem, mas um serviço criado à mão no painel não lê as rotas do ficheiro.
+3. Confirmar: abrir `https://<staging>/sis/docs-json` deve devolver o contrato, não a aplicação.
+
+Produção (ramo main) fica como está enquanto não houver backend de produção: sem `VITE_API_REAL`.
 
 Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
 
@@ -82,7 +96,8 @@ Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do back
 - **Sessão**: `POST /auth/login` dá o token (só em memória) e o cookie de renovação; `GET /auth/me`
   dá nome, papel e permissões, traduzidas para as da interface (`shared/config/papeis.ts`). Um 401
   a meio do trabalho renova uma vez por `POST /auth/refresh` e repete o pedido; recarregar a página
-  recupera a sessão pelo mesmo cookie. O proxy do Vite reescreve o caminho do cookie para `/sis`.
+  recupera a sessão pelo mesmo cookie. O proxy do Vite reescreve o caminho do cookie para `/sis`;
+  a reescrita do Render não o faz, por isso o backend deve emitir o cookie com `Path=/`.
 - **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
   `ApiError` (mensagens do class-validator → erros por campo).
 - No modo híbrido, o MSW aceita o JWT real e dá as permissões do papel às áreas simuladas.

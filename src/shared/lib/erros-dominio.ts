@@ -36,6 +36,7 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   RENOVACAO_APLICADA: msg`A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma.`,
   EVENTO_FIXO: msg`Os feriados nacionais vêm da lei e não se apagam.`,
   DISCIPLINA_EM_USO: msg`Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la.`,
+  NAO_DISPONIVEL: msg`Esta parte ainda não está disponível no servidor. Aparece aqui quando o backend a publicar.`,
 }
 
 const SESSAO_EXPIRADA = msg`A sessão terminou. Entre de novo para continuar.`

@@ -36,6 +36,15 @@ export function definirAreasReais(areas: readonly AreaApi[]) {
   areasReais = new Set(areas)
 }
 
+/**
+ * Só API real (staging): todas as áreas no backend SIS e sem simulação. O que o backend ainda não
+ * tem (cliente /api/v1) responde logo "não disponível" em vez de pedir ao servidor estático.
+ */
+export function eSoApiReal(): boolean {
+  const simulada = import.meta.env.MODE === 'mock' || import.meta.env.VITE_API_MOCK === 'true'
+  return !simulada && areasReais.size === AREAS_API.length
+}
+
 /** Esta área fala com o backend SIS real? */
 export function eReal(area: AreaApi): boolean {
   return areasReais.has(area)

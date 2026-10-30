@@ -2398,6 +2398,10 @@ msgstr "Está em uso: mantém turmas, matrículas e planos; só deixa de ser ofe
 msgid "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
 msgstr "Esta matrícula ainda não está confirmada. Confirme-a antes de inscrever numa turma."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Esta parte ainda não está disponível no servidor. Aparece aqui quando o backend a publicar."
+msgstr "Esta parte ainda não está disponível no servidor. Aparece aqui quando o backend a publicar."
+
 #: src/entities/tarefa/ui/quadro-tarefas.tsx
 msgid "Esta tarefa já não está disponível."
 msgstr "Esta tarefa já não está disponível."
