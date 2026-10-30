@@ -29,7 +29,12 @@ export function lerAreasReais(valor: string | undefined): ReadonlySet<AreaApi> {
   return new Set(AREAS_API.filter((area) => pedidas.includes(area)))
 }
 
-const areasReais = lerAreasReais(import.meta.env.VITE_API_REAL)
+let areasReais = lerAreasReais(import.meta.env.VITE_API_REAL)
+
+/** Só para testes: liga áreas sem depender das variáveis de ambiente da build. */
+export function definirAreasReais(areas: readonly AreaApi[]) {
+  areasReais = new Set(areas)
+}
 
 /** Esta área fala com o backend SIS real? */
 export function eReal(area: AreaApi): boolean {

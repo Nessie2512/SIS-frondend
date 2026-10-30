@@ -6,10 +6,13 @@
  * - BroadcastChannel propaga a saída de sessão a todos os separadores.
  */
 
-import { eReal } from '@/shared/config/ligacao'
+import { eReal, SIS_URL } from '@/shared/config/ligacao'
 
-// TODO(contrato): confirmar com o backend o caminho e a resposta da renovação (ADR 0001).
-const caminhoRenovar = () => new URL('/api/v1/auth/refresh', window.location.origin).href
+/** Backend SIS: POST /auth/refresh com o cookie de renovação (contrato de 30/10). */
+const caminhoRenovar = () =>
+  eReal('sessao')
+    ? `${SIS_URL.replace(/\/$/, '')}/auth/refresh`
+    : new URL('/api/v1/auth/refresh', window.location.origin).href
 
 let tokenAcesso: string | null = null
 /** Papel de quem entrou (backend SIS): o modo híbrido dá às áreas simuladas as permissões dele. */
@@ -48,8 +51,6 @@ export const sessao = {
 
   /** Renova o token uma só vez, mesmo que várias chamadas recebam 401 ao mesmo tempo. */
   renovarUmaVez(): Promise<boolean> {
-    // O backend SIS não tem renovação: não vale a pena pedir ao /api/v1
-    if (eReal('sessao')) return Promise.resolve(false)
     renovacaoEmCurso ??= (async () => {
       try {
         const resposta = await fetch(caminhoRenovar(), { method: 'POST', credentials: 'include' })

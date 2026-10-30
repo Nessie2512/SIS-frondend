@@ -79,9 +79,10 @@ Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do back
 
 - **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis`
   (`SIS_URL` muda o destino); no Render, a reescrita `/sis/*` em `render.yaml`.
-- **Sessão**: `POST /auth/login` devolve só o token, e o JWT só traz `sub` e `exp`. Nome, email e papel vêm de `GET /users/{sub}` (sem acesso: entra-se sem permissões de escrita); as
-  permissões saem do papel (`shared/config/papeis.ts`, provisório). Não há renovação: recarregar
-  a página pede a entrada de novo, e um 401 a meio do trabalho abre o diálogo de sessão terminada.
+- **Sessão**: `POST /auth/login` dá o token (só em memória) e o cookie de renovação; `GET /auth/me`
+  dá nome, papel e permissões, traduzidas para as da interface (`shared/config/papeis.ts`). Um 401
+  a meio do trabalho renova uma vez por `POST /auth/refresh` e repete o pedido; recarregar a página
+  recupera a sessão pelo mesmo cookie. O proxy do Vite reescreve o caminho do cookie para `/sis`.
 - **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
   `ApiError` (mensagens do class-validator → erros por campo).
 - No modo híbrido, o MSW aceita o JWT real e dá as permissões do papel às áreas simuladas.
