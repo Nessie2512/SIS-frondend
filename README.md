@@ -89,6 +89,21 @@ servidor» e não oferece «Tentar de novo».
 
 Produção (ramo main) fica como está enquanto não houver backend de produção: sem `VITE_API_REAL`.
 
+O que o staging faz com o contrato de 30/10:
+
+| Área          | Ler                                  | Escrever                                                                                    |
+| ------------- | ------------------------------------ | ------------------------------------------------------------------------------------------- |
+| Sessão        | `/auth/me`, renovação por cookie     | entrar, sair                                                                                |
+| Anos lectivos | lista e estado                       | criar, activar (encerrar, reabrir, duplicar: não)                                           |
+| Currículo     | ciclos, classes, disciplinas         | criar ciclo e classe, renomear e desactivar classe; criar, inactivar e reactivar disciplina |
+| Turmas        | lista, filtros, ficha (sem ocupação) | criar (nome automático), encerrar                                                           |
+| Estudantes    | lista com pesquisa, ficha            | — (editar dados: não)                                                                       |
+| Professores   | lista, ficha com atribuições do ano  | —                                                                                           |
+| Contas        | contas e perfis                      | —                                                                                           |
+
+Matrículas, encarregados, documentos, percurso, ocorrências, calendário, planos, renovação,
+transferências, importação, relatórios, tarefas, auditoria e painel: «não disponível».
+
 Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
 
 - **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis`

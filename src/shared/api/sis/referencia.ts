@@ -1,6 +1,7 @@
 // shared/api/sis/referencia.ts — listas em bruto do backend SIS, partilhadas pelas entidades
 import { queryOptions } from '@tanstack/react-query'
 import { FRESCURA } from '@/shared/config/constantes'
+import { ApiError } from '../api-error'
 import { apiSis, type DtoSis } from './client'
 
 /**
@@ -85,4 +86,19 @@ export const referenciaSis = {
 /** Índice por id numérico, para seguir as referências entre recursos. */
 export function porId<T extends { id: number }>(itens: readonly T[]): Map<number, T> {
   return new Map(itens.map((item) => [item.id, item]))
+}
+
+/** Acção que o backend SIS ainda não tem: o ecrã diz "não disponível". `accao` é um código técnico (ex.: ENCERRAR_ANO). */
+export function naoDisponivel(accao: string): never {
+  throw new ApiError(501, { title: 'NAO_DISPONIVEL', code: 'NAO_DISPONIVEL', detail: accao })
+}
+
+/** Id numérico de um recurso do SIS a partir do uuid que a interface usa. */
+export function idNumerico<T extends { id: number; uuid: string }>(
+  itens: readonly T[],
+  uuid: string,
+): number {
+  const item = itens.find((x) => x.uuid === uuid)
+  if (!item) throw new ApiError(404, { title: 'REFERENCIA_NAO_ENCONTRADA', detail: uuid })
+  return item.id
 }
