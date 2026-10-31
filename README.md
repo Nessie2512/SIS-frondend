@@ -79,13 +79,35 @@ No modo real, o que o backend ainda não tem (cliente `/api/v1`) responde logo c
 `NAO_DISPONIVEL` (501), sem ir à rede: o ecrã diz «Esta parte ainda não está disponível no
 servidor» e não oferece «Tentar de novo».
 
+### Local e staging: cada um com o seu backend
+
+| Onde                | Frontend                | Backend SIS                                              |
+| ------------------- | ----------------------- | -------------------------------------------------------- |
+| Local (`pnpm dev*`) | `http://localhost:5173` | `http://localhost:3000` (proxy `/sis` do Vite)           |
+| Staging (Render)    | serviço do ramo `Dev`   | reescrita `/sis/*` de `render.yaml` → backend de staging |
+
+Em local, `SIS_URL` (ambiente ou `.env.local`) aponta o proxy `/sis` para outro servidor, por
+exemplo o staging, sem alterar o código. O staging não lê essa variável: o browser fala com
+`/sis` na própria origem e o Render encaminha para o backend de staging.
+
 ### Staging no Render (serviço do ramo Dev)
 
-1. **Environment** → `VITE_API_REAL=todas` (é lida na build: depois de a mudar, fazer novo deploy).
-2. **Redirects/Rewrites** → acima da regra `/*` → `/index.html`, acrescentar
-   `/sis/*` → `https://sis-backend-vp7g.onrender.com/*`, acção **Rewrite**. O `render.yaml` já a
-   tem, mas um serviço criado à mão no painel não lê as rotas do ficheiro.
-3. Confirmar: abrir `https://<staging>/sis/docs-json` deve devolver o contrato, não a aplicação.
+O serviço é `schoolie-frondend-staging` (https://schoolie-frondend-staging.onrender.com). Se foi
+criado à mão no painel, o `render.yaml` **não é lido**: as rotas e as variáveis têm de existir no
+painel. Sintoma de rotas em falta: `/sis/docs-json` devolve 404 e `POST /sis/auth/login` devolve
+200 vazio, por isso o login nunca chega ao backend e «as credenciais não passam».
+
+1. **Environment** → `VITE_API_MOCK=false`, `VITE_API_REAL=todas` (são lidas na build: depois de
+   as mudar, fazer novo deploy).
+2. **Redirects/Rewrites** → por esta ordem:
+   - `/sis/*` → `https://sis-backend-vp7g.onrender.com/*`, acção **Rewrite**;
+   - `/*` → `/index.html`, acção **Rewrite** (sem esta, rotas como `/entrar` dão 404 ao recarregar).
+3. Confirmar:
+   ```bash
+   curl -o /dev/null -w "%{http_code}\n" https://schoolie-frondend-staging.onrender.com/sis/docs-json   # 200
+   curl -o /dev/null -w "%{http_code}\n" https://schoolie-frondend-staging.onrender.com/entrar           # 200
+   ```
+   O `POST /sis/auth/login` com credenciais erradas deve devolver **401** (não 200 vazio).
 
 Produção (ramo main) fica como está enquanto não houver backend de produção: sem `VITE_API_REAL`.
 
@@ -106,8 +128,9 @@ transferências, importação, relatórios, tarefas, auditoria e painel: «não 
 
 Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
 
-- **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis`
-  (`SIS_URL` muda o destino); no Render, a reescrita `/sis/*` em `render.yaml`.
+- **Mesma origem**: o backend não aceita CORS. Em desenvolvimento o Vite encaminha `/sis` para
+  `http://localhost:3000` (`SIS_URL` muda o destino); no staging, a reescrita `/sis/*` de
+  `render.yaml`.
 - **Sessão**: `POST /auth/login` dá o token (só em memória) e o cookie de renovação; `GET /auth/me`
   dá nome, papel e permissões, traduzidas para as da interface (`shared/config/papeis.ts`). Um 401
   a meio do trabalho renova uma vez por `POST /auth/refresh` e repete o pedido; recarregar a página

@@ -1,18 +1,22 @@
 services:
   - type: web
-    name: schoolie-frontend
+    # Tem de ser exactamente o nome do serviço no Render (a URL é <nome>.onrender.com).
+    # Um serviço criado à mão no painel não lê este ficheiro: as rotas abaixo têm de ser
+    # acrescentadas em Dashboard → Redirects/Rewrites.
+    name: schoolie-frondend-staging
     runtime: static
     buildCommand: pnpm install --frozen-lockfile && pnpm build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_MOCK
-        value: "false"
+        value: 'false'
       # Liga todas as áreas ao backend SIS real (lida na build)
       - key: VITE_API_REAL
-        value: "todas"
+        value: 'todas'
       - key: NODE_VERSION
-        value: "22.0.0"
-    # A ordem conta: o backend SIS antes da regra da SPA (o SIS não aceita CORS)
+        value: '22.0.0'
+    # A ordem conta: o backend SIS antes da regra da SPA (o SIS não aceita CORS).
+    # Sem /sis/*, o login devolve 200 vazio (fallback) e as credenciais não passam.
     routes:
       - type: rewrite
         source: /sis/*
