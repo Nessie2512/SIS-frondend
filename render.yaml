@@ -4,8 +4,15 @@ services:
     runtime: static
     buildCommand: pnpm install --frozen-lockfile && pnpm build
     staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_MOCK
+        value: "false"
+      # Liga todas as áreas ao backend SIS real (lida na build)
+      - key: VITE_API_REAL
+        value: "todas"
+      - key: NODE_VERSION
+        value: "22.0.0"
     # A ordem conta: o backend SIS antes da regra da SPA (o SIS não aceita CORS)
-    # TODO(producao): apontar para o backend de produção quando existir; este é o de teste
     routes:
       - type: rewrite
         source: /sis/*
