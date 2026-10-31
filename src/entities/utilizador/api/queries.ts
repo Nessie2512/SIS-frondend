@@ -46,10 +46,11 @@ async function utilizadorDaSessao(signal?: AbortSignal) {
 }
 
 export async function sair() {
-  // Anula o cookie de renovação no servidor; mesmo que falhe, a sessão local termina
+  // Anula o cookie de renovação no servidor; mesmo que falhe ou demore, a sessão local termina.
+  const sinal = AbortSignal.timeout(4000)
   const pedido = eReal('sessao')
-    ? apiSis.POST('/auth/logout', { credentials: 'include' })
-    : api.POST('/auth/logout', { credentials: 'include' })
+    ? apiSis.POST('/auth/logout', { credentials: 'include', signal: sinal })
+    : api.POST('/auth/logout', { credentials: 'include', signal: sinal })
   await pedido.catch(() => undefined)
   sessao.terminar()
 }

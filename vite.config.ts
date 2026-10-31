@@ -195,9 +195,9 @@ export default defineConfig(({ mode }) => {
           target: destinoSis,
           changeOrigin: true,
           rewrite: (caminho) => caminho.replace(/^\/sis/, ''),
-          // Cookie de renovação: o navegador vê /sis/auth/refresh, não /auth/refresh
-          cookiePathRewrite: { '*': '/sis' },
-          cookieDomainRewrite: { '*': '' },
+          // O cookie de renovação fica com o `Path=/` que o backend define: `/` cobre tanto
+          // `/sis/auth/refresh` como `/auth/refresh`. Reescrever o Path para `/sis` criava um
+          // segundo cookie e o logout limpava só um deles, deixando a sessão viva.
         },
       },
     },

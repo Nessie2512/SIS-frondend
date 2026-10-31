@@ -18,6 +18,11 @@ let tokenAcesso: string | null = null
 /** Papel de quem entrou (backend SIS): o modo híbrido dá às áreas simuladas as permissões dele. */
 let papel: string | null = null
 let renovacaoEmCurso: Promise<boolean> | null = null
+/**
+ * O utilizador pediu para sair: não voltar a recuperar a sessão pelo cookie até entrar de novo.
+ * Sem isto, um logout que não conseguiu apagar o cookie reautenticava logo a seguir.
+ */
+let saidaPedida = false
 
 const canal = typeof BroadcastChannel === 'undefined' ? null : new BroadcastChannel('sessao')
 const ouvintesSaida = new Set<(motivo: MotivoFimSessao) => void>()
@@ -32,6 +37,7 @@ canal?.addEventListener('message', (evento: MessageEvent<{ tipo: string }>) => {
 function terminarLocalmente(motivo: MotivoFimSessao) {
   tokenAcesso = null
   papel = null
+  if (motivo === 'saida') saidaPedida = true
   ouvintesSaida.forEach((ouvinte) => ouvinte(motivo))
 }
 
@@ -40,7 +46,9 @@ export const sessao = {
 
   definirToken(token: string | null) {
     tokenAcesso = token
-    if (!token) papel = null
+    // Entrar de novo volta a permitir a recuperação pelo cookie
+    if (token) saidaPedida = false
+    else papel = null
   },
 
   papel: () => papel,
@@ -51,6 +59,7 @@ export const sessao = {
 
   /** Renova o token uma só vez, mesmo que várias chamadas recebam 401 ao mesmo tempo. */
   renovarUmaVez(): Promise<boolean> {
+    if (saidaPedida) return Promise.resolve(false)
     renovacaoEmCurso ??= (async () => {
       try {
         const resposta = await fetch(caminhoRenovar(), { method: 'POST', credentials: 'include' })
