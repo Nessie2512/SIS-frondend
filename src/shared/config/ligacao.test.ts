@@ -1,17 +1,16 @@
-import { describe, expect, it } from 'vitest'
-import { AREAS_API, eReal, lerAreasReais } from './ligacao'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { AREAS_API, definirAreasReais, eReal } from './ligacao'
 
-describe('lerAreasReais', () => {
-  it('lê a lista separada por vírgulas e ignora áreas desconhecidas', () => {
-    expect([...lerAreasReais(' sessao, Anos ,xpto')]).toEqual(['sessao', 'anos'])
+beforeEach(() => definirAreasReais([]))
+afterEach(() => definirAreasReais([]))
+
+describe('ligação ao backend', () => {
+  it('permite aos testes escolher explicitamente quais áreas usam o contrato SIS', () => {
+    definirAreasReais(['sessao', 'anos'])
+    expect(AREAS_API.filter(eReal)).toEqual(['sessao', 'anos'])
   })
 
-  it('"todas" liga todas as áreas', () => {
-    expect(lerAreasReais('todas').size).toBe(AREAS_API.length)
-  })
-
-  it('sem valor, nenhuma área é real (os testes correm sobre o MSW)', () => {
-    expect(lerAreasReais(undefined).size).toBe(0)
+  it('os testes começam sem alterar o comportamento simulado do MSW', () => {
     expect(AREAS_API.some(eReal)).toBe(false)
   })
 })

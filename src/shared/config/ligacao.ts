@@ -1,13 +1,4 @@
-/**
- * Ligação faseada ao backend SIS (guia 4.3).
- *
- * Cada área passa para a API real quando o contrato dela está validado; as outras continuam
- * no MSW (modo híbrido) ou à espera do backend. A lista vem de VITE_API_REAL:
- *
- *   VITE_API_REAL=sessao,anos      só estas áreas usam a API real
- *   VITE_API_REAL=todas            todas as áreas abaixo
- *   (vazio)                        nenhuma: comportamento de antes
- */
+/** Áreas do frontend ligadas ao contrato real do backend SIS. */
 export const AREAS_API = [
   'sessao',
   'anos',
@@ -20,16 +11,8 @@ export const AREAS_API = [
 
 export type AreaApi = (typeof AREAS_API)[number]
 
-export function lerAreasReais(valor: string | undefined): ReadonlySet<AreaApi> {
-  const pedidas = (valor ?? '')
-    .split(',')
-    .map((parte) => parte.trim().toLowerCase())
-    .filter(Boolean)
-  if (pedidas.includes('todas')) return new Set(AREAS_API)
-  return new Set(AREAS_API.filter((area) => pedidas.includes(area)))
-}
-
-let areasReais = lerAreasReais(import.meta.env.VITE_API_REAL)
+const modoDeTeste = import.meta.env.MODE === 'mock' || import.meta.env.MODE === 'test'
+let areasReais: ReadonlySet<AreaApi> = modoDeTeste ? new Set() : new Set(AREAS_API)
 
 /** Só para testes: liga áreas sem depender das variáveis de ambiente da build. */
 export function definirAreasReais(areas: readonly AreaApi[]) {
@@ -37,12 +20,11 @@ export function definirAreasReais(areas: readonly AreaApi[]) {
 }
 
 /**
- * Só API real (staging): todas as áreas no backend SIS e sem simulação. O que o backend ainda não
- * tem (cliente /api/v1) responde logo "não disponível" em vez de pedir ao servidor estático.
+ * Em qualquer build do produto, o contrato provisório falha fechado em vez de mostrar dados
+ * simulados ou enviar pedidos para o fallback da aplicação estática.
  */
 export function eSoApiReal(): boolean {
-  const simulada = import.meta.env.MODE === 'mock' || import.meta.env.VITE_API_MOCK === 'true'
-  return !simulada && areasReais.size === AREAS_API.length
+  return areasReais.size === AREAS_API.length
 }
 
 /** Esta área fala com o backend SIS real? */

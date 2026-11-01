@@ -6,18 +6,13 @@ import { activarLingua } from './shared/i18n'
 import { sincronizarPreferencias } from './shared/lib/preferencias'
 import './shared/styles/tokens.css'
 
-// Modo mock: `pnpm dev:mock`, ou a build dos testes ponta a ponta (`vite build --mode mock`).
-// Constante em tempo de compilação: na build de produção normal o MSW nem entra no pacote.
+// MSW só é iniciado na build dedicada aos testes ponta a ponta (`vite build --mode mock`).
 const MODO_SIMULADO = import.meta.env.MODE === 'mock'
 
 async function prepararApiSimulada() {
-  // Enquanto não há backend/OpenAPI: `pnpm dev:mock` (ou VITE_API_MOCK=true em .env.local)
-  const simulada =
-    MODO_SIMULADO || (import.meta.env.DEV && import.meta.env.VITE_API_MOCK === 'true')
-  if (simulada) {
+  if (MODO_SIMULADO) {
     const { worker } = await import('./mocks/browser')
-    // 'bypass': no modo híbrido (pnpm dev:hibrido), os pedidos ao backend SIS real (/sis)
-    // não têm handler e seguem para a rede, pelo proxy do Vite
+    // Os pedidos que não são cobertos pelas fixtures seguem para a rede.
     await worker.start({ onUnhandledFrame: 'bypass', quiet: import.meta.env.PROD })
     manterSimulacaoActiva()
   }
@@ -26,9 +21,9 @@ async function prepararApiSimulada() {
 /**
  * O navegador pode parar o service worker do MSW (separador em segundo plano, poupança de
  * energia). Ao arrancar de novo, o worker esquece que esta página usa a simulação e deixa os
- * pedidos seguir para o servidor real (no dev:mock, o proxy para localhost:3000 dá ECONNREFUSED).
+ * pedidos seguirem para o servidor real sem passar pelo MSW.
  * Voltar a registar a página quando fica visível, ganha foco, a cada gesto (antes do pedido
- * que o gesto provoca) e a cada 2 s resolve isso.
+ * que o gesto provoca) e a cada 2 s resolve isso nos testes de navegador.
  */
 function manterSimulacaoActiva() {
   const reactivar = () => {
@@ -45,7 +40,7 @@ function manterSimulacaoActiva() {
 
 sincronizarPreferencias()
 
-// O catálogo de mensagens, a API simulada e a cache em disco preparam-se em paralelo
+// O catálogo de mensagens, o MSW de testes e a cache em disco preparam-se em paralelo
 void Promise.all([activarLingua(), prepararApiSimulada(), prepararCache()]).then(() => {
   createRoot(document.getElementById('root')!).render(
     <StrictMode>

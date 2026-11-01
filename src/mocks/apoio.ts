@@ -48,8 +48,8 @@ export function utilizadorDo(request: Request) {
 }
 
 /**
- * Modo híbrido (pnpm dev:hibrido): a sessão vem do backend SIS real e o token é um JWT. As
- * áreas ainda simuladas aceitam-no e dão as permissões do papel (a assinatura não se verifica).
+ * Testes da sessão SIS real: áreas simuladas aceitam o JWT e dão as permissões do papel
+ * (a assinatura não se verifica).
  */
 function utilizadorDoJwt(token: string | undefined) {
   const claims = token ? lerJwt(token) : null

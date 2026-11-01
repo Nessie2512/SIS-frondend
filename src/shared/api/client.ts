@@ -15,7 +15,7 @@ const METODOS_DE_ESCRITA = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
 
 const comContexto: Middleware = {
   async onRequest({ request }) {
-    // Staging só com a API real: o contrato provisório não tem servidor (iria dar o index.html)
+    // O produto só usa o SIS; endpoints ainda não disponíveis falham sem chegar ao fallback da SPA.
     if (eSoApiReal()) {
       throw new ApiError(501, {
         title: 'NAO_DISPONIVEL',

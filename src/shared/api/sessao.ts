@@ -15,7 +15,7 @@ const caminhoRenovar = () =>
     : new URL('/api/v1/auth/refresh', window.location.origin).href
 
 let tokenAcesso: string | null = null
-/** Papel de quem entrou (backend SIS): o modo híbrido dá às áreas simuladas as permissões dele. */
+/** Papel de quem entrou pelo backend SIS, usado na sessão em memória. */
 let papel: string | null = null
 let renovacaoEmCurso: Promise<boolean> | null = null
 /**

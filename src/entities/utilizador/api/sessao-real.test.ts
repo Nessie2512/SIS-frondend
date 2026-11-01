@@ -47,7 +47,7 @@ const meAgora = () =>
     signal: new AbortController().signal,
   })
 
-// Área "sessao" ligada ao backend SIS real; as outras ficam no MSW (modo híbrido).
+// Testa a sessão SIS real, com os restantes pedidos dos testes tratados pelo MSW.
 // O setup dos testes abre uma sessão simulada (tk-u1); aqui começa-se sem nenhuma
 beforeEach(() => {
   definirAreasReais(['sessao'])

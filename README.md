@@ -7,39 +7,32 @@ SPA em React 19 + TypeScript (strict) + Vite, segundo o
 
 ```powershell
 pnpm install
-pnpm dev:mock     # API simulada pelo MSW
-pnpm dev          # sessão no backend SIS local; o resto no MSW
-pnpm dev:hibrido  # igual a pnpm dev (ligação faseada)
+pnpm dev          # todas as áreas usam o backend SIS em http://localhost:3000
 ```
 
 ## Scripts
 
-| Comando                         | O que faz                                                                                           |
-| ------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `pnpm dev` / `pnpm dev:hibrido` | Sessão no backend SIS local; outras áreas simuladas pelo MSW                                        |
-| `pnpm dev:mock`                 | API simulada pelo MSW                                                                               |
-| `pnpm build`                    | Verificação de tipos e build de produção (inclui o service worker)                                  |
-| `pnpm check`                    | Tipos + lint + testes + fronteiras de arquitectura + contraste                                      |
-| `pnpm test` / `pnpm test:run`   | Testes unitários e de componentes (jsdom)                                                           |
-| `pnpm e2e` / `pnpm e2e:ui`      | Fluxos críticos no navegador, contra o MSW, com axe (arranca o servidor sozinho)                    |
-| `pnpm storybook`                | Catálogo de componentes em http://localhost:6006                                                    |
-| `pnpm test:storybook`           | Cada história como teste no navegador, com axe (precisa de `pnpm exec playwright install chromium`) |
-| `pnpm tamanho`                  | Orçamento de JavaScript inicial (correr depois de `pnpm build`)                                     |
-| `pnpm contraste`                | Verifica o contraste dos tokens e actualiza `docs/contraste.md`                                     |
-| `pnpm i18n:extrair`             | Actualiza o catálogo de mensagens pt-AO                                                             |
-| `pnpm deps:check`               | dependency-cruiser: camadas do guia 4.1                                                             |
-| `pnpm api:baixar`               | Descarrega o `openapi.json` do backend SIS (`SIS_URL` muda o servidor)                              |
-| `pnpm api:gen`                  | Gera `src/shared/api/sis/schema.d.ts` a partir de `./openapi.json` (o CI confirma que estão iguais) |
-| `pnpm api:amostras`             | Recolhe respostas reais para `amostras-api/` (pede credenciais; pasta fora do Git)                  |
-| `pnpm format`                   | Prettier (ordena também as classes Tailwind)                                                        |
-| `pnpm fontes`                   | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
+| Comando                       | O que faz                                                                                           |
+| ----------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                    | Aplicação ligada ao backend SIS local                                                               |
+| `pnpm build`                  | Verificação de tipos e build de produção (inclui o service worker)                                  |
+| `pnpm check`                  | Tipos + lint + testes + fronteiras de arquitectura + contraste                                      |
+| `pnpm test` / `pnpm test:run` | Testes unitários e de componentes (jsdom)                                                           |
+| `pnpm e2e` / `pnpm e2e:ui`    | Fluxos críticos no navegador, contra o MSW, com axe (arranca o servidor sozinho)                    |
+| `pnpm storybook`              | Catálogo de componentes em http://localhost:6006                                                    |
+| `pnpm test:storybook`         | Cada história como teste no navegador, com axe (precisa de `pnpm exec playwright install chromium`) |
+| `pnpm tamanho`                | Orçamento de JavaScript inicial (correr depois de `pnpm build`)                                     |
+| `pnpm contraste`              | Verifica o contraste dos tokens e actualiza `docs/contraste.md`                                     |
+| `pnpm i18n:extrair`           | Actualiza o catálogo de mensagens pt-AO                                                             |
+| `pnpm deps:check`             | dependency-cruiser: camadas do guia 4.1                                                             |
+| `pnpm api:baixar`             | Descarrega o `openapi.json` do backend SIS (`SIS_URL` muda o servidor)                              |
+| `pnpm api:gen`                | Gera `src/shared/api/sis/schema.d.ts` a partir de `./openapi.json` (o CI confirma que estão iguais) |
+| `pnpm api:amostras`           | Recolhe respostas reais para `amostras-api/` (pede credenciais; pasta fora do Git)                  |
+| `pnpm format`                 | Prettier (ordena também as classes Tailwind)                                                        |
+| `pnpm fontes`                 | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
 
-## Contas de teste (modo simulado)
-
-| Email                  | Palavra-passe | Perfil                             |
-| ---------------------- | ------------- | ---------------------------------- |
-| `secretaria@escola.ao` | `secretaria`  | Todas as permissões                |
-| `consulta@escola.ao`   | `consulta`    | Só leitura (sem acções de escrita) |
+Para entrar localmente, use uma conta existente no backend configurado. Não existem contas
+simuladas na aplicação.
 
 ## Estrutura (guia 4.1)
 
@@ -50,56 +43,46 @@ src/
   features/   casos de uso (inscrever-na-turma, matricular-estudante, ...)
   entities/   conceitos do domínio: api/ (queries), model/ (tipos, mapeadores), ui/
   shared/     ui/, api/, lib/, config/, styles/
-  mocks/      MSW: dados e handlers (só arranque e testes)
+  mocks/      MSW e fixtures usados exclusivamente pelos testes automatizados
 ```
 
 Cada camada só importa das de baixo; as features não se importam entre si (`pnpm deps:check`).
 
-## Contrato com a API: ligação faseada (guia 4.3)
-
-Há dois contratos lado a lado enquanto a ligação ao backend SIS avança:
+## Contrato com a API (guia 4.3)
 
 - `src/shared/api/sis/schema.d.ts` — **real**, gerado do `openapi.json` publicado pelo backend
   (`pnpm api:baixar && pnpm api:gen`). Cliente `apiSis`, base `/sis`.
 - `src/shared/api/schema.d.ts` — **provisório**, escrito à mão, para as áreas que o backend
-  ainda não tem. Cliente `api`, base `/api/v1`, servido pelo MSW.
+  ainda não tem. No produto, os pedidos desse cliente falham com `NAO_DISPONIVEL` (501) sem
+  chegar à rede ou ao fallback da SPA.
 
-Cada área passa para a API real com `VITE_API_REAL` (lista separada por vírgulas, ou `todas`):
-`sessao`, `anos`, `curriculo`, `turmas`, `estudantes`, `professores`, `utilizadores`. As queries
-de cada entidade escolhem o cliente com `eReal(area)` e convertem o DTO real no mesmo modelo de
-vista, por isso os ecrãs não mudam. Acções que o backend ainda não suporta ficam desactivadas
-com o motivo.
-
-| Modo     | Como                                              | Áreas reais         | Resto            |
-| -------- | ------------------------------------------------- | ------------------- | ---------------- |
-| Simulado | `pnpm dev:mock`                                   | nenhuma             | MSW              |
-| Híbrido  | `pnpm dev` ou `pnpm dev:hibrido` (`.env.hibrido`) | as de VITE_API_REAL | MSW              |
-| Real     | `VITE_API_REAL=todas` (Render ou `.env.local`)    | todas               | «não disponível» |
-
-No modo real, o que o backend ainda não tem (cliente `/api/v1`) responde logo com
-`NAO_DISPONIVEL` (501), sem ir à rede: o ecrã diz «Esta parte ainda não está disponível no
-servidor» e não oferece «Tentar de novo».
+Todos os dados do produto vêm do backend SIS. Áreas sem endpoint no contrato publicado não
+mostram dados de exemplo e apresentam a mensagem «Esta parte ainda não está disponível no
+servidor». MSW e fixtures só são iniciados pelos testes automatizados (`pnpm test:run` e
+`pnpm e2e`).
 
 ### Local e staging: cada um com o seu backend
 
-| Onde                | Frontend                | Backend SIS                                              |
-| ------------------- | ----------------------- | -------------------------------------------------------- |
-| Local (`pnpm dev*`) | `http://localhost:5173` | `http://localhost:3000` (proxy `/sis` do Vite)           |
-| Staging (Render)    | serviço do ramo `Dev`   | reescrita `/sis/*` de `render.yaml` → backend de staging |
+| Onde               | Frontend                | Backend SIS                                              |
+| ------------------ | ----------------------- | -------------------------------------------------------- |
+| Local (`pnpm dev`) | `http://localhost:5173` | `http://localhost:3000` (proxy `/sis` do Vite)           |
+| Staging (Render)   | serviço do ramo `Dev`   | reescrita `/sis/*` de `render.yaml` → backend de staging |
 
-Em local, `SIS_URL` (ambiente ou `.env.local`) aponta o proxy `/sis` para outro servidor, por
-exemplo o staging, sem alterar o código. O staging não lê essa variável: o browser fala com
-`/sis` na própria origem e o Render encaminha para o backend de staging.
+`VITE_SIS_BASE` define o caminho da API na origem do browser (por omissão `/sis`).
+`SIS_URL` define o destino do proxy do Vite em desenvolvimento (por omissão
+`http://localhost:3000`). Ambos são configuráveis no `.env.development` ou `.env.local`. Em produção,
+o browser continua a falar com `/sis` na própria origem para evitar CORS; o destino é configurado
+pela rewrite do Render.
 
 ### Staging no Render (serviço do ramo Dev)
 
 O serviço é `schoolie-frondend-staging` (https://schoolie-frondend-staging.onrender.com). Se foi
 criado à mão no painel, o `render.yaml` **não é lido**: as rotas e as variáveis têm de existir no
-painel. Sintoma de rotas em falta: `/sis/docs-json` devolve 404 e `POST /sis/auth/login` devolve
-200 vazio, por isso o login nunca chega ao backend e «as credenciais não passam».
+painel. Sintoma de rota em falta: `POST /sis/auth/login` devolve 200 vazio, por isso o login nunca
+chega ao backend e «as credenciais não passam».
 
-1. **Environment** → `VITE_API_MOCK=false`, `VITE_API_REAL=todas` (são lidas na build: depois de
-   as mudar, fazer novo deploy).
+1. **Environment** → `VITE_SIS_BASE=/sis` (variáveis `VITE_*` são lidas na build; fazer novo deploy
+   depois de as alterar).
 2. **Redirects/Rewrites** → por esta ordem:
    - `/sis/*` → `https://sis-backend-vp7g.onrender.com/*`, acção **Rewrite**;
    - `/*` → `/index.html`, acção **Rewrite** (sem esta, rotas como `/entrar` dão 404 ao recarregar).
@@ -116,8 +99,8 @@ painel. Sintoma de rotas em falta: `/sis/docs-json` devolve 404 e `POST /sis/aut
 
 O `render.yaml` declara essa configuração para `https://schoolie-frondend-staging.onrender.com`;
 ela só fica activa se o serviço sincronizar com o Blueprint. Se o frontend for publicado noutro
-serviço Render ou tiver sido criado manualmente, configurar nele `VITE_API_MOCK=false`,
-`VITE_API_REAL=todas` e a reescrita `/sis/*` para o mesmo backend antes do fallback da SPA.
+serviço Render ou tiver sido criado manualmente, configurar nele `VITE_SIS_BASE=/sis` e a
+reescrita `/sis/*` para o backend antes do fallback da SPA.
 
 O que o staging faz com o contrato de 30/10:
 
@@ -146,10 +129,8 @@ Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do back
   a reescrita do Render não o faz, por isso o backend deve emitir o cookie com `Path=/`.
 - **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
   `ApiError` (mensagens do class-validator → erros por campo).
-- No modo híbrido, o MSW aceita o JWT real e dá as permissões do papel às áreas simuladas.
-
-Regras: tipos de API só nos `schema.d.ts`; componentes recebem o modelo de vista, nunca o DTO;
-dados simulados só em `src/mocks/`.
+  Regras: tipos de API só nos `schema.d.ts`; componentes recebem o modelo de vista, nunca o DTO;
+  fixtures de dados só em `src/mocks/` e exclusivamente para testes.
 
 ## Regras do dia a dia
 

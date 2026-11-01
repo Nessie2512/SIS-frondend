@@ -45,8 +45,8 @@ function preCarregarCatalogo(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  // Em desenvolvimento o backend SIS é o da máquina (como /api). `SIS_URL` no ambiente ou em
-  // `.env.local` aponta para outro servidor quando for preciso. O staging não passa por aqui:
+  // Em desenvolvimento o backend SIS é o da máquina. `SIS_URL` no ambiente ou em
+  // `.env.local` aponta para outro servidor quando for preciso. O Render não passa por aqui:
   // no Render, a reescrita /sis/* de render.yaml encaminha para o backend de staging.
   const destinoSis = loadEnv(mode, process.cwd(), '').SIS_URL || 'http://localhost:3000'
 
@@ -187,7 +187,6 @@ export default defineConfig(({ mode }) => {
       port: 5173,
       // Mesma origem que a API: necessário para o cookie de renovação SameSite=Strict (guia 4.4)
       proxy: {
-        '/api': { target: 'http://localhost:3000', changeOrigin: true },
         // Backend SIS (guia 4.3): não aceita CORS, por isso fala-se com ele na mesma origem.
         // Em desenvolvimento vai para o backend local; `SIS_URL` muda o destino. No staging é
         // a reescrita /sis/* de render.yaml que aponta para o backend de staging.

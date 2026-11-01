@@ -1,8 +1,8 @@
 /**
  * ⚠️ PROVISÓRIO — escrito à mão com a MESMA FORMA que o openapi-typescript gera.
  *
- * Existe para o projecto compilar e para os ecrãs avançarem com MSW enquanto o backend
- * não publica o OpenAPI. Quando houver `openapi.json`, corre:
+ * Contrato provisório para endpoints ainda ausentes do backend SIS. No produto, os pedidos
+ * falham fechados com NAO_DISPONIVEL; MSW usa-o apenas nos testes. Quando houver `openapi.json`, corre:
  *
  *     pnpm api:gen
  *
