@@ -8,30 +8,31 @@ SPA em React 19 + TypeScript (strict) + Vite, segundo o
 ```powershell
 pnpm install
 pnpm dev:mock     # API simulada pelo MSW
-pnpm dev:hibrido  # sessão no backend SIS real; o resto no MSW (ligação faseada)
-pnpm dev          # sem simulação (só as áreas em VITE_API_REAL funcionam)
+pnpm dev          # sessão no backend SIS local; o resto no MSW
+pnpm dev:hibrido  # igual a pnpm dev (ligação faseada)
 ```
 
 ## Scripts
 
-| Comando                       | O que faz                                                                                           |
-| ----------------------------- | --------------------------------------------------------------------------------------------------- |
-| `pnpm dev` / `pnpm dev:mock`  | Servidor de desenvolvimento (API real / simulada pelo MSW)                                          |
-| `pnpm build`                  | Verificação de tipos e build de produção (inclui o service worker)                                  |
-| `pnpm check`                  | Tipos + lint + testes + fronteiras de arquitectura + contraste                                      |
-| `pnpm test` / `pnpm test:run` | Testes unitários e de componentes (jsdom)                                                           |
-| `pnpm e2e` / `pnpm e2e:ui`    | Fluxos críticos no navegador, contra o MSW, com axe (arranca o servidor sozinho)                    |
-| `pnpm storybook`              | Catálogo de componentes em http://localhost:6006                                                    |
-| `pnpm test:storybook`         | Cada história como teste no navegador, com axe (precisa de `pnpm exec playwright install chromium`) |
-| `pnpm tamanho`                | Orçamento de JavaScript inicial (correr depois de `pnpm build`)                                     |
-| `pnpm contraste`              | Verifica o contraste dos tokens e actualiza `docs/contraste.md`                                     |
-| `pnpm i18n:extrair`           | Actualiza o catálogo de mensagens pt-AO                                                             |
-| `pnpm deps:check`             | dependency-cruiser: camadas do guia 4.1                                                             |
-| `pnpm api:baixar`             | Descarrega o `openapi.json` do backend SIS (`SIS_URL` muda o servidor)                              |
-| `pnpm api:gen`                | Gera `src/shared/api/sis/schema.d.ts` a partir de `./openapi.json` (o CI confirma que estão iguais) |
-| `pnpm api:amostras`           | Recolhe respostas reais para `amostras-api/` (pede credenciais; pasta fora do Git)                  |
-| `pnpm format`                 | Prettier (ordena também as classes Tailwind)                                                        |
-| `pnpm fontes`                 | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
+| Comando                         | O que faz                                                                                           |
+| ------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `pnpm dev` / `pnpm dev:hibrido` | Sessão no backend SIS local; outras áreas simuladas pelo MSW                                        |
+| `pnpm dev:mock`                 | API simulada pelo MSW                                                                               |
+| `pnpm build`                    | Verificação de tipos e build de produção (inclui o service worker)                                  |
+| `pnpm check`                    | Tipos + lint + testes + fronteiras de arquitectura + contraste                                      |
+| `pnpm test` / `pnpm test:run`   | Testes unitários e de componentes (jsdom)                                                           |
+| `pnpm e2e` / `pnpm e2e:ui`      | Fluxos críticos no navegador, contra o MSW, com axe (arranca o servidor sozinho)                    |
+| `pnpm storybook`                | Catálogo de componentes em http://localhost:6006                                                    |
+| `pnpm test:storybook`           | Cada história como teste no navegador, com axe (precisa de `pnpm exec playwright install chromium`) |
+| `pnpm tamanho`                  | Orçamento de JavaScript inicial (correr depois de `pnpm build`)                                     |
+| `pnpm contraste`                | Verifica o contraste dos tokens e actualiza `docs/contraste.md`                                     |
+| `pnpm i18n:extrair`             | Actualiza o catálogo de mensagens pt-AO                                                             |
+| `pnpm deps:check`               | dependency-cruiser: camadas do guia 4.1                                                             |
+| `pnpm api:baixar`               | Descarrega o `openapi.json` do backend SIS (`SIS_URL` muda o servidor)                              |
+| `pnpm api:gen`                  | Gera `src/shared/api/sis/schema.d.ts` a partir de `./openapi.json` (o CI confirma que estão iguais) |
+| `pnpm api:amostras`             | Recolhe respostas reais para `amostras-api/` (pede credenciais; pasta fora do Git)                  |
+| `pnpm format`                   | Prettier (ordena também as classes Tailwind)                                                        |
+| `pnpm fontes`                   | Volta a copiar a Inter variável para `public/fonts` (depois de actualizar o pacote)                 |
 
 ## Contas de teste (modo simulado)
 
@@ -69,11 +70,11 @@ de cada entidade escolhem o cliente com `eReal(area)` e convertem o DTO real no 
 vista, por isso os ecrãs não mudam. Acções que o backend ainda não suporta ficam desactivadas
 com o motivo.
 
-| Modo     | Como                                             | Áreas reais         | Resto            |
-| -------- | ------------------------------------------------ | ------------------- | ---------------- |
-| Simulado | `pnpm dev:mock`                                  | nenhuma             | MSW              |
-| Híbrido  | `pnpm dev:hibrido` (`.env.hibrido`)              | as de VITE_API_REAL | MSW              |
-| Real     | `VITE_API_REAL=todas` (staging, ou `.env.local`) | todas               | «não disponível» |
+| Modo     | Como                                              | Áreas reais         | Resto            |
+| -------- | ------------------------------------------------- | ------------------- | ---------------- |
+| Simulado | `pnpm dev:mock`                                   | nenhuma             | MSW              |
+| Híbrido  | `pnpm dev` ou `pnpm dev:hibrido` (`.env.hibrido`) | as de VITE_API_REAL | MSW              |
+| Real     | `VITE_API_REAL=todas` (Render ou `.env.local`)    | todas               | «não disponível» |
 
 No modo real, o que o backend ainda não tem (cliente `/api/v1`) responde logo com
 `NAO_DISPONIVEL` (501), sem ir à rede: o ecrã diz «Esta parte ainda não está disponível no
@@ -104,12 +105,19 @@ painel. Sintoma de rotas em falta: `/sis/docs-json` devolve 404 e `POST /sis/aut
    - `/*` → `/index.html`, acção **Rewrite** (sem esta, rotas como `/entrar` dão 404 ao recarregar).
 3. Confirmar:
    ```bash
-   curl -o /dev/null -w "%{http_code}\n" https://schoolie-frondend-staging.onrender.com/sis/docs-json   # 200
    curl -o /dev/null -w "%{http_code}\n" https://schoolie-frondend-staging.onrender.com/entrar           # 200
+   curl -sS -o /dev/null -w "%{http_code}\n" -X POST \
+     -H 'content-type: application/json' \
+     -d '{"email":"teste-inexistente@example.invalid","password":"invalida"}' \
+     https://schoolie-frondend-staging.onrender.com/sis/auth/login   # 401
    ```
-   O `POST /sis/auth/login` com credenciais erradas deve devolver **401** (não 200 vazio).
+   O `POST /sis/auth/login` com credenciais inválidas deve devolver **401**; **200** indica que o
+   fallback da SPA respondeu em vez do backend.
 
-Produção (ramo main) fica como está enquanto não houver backend de produção: sem `VITE_API_REAL`.
+O `render.yaml` declara essa configuração para `https://schoolie-frondend-staging.onrender.com`;
+ela só fica activa se o serviço sincronizar com o Blueprint. Se o frontend for publicado noutro
+serviço Render ou tiver sido criado manualmente, configurar nele `VITE_API_MOCK=false`,
+`VITE_API_REAL=todas` e a reescrita `/sis/*` para o mesmo backend antes do fallback da SPA.
 
 O que o staging faz com o contrato de 30/10:
 
