@@ -17,7 +17,8 @@ services:
     routes:
       - type: rewrite
         source: /sis/*
-        destination: https://sis-backend-vp7g.onrender.com*
+        destination: https://onrender.com*
       - type: rewrite
         source: /*
         destination: /index.html
+
