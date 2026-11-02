@@ -3,7 +3,9 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { LogOut } from 'lucide-react'
 import { meQuery, sair } from '@/entities/utilizador'
+import type { Lingua } from '@/shared/config/constantes'
 import { usePreferencias, type Densidade, type PreferenciaTema } from '@/shared/lib/preferencias'
+import { recarregar } from '@/shared/lib/recarregar'
 import { Avatar, Button, ControloSegmentado, ErroDeRota } from '@/shared/ui'
 import type { ReactNode } from 'react'
 
@@ -12,11 +14,30 @@ export const Route = createFileRoute('/_app/definicoes/')({
   component: Definicoes,
 })
 
+/**
+ * Cada língua com o seu próprio nome, para quem não lê a língua actual a encontrar na lista.
+ * Por isso fora da tradução.
+ */
+const NOMES_LINGUAS: Record<Lingua, string> = {
+  // eslint-disable-next-line lingui/no-unlocalized-strings -- nome da língua na própria língua
+  'pt-AO': 'Português',
+  // eslint-disable-next-line lingui/no-unlocalized-strings -- nome da língua na própria língua
+  en: 'English',
+}
+
 /** Preferências (guia 6.1): apresentação neste navegador e a conta. */
 function Definicoes() {
   const { t } = useLingui()
-  const { tema, densidade, menuRecolhido, definirTema, definirDensidade, definirMenuRecolhido } =
-    usePreferencias()
+  const {
+    tema,
+    densidade,
+    menuRecolhido,
+    lingua,
+    definirTema,
+    definirDensidade,
+    definirMenuRecolhido,
+    definirLingua,
+  } = usePreferencias()
   const { data: eu } = useQuery(meQuery())
 
   return (
@@ -24,6 +45,29 @@ function Definicoes() {
       <p className="text-secundario text-texto-2">
         <Trans>As preferências de apresentação ficam guardadas neste navegador.</Trans>
       </p>
+
+      <Grupo titulo={t`Língua`}>
+        <Linha
+          rotulo={t`Língua da aplicação`}
+          descricao={t`Menus, botões e mensagens. A página recarrega para aplicar a mudança.`}
+        >
+          <ControloSegmentado
+            rotulo={t`Língua da aplicação`}
+            valor={lingua}
+            aoMudar={(v) => {
+              if (v === lingua) return
+              // O catálogo e os formatos de data e número lêem a língua no arranque
+              definirLingua(v as Lingua)
+              recarregar.agora()
+            }}
+            opcoes={(Object.keys(NOMES_LINGUAS) as Lingua[]).map((l) => ({
+              valor: l,
+              rotulo: NOMES_LINGUAS[l],
+              lingua: l,
+            }))}
+          />
+        </Linha>
+      </Grupo>
 
       <Grupo titulo={t`Apresentação`}>
         <Linha

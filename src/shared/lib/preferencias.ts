@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { CHAVE_PREFERENCIAS, LINGUA_BASE, type Lingua } from '@/shared/config/constantes'
 
 /**
  * Preferências do utilizador neste navegador (guia 4.2: cliente persistente).
@@ -13,13 +14,16 @@ interface EstadoPreferencias {
   densidade: Densidade
   /** Menu lateral só com ícones */
   menuRecolhido: boolean
+  /** Língua da interface; muda ao recarregar (o catálogo e os formatos lêem-na no arranque) */
+  lingua: Lingua
   definirTema: (tema: PreferenciaTema) => void
   definirDensidade: (densidade: Densidade) => void
   definirMenuRecolhido: (recolhido: boolean) => void
+  definirLingua: (lingua: Lingua) => void
 }
 
 /** A mesma chave é lida pelo script em index.html para aplicar o tema antes da primeira pintura. */
-export const CHAVE_PREFERENCIAS = 'secretaria:preferencias'
+export { CHAVE_PREFERENCIAS }
 
 export const usePreferencias = create<EstadoPreferencias>()(
   persist(
@@ -27,13 +31,20 @@ export const usePreferencias = create<EstadoPreferencias>()(
       tema: 'sistema',
       densidade: 'confortavel',
       menuRecolhido: false,
+      lingua: LINGUA_BASE,
       definirTema: (tema) => set({ tema }),
       definirDensidade: (densidade) => set({ densidade }),
       definirMenuRecolhido: (menuRecolhido) => set({ menuRecolhido }),
+      definirLingua: (lingua) => set({ lingua }),
     }),
     {
       name: CHAVE_PREFERENCIAS,
-      partialize: ({ tema, densidade, menuRecolhido }) => ({ tema, densidade, menuRecolhido }),
+      partialize: ({ tema, densidade, menuRecolhido, lingua }) => ({
+        tema,
+        densidade,
+        menuRecolhido,
+        lingua,
+      }),
     },
   ),
 )

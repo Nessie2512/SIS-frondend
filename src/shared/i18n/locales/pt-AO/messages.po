@@ -3256,6 +3256,14 @@ msgstr "Limpar filtros"
 msgid "Limpar selecção"
 msgstr "Limpar selecção"
 
+#: src/routes/_app/definicoes/index.tsx
+msgid "Língua"
+msgstr "Língua"
+
+#: src/routes/_app/definicoes/index.tsx
+msgid "Língua da aplicação"
+msgstr "Língua da aplicação"
+
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "Linha"
 msgstr "Linha"
@@ -3450,6 +3458,10 @@ msgstr "Menu"
 #: src/routes/_app/definicoes/index.tsx
 msgid "Menu lateral"
 msgstr "Menu lateral"
+
+#: src/routes/_app/definicoes/index.tsx
+msgid "Menus, botões e mensagens. A página recarrega para aplicar a mudança."
+msgstr "Menus, botões e mensagens. A página recarrega para aplicar a mudança."
 
 #: src/shared/ui/calendario.tsx
 msgid "Mês anterior"
