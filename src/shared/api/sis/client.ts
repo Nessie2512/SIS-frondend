@@ -69,11 +69,21 @@ async function lancarErro(response: Response, caminho: string): Promise<never> {
  * Fica a protecção: se voltar, entrega-se só `data`. As outras respostas passam intactas.
  */
 async function desembrulhar(response: Response): Promise<Response> {
+  // Várias escritas respondem 200/201 sem corpo (ex.: POST /classes). Marca-se o corpo vazio
+  // com Content-Length 0, para o openapi-fetch devolver data undefined em vez de falhar no JSON
+  const texto = await response.clone().text()
+  if (!texto.trim()) {
+    const headers = new Headers(response.headers)
+    headers.set('content-length', '0')
+    return new Response(null, { status: response.status, statusText: response.statusText, headers })
+  }
   if (!response.headers.get('content-type')?.includes('json')) return response
-  const corpo: unknown = await response
-    .clone()
-    .json()
-    .catch(() => undefined)
+  let corpo: unknown
+  try {
+    corpo = JSON.parse(texto)
+  } catch {
+    return response
+  }
   if (!eEnvelope(corpo)) return response
   const headers = new Headers(response.headers)
   headers.delete('content-length')

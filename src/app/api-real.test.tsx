@@ -1,4 +1,5 @@
 import { screen, within } from '@testing-library/react'
+import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { contasQuery, perfisQuery } from '@/entities/administracao'
 import { anosLectivosQuery } from '@/entities/ano-lectivo'
@@ -11,7 +12,7 @@ import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
 import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { renderizarEm } from '@/test/renderizar'
-import { handlersSis } from '@/test/sis'
+import { anosSis, handlersSis } from '@/test/sis'
 import { criarQueryClient } from './query-client'
 
 // Staging: todas as áreas no backend SIS, sem simulação
@@ -32,6 +33,16 @@ describe('API real: referência', () => {
       ['ano-sis-2026', 'EM_CURSO', '2026-09-01', '2027-07-31'],
     ])
     expect(anos[0]?.soLeitura).toBe(true)
+  })
+
+  it('usa startDate e endDate quando o backend os devolve', async () => {
+    server.use(
+      http.get('/sis/academic-years', () =>
+        HttpResponse.json([{ ...anosSis[0], startDate: '2026-02-02', endDate: '2026-12-11' }]),
+      ),
+    )
+    const [ano] = await cliente().fetchQuery(anosLectivosQuery())
+    expect([ano?.dataInicio, ano?.dataFim]).toEqual(['2026-02-02', '2026-12-11'])
   })
 
   it('classes ligadas ao ciclo pelo id numérico, ordenadas pelo número do nome', async () => {
