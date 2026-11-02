@@ -217,7 +217,7 @@ export const meSis: DtoSis<'MeResponseDto'> = {
   name: 'Domingas Chefe',
   email: 'chefe@escola.ao',
   role: 'CHEFE_SECRETARIA',
-  permissions: [],
+  permissions: ['students:read', 'classes:write', 'academic:write', 'users:write'],
 }
 
 const tokenSis = () => jwtDeTeste({ sub: 'u-1', exp: Math.floor(Date.now() / 1000) + 3600 })

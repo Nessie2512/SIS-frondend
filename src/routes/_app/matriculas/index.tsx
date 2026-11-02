@@ -164,7 +164,7 @@ function EcraMatriculas() {
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
-  const podeConfirmar = useCan('matriculas:escrever') && !soLeitura
+  const podeConfirmar = useCan('matriculas:aprovar') && !soLeitura
   const total = data?.total ?? 0
   const pagina = data?.page ?? filtros.page
   const totalPaginas = data?.totalPaginas ?? 1

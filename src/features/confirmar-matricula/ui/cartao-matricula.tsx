@@ -21,7 +21,7 @@ interface Props {
  */
 export function CartaoMatricula({ estudante, documentos, soLeitura }: Props) {
   const { t } = useLingui()
-  const podeEscrever = useCan('matriculas:escrever')
+  const podeEscrever = useCan('matriculas:aprovar')
   const confirmar = useConfirmarMatricula()
   if (!estudante.matriculaId || !estudante.matricula) return null
 

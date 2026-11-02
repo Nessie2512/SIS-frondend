@@ -20,39 +20,48 @@ describe('lerJwt', () => {
   })
 })
 
-describe('permissoesDoPapel', () => {
-  it('o secretário matricula mas não gere anos nem utilizadores', () => {
+describe('permissões do backend SIS', () => {
+  it('chefe da secretaria: anos, currículo, professores, turmas e matrículas', () => {
+    const p = permissoesDoPapel('CHEFE_SECRETARIA')
+    for (const esperada of [
+      'anos:gerir',
+      'curriculo:escrever',
+      'professores:escrever',
+      'turmas:escrever',
+      'matriculas:aprovar',
+      'estudantes:escrever',
+      'administracao:escrever',
+    ])
+      expect(p).toContain(esperada)
+    // O âmbito curriculum (disciplinas por classe) não é dele
+    expect(p).not.toContain('planos:escrever')
+  })
+
+  it('secretário: cria estudantes e abre a matrícula, mas não aprova nem gere anos', () => {
     const p = permissoesDoPapel('SECRETARIO')
     expect(p).toContain('matriculas:escrever')
+    expect(p).not.toContain('matriculas:aprovar')
     expect(p).not.toContain('anos:gerir')
-    expect(p).not.toContain('administracao:escrever')
-  })
-
-  it('papel desconhecido não ganha permissões', () => {
-    expect(permissoesDoPapel('OUTRO')).toEqual([])
-  })
-})
-
-describe('permissoesDoSis', () => {
-  it('traduz o vocabulário do backend para o da interface', () => {
-    const p = permissoesDoSis(['students:read', 'student-entry:write', 'academic-years:write'], 'X')
-    expect(p).toEqual(
-      expect.arrayContaining([
-        'estudantes:ler',
-        'matriculas:ler',
-        'matriculas:escrever',
-        'anos:gerir',
-      ]),
-    )
     expect(p).not.toContain('estudantes:escrever')
   })
 
-  it('quem escreve turmas também pode pedir a excepção à lotação', () => {
-    expect(permissoesDoSis(['classes:write'], undefined)).toContain('inscricoes:excepcao')
+  it('director pedagógico e admin: só as disciplinas de cada classe', () => {
+    for (const papel of ['DIRECTOR_PEDAGOGICO', 'ADMIN']) {
+      const p = permissoesDoPapel(papel)
+      expect(p).toContain('planos:escrever')
+      expect(p).not.toContain('curriculo:escrever')
+    }
   })
 
-  it('sem nenhuma reconhecida, vale a tabela do papel', () => {
-    expect(permissoesDoSis(['xpto:read'], 'SECRETARIO')).toEqual(permissoesDoPapel('SECRETARIO'))
-    expect(permissoesDoSis([], 'ADMIN')).toContain('administracao:escrever')
+  it('traduz a lista de /auth/me e ignora nomes desconhecidos', () => {
+    const p = permissoesDoSis(['academic:read', 'student-approval:write', 'xpto:read'], 'X')
+    expect(p).toEqual(
+      expect.arrayContaining(['curriculo:ler', 'professores:ler', 'matriculas:aprovar']),
+    )
+  })
+
+  it('sem nenhuma reconhecida, vale a tabela do papel; papel desconhecido não ganha nada', () => {
+    expect(permissoesDoSis(['xpto:read'], 'GESTOR_TI')).toEqual(permissoesDoPapel('GESTOR_TI'))
+    expect(permissoesDoPapel('OUTRO')).toEqual([])
   })
 })
