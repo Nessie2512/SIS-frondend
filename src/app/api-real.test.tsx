@@ -1,4 +1,5 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
 import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { contasQuery, perfisQuery } from '@/entities/administracao'
@@ -180,6 +181,39 @@ describe('API real: ecrãs', () => {
     expect(within(ciclos).getByRole('row', { name: /II Ciclo 10 12 22/ })).toBeInTheDocument()
     const turmas = screen.getByRole('table', { name: 'Estudantes por turma' })
     expect(within(turmas).getByRole('row', { name: /7.ª A 7.ª classe 10/ })).toBeInTheDocument()
+  })
+
+  it('sem nenhum ano, o chefe da secretaria cria o primeiro (1 Set a 31 Jul)', async () => {
+    const criados: unknown[] = []
+    const anos: Record<string, unknown>[] = []
+    server.use(
+      http.get('/sis/academic-years', () => HttpResponse.json(anos)),
+      http.post('/sis/academic-years', async ({ request }) => {
+        const corpo = (await request.json()) as { label: string; startYear: number }
+        criados.push(corpo)
+        anos.push({
+          id: 1,
+          uuid: 'ano-novo',
+          label: corpo.label,
+          startYear: corpo.startYear,
+          isActive: false,
+          isClosed: false,
+        })
+        return new HttpResponse(null, { status: 201 })
+      }),
+    )
+    const { router } = renderizarEm('/anos-lectivos')
+    expect(await screen.findByText('Ainda não há anos lectivos')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Criar o ano lectivo' }))
+    const folha = await screen.findByRole('dialog')
+    const botao = within(folha).getByRole('button', { name: /^Criar \d{4}\/\d{4}$/ })
+    const designacao = botao.textContent!.replace('Criar ', '')
+    await userEvent.click(botao)
+    // O POST responde sem corpo: o ano lê-se da lista e abre-se a sua página
+    await waitFor(() => expect(router.state.location.pathname).toBe('/anos-lectivos/ano-novo'), {
+      timeout: 10_000,
+    })
+    expect(criados).toEqual([{ label: designacao, startYear: Number(designacao.slice(0, 4)) }])
   })
 
   it('o que o backend ainda não tem diz que não está disponível', async () => {

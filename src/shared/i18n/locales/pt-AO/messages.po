@@ -759,6 +759,10 @@ msgstr "Abertura do ano"
 msgid "Abrir"
 msgstr "Abrir"
 
+#: src/routes/_app/anos-lectivos/index.tsx
+msgid "Abrir {anoPlaneado}"
+msgstr "Abrir {anoPlaneado}"
+
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Abrir as definições"
 msgstr "Abrir as definições"
@@ -931,6 +935,10 @@ msgstr "Ainda não foram emitidos documentos oficiais."
 #: src/routes/_app/matriculas/renovar.tsx
 msgid "Ainda não há ano seguinte para onde renovar."
 msgstr "Ainda não há ano seguinte para onde renovar."
+
+#: src/routes/_app/anos-lectivos/index.tsx
+msgid "Ainda não há anos lectivos"
+msgstr "Ainda não há anos lectivos"
 
 #: src/routes/_app/calendario.tsx
 #: src/routes/_app/estudantes/importar.tsx
@@ -1625,6 +1633,7 @@ msgid "Criar o ano {designacao}"
 msgstr "Criar o ano {designacao}"
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+#: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 msgid "Criar o ano lectivo"
 msgstr "Criar o ano lectivo"
 
@@ -1652,6 +1661,10 @@ msgstr "Crie o primeiro ano lectivo para começar."
 #: src/routes/_app/calendario.tsx
 msgid "Crie o primeiro ano lectivo para ver o calendário."
 msgstr "Crie o primeiro ano lectivo para ver o calendário."
+
+#: src/routes/_app/anos-lectivos/index.tsx
+msgid "Crie o primeiro ano para começar a registar turmas e matrículas."
+msgstr "Crie o primeiro ano para começar a registar turmas e matrículas."
 
 #: src/routes/_app/matriculas/renovar.tsx
 msgid "Crie primeiro o próximo ano lectivo; a renovação é uma das etapas da abertura."
@@ -3813,6 +3826,10 @@ msgstr "Número de processo"
 msgid "Nunca"
 msgstr "Nunca"
 
+#: src/routes/_app/anos-lectivos/index.tsx
+msgid "O ano {anoPlaneado} está planeado. Termine a abertura (ou active-o) antes de criar outro."
+msgstr "O ano {anoPlaneado} está planeado. Termine a abertura (ou active-o) antes de criar outro."
+
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "O ano {designacao} está em curso."
 msgstr "O ano {designacao} está em curso."
@@ -3920,6 +3937,10 @@ msgstr "O plano diz que disciplinas a classe tem e com que carga semanal."
 #: src/features/editar-plano/ui/accoes-plano.tsx
 msgid "O plano não tem disciplinas. Acrescente pelo menos uma antes de publicar."
 msgstr "O plano não tem disciplinas. Acrescente pelo menos uma antes de publicar."
+
+#: src/routes/_app/anos-lectivos/index.tsx
+msgid "O primeiro ano lectivo é criado por quem gere os anos lectivos."
+msgstr "O primeiro ano lectivo é criado por quem gere os anos lectivos."
 
 #: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "O processo, os encarregados e os documentos já existem; só falta a classe."

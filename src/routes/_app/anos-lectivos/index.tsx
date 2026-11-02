@@ -5,7 +5,7 @@ import { anosLectivosQuery, TOM_ESTADO_ANO } from '@/entities/ano-lectivo'
 import { NovoAnoLectivo } from '@/features/gerir-ano-lectivo'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { useCan } from '@/shared/lib/permissoes'
-import { ErroDeRota, Esqueleto, EtiquetaEstado } from '@/shared/ui'
+import { Aviso, ErroDeRota, Esqueleto, EstadoVazio, EtiquetaEstado } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/anos-lectivos/')({
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(anosLectivosQuery()),
@@ -21,7 +21,10 @@ function EcraAnosLectivos() {
   const { data: anos } = useQuery(anosLectivosQuery())
   if (!anos) return <Esqueleto className="h-64 w-full" />
   const ordenados = [...anos].sort((a, b) => b.dataInicio.localeCompare(a.dataInicio))
-  const temPlaneado = anos.some((a) => a.estado === 'PLANEADO')
+  const planeado = anos.find((a) => a.estado === 'PLANEADO')
+  const anoPlaneado = planeado?.designacao
+  const irPara = (ano: { id: string }) =>
+    void navigate({ to: '/anos-lectivos/$anoId', params: { anoId: ano.id } })
 
   return (
     <section className="flex flex-col gap-6">
@@ -34,15 +37,33 @@ function EcraAnosLectivos() {
             <Trans>Só um ano está em curso de cada vez. O seguinte prepara-se por etapas.</Trans>
           </p>
         </div>
-        {podeGerir && !temPlaneado && ordenados[0] && (
-          <NovoAnoLectivo
-            ultimo={ordenados[0]}
-            aoCriar={(ano) =>
-              void navigate({ to: '/anos-lectivos/$anoId', params: { anoId: ano.id } })
-            }
-          />
+        {podeGerir && !planeado && ordenados.length > 0 && (
+          <NovoAnoLectivo ultimo={ordenados[0]} aoCriar={irPara} />
         )}
       </div>
+      {podeGerir && planeado && (
+        <Aviso tom="informacao">
+          {t`O ano ${anoPlaneado} está planeado. Termine a abertura (ou active-o) antes de criar outro.`}{' '}
+          <Link
+            to="/anos-lectivos/$anoId"
+            params={{ anoId: planeado.id }}
+            className="text-acento hover:underline"
+          >
+            <Trans>Abrir {anoPlaneado}</Trans>
+          </Link>
+        </Aviso>
+      )}
+      {ordenados.length === 0 && (
+        <EstadoVazio
+          titulo={t`Ainda não há anos lectivos`}
+          descricao={
+            podeGerir
+              ? t`Crie o primeiro ano para começar a registar turmas e matrículas.`
+              : t`O primeiro ano lectivo é criado por quem gere os anos lectivos.`
+          }
+          accao={podeGerir && <NovoAnoLectivo aoCriar={irPara} />}
+        />
+      )}
       <ul aria-label={t`Anos lectivos`} className="grid gap-4 md:grid-cols-2">
         {ordenados.map((ano) => {
           const designacao = ano.designacao
