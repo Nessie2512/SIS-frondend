@@ -74,6 +74,23 @@ servidor». MSW e fixtures só são iniciados pelos testes automatizados (`pnpm 
 o browser continua a falar com `/sis` na própria origem para evitar CORS; o destino é configurado
 pela rewrite do Render.
 
+### Testar contra o backend local
+
+1. No `SIS-backend`, siga a secção «Testes locais com o frontend» do README: `.env`, a API em
+   `http://localhost:3000` (`docker compose up --build`, ou `docker compose up -d postgres`,
+   `pnpm db:preparar` e `pnpm start:dev`) e `pnpm dados:locais`. Ficam criadas uma conta por perfil,
+   o ano 2026/2027 activo, classes, turmas, professores e estudantes.
+2. Aqui: `pnpm dev` e abrir `http://localhost:5173`. Não é preciso mudar nada: o
+   `.env.development` já aponta o proxy `/sis` para `http://localhost:3000`.
+3. Entrar com as contas `*.dev@bma.com` (palavra-passe `DEV_USERS_PASSWORD` do `.env` do
+   backend). O que cada perfil vê segue o `AccessGuard` do backend: por exemplo, só `chefe.dev`
+   inscreve estudantes em turmas, e `admin.dev` e `pedagogico.dev` recebem 403 ao ler classes
+   (lacuna conhecida do backend).
+
+Se o login falhar com «sem ligação», a API não está a responder em `:3000`. Se der 401 ao
+recarregar a página, o browser não guardou o cookie de renovação: use Chrome, Edge ou Firefox em
+`localhost` (não `127.0.0.1`).
+
 ### Staging no Render (serviço do ramo Dev)
 
 O serviço é `schoolie-frondend-staging` (https://schoolie-frondend-staging.onrender.com). Se foi
