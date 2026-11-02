@@ -14,6 +14,8 @@ import {
 } from '@/entities/administracao'
 import { meQuery } from '@/entities/utilizador'
 import { BotaoEstadoUtilizador } from '@/features/alterar-estado-utilizador'
+import { MudarPapel, NovaConta } from '@/features/gerir-contas'
+import { eReal } from '@/shared/config/ligacao'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
@@ -84,7 +86,16 @@ function useColunas(podeAlterar: boolean, euId: string | undefined): ColunaTabel
           </span>
         ),
       }),
-      c.accessor('perfil', { header: t`Perfil` }),
+      c.accessor('perfil', {
+        header: t`Perfil`,
+        // Backend SIS: o perfil é o papel e muda-se com PATCH /users/{uuid}
+        cell: (info) =>
+          podeAlterar && eReal('utilizadores') && info.row.original.id !== euId ? (
+            <MudarPapel conta={info.row.original} />
+          ) : (
+            info.getValue()
+          ),
+      }),
       c.accessor('ultimoAcesso', {
         header: t`Último acesso`,
         cell: (info) => {
@@ -176,13 +187,17 @@ function EcraUtilizadores() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h2 className="text-titulo-seccao">
-          <Trans>Utilizadores</Trans>
-        </h2>
-        <p className="tabular text-secundario text-texto-2" aria-live="polite">
-          {plural(total, { one: '# utilizador', other: '# utilizadores' })}
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <h2 className="text-titulo-seccao">
+            <Trans>Utilizadores</Trans>
+          </h2>
+          <p className="tabular text-secundario text-texto-2" aria-live="polite">
+            {plural(total, { one: '# utilizador', other: '# utilizadores' })}
+          </p>
+        </div>
+        {/* Criar contas só existe no backend SIS (POST /users) */}
+        {podeAlterar && eReal('utilizadores') && <NovaConta />}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_14rem_12rem]">

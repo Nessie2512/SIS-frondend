@@ -327,6 +327,10 @@ msgstr "{nome} largado em {destino}."
 msgid "{nome} matriculado em {designacaoAno}."
 msgstr "{nome} matriculado em {designacaoAno}."
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+msgid "{nome} passa a {perfil}."
+msgstr "{nome} passa a {perfil}."
+
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "{nome} passou a «{rotulo}»."
 msgstr "{nome} passou a «{rotulo}»."
@@ -679,9 +683,17 @@ msgstr "A obter o estado da tarefa"
 msgid "A ordem das classes define a classe seguinte na renovação. Uma classe em uso não se elimina: inactiva-se."
 msgstr "A ordem das classes define a classe seguinte na renovação. Uma classe em uso não se elimina: inactiva-se."
 
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "A palavra-passe tem de 12 a 128 caracteres."
+msgstr "A palavra-passe tem de 12 a 128 caracteres."
+
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "A partir de"
 msgstr "A partir de"
+
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "A pessoa entra com o email e a palavra-passe inicial, e muda-a depois."
+msgstr "A pessoa entra com o email e a palavra-passe inicial, e muda-a depois."
 
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "A procurar…"
@@ -1157,6 +1169,10 @@ msgstr "As disciplinas aparecem aqui quando o plano for publicado."
 msgid "As matrículas confirmadas ficam concluídas com o resultado registado."
 msgstr "As matrículas confirmadas ficam concluídas com o resultado registado."
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+msgid "As permissões mudam na próxima vez que a pessoa entrar."
+msgstr "As permissões mudam na próxima vez que a pessoa entrar."
+
 #: src/routes/_app/definicoes/index.tsx
 msgid "As preferências de apresentação ficam guardadas neste navegador."
 msgstr "As preferências de apresentação ficam guardadas neste navegador."
@@ -1227,6 +1243,7 @@ msgid "Avô"
 msgstr "Avô"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Bairro"
 msgstr "Bairro"
@@ -1291,6 +1308,8 @@ msgstr "Cancelado."
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/reabrir-ano.tsx
 #: src/features/gerir-classes/ui/arvore-classes.tsx
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/gerir-turmas/ui/encerrar-turma.tsx
@@ -1531,6 +1550,10 @@ msgstr "Conta"
 msgid "Conta de {nome}"
 msgstr "Conta de {nome}"
 
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "Conta de {nome} criada."
+msgstr "Conta de {nome} criada."
+
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Contas de utilizador e auditoria."
 msgstr "Contas de utilizador e auditoria."
@@ -1574,6 +1597,10 @@ msgstr "Criar ciclo"
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "Criar classe"
 msgstr "Criar classe"
+
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "Criar conta"
+msgstr "Criar conta"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Criar disciplina"
@@ -1666,6 +1693,7 @@ msgstr "Data da saída"
 #: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -1707,6 +1735,10 @@ msgstr "De {de} a {ate}"
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "De {origem} para {destino}."
 msgstr "De {origem} para {destino}."
+
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "De 12 a 128 caracteres. Entregue-a à pessoa por um canal seguro."
+msgstr "De 12 a 128 caracteres. Entregue-a à pessoa por um canal seguro."
 
 #: src/entities/professor/model/mapeadores.ts
 #: src/routes/_app/professores/index.tsx
@@ -2130,6 +2162,7 @@ msgid "Em vigor desde {data}."
 msgstr "Em vigor desde {data}."
 
 #: src/features/autenticar/ui/formulario-entrada.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
@@ -2373,6 +2406,11 @@ msgstr "Escolha o docente."
 msgid "Escolha o encarregado da lista."
 msgstr "Escolha o encarregado da lista."
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "Escolha o perfil."
+msgstr "Escolha o perfil."
+
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha o sexo."
 msgstr "Escolha o sexo."
@@ -2459,6 +2497,7 @@ msgid "Escreva o tipo e o número, por exemplo BI 002145678LA043."
 msgstr "Escreva o tipo e o número, por exemplo BI 002145678LA043."
 
 #: src/features/autenticar/model/esquema.ts
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escreva um email válido."
 msgstr "Escreva um email válido."
@@ -2871,6 +2910,7 @@ msgstr "Gestor de TI"
 msgid "Guardado"
 msgstr "Guardado"
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Guardar"
@@ -3436,6 +3476,10 @@ msgstr "Mover para…"
 msgid "Mudança de turma"
 msgstr "Mudança de turma"
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+msgid "Mudar"
+msgstr "Mudar"
+
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Mudar {nome} para {nomeDestino}"
 msgstr "Mudar {nome} para {nomeDestino}"
@@ -3444,11 +3488,16 @@ msgstr "Mudar {nome} para {nomeDestino}"
 msgid "Mudar de turma"
 msgstr "Mudar de turma"
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+msgid "Mudar o perfil de {nome}"
+msgstr "Mudar o perfil de {nome}"
+
 #: src/shared/lib/erros-dominio.ts
 msgid "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
 msgstr "Muitos pedidos seguidos. Aguarde um momento e tente de novo."
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Município"
 msgstr "Município"
@@ -3468,6 +3517,7 @@ msgid "N.º e código de verificação atribuídos ao emitir"
 msgstr "N.º e código de verificação atribuídos ao emitir"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Nacionalidade"
 msgstr "Nacionalidade"
@@ -3651,6 +3701,7 @@ msgstr "Nome"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
@@ -3686,6 +3737,10 @@ msgstr "Nova classe"
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "Nova classe em {nomeCiclo}"
 msgstr "Nova classe em {nomeCiclo}"
+
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "Nova conta"
+msgstr "Nova conta"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 msgid "Nova disciplina"
@@ -4032,6 +4087,10 @@ msgstr "Pai"
 msgid "Palavra-passe"
 msgstr "Palavra-passe"
 
+#: src/features/gerir-contas/ui/nova-conta.tsx
+msgid "Palavra-passe inicial"
+msgstr "Palavra-passe inicial"
+
 #: src/routes/-casca/paleta-comandos.tsx
 msgid "Paleta de comandos"
 msgstr "Paleta de comandos"
@@ -4116,6 +4175,8 @@ msgstr "Percurso"
 msgid "Percurso de {nome}"
 msgstr "Percurso de {nome}"
 
+#: src/features/gerir-contas/ui/mudar-papel.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Perfil"
 msgstr "Perfil"
@@ -4216,6 +4277,7 @@ msgid "Pré-visualização do documento"
 msgstr "Pré-visualização do documento"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 msgid "Preencha este campo."
 msgstr "Preencha este campo."
 
@@ -4327,6 +4389,7 @@ msgid "Proposta ({nPropostas})"
 msgstr "Proposta ({nPropostas})"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Província"
 msgstr "Província"
@@ -4686,6 +4749,7 @@ msgid "Revisão"
 msgstr "Revisão"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerir-contas/ui/nova-conta.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Rua e número"
 msgstr "Rua e número"
