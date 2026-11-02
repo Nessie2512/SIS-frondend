@@ -13,7 +13,10 @@ import {
   type EstadoProfessor,
   type ProfessorResumo,
 } from '@/entities/professor'
+import { NovoProfessor } from '@/features/criar-professor'
 import { VistasGuardadas } from '@/features/guardar-vista'
+import { eReal } from '@/shared/config/ligacao'
+import { useCan } from '@/shared/lib/permissoes'
 import { TEMPOS } from '@/shared/config/constantes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
@@ -139,6 +142,7 @@ function EcraProfessores() {
   const { anoLectivoId } = Route.useRouteContext()
   const { professor: aberto, q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
+  const podeRegistar = useCan('professores:escrever') && eReal('professores')
   const { filtrar, aFiltrar } = useFiltrarEmTransicao()
   const [texto, setTexto] = useState(q ?? '')
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
@@ -216,13 +220,17 @@ function EcraProfessores() {
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-titulo-pagina">
-          <Trans>Professores</Trans>
-        </h1>
-        <p className="tabular text-secundario text-texto-2" aria-live="polite">
-          {plural(total, { one: '# professor', other: '# professores' })}
-        </p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-titulo-pagina">
+            <Trans>Professores</Trans>
+          </h1>
+          <p className="tabular text-secundario text-texto-2" aria-live="polite">
+            {plural(total, { one: '# professor', other: '# professores' })}
+          </p>
+        </div>
+        {/* Registar professores só existe no backend SIS (POST /teachers) */}
+        {podeRegistar && <NovoProfessor />}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-[1fr_14rem_12rem]">

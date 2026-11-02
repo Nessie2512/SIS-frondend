@@ -1,7 +1,7 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '@/shared/api'
-import { porId, referenciaSis } from '@/shared/api/sis'
+import { apiSis, porId, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { paraInscrito, paraPaginaTurmas, paraTurma, paraTurmaDoSis } from '../model/mapeadores'
@@ -73,7 +73,8 @@ export function inscritosQuery(turmaId: string) {
 export function docentesQuery(turmaId: string) {
   return queryOptions({
     queryKey: turmaKeys.docentes(turmaId),
-    queryFn: async ({ signal }): Promise<DocenteTurma[]> => {
+    queryFn: async ({ signal, client }): Promise<DocenteTurma[]> => {
+      if (eReal('turmas')) return docentesDoSis(client, turmaId, signal)
       const { data } = await api.GET('/turmas/{id}/docentes', {
         params: { path: { id: turmaId } },
         signal,
@@ -133,4 +134,72 @@ async function paginaDoSis(client: QueryClient, filtros: FiltrosTurma): Promise<
     page,
     totalPaginas,
   }
+}
+
+/**
+ * Backend SIS: uma linha por disciplina da classe da turma (subjectIds), com o professor
+ * atribuído. As atribuições só se lêem por professor (GET /teachers/{uuid}/assignments), por
+ * isso pedem-se as de todos os professores activos. Sem data de início nem fim no backend:
+ * com várias atribuições activas à mesma disciplina, a mais recente (id maior) é a actual e as
+ * outras ficam no histórico.
+ */
+async function docentesDoSis(
+  client: QueryClient,
+  turmaId: string,
+  signal: AbortSignal,
+): Promise<DocenteTurma[]> {
+  const [turmas, classes, disciplinas, professores] = await Promise.all([
+    client.fetchQuery(referenciaSis.turmas()),
+    client.fetchQuery(referenciaSis.classes()),
+    client.fetchQuery(referenciaSis.disciplinas()),
+    client.fetchQuery(referenciaSis.professores()),
+  ])
+  const turma = turmas.find((t) => t.uuid === turmaId)
+  if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
+  const classe = classes.find((c) => c.id === turma.gradeId)
+  const disciplinaPorId = porId(disciplinas)
+  const atribuicoes = (
+    await Promise.all(
+      professores
+        .filter((p) => p.isActive)
+        .map(async (p) => {
+          const { data } = await apiSis.GET('/teachers/{uuid}/assignments', {
+            params: { path: { uuid: p.uuid } },
+            signal,
+          })
+          return (data ?? []).map((a) => ({ ...a, professor: p }))
+        }),
+    )
+  )
+    .flat()
+    .filter((a) => a.isActive && a.classId === turma.id)
+    .sort((a, b) => b.id - a.id)
+
+  return (classe?.subjectIds ?? []).flatMap((numero) => {
+    const disciplina = disciplinaPorId.get(numero)
+    if (!disciplina) return []
+    const [actual, ...anteriores] = atribuicoes.filter((a) => a.subjectId === numero)
+    return [
+      {
+        disciplinaId: disciplina.uuid,
+        disciplina: disciplina.name,
+        sigla: disciplina.code,
+        horasSemanais: 0,
+        actual: actual
+          ? {
+              atribuicaoId: actual.uuid,
+              professorId: actual.professor.uuid,
+              professor: actual.professor.name,
+              desde: '',
+            }
+          : null,
+        historico: anteriores.map((a) => ({
+          professor: a.professor.name,
+          desde: '',
+          ate: '',
+          motivo: '',
+        })),
+      },
+    ]
+  })
 }
