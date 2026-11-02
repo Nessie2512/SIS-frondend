@@ -24,6 +24,11 @@ export interface LinhaPlano {
 
 export interface Plano extends PlanoResumo {
   linhas: LinhaPlano[]
+  /**
+   * Backend SIS: o plano é só a lista de disciplinas da classe, sem carga horária, versões nem
+   * publicação. Os ecrãs escondem as horas e as acções de versão.
+   */
+  semCargaHoraria?: boolean
   /** ETag para If-Match */
   revisao: string
 }

@@ -39,3 +39,39 @@ export function paraPlano(dto: Dto<'PlanoDto'>): Plano {
     revisao: dto.revisao,
   }
 }
+
+/** Backend SIS: um único plano por classe (id = uuid da classe), sempre em vigor. */
+export function planoResumoDoSis(classeId: string): PlanoResumo {
+  return {
+    id: classeId,
+    classeId,
+    versao: 1,
+    estado: 'VIGENTE',
+    estadoRotulo: i18n._(ESTADO.VIGENTE.rotulo),
+    estadoTom: ESTADO.VIGENTE.tom,
+    // Edita-se directamente: não há rascunho nem publicação no backend
+    editavel: true,
+    publicadoEm: null,
+    totalHoras: 0,
+  }
+}
+
+export function planoDoSis(
+  classeId: string,
+  disciplinas: { uuid: string; name: string; code: string }[],
+): Plano {
+  return comLinhas(
+    {
+      ...planoResumoDoSis(classeId),
+      linhas: [],
+      revisao: '',
+      semCargaHoraria: true,
+    },
+    disciplinas.map((d) => ({
+      disciplinaId: d.uuid,
+      disciplina: d.name,
+      sigla: d.code,
+      horasSemanais: 0,
+    })),
+  )
+}

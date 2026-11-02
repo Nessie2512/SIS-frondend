@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { paraPlano, planoKeys, planoQuery, type Plano } from '@/entities/plano'
 import { api, eApiError } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 /** Nova versão a partir do vigente: um rascunho editável, igual ao vigente. */
 export function useNovaVersao() {
@@ -8,6 +10,8 @@ export function useNovaVersao() {
   return useMutation({
     mutationKey: ['plano', 'nova-versao'],
     mutationFn: async (vigente: Plano) => {
+      // Backend SIS: sem versões de plano
+      if (eReal('curriculo')) naoDisponivel('NOVA_VERSAO_PLANO')
       try {
         const { data } = await api.POST('/planos/{id}/nova-versao', {
           params: { path: { id: vigente.id } },
@@ -39,6 +43,7 @@ export function usePublicarPlano() {
   return useMutation({
     mutationKey: ['plano', 'publicar'],
     mutationFn: async (rascunho: Plano) => {
+      if (eReal('curriculo')) naoDisponivel('PUBLICAR_PLANO')
       const revisao = qc.getQueryData<Plano>(planoKeys.detalhe(rascunho.id))?.revisao
       const { data } = await api.POST('/planos/{id}/publicar', {
         params: { path: { id: rascunho.id }, header: { 'If-Match': revisao ?? rascunho.revisao } },

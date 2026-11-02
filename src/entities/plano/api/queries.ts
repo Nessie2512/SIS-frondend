@@ -1,7 +1,10 @@
 import { queryOptions } from '@tanstack/react-query'
-import { api } from '@/shared/api'
+import type { QueryClient } from '@tanstack/react-query'
+import { api, eApiError } from '@/shared/api'
+import { apiSis, porId, referenciaSis, SEM_AVISO_403 } from '@/shared/api/sis'
 import { FRESCURA } from '@/shared/config/constantes'
-import { paraPlano, paraPlanoResumo } from '../model/mapeadores'
+import { eReal } from '@/shared/config/ligacao'
+import { paraPlano, paraPlanoResumo, planoDoSis, planoResumoDoSis } from '../model/mapeadores'
 
 export const planoKeys = {
   todos: ['planos'] as const,
@@ -14,6 +17,8 @@ export function planosQuery(classeId: string) {
   return queryOptions({
     queryKey: planoKeys.daClasse(classeId),
     queryFn: async ({ signal }) => {
+      // Backend SIS: um plano por classe, que é a lista das suas disciplinas
+      if (eReal('curriculo')) return [planoResumoDoSis(classeId)]
       const { data } = await api.GET('/planos', { params: { query: { classeId } }, signal })
       return data!.map(paraPlanoResumo)
     },
@@ -24,10 +29,42 @@ export function planosQuery(classeId: string) {
 export function planoQuery(id: string) {
   return queryOptions({
     queryKey: planoKeys.detalhe(id),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('curriculo')) return planoDoSisPorClasse(client, id, signal)
       const { data } = await api.GET('/planos/{id}', { params: { path: { id } }, signal })
       return paraPlano(data!)
     },
     staleTime: FRESCURA.lista,
   })
+}
+
+/**
+ * GET /grades/{id}/subjects é do âmbito curriculum (admin e director pedagógico). Para quem só
+ * tem o âmbito academic (chefe da secretaria, director geral), as mesmas disciplinas lêem-se
+ * de subjectIds na lista das classes, só para consulta.
+ */
+async function planoDoSisPorClasse(client: QueryClient, classeId: string, signal: AbortSignal) {
+  try {
+    const { data } = await apiSis.GET('/grades/{gradeId}/subjects', {
+      params: { path: { gradeId: classeId } },
+      headers: { [SEM_AVISO_403]: '1' },
+      signal,
+    })
+    return planoDoSis(classeId, data!.subjects)
+  } catch (erro) {
+    if (!eApiError(erro) || erro.status !== 403) throw erro
+  }
+  const [classes, disciplinas] = await Promise.all([
+    client.fetchQuery(referenciaSis.classes()),
+    client.fetchQuery(referenciaSis.disciplinas()),
+  ])
+  const classe = classes.find((c) => c.uuid === classeId)
+  const porNumero = porId(disciplinas)
+  return planoDoSis(
+    classeId,
+    (classe?.subjectIds ?? []).flatMap((n) => {
+      const d = porNumero.get(n)
+      return d ? [d] : []
+    }),
+  )
 }
