@@ -2397,6 +2397,11 @@ msgstr "Escreva o nome do evento."
 msgid "Escreva o registo correcto."
 msgstr "Escreva o registo correcto."
 
+#: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "Escreva o tipo e o número, por exemplo BI 002145678LA043."
+msgstr "Escreva o tipo e o número, por exemplo BI 002145678LA043."
+
 #: src/features/autenticar/model/esquema.ts
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escreva um email válido."
@@ -3769,6 +3774,14 @@ msgstr "O registo original fica no percurso, marcado como rectificado. A rectifi
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "O resultado entra no percurso de cada estudante."
 msgstr "O resultado entra no percurso de cada estudante."
+
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "O servidor pede o nome e o telefone do pai e da mãe. Acrescente-os como encarregados, com o parentesco Pai e Mãe."
+msgstr "O servidor pede o nome e o telefone do pai e da mãe. Acrescente-os como encarregados, com o parentesco Pai e Mãe."
+
+#: src/features/matricular-existente/model/use-matricular-existente.ts
+msgid "O servidor só matricula numa turma. Escolha a turma."
+msgstr "O servidor só matricula numa turma. Escolha a turma."
 
 #: src/routes/_app/estudantes/importar.tsx
 msgid "O seu perfil não permite importar estudantes."

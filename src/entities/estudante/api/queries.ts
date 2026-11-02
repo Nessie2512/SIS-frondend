@@ -109,7 +109,11 @@ export function encarregadosQuery(id: string) {
 export function duplicadosQuery(nome: string, dataNascimento?: string) {
   return queryOptions({
     queryKey: estudanteKeys.duplicados(nome, dataNascimento),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('estudantes')) {
+        const todos = await client.fetchQuery(referenciaSis.estudantes())
+        return possiveisDuplicados(todos.map(paraEstudanteDoSis), nome, dataNascimento)
+      }
       const { data } = await api.GET('/estudantes/duplicados', {
         params: { query: { nome, dataNascimento } },
         signal,
@@ -159,4 +163,29 @@ async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<P
   const ordenados = ordenarLocal(filtrados, f.ordenar ?? 'nome')
   const { itens, total, page, totalPaginas } = paginarLocal(ordenados, f.page, PAGINACAO.porPagina)
   return { estudantes: itens, total, page, totalPaginas }
+}
+
+/**
+ * Backend SIS (sem endpoint de duplicados): possíveis duplicados no cliente. Conta como
+ * candidato o mesmo nome completo, ou o primeiro e o último nome iguais com a mesma data de
+ * nascimento. Sem acentos nem maiúsculas.
+ */
+export function possiveisDuplicados<T extends { nome: string; dataNascimento: string }>(
+  estudantes: readonly T[],
+  nome: string,
+  dataNascimento?: string,
+): T[] {
+  const partes = normalizarTexto(nome).split(/\s+/).filter(Boolean)
+  if (partes.length < 2) return []
+  const completo = partes.join(' ')
+  const extremos = `${partes[0]} ${partes.at(-1)}`
+  return estudantes.filter((e) => {
+    const outras = normalizarTexto(e.nome).split(/\s+/).filter(Boolean)
+    if (outras.join(' ') === completo) return true
+    return (
+      Boolean(dataNascimento) &&
+      e.dataNascimento === dataNascimento &&
+      `${outras[0]} ${outras.at(-1)}` === extremos
+    )
+  })
 }

@@ -29,3 +29,12 @@ export {
   percursoQuery,
 } from './api/queries'
 export { EtiquetaEstadoEstudante } from './ui/etiqueta-estado-estudante'
+export {
+  alterarDocumentoSis,
+  anularEstudanteSis,
+  criarEstudanteSis,
+  lerDocumento,
+  matricularSis,
+  recarregarEstudantesSis,
+  type NovoEstudanteSis,
+} from './api/escrita-sis'

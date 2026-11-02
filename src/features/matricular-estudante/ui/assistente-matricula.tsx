@@ -41,6 +41,17 @@ const CAMPO_SERVIDOR: Record<string, [FieldPath<DadosMatricula>, number]> = {
   encarregados: ['encarregados', 1],
   classeId: ['classeId', 3],
   turmaId: ['turmaId', 3],
+  // Campos do backend SIS (CreateStudentDto, NewEnrollmentInputDto)
+  name: ['estudante.nome', 0],
+  birthDate: ['estudante.dataNascimento', 0],
+  documentoIdentificacao: ['estudante.documentoIdentificacao', 0],
+  documentNumber: ['estudante.documentoIdentificacao', 0],
+  fatherName: ['encarregados', 1],
+  fatherContact: ['encarregados', 1],
+  motherName: ['encarregados', 1],
+  motherContact: ['encarregados', 1],
+  primaryGuardian: ['encarregados', 1],
+  classId: ['turmaId', 3],
 }
 
 /**
