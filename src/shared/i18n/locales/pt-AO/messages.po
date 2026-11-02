@@ -964,6 +964,10 @@ msgstr "Ainda não há registos no percurso."
 msgid "Ainda não há registos."
 msgstr "Ainda não há registos."
 
+#: src/features/gerar-relatorio/ui/contagens.tsx
+msgid "Ainda não há turmas activas neste ano lectivo."
+msgstr "Ainda não há turmas activas neste ano lectivo."
+
 #: src/routes/_app/turmas/index.tsx
 msgid "Ainda não há turmas neste ano."
 msgstr "Ainda não há turmas neste ano."
@@ -1368,6 +1372,7 @@ msgid "ciclo"
 msgstr "ciclo"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/gerar-relatorio/ui/contagens.tsx
 msgid "Ciclo"
 msgstr "Ciclo"
 
@@ -1392,6 +1397,7 @@ msgstr "Claro"
 msgid "classe"
 msgstr "classe"
 
+#: src/features/gerar-relatorio/ui/contagens.tsx
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
@@ -1553,6 +1559,10 @@ msgstr "Conta de {nome}"
 #: src/features/gerir-contas/ui/nova-conta.tsx
 msgid "Conta de {nome} criada."
 msgstr "Conta de {nome} criada."
+
+#: src/routes/_app/relatorios.tsx
+msgid "Contagens do ano lectivo em contexto, actualizadas pelo servidor."
+msgstr "Contagens do ano lectivo em contexto, actualizadas pelo servidor."
 
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Contas de utilizador e auditoria."
@@ -2633,6 +2643,7 @@ msgstr "Estudante, processo, número ou código"
 msgid "estudantes"
 msgstr "estudantes"
 
+#: src/features/gerar-relatorio/ui/contagens.tsx
 #: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/estudantes/$estudanteId.tsx
 #: src/routes/_app/estudantes/importar.tsx
@@ -2649,6 +2660,18 @@ msgstr "Estudantes da turma {designacao}"
 #: src/features/emitir-documento/ui/emitir-global.tsx
 msgid "Estudantes encontrados"
 msgstr "Estudantes encontrados"
+
+#: src/features/gerar-relatorio/ui/contagens.tsx
+msgid "Estudantes por ciclo"
+msgstr "Estudantes por ciclo"
+
+#: src/features/gerar-relatorio/ui/contagens.tsx
+msgid "Estudantes por ciclo e sexo"
+msgstr "Estudantes por ciclo e sexo"
+
+#: src/features/gerar-relatorio/ui/contagens.tsx
+msgid "Estudantes por turma"
+msgstr "Estudantes por turma"
 
 #: src/routes/_app/index.tsx
 msgid "Estudantes sem turma"
@@ -4368,6 +4391,7 @@ msgstr "Professor"
 msgid "professores"
 msgstr "professores"
 
+#: src/features/gerar-relatorio/ui/contagens.tsx
 #: src/routes/_app/definicoes/perfis.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
@@ -4421,6 +4445,14 @@ msgstr "Quem"
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Quem é o encarregado"
 msgstr "Quem é o encarregado"
+
+#: src/features/gerar-relatorio/ui/contagens.tsx
+msgid "Raparigas"
+msgstr "Raparigas"
+
+#: src/features/gerar-relatorio/ui/contagens.tsx
+msgid "Rapazes"
+msgstr "Rapazes"
 
 #: src/entities/plano/model/mapeadores.ts
 msgid "Rascunho"
@@ -5122,6 +5154,7 @@ msgstr "Tornar {quem} o encarregado principal"
 msgid "Tornar principal"
 msgstr "Tornar principal"
 
+#: src/features/gerar-relatorio/ui/contagens.tsx
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Total"
 msgstr "Total"
@@ -5166,6 +5199,7 @@ msgstr "turma"
 
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 #: src/features/emitir-documento/ui/emitir-lote.tsx
+#: src/features/gerar-relatorio/ui/contagens.tsx
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-classe-turma.tsx

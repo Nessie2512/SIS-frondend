@@ -250,5 +250,20 @@ export function handlersSis() {
       HttpResponse.json(atribuicoesSis.filter((a) => a.teacherUuid === params.uuid)),
     ),
     http.get('/sis/users', () => HttpResponse.json(utilizadoresSis)),
+    // Contagens: valores fixos por filtro, para os testes saberem o que esperar
+    http.get('/sis/students/reports/year/:sexo', ({ params }) =>
+      HttpResponse.json({ count: params.sexo === 'male' ? 12 : 15, students: [] }),
+    ),
+    http.get('/sis/students/reports/cycle/:sexo', ({ params, request }) => {
+      const nivel = Number(new URL(request.url).searchParams.get('academicLevelId'))
+      return HttpResponse.json({ count: (params.sexo === 'male' ? 5 : 6) * nivel, students: [] })
+    }),
+    http.get('/sis/students/reports/class', ({ request }) =>
+      HttpResponse.json({
+        count: Number(new URL(request.url).searchParams.get('classId')) - 10,
+        students: [],
+      }),
+    ),
+    http.get('/sis/teachers/reports/year', () => HttpResponse.json({ count: 4 })),
   ]
 }

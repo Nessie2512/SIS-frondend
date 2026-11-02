@@ -168,6 +168,20 @@ describe('API real: ecrãs', () => {
     expect(within(tabela).getAllByText('7.ª classe').length).toBeGreaterThan(0)
   })
 
+  it('relatórios: contagens do ano por sexo, ciclo e turma', async () => {
+    renderizarEm('/relatorios')
+    expect(await screen.findByRole('heading', { name: 'Estudantes por ciclo' })).toBeInTheDocument()
+    // Resumo: 12 rapazes + 15 raparigas
+    const total = screen.getAllByText('Estudantes').find((el) => el.tagName === 'DT')!
+    expect(total.nextElementSibling).toHaveTextContent('27')
+    const ciclos = screen.getByRole('table', { name: 'Estudantes por ciclo e sexo' })
+    // I Ciclo (id 1): 5 + 6; II Ciclo (id 2): 10 + 12
+    expect(within(ciclos).getByRole('row', { name: /I Ciclo 5 6 11/ })).toBeInTheDocument()
+    expect(within(ciclos).getByRole('row', { name: /II Ciclo 10 12 22/ })).toBeInTheDocument()
+    const turmas = screen.getByRole('table', { name: 'Estudantes por turma' })
+    expect(within(turmas).getByRole('row', { name: /7.ª A 7.ª classe 10/ })).toBeInTheDocument()
+  })
+
   it('o que o backend ainda não tem diz que não está disponível', async () => {
     renderizarEm('/calendario')
     expect(
