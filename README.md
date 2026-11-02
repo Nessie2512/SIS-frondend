@@ -102,20 +102,23 @@ ela só fica activa se o serviço sincronizar com o Blueprint. Se o frontend for
 serviço Render ou tiver sido criado manualmente, configurar nele `VITE_SIS_BASE=/sis` e a
 reescrita `/sis/*` para o backend antes do fallback da SPA.
 
-O que o staging faz com o contrato de 30/10:
+O que o staging faz com o contrato de 30/10 (consumo integral, 02/11):
 
-| Área          | Ler                                  | Escrever                                                                                    |
-| ------------- | ------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Sessão        | `/auth/me`, renovação por cookie     | entrar, sair                                                                                |
-| Anos lectivos | lista e estado                       | criar, activar (encerrar, reabrir, duplicar: não)                                           |
-| Currículo     | ciclos, classes, disciplinas         | criar ciclo e classe, renomear e desactivar classe; criar, inactivar e reactivar disciplina |
-| Turmas        | lista, filtros, ficha (sem ocupação) | criar (nome automático), encerrar                                                           |
-| Estudantes    | lista com pesquisa, ficha            | — (editar dados: não)                                                                       |
-| Professores   | lista, ficha com atribuições do ano  | —                                                                                           |
-| Contas        | contas e perfis                      | —                                                                                           |
+| Área          | Ler                                        | Escrever                                                                                                                   |
+| ------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| Sessão        | `/auth/me`, renovação por cookie           | entrar, sair                                                                                                               |
+| Anos lectivos | lista, estado, datas                       | criar, activar (encerrar, reabrir, duplicar: não)                                                                          |
+| Currículo     | ciclos, classes, disciplinas, plano/classe | criar ciclo e classe, renomear e desactivar classe; disciplinas; juntar e retirar disciplinas do plano (sem carga horária) |
+| Turmas        | lista, filtros, ficha (sem ocupação)       | criar (nome automático), encerrar                                                                                          |
+| Estudantes    | lista, ficha, possíveis duplicados         | matricular (criar + inscrever na turma), alterar o documento, anular                                                       |
+| Professores   | lista, ficha, docentes de cada turma       | registar, atribuir a turma e disciplina, desligar                                                                          |
+| Contas        | contas e perfis                            | criar, mudar o perfil, desactivar                                                                                          |
+| Relatórios    | contagens por sexo (ano, ciclo, turma)     | —                                                                                                                          |
 
-Matrículas, encarregados, documentos, percurso, ocorrências, calendário, planos, renovação,
-transferências, importação, relatórios, tarefas, auditoria e painel: «não disponível».
+Encarregados, documentos oficiais, percurso, ocorrências, calendário, versões do plano,
+renovação, transferências, importação, tarefas, auditoria e painel: «não disponível» (sem
+endpoint). Inscrever um estudante numa turma pede `student-approval` (só o chefe da secretaria);
+para os outros perfis a matrícula fica por confirmar. O backend exige pai e mãe (nome e telefone).
 
 Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
 
@@ -125,10 +128,12 @@ Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do back
 - **Sessão**: `POST /auth/login` dá o token (só em memória) e o cookie de renovação; `GET /auth/me`
   dá nome, papel e permissões, traduzidas para as da interface (`shared/config/papeis.ts`). Um 401
   a meio do trabalho renova uma vez por `POST /auth/refresh` e repete o pedido; recarregar a página
-  recupera a sessão pelo mesmo cookie. O proxy do Vite reescreve o caminho do cookie para `/sis`;
-  a reescrita do Render não o faz, por isso o backend deve emitir o cookie com `Path=/`.
-- **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
-  `ApiError` (mensagens do class-validator → erros por campo).
+  recupera a sessão pelo mesmo cookie, emitido pelo backend com `Path=/` (o proxy do Vite e a
+  reescrita do Render deixam-no como vem).
+- **Erros**: problem+json (RFC 9457) e o formato antigo do NestJS; `shared/api/sis/erros.ts`
+  converte ambos em `ApiError` (mensagens do class-validator → erros por campo).
+- **Respostas sem corpo**: várias escritas (`POST /students`, `POST /classes`…) respondem sem
+  corpo; o cliente aceita-as e o frontend relê a lista para encontrar o registo criado.
   Regras: tipos de API só nos `schema.d.ts`; componentes recebem o modelo de vista, nunca o DTO;
   fixtures de dados só em `src/mocks/` e exclusivamente para testes.
 
