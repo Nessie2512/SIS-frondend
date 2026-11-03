@@ -523,8 +523,8 @@ msgid "1. Preparar o ficheiro"
 msgstr "1. Prepare the file"
 
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
-msgid "2 a 5 letras, usada nos horários e pautas."
-msgstr "2 to 5 letters, used in timetables and mark sheets."
+msgid "2 a 5 letras e, se precisar, uma barra (/), por exemplo L/P. Usada nos horários e pautas."
+msgstr "2 to 5 letters and, if needed, a slash (/), for example L/P. Used in timetables and mark sheets."
 
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "2. Escolher e rever"
@@ -726,8 +726,8 @@ msgid "A sessão terminou. Entre de novo para continuar."
 msgstr "Your session has ended. Sign in again to continue."
 
 #: src/features/gerir-disciplinas/model/esquema.ts
-msgid "A sigla tem 2 a 5 letras, sem espaços."
-msgstr "The abbreviation has 2 to 5 letters, without spaces."
+msgid "A sigla tem 2 a 5 letras, sem espaços; pode ter uma barra (/) entre letras."
+msgstr "The abbreviation has 2 to 5 letters, no spaces; it may have a slash (/) between letters."
 
 #: src/routes/_app/matriculas/nova.tsx
 msgid "A sua conta não tem permissão para matricular estudantes."
@@ -1465,6 +1465,23 @@ msgstr "code"
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Código copiado."
 msgstr "Code copied."
+
+#: src/features/editar-estudante/ui/dados-estudante.tsx
+#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
+#: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/turma.$turmaId.tsx
+#: src/routes/_app/matriculas/index.tsx
+msgid "Código de estudante"
+msgstr "Student code"
+
+#: src/features/emitir-documento/ui/emitir-global.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/routes/_app/documentos.tsx
+#: src/routes/_app/estudantes/$estudanteId.tsx
+#: src/routes/_app/estudantes/index.tsx
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Código de estudante: {codigo}"
+msgstr "Student code: {codigo}"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Código de verificação"
@@ -2704,8 +2721,8 @@ msgid "Estudante"
 msgstr "Student"
 
 #: src/routes/_app/documentos.tsx
-msgid "Estudante, processo, número ou código"
-msgstr "Student, file, number or code"
+msgid "Estudante, código de estudante, número ou código"
+msgstr "Student, student code, number or code"
 
 #: src/shared/config/glossario.ts
 msgid "estudantes"
@@ -3628,8 +3645,8 @@ msgid "Nacionalidade"
 msgstr "Nationality"
 
 #: src/routes/-casca/paleta-comandos.tsx
-msgid "Nada encontrado. Experimente o número de processo."
-msgstr "Nothing found. Try the file number."
+msgid "Nada encontrado. Experimente o código de estudante."
+msgstr "Nothing found. Try the student code."
 
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Não"
@@ -3819,6 +3836,14 @@ msgstr "Full name"
 msgid "Nome da vista"
 msgstr "View name"
 
+#: src/routes/_app/estudantes/index.tsx
+msgid "Nome ou código de estudante"
+msgstr "Name or student code"
+
+#: src/features/emitir-documento/ui/emitir-global.tsx
+msgid "Nome ou código de estudante."
+msgstr "Name or student code."
+
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Nome ou email"
 msgstr "Name or email"
@@ -3826,14 +3851,6 @@ msgstr "Name or email"
 #: src/routes/_app/professores/index.tsx
 msgid "Nome ou número de agente"
 msgstr "Name or agent number"
-
-#: src/routes/_app/estudantes/index.tsx
-msgid "Nome ou número de processo"
-msgstr "Name or file number"
-
-#: src/features/emitir-documento/ui/emitir-global.tsx
-msgid "Nome ou número de processo."
-msgstr "Name or file number."
 
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "Nova classe"
@@ -3890,10 +3907,6 @@ msgstr "Number"
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Número copiado."
 msgstr "Number copied."
-
-#: src/features/editar-estudante/ui/dados-estudante.tsx
-msgid "Número de processo"
-msgstr "File number"
 
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Nunca"
@@ -4430,20 +4443,6 @@ msgstr "Main"
 msgid "Problema"
 msgstr "Problem"
 
-#: src/features/exportar-estudantes/ui/exportar-seleccao.tsx
-#: src/routes/_app/estudantes/index.tsx
-#: src/routes/_app/imprimir/turma.$turmaId.tsx
-#: src/routes/_app/matriculas/index.tsx
-msgid "Processo"
-msgstr "File"
-
-#: src/features/matricular-estudante/ui/assistente-matricula.tsx
-#: src/routes/_app/estudantes/$estudanteId.tsx
-#: src/routes/_app/estudantes/index.tsx
-#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
-msgid "Processo {processo}"
-msgstr "File {processo}"
-
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "Processo aberto por engano. Não pode ser desfeito."
 msgstr "File opened by mistake. This cannot be undone."
@@ -4455,11 +4454,6 @@ msgstr "Complete file"
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "Processo de {nome} anulado."
 msgstr "File of {nome} cancelled."
-
-#: src/features/emitir-documento/ui/emitir-global.tsx
-#: src/routes/_app/documentos.tsx
-msgid "Processo n.º {processo}"
-msgstr "File no. {processo}"
 
 #: src/routes/_app/index.tsx
 msgid "Procurar estudante"

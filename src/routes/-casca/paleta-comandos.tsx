@@ -37,7 +37,7 @@ interface Props {
 
 /**
  * Paleta de comandos (guia 1.1, 6.2, 7.5): ⌘K / Ctrl+K para navegar, agir e encontrar
- * estudantes (nome ou n.º de processo) e turmas sem largar o teclado.
+ * estudantes (nome ou código de estudante) e turmas sem largar o teclado.
  */
 export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
   const { t } = useLingui()
@@ -84,7 +84,7 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
           {pesquisa.activa && pesquisa.aProcurar ? (
             <Trans>A procurar…</Trans>
           ) : (
-            <Trans>Nada encontrado. Experimente o número de processo.</Trans>
+            <Trans>Nada encontrado. Experimente o código de estudante.</Trans>
           )}
         </Command.Empty>
         {pesquisa.estudantes.length > 0 && (

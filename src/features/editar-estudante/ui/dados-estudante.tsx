@@ -64,8 +64,8 @@ export function DadosEstudante({ estudante, soLeitura }: Props) {
           atalhoEditar: true,
           validar: (v) => (v.split(/\s+/).length < 2 ? t`Escreva o nome completo.` : undefined),
         })}
-        {/* Número de processo é imutável: sempre texto, nunca campo (guia 2.4) */}
-        <Linha rotulo={t`Número de processo`} valor={estudante.numeroProcesso} tabular />
+        {/* O código de estudante é imutável: sempre texto, nunca campo (guia 2.4) */}
+        <Linha rotulo={t`Código de estudante`} valor={estudante.numeroProcesso} tabular />
         <Linha
           rotulo={t`Data de nascimento`}
           valor={formatarDataCivil(estudante.dataNascimento)}

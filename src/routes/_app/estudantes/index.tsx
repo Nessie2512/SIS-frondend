@@ -120,7 +120,7 @@ function useColunas(): ColunaTabela<EstudanteResumo>[] {
         ),
       }),
       c.accessor('numeroProcesso', {
-        header: t`Processo`,
+        header: t`Código de estudante`,
         cell: (info) => <span className="tabular text-texto-2">{info.getValue()}</span>,
       }),
       c.accessor('matricula', {
@@ -286,7 +286,7 @@ function EcraEstudantes() {
               {...c}
               type="search"
               data-atalho="pesquisa"
-              placeholder={t`Nome ou número de processo`}
+              placeholder={t`Nome ou código de estudante`}
               prefixo={<Search aria-hidden />}
               value={texto}
               onChange={(e) => pesquisar(e.target.value)}
@@ -489,7 +489,7 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
   const { t } = useLingui()
   const navigate = useNavigate()
   const { data: e } = useQuery({ ...estudanteQuery(id ?? ''), enabled: Boolean(id) })
-  const processo = e?.numeroProcesso
+  const codigo = e?.numeroProcesso
   const idade = e?.idade ?? 0
   const emFalta = e?.documentosEmFalta ?? 0
 
@@ -499,7 +499,7 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
       aoMudar={(aberta) => !aberta && aoFechar()}
       nomeTransicao={NOME_TRANSICAO_FICHA}
       titulo={e?.nome ?? t`Estudante`}
-      descricao={e ? t`Processo ${processo}` : undefined}
+      descricao={e ? t`Código de estudante: ${codigo}` : undefined}
       rodape={
         id && (
           <Button asChild variante="primario">

@@ -77,7 +77,7 @@ function ListaNominal() {
                 <Trans>N.º</Trans>
               </th>
               <th scope="col" className="w-28 px-2 py-1.5 font-medium">
-                <Trans>Processo</Trans>
+                <Trans>Código de estudante</Trans>
               </th>
               <th scope="col" className="px-2 py-1.5 font-medium">
                 <Trans>Nome</Trans>

@@ -80,7 +80,7 @@ function FichaImpressa() {
   }
 
   const nome = e.nome
-  const processo = e.numeroProcesso
+  const codigo = e.numeroProcesso
   const emitida = formatarInstante(new Date())
   const autor = eu?.nome ?? ''
   const ESTADO_DOC = { ENTREGUE: t`Entregue`, EM_FALTA: t`Em falta`, DISPENSADO: t`Dispensado` }
@@ -101,7 +101,7 @@ function FichaImpressa() {
     >
       <CabecalhoImpressao
         titulo={t`Ficha do estudante`}
-        referencia={<p className="tabular">{t`Processo ${processo}`}</p>}
+        referencia={<p className="tabular">{t`Código de estudante: ${codigo}`}</p>}
       />
 
       <div className="flex items-start gap-5">

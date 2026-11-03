@@ -103,7 +103,7 @@ function useColunas(): ColunaTabela<Matricula>[] {
         ),
       }),
       c.accessor('numeroProcesso', {
-        header: t`Processo`,
+        header: t`Código de estudante`,
         cell: (info) => <span className="tabular text-texto-2">{info.getValue()}</span>,
       }),
       c.accessor('classe', {

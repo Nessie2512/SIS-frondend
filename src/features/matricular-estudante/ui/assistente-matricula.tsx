@@ -298,7 +298,7 @@ function MatriculaConcluida({
 }) {
   const { t } = useLingui()
   const nome = matricula.estudanteNome
-  const processo = matricula.numeroProcesso
+  const codigo = matricula.numeroProcesso
   const emFalta = matricula.documentosEmFalta
   return (
     <section aria-labelledby="concluida" className="flex max-w-xl flex-col items-start gap-5">
@@ -308,7 +308,8 @@ function MatriculaConcluida({
           {t`Matrícula de ${nome} registada`}
         </h2>
         <p className="tabular text-texto-2">
-          {t`Processo ${processo}`} · {matricula.classe} · {matricula.turma ?? t`sem turma`}
+          {t`Código de estudante: ${codigo}`} · {matricula.classe} ·{' '}
+          {matricula.turma ?? t`sem turma`}
         </p>
       </div>
       <EtiquetaEstado tom={matricula.estadoTom}>{matricula.estadoRotulo}</EtiquetaEstado>

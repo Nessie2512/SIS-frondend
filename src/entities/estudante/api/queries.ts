@@ -142,7 +142,7 @@ export function ocorrenciasQuery(id: string) {
 
 /**
  * Backend SIS: os estudantes com matrícula no ano (guia de integração, 1). Filtra-se aqui o que o estudante tem (pesquisa por
- * nome, número de processo ou documento; estado; sexo); os filtros de matrícula (classe, sem
+ * nome, código de estudante ou documento; estado; sexo); os filtros de matrícula (classe, sem
  * turma, documentos em falta) não têm dados e devolvem a lista vazia em vez de enganar.
  */
 async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<PaginaEstudantes> {

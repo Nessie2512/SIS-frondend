@@ -79,7 +79,7 @@ function FichaEstudante() {
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
   if (!e) return <FichaEsqueleto />
   const emFalta = e.documentosEmFalta
-  const processo = e.numeroProcesso
+  const codigo = e.numeroProcesso
 
   return (
     <article className="flex flex-col gap-6">
@@ -101,7 +101,7 @@ function FichaEstudante() {
         <div className="flex min-w-48 flex-1 flex-col gap-1">
           <h1 className="text-titulo-pagina">{e.nome}</h1>
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-secundario text-texto-2">
-            <span className="tabular">{t`Processo ${processo}`}</span>
+            <span className="tabular">{t`Código de estudante: ${codigo}`}</span>
             <span aria-hidden>·</span>
             <span>{e.matricula ?? t`Sem matrícula neste ano`}</span>
             <EtiquetaEstadoEstudante estudante={e} />

@@ -42,7 +42,7 @@ describe('Estudantes: selecção múltipla e acções em lote', () => {
     const csv = await blobs[0]!.text()
     const linhas = csv.replace(/^\uFEFF/, '').split('\r\n')
     expect(linhas[0]).toBe(
-      'Processo;Nome;Data de nascimento;Situação;Matrícula;Documentos em falta',
+      'Código de estudante;Nome;Data de nascimento;Situação;Matrícula;Documentos em falta',
     )
     expect(linhas).toHaveLength(4)
     expect(csv).toContain(nomeA)

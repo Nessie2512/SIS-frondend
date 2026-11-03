@@ -240,7 +240,7 @@ function FolhaNovaDisciplina({ aberta, aoFechar }: { aberta: boolean; aoFechar: 
         </Campo>
         <Campo
           rotulo={t`Sigla`}
-          descricao={t`2 a 5 letras, usada nos horários e pautas.`}
+          descricao={t`2 a 5 letras e, se precisar, uma barra (/), por exemplo L/P. Usada nos horários e pautas.`}
           erro={errors.sigla?.message}
           obrigatorio
         >
