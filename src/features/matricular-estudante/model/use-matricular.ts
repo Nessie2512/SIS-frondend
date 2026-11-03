@@ -4,7 +4,10 @@ import { estudanteKeys } from '@/entities/estudante'
 import { matriculaKeys, paraMatricula } from '@/entities/matricula'
 import { turmaKeys } from '@/entities/turma'
 import { api, novaChaveIdempotencia } from '@/shared/api'
+import { sisKeys } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 import { soDigitos, type DadosMatricula } from './esquema'
+import { matricularNoSis } from './matricular-sis'
 
 /**
  * Gravar a matrícula (guia 5.1: semi-optimista). A Idempotency-Key é gerada uma vez por
@@ -17,6 +20,7 @@ export function useMatricular(anoLectivoId: string) {
   return useMutation({
     mutationKey: ['matricular'],
     mutationFn: async (dados: DadosMatricula) => {
+      if (eReal('estudantes')) return matricularNoSis(qc, dados, anoLectivoId)
       const e = dados.estudante
       const { data } = await api.POST('/matriculas', {
         params: { header: { 'Idempotency-Key': chave } },
@@ -56,6 +60,7 @@ export function useMatricular(anoLectivoId: string) {
     },
     onSettled: () =>
       Promise.all([
+        qc.invalidateQueries({ queryKey: sisKeys.todas }),
         qc.invalidateQueries({ queryKey: matriculaKeys.todas }),
         qc.invalidateQueries({ queryKey: estudanteKeys.todos }),
         qc.invalidateQueries({ queryKey: turmaKeys.todas }),

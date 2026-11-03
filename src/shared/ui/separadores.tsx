@@ -52,6 +52,8 @@ interface OpcaoSegmento {
   valor: string
   rotulo: string
   desactivado?: boolean
+  /** Língua do rótulo, quando difere da página (ex.: «English» numa página em português) */
+  lingua?: string
 }
 
 interface PropsSegmentado {
@@ -76,6 +78,7 @@ export function ControloSegmentado({ rotulo, opcoes, valor, aoMudar }: PropsSegm
           key={opcao.valor}
           value={opcao.valor}
           disabled={opcao.desactivado}
+          lang={opcao.lingua}
           className={cn(
             'h-8 rounded-[6px] px-3 text-texto-2 transition-colors duration-(--duracao-micro)',
             'hover:text-texto-1 data-[state=on]:bg-superficie data-[state=on]:text-texto-1 data-[state=on]:shadow-elevado',

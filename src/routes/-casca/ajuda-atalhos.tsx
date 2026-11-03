@@ -1,6 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
 import { Dialogo } from '@/shared/ui'
+import { useAreas } from './areas'
 
 /** Lista de atalhos (guia 7.5), aberta com "?". */
 export function AjudaAtalhos({
@@ -11,6 +12,7 @@ export function AjudaAtalhos({
   aoMudar: (v: boolean) => void
 }) {
   const { t } = useLingui()
+  const { principais: areas } = useAreas()
   const atalhos: [string, string][] = [
     ['mod+k', t`Paleta de comandos: navegar, pesquisar, agir`],
     ['mod+b', t`Recolher ou expandir o menu lateral`],
@@ -20,11 +22,9 @@ export function AjudaAtalhos({
     ['mod+enter', t`Guardar ou confirmar`],
     ['mod+z', t`Desfazer a última acção reversível`],
     ['Esc', t`Fechar folha, menu ou diálogo`],
-    ['g i', t`Ir para Início`],
-    ['g e', t`Ir para Estudantes`],
-    ['g m', t`Ir para Matrículas`],
-    ['g t', t`Ir para Turmas`],
-    ['g p', t`Ir para Professores`],
+    ...areas.flatMap(({ atalho, rotulo }): [string, string][] =>
+      atalho ? [[atalho, t`Ir para ${rotulo}`]] : [],
+    ),
     ['?', t`Mostrar todos os atalhos`],
   ]
   return (

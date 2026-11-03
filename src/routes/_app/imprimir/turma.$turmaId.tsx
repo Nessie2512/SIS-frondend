@@ -8,8 +8,10 @@ import { inscritosQuery, turmaQuery } from '@/entities/turma'
 import { meQuery } from '@/entities/utilizador'
 import { formatarInstante } from '@/shared/lib/datas'
 import { CabecalhoImpressao, ErroDeRota, Esqueleto, PreVisualizacaoImpressao } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/imprimir/turma/$turmaId')({
+  beforeLoad: () => exigir('listaNominal'),
   loader: ({ context: { queryClient }, params: { turmaId } }) =>
     Promise.all([
       queryClient.ensureQueryData(turmaQuery(turmaId)),
@@ -77,7 +79,7 @@ function ListaNominal() {
                 <Trans>N.º</Trans>
               </th>
               <th scope="col" className="w-28 px-2 py-1.5 font-medium">
-                <Trans>Processo</Trans>
+                <Trans>Código de estudante</Trans>
               </th>
               <th scope="col" className="px-2 py-1.5 font-medium">
                 <Trans>Nome</Trans>

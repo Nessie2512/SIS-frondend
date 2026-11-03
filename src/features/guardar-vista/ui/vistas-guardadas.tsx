@@ -16,6 +16,7 @@ import { cn } from '@/shared/lib/cn'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { Button, Campo, Dialogo, Entrada, notificar, notificarComDesfazer } from '@/shared/ui'
 import { useApagarVista, useGuardarVista } from '../model/use-vistas'
+import { usePode } from '@/shared/lib/permissoes'
 
 interface Props {
   ecra: EcraVista
@@ -31,7 +32,12 @@ interface Props {
  * A vista que corresponde aos filtros actuais fica assinalada; guardar só faz sentido quando
  * há filtros e ainda não existe uma vista igual.
  */
-export function VistasGuardadas({ ecra, pesquisa, aoAplicar, className }: Props) {
+export function VistasGuardadas(props: Props) {
+  // Ainda sem rota no servidor: as vistas não aparecem (guia 2.7)
+  return usePode('vistasGuardadas') ? <ListaVistas {...props} /> : null
+}
+
+function ListaVistas({ ecra, pesquisa, aoAplicar, className }: Props) {
   const { t } = useLingui()
   const { data: vistas = [] } = useQuery(vistasQuery(ecra))
   const apagar = useApagarVista(ecra)

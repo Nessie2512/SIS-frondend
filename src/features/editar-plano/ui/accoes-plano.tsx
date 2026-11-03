@@ -30,6 +30,9 @@ export function AccoesPlano({ plano, versoes, classe, aoAbrir }: Props) {
   const versao = plano.versao
   const versaoVigente = vigente?.versao
 
+  // Backend SIS: o plano é a lista de disciplinas da classe, sem versões nem publicação
+  if (plano.semCargaHoraria) return null
+
   if (plano.estado === 'VIGENTE' && !rascunho) {
     return (
       <Button

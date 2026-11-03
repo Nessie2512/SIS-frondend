@@ -7,8 +7,10 @@ import { AberturaAno, EncerramentoAno, ReabrirAno } from '@/features/gerir-ano-l
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { useCan } from '@/shared/lib/permissoes'
 import { Aviso, ErroDeRota, Esqueleto, EstadoVazio, EtiquetaEstado } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/anos-lectivos/$anoId')({
+  beforeLoad: () => exigir('anosLectivos'),
   loader: async ({ context: { queryClient }, params: { anoId } }) => {
     const anos = await queryClient.ensureQueryData(anosLectivosQuery())
     if (!anos.some((a) => a.id === anoId)) throw notFound()
@@ -48,7 +50,7 @@ function EcraAnoLectivo() {
       </div>
 
       {ano.estado === 'PLANEADO' && <AberturaAno ano={ano} podeGerir={podeGerir} />}
-      {ano.estado === 'EM_CURSO' && <EncerramentoAno ano={ano} podeGerir={podeGerir} />}
+      {ano.estado === 'EM_CURSO' && <EncerramentoAno ano={ano} />}
       {ano.estado === 'ENCERRADO' && (
         <div className="flex flex-col gap-4">
           <Aviso tom="leitura">

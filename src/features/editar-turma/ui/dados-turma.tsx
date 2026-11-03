@@ -1,7 +1,8 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { professoresQuery } from '@/entities/professor'
-import type { Turma } from '@/entities/turma'
+import { docentesQuery, type DocenteTurma, type Turma } from '@/entities/turma'
+import { eReal } from '@/shared/config/ligacao'
 import { Button, Dialogo, EdicaoNoSitio, type OpcaoSelector } from '@/shared/ui'
 import { useEditarTurma } from '../model/use-editar-turma'
 
@@ -23,15 +24,28 @@ export function DadosTurma({
 }) {
   const { t } = useLingui()
   const { guardar, conflito, manterActual, guardarOMeu } = useEditarTurma(turma.id)
+  // Backend SIS: o director tem de leccionar na turma; as opções são os docentes dela
+  const soDocentes = eReal('turmas')
+  const editavel = podeEditar && !desactivadoPorque
   const { data: pagina } = useQuery({
     ...professoresQuery({ anoLectivoId, estado: 'ACTIVO', ordenar: 'nome', page: 1 }),
-    enabled: podeEditar && !desactivadoPorque,
+    enabled: editavel && !soDocentes,
   })
-  const professores = pagina?.professores ?? []
+  const { data: docentes } = useQuery({
+    ...docentesQuery(turma.id),
+    enabled: editavel && soDocentes,
+  })
+  const professores: { id: string; nome: string; descricao?: string }[] = soDocentes
+    ? docentesDaTurma(docentes ?? [])
+    : (pagina?.professores ?? []).map((p) => ({
+        id: p.id,
+        nome: p.nome,
+        descricao: p.disciplinasTexto,
+      }))
   const nomeDe = (id: string) => professores.find((p) => p.id === id)?.nome
   const opcoes: OpcaoSelector[] = [
     { valor: '', rotulo: t`Sem director de turma` },
-    ...professores.map((p) => ({ valor: p.id, rotulo: p.nome, descricao: p.disciplinasTexto })),
+    ...professores.map((p) => ({ valor: p.id, rotulo: p.nome, descricao: p.descricao })),
   ]
 
   return (
@@ -111,4 +125,23 @@ export function DadosTurma({
       </Dialogo>
     </section>
   )
+}
+
+/** Um por professor, com as disciplinas que dá na turma (ex.: «Matemática, Física»). */
+function docentesDaTurma(linhas: readonly DocenteTurma[]) {
+  const porProfessor = new Map<string, { id: string; nome: string; disciplinas: string[] }>()
+  for (const linha of linhas) {
+    if (!linha.actual) continue
+    const { professorId, professor } = linha.actual
+    const item = porProfessor.get(professorId) ?? {
+      id: professorId,
+      nome: professor,
+      disciplinas: [],
+    }
+    item.disciplinas.push(linha.disciplina)
+    porProfessor.set(professorId, item)
+  }
+  return [...porProfessor.values()]
+    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
+    .map((p) => ({ id: p.id, nome: p.nome, descricao: p.disciplinas.join(', ') }))
 }

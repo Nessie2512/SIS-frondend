@@ -15,8 +15,10 @@ import { TEMPOS } from '@/shared/config/constantes'
 import { cn } from '@/shared/lib/cn'
 import { useCan } from '@/shared/lib/permissoes'
 import { ErroDeRota, Esqueleto, EstadoVazio } from '@/shared/ui'
+import { exigir } from '../-acesso'
 
 export const Route = createFileRoute('/_app/calendario')({
+  beforeLoad: () => exigir('calendario'),
   // O dia aberto vive no URL: «calendário no dia 11 de Novembro» é uma ligação (guia 7.1)
   validateSearch: z.object({
     dia: z.catch(z.optional(z.string().check(z.regex(/^\d{4}-\d{2}-\d{2}$/))), undefined),

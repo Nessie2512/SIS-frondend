@@ -1,20 +1,11 @@
 import { Trans, useLingui } from '@lingui/react/macro'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, type NavigateOptions } from '@tanstack/react-router'
 import { Command } from 'cmdk'
 import {
-  BookOpen,
-  CalendarDays,
-  CalendarRange,
-  ClipboardList,
-  FileSpreadsheet,
-  FileText,
   Contrast,
-  GraduationCap,
-  Home,
   Keyboard,
   Moon,
   PanelLeft,
-  Presentation,
   Rows3,
   Rows4,
   Settings,
@@ -26,8 +17,10 @@ import {
 import { useState } from 'react'
 import { usePesquisa } from '@/features/pesquisar'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
+import { usePode } from '@/shared/lib/permissoes'
 import { usePreferencias } from '@/shared/lib/preferencias'
 import type { ReactNode } from 'react'
+import { useAreas } from './areas'
 
 interface Props {
   aberta: boolean
@@ -37,7 +30,7 @@ interface Props {
 
 /**
  * Paleta de comandos (guia 1.1, 6.2, 7.5): ⌘K / Ctrl+K para navegar, agir e encontrar
- * estudantes (nome ou n.º de processo) e turmas sem largar o teclado.
+ * estudantes (nome ou código de estudante) e turmas sem largar o teclado.
  */
 export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
   const { t } = useLingui()
@@ -48,6 +41,8 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
   const definirMenuRecolhido = usePreferencias((e) => e.definirMenuRecolhido)
   const [procura, setProcura] = useState('')
   const pesquisa = usePesquisa(procura)
+  const { principais: areas } = useAreas()
+  const podeMatricular = usePode('matricular')
 
   function mudar(aberta: boolean) {
     if (!aberta) setProcura('')
@@ -84,7 +79,7 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
           {pesquisa.activa && pesquisa.aProcurar ? (
             <Trans>A procurar…</Trans>
           ) : (
-            <Trans>Nada encontrado. Experimente o número de processo.</Trans>
+            <Trans>Nada encontrado. Experimente o código de estudante.</Trans>
           )}
         </Command.Empty>
         {pesquisa.estudantes.length > 0 && (
@@ -132,90 +127,29 @@ export function PaletaComandos({ aberta, aoMudar, aoMostrarAtalhos }: Props) {
           </Grupo>
         )}
         <Grupo titulo={t`Navegar`}>
-          <Item
-            icone={<Home />}
-            atalho="g i"
-            aoEscolher={() => executar(() => void router.navigate({ to: '/' }))}
-          >
-            <Trans>Início</Trans>
-          </Item>
-          <Item
-            icone={<GraduationCap />}
-            atalho="g e"
-            aoEscolher={() =>
-              executar(() => void router.navigate({ to: '/estudantes', search: { page: 1 } }))
-            }
-          >
-            <Trans>Estudantes</Trans>
-          </Item>
-          <Item
-            icone={<ClipboardList />}
-            atalho="g m"
-            aoEscolher={() =>
-              executar(() => void router.navigate({ to: '/matriculas', search: { page: 1 } }))
-            }
-          >
-            <Trans>Matrículas</Trans>
-          </Item>
-          <Item
-            icone={<Users />}
-            atalho="g t"
-            aoEscolher={() => executar(() => void router.navigate({ to: '/turmas' }))}
-          >
-            <Trans>Turmas</Trans>
-          </Item>
-          <Item
-            icone={<Presentation />}
-            atalho="g p"
-            aoEscolher={() =>
-              executar(() => void router.navigate({ to: '/professores', search: { page: 1 } }))
-            }
-          >
-            <Trans>Professores</Trans>
-          </Item>
-          <Item
-            icone={<BookOpen />}
-            aoEscolher={() =>
-              executar(() => void router.navigate({ to: '/curriculo', search: { classeId: 'c7' } }))
-            }
-          >
-            <Trans>Currículo</Trans>
-          </Item>
-          <Item
-            icone={<CalendarDays />}
-            aoEscolher={() => executar(() => void router.navigate({ to: '/calendario' }))}
-          >
-            <Trans>Calendário</Trans>
-          </Item>
-          <Item
-            icone={<CalendarRange />}
-            aoEscolher={() => executar(() => void router.navigate({ to: '/anos-lectivos' }))}
-          >
-            <Trans>Anos lectivos</Trans>
-          </Item>
-          <Item
-            icone={<FileText />}
-            aoEscolher={() =>
-              executar(() => void router.navigate({ to: '/documentos', search: { page: 1 } }))
-            }
-          >
-            <Trans>Documentos</Trans>
-          </Item>
-          <Item
-            icone={<FileSpreadsheet />}
-            aoEscolher={() => executar(() => void router.navigate({ to: '/relatorios' }))}
-          >
-            <Trans>Relatórios</Trans>
-          </Item>
+          {areas.map((area) => (
+            <Item
+              key={area.id}
+              icone={area.icone}
+              atalho={area.atalho}
+              aoEscolher={() =>
+                executar(() => void router.navigate(area.ligacao as NavigateOptions))
+              }
+            >
+              {area.rotulo}
+            </Item>
+          ))}
         </Grupo>
-        <Grupo titulo={t`Agir`}>
-          <Item
-            icone={<UserPlus />}
-            aoEscolher={() => executar(() => void router.navigate({ to: '/matriculas/nova' }))}
-          >
-            <Trans>Matricular estudante novo</Trans>
-          </Item>
-        </Grupo>
+        {podeMatricular && (
+          <Grupo titulo={t`Agir`}>
+            <Item
+              icone={<UserPlus />}
+              aoEscolher={() => executar(() => void router.navigate({ to: '/matriculas/nova' }))}
+            >
+              <Trans>Matricular estudante novo</Trans>
+            </Item>
+          </Grupo>
+        )}
         <Grupo titulo={t`Preferências`}>
           <Item
             icone={<Settings />}

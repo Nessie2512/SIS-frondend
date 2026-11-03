@@ -1,10 +1,11 @@
 import { http, HttpResponse } from 'msw'
-import type { DtoSis } from '@/shared/api/sis'
+import { definirAnoSis, type DtoSis, type EstudanteSis } from '@/shared/api/sis'
 import { jwtDeTeste } from './jwt'
 
 /**
- * Backend SIS falso para os testes da ligação real: dados na forma do contrato de 30/10, com
- * as referências numéricas entre recursos (a turma aponta para a classe pelo id, etc.).
+ * Backend SIS falso para os testes da ligação real: dados na forma do contrato de 03/11 (guia
+ * de integração), com as referências numéricas entre recursos (a turma aponta para a classe
+ * pelo id, etc.). Como o backend, as consultas anuais sem academicYearId respondem 400.
  */
 export const anosSis: DtoSis<'AcademicYearOutputDto'>[] = [
   {
@@ -12,6 +13,8 @@ export const anosSis: DtoSis<'AcademicYearOutputDto'>[] = [
     uuid: 'ano-sis-2026',
     label: '2026/2027',
     startYear: 2026,
+    startDate: '2026-09-01',
+    endDate: '2027-07-31',
     isActive: true,
     isClosed: false,
   },
@@ -20,6 +23,8 @@ export const anosSis: DtoSis<'AcademicYearOutputDto'>[] = [
     uuid: 'ano-sis-2025',
     label: '2025/2026',
     startYear: 2025,
+    startDate: '2025-09-01',
+    endDate: '2026-07-31',
     isActive: false,
     isClosed: true,
   },
@@ -69,6 +74,10 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     academicYearId: 1,
     period: 'AFTERNOON',
     isActive: true,
+    capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
   {
     id: 20,
@@ -78,6 +87,10 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     academicYearId: 1,
     period: 'MORNING',
     isActive: true,
+    capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
   {
     id: 22,
@@ -87,6 +100,10 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     academicYearId: 1,
     period: 'INTEGRAL',
     isActive: false,
+    capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
   {
     id: 23,
@@ -96,6 +113,10 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     academicYearId: 2,
     period: 'MORNING',
     isActive: true,
+    capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
 ]
 
@@ -111,10 +132,7 @@ export const disciplinasSis: DtoSis<'SubjectResponseDto'>[] = [
   { id: 100, uuid: 'disc-mat', name: 'Matemática', code: 'MAT', isActive: true, createdAt: '' },
 ]
 
-const estudante = (
-  n: number,
-  dados: Partial<DtoSis<'StudentOutputDto'>>,
-): DtoSis<'StudentOutputDto'> => ({
+const estudante = (n: number, dados: Partial<EstudanteSis>): EstudanteSis => ({
   id: n,
   uuid: `est-${n}`,
   studentCode: `BMA2026${String(n).padStart(4, '0')}`,
@@ -133,14 +151,59 @@ const estudante = (
   motherContact: '+244923000002',
   primaryGuardian: '+244923000002',
   bestLanguage: 'Português',
-  familyPrefix: {},
+  familyPrefix: null,
   ...dados,
 })
 
-export const estudantesSis: DtoSis<'StudentOutputDto'>[] = [
+export const estudantesSis: EstudanteSis[] = [
   estudante(1, { name: 'João Baptista', sex: 'M' }),
   estudante(2, { name: 'Conceição Neto', sex: 'F', birthDate: '2012-04-12T00:00:00.000Z' }),
   estudante(3, { name: 'Ana Domingos', sex: 'F', isActive: false, documentType: 'N/A' }),
+]
+
+type MatriculaSis = DtoSis<'EnrollmentListItemDto'>
+
+const refEstudante = (e: EstudanteSis) => ({
+  id: e.id,
+  uuid: e.uuid,
+  name: e.name,
+  studentCode: e.studentCode ?? null,
+  sex: e.sex === 'F' ? ('F' as const) : ('M' as const),
+})
+const refTurma = (id: number) => {
+  const t = turmasSis.find((x) => x.id === id)!
+  return { id: t.id, uuid: t.uuid, name: t.name }
+}
+const refClasse = (turmaId: number) => {
+  const c = classesSis.find((x) => x.id === turmasSis.find((t) => t.id === turmaId)!.gradeId)!
+  return { id: c.id, uuid: c.uuid, name: c.name }
+}
+
+/** João na 7.ª A e Conceição na 7.ª B, no ano em curso (GET /enrollments). */
+export const matriculasSis: MatriculaSis[] = [
+  { e: 0, turma: 20, data: '2026-09-02T09:00:00.000Z' },
+  { e: 1, turma: 21, data: '2026-09-03T09:00:00.000Z' },
+].map(({ e, turma, data }, i) => ({
+  uuid: `mat-${i + 1}`,
+  academicYearId: 1,
+  enrollmentDate: data,
+  status: 'ACTIVE' as const,
+  student: refEstudante(estudantesSis[e]!),
+  class: refTurma(turma),
+  grade: refClasse(turma),
+}))
+
+/** Uma confirmação à espera de pagamento: Ana, para a 7.ª B. */
+export const confirmacoesSis: DtoSis<'ConfirmationListItemDto'>[] = [
+  {
+    uuid: 'conf-1',
+    academicYearId: 1,
+    confirmationDate: '2026-09-04T09:00:00.000Z',
+    status: 'PENDING_PAYMENT',
+    student: refEstudante(estudantesSis[2]!),
+    class: refTurma(21),
+    grade: refClasse(21),
+  },
 ]
 
 export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
@@ -156,7 +219,8 @@ export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
     nationality: 'Angolana',
     isActive: true,
     isSupervisor: false,
-    academicLevelId: 1,
+    // Pode leccionar Matemática (a única disciplina em que se lhe atribui turma)
+    specialtySubjectIds: [100],
     teacherField: 'Ciências Exactas',
     educationalAttainment: 'Licenciatura em Matemática',
   },
@@ -217,16 +281,51 @@ export const meSis: DtoSis<'MeResponseDto'> = {
   name: 'Domingas Chefe',
   email: 'chefe@escola.ao',
   role: 'CHEFE_SECRETARIA',
-  permissions: [],
+  permissions: ['students:read', 'classes:write', 'academic:write', 'users:write'],
 }
 
 const tokenSis = () => jwtDeTeste({ sub: 'u-1', exp: Math.floor(Date.now() / 1000) + 3600 })
 
-/** Handlers para server.use(...handlersSis()). */
+/** academicYearId de uma consulta anual; sem ele, o backend responde 400 (guia, 1). */
+function anoDaConsulta(request: Request): number | null {
+  const valor = new URL(request.url).searchParams.get('academicYearId')
+  return valor && Number(valor) > 0 ? Number(valor) : null
+}
+
+const SEM_ANO = () =>
+  HttpResponse.json(
+    {
+      type: 'about:blank',
+      title: 'Bad Request',
+      status: 400,
+      code: 'VALIDATION_ERROR',
+      errors: [{ field: 'academicYearId', message: 'academicYearId must be an integer' }],
+    },
+    { status: 400, headers: { 'Content-Type': 'application/problem+json' } },
+  )
+
+/** Lista anual: exige o ano e aplica-o a quem o tem (turmas, atribuições). */
+const anual =
+  <T>(lista: () => T[], filtrar: (item: T, ano: number, query: URLSearchParams) => boolean) =>
+  ({ request }: { request: Request }) => {
+    const ano = anoDaConsulta(request)
+    if (!ano) return SEM_ANO()
+    const query = new URL(request.url).searchParams
+    return HttpResponse.json(lista().filter((x) => filtrar(x, ano, query)) as never)
+  }
+
+const todos = () => true
+
+/**
+ * Handlers para server.use(...handlersSis()). Põe também o ano em curso (2026/2027) como o ano
+ * em contexto das consultas anuais, como faz a aplicação ao entrar.
+ */
 export function handlersSis() {
+  definirAnoSis(anosSis[0]!.uuid)
   const porUuid =
     <T extends { uuid: string }>(lista: T[]) =>
-    ({ params }: { params: Record<string, unknown> }) => {
+    ({ params, request }: { params: Record<string, unknown>; request: Request }) => {
+      if (!anoDaConsulta(request)) return SEM_ANO()
       const item = lista.find((x) => x.uuid === params.uuid)
       return item
         ? HttpResponse.json(item)
@@ -238,17 +337,104 @@ export function handlersSis() {
     ),
     http.get('/sis/auth/me', () => HttpResponse.json(meSis)),
     http.get('/sis/academic-years', () => HttpResponse.json(anosSis)),
-    http.get('/sis/academic-levels', () => HttpResponse.json(niveisSis)),
-    http.get('/sis/grades', () => HttpResponse.json(classesSis)),
-    http.get('/sis/classes', () => HttpResponse.json(turmasSis)),
-    http.get('/sis/subjects', () => HttpResponse.json(disciplinasSis)),
-    http.get('/sis/students', () => HttpResponse.json(estudantesSis)),
-    http.get('/sis/students/:uuid', porUuid(estudantesSis)),
-    http.get('/sis/teachers', () => HttpResponse.json(professoresSis)),
-    http.get('/sis/teachers/:uuid', porUuid(professoresSis)),
-    http.get('/sis/teachers/:uuid/assignments', ({ params }) =>
-      HttpResponse.json(atribuicoesSis.filter((a) => a.teacherUuid === params.uuid)),
+    http.get(
+      '/sis/academic-levels',
+      anual(() => niveisSis, todos),
     ),
+    http.get(
+      '/sis/grades',
+      anual(() => classesSis, todos),
+    ),
+    http.get(
+      '/sis/classes',
+      anual(
+        () => turmasSis,
+        (t, ano) => t.academicYearId === ano,
+      ),
+    ),
+    http.get(
+      '/sis/subjects',
+      anual(() => disciplinasSis, todos),
+    ),
+    http.get(
+      '/sis/students',
+      anual(() => estudantesSis, todos),
+    ),
+    http.get('/sis/students/:uuid', porUuid(estudantesSis)),
+    http.get(
+      '/sis/teachers',
+      anual(
+        () => professoresSis,
+        (p, ano, q) =>
+          !q.get('classId') ||
+          atribuicoesSis.some(
+            (a) =>
+              a.teacherUuid === p.uuid &&
+              a.academicYearId === ano &&
+              a.classId === Number(q.get('classId')),
+          ),
+      ),
+    ),
+    http.get('/sis/teachers/:uuid', porUuid(professoresSis)),
+    http.get('/sis/teachers/:uuid/assignments', ({ params, request }) => {
+      const ano = anoDaConsulta(request)
+      if (!ano) return SEM_ANO()
+      const turma = new URL(request.url).searchParams.get('classId')
+      return HttpResponse.json(
+        atribuicoesSis.filter(
+          (a) =>
+            a.teacherUuid === params.uuid &&
+            a.academicYearId === ano &&
+            (!turma || a.classId === Number(turma)),
+        ),
+      )
+    }),
     http.get('/sis/users', () => HttpResponse.json(utilizadoresSis)),
+    // Contagens: valores fixos por filtro, para os testes saberem o que esperar
+    http.get('/sis/students/reports/year/:sexo', ({ params }) =>
+      HttpResponse.json({ count: params.sexo === 'male' ? 12 : 15, students: [] }),
+    ),
+    http.get('/sis/students/reports/cycle/:sexo', ({ params, request }) => {
+      const nivel = Number(new URL(request.url).searchParams.get('academicLevelId'))
+      return HttpResponse.json({ count: (params.sexo === 'male' ? 5 : 6) * nivel, students: [] })
+    }),
+    http.get('/sis/students/reports/class', ({ request }) =>
+      HttpResponse.json({
+        count: Number(new URL(request.url).searchParams.get('classId')) - 10,
+        students: [],
+      }),
+    ),
+    http.get('/sis/teachers/reports/year', () => HttpResponse.json({ count: 4 })),
+    http.get('/sis/enrollments', ({ request }) => {
+      const ano = anoDaConsulta(request)
+      if (!ano) return SEM_ANO()
+      const q = new URL(request.url).searchParams
+      const num = (k: string) => (q.get(k) ? Number(q.get(k)) : undefined)
+      const lista = matriculasSis.filter(
+        (m) =>
+          m.academicYearId === ano &&
+          (num('gradeId') === undefined || m.grade.id === num('gradeId')) &&
+          (num('classId') === undefined || m.class.id === num('classId')) &&
+          (num('studentId') === undefined || m.student.id === num('studentId')) &&
+          (!q.get('status') || m.status === q.get('status')),
+      )
+      const page = num('page') ?? 1
+      const pageSize = num('pageSize') ?? 25
+      return HttpResponse.json({
+        data: lista.slice((page - 1) * pageSize, page * pageSize),
+        total: lista.length,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(lista.length / pageSize)),
+      })
+    }),
+    http.get('/sis/enrollments/confirmations', ({ request }) => {
+      const ano = anoDaConsulta(request)
+      if (!ano) return SEM_ANO()
+      const estado = new URL(request.url).searchParams.get('status')
+      return HttpResponse.json(
+        confirmacoesSis.filter((c) => c.academicYearId === ano && (!estado || c.status === estado)),
+      )
+    }),
   ]
 }

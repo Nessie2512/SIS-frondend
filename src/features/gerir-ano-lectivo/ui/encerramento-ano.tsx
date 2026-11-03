@@ -8,7 +8,9 @@ import { encerramentoQuery, type AnoLectivo, type Encerramento } from '@/entitie
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
+import { eReal } from '@/shared/config/ligacao'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
+import { useCan } from '@/shared/lib/permissoes'
 import {
   Aviso,
   BarraProgresso,
@@ -21,6 +23,7 @@ import {
   notificar,
 } from '@/shared/ui'
 import { useEncerrarAno } from '../model/use-accoes-ano'
+import { usePode } from '@/shared/lib/permissoes'
 
 type Pendencia = Encerramento['pendencias'][number]
 
@@ -28,8 +31,10 @@ type Pendencia = Encerramento['pendencias'][number]
  * Encerramento do ano (guia 2.3): pendências bloqueantes à vista, cada uma com o caminho para a
  * resolver; encerrar só quando não há nenhuma, com confirmação digitada. Depois, modo de leitura.
  */
-export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir: boolean }) {
+export function EncerramentoAno({ ano }: { ano: AnoLectivo }) {
   const { t } = useLingui()
+  // Encerrar é do ADMIN no backend SIS (@Roles), como activar
+  const podeGerir = useCan('anos:activar')
   const { data: enc } = useQuery(encerramentoQuery(ano.id))
   const [aConfirmar, setAConfirmar] = useState(false)
   if (!enc) return <Esqueleto className="h-64 w-full" />
@@ -53,14 +58,24 @@ export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir
           </Trans>
         </p>
       </div>
-      <ul
-        aria-label={t`Pendências do encerramento`}
-        className="flex flex-col divide-y divide-linha rounded-cartao bg-superficie ring-1 ring-linha"
-      >
-        {enc.pendencias.map((p) => (
-          <LinhaPendencia key={p.tipo} pendencia={p} enc={enc} />
-        ))}
-      </ul>
+      {eReal('anos') && (
+        <Aviso tom="informacao">
+          <Trans>
+            O servidor ainda não indica pendências. Ao encerrar, as matrículas activas do ano ficam
+            concluídas.
+          </Trans>
+        </Aviso>
+      )}
+      {enc.pendencias.length > 0 && (
+        <ul
+          aria-label={t`Pendências do encerramento`}
+          className="flex flex-col divide-y divide-linha rounded-cartao bg-superficie ring-1 ring-linha"
+        >
+          {enc.pendencias.map((p) => (
+            <LinhaPendencia key={p.tipo} pendencia={p} enc={enc} />
+          ))}
+        </ul>
+      )}
       {podeGerir && (
         <div className="flex justify-end">
           {razao ? (
@@ -95,6 +110,9 @@ export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir
 
 function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerramento }) {
   const { t } = useLingui()
+  const podeMatriculas = usePode('matriculas')
+  const podeQuadro = usePode('distribuirTurmas')
+  const podeResultados = usePode('resultadosFinais')
   const n = pendencia.quantidade
   const resolvida = n === 0
   const TITULO = {
@@ -123,7 +141,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
               : `${plural(n, { one: 'Falta #.', other: 'Faltam #.' })} ${AJUDA[pendencia.tipo]}`}
           </span>
         </div>
-        {!resolvida && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
+        {!resolvida && podeMatriculas && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
           <Link
             to="/matriculas"
             search={{ estado: 'PENDENTE', page: 1 }}
@@ -132,7 +150,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
             <Trans>Ver matrículas</Trans>
           </Link>
         )}
-        {!resolvida && pendencia.tipo === 'CONFIRMADAS_SEM_TURMA' && (
+        {!resolvida && podeQuadro && pendencia.tipo === 'CONFIRMADAS_SEM_TURMA' && (
           <Link
             to="/turmas/quadro"
             className="text-secundario whitespace-nowrap text-acento hover:underline"
@@ -141,7 +159,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
           </Link>
         )}
       </div>
-      {!resolvida && pendencia.tipo === 'RESULTADOS_EM_FALTA' && (
+      {!resolvida && podeResultados && pendencia.tipo === 'RESULTADOS_EM_FALTA' && (
         <ul
           aria-label={t`Turmas com resultados em falta`}
           className="ml-8 flex flex-wrap gap-x-4 gap-y-1 text-secundario"

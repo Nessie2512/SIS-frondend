@@ -1,6 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
-import { useCan } from '@/shared/lib/permissoes'
+import { usePode } from '@/shared/lib/permissoes'
 import { ErroDeRota } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/definicoes')({
@@ -17,7 +17,9 @@ const classesSeparador =
  */
 function LayoutDefinicoes() {
   const { t } = useLingui()
-  const administra = useCan('administracao:ler')
+  const utilizadores = usePode('utilizadores')
+  const perfis = usePode('perfis')
+  const auditoria = usePode('auditoria')
   return (
     <section className="flex flex-col gap-6">
       <h1 className="text-titulo-pagina">
@@ -30,24 +32,26 @@ function LayoutDefinicoes() {
               <Trans>Preferências</Trans>
             </Link>
           </li>
-          {administra && (
-            <>
-              <li>
-                <Link to="/definicoes/utilizadores" className={classesSeparador}>
-                  <Trans>Utilizadores</Trans>
-                </Link>
-              </li>
-              <li>
-                <Link to="/definicoes/perfis" className={classesSeparador}>
-                  <Trans>Perfis de acesso</Trans>
-                </Link>
-              </li>
-              <li>
-                <Link to="/definicoes/auditoria" className={classesSeparador}>
-                  <Trans>Auditoria</Trans>
-                </Link>
-              </li>
-            </>
+          {utilizadores && (
+            <li>
+              <Link to="/definicoes/utilizadores" className={classesSeparador}>
+                <Trans>Utilizadores</Trans>
+              </Link>
+            </li>
+          )}
+          {perfis && (
+            <li>
+              <Link to="/definicoes/perfis" className={classesSeparador}>
+                <Trans>Perfis de acesso</Trans>
+              </Link>
+            </li>
+          )}
+          {auditoria && (
+            <li>
+              <Link to="/definicoes/auditoria" className={classesSeparador}>
+                <Trans>Auditoria</Trans>
+              </Link>
+            </li>
           )}
         </ul>
       </nav>

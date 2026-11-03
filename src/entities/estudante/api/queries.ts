@@ -1,10 +1,12 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 import { api } from '@/shared/api'
-import { apiSis, referenciaSis } from '@/shared/api/sis'
+import { apiSis, doAno, idDoAnoSis, referenciaSis, type EstudanteSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
 import {
+  comMatriculaDoSis,
+  encarregadosDoSis,
   paraDocumento,
   paraEncarregado,
   paraEstudante,
@@ -48,13 +50,23 @@ export function estudantesQuery(filtros: FiltrosEstudantes) {
 export function estudanteQuery(id: string) {
   return queryOptions({
     queryKey: estudanteKeys.detalhe(id),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
       if (eReal('estudantes')) {
+        // A ficha é do ano em contexto: o backend só a devolve a quem tem matrícula nesse ano
+        const academicYearId = await idDoAnoSis(client)
         const { data } = await apiSis.GET('/students/{uuid}', {
-          params: { path: { uuid: id } },
+          params: { path: { uuid: id }, ...doAno(academicYearId) },
           signal,
         })
-        return paraEstudanteDoSis(data!)
+        const dto = data as EstudanteSis
+        // A matrícula activa no ano: classe e turma na ficha (GET /enrollments?studentId)
+        const { data: matriculas } = await apiSis.GET('/enrollments', {
+          params: {
+            query: { academicYearId, studentId: dto.id, status: 'ACTIVE', pageSize: 1 },
+          },
+          signal,
+        })
+        return comMatriculaDoSis(paraEstudanteDoSis(dto), matriculas?.data[0])
       }
       const { data } = await api.GET('/estudantes/{id}', { params: { path: { id } }, signal })
       return paraEstudante(data!)
@@ -94,7 +106,15 @@ export function documentosQuery(id: string) {
 export function encarregadosQuery(id: string) {
   return queryOptions({
     queryKey: estudanteKeys.encarregados(id),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('estudantes')) {
+        // Backend SIS: pai e mãe vêm na ficha do estudante (só leitura)
+        const { data } = await apiSis.GET('/students/{uuid}', {
+          params: { path: { uuid: id }, ...doAno(await idDoAnoSis(client)) },
+          signal,
+        })
+        return encarregadosDoSis(data as EstudanteSis)
+      }
       const { data } = await api.GET('/estudantes/{id}/encarregados', {
         params: { path: { id } },
         signal,
@@ -109,7 +129,11 @@ export function encarregadosQuery(id: string) {
 export function duplicadosQuery(nome: string, dataNascimento?: string) {
   return queryOptions({
     queryKey: estudanteKeys.duplicados(nome, dataNascimento),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('estudantes')) {
+        const todos = await client.fetchQuery(referenciaSis.estudantes())
+        return possiveisDuplicados(todos.map(paraEstudanteDoSis), nome, dataNascimento)
+      }
       const { data } = await api.GET('/estudantes/duplicados', {
         params: { query: { nome, dataNascimento } },
         signal,
@@ -136,12 +160,14 @@ export function ocorrenciasQuery(id: string) {
 }
 
 /**
- * Backend SIS: lista inteira, sem matrículas. Filtra-se aqui o que o estudante tem (pesquisa por
- * nome, número de processo ou documento; estado; sexo); os filtros de matrícula (classe, sem
+ * Backend SIS: os estudantes com matrícula no ano (guia de integração, 1). Filtra-se aqui o que o estudante tem (pesquisa por
+ * nome, código de estudante ou documento; estado; sexo); os filtros de matrícula (classe, sem
  * turma, documentos em falta) não têm dados e devolvem a lista vazia em vez de enganar.
  */
 async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<PaginaEstudantes> {
-  const todos = (await client.fetchQuery(referenciaSis.estudantes())).map(paraEstudanteDoSis)
+  const todos = (await client.fetchQuery(referenciaSis.estudantes(f.anoLectivoId))).map(
+    paraEstudanteDoSis,
+  )
   const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
   const semDadosDeMatricula = Boolean(f.classeId || f.semTurma || f.documentosEmFalta)
   const filtrados = semDadosDeMatricula
@@ -159,4 +185,29 @@ async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<P
   const ordenados = ordenarLocal(filtrados, f.ordenar ?? 'nome')
   const { itens, total, page, totalPaginas } = paginarLocal(ordenados, f.page, PAGINACAO.porPagina)
   return { estudantes: itens, total, page, totalPaginas }
+}
+
+/**
+ * Backend SIS (sem endpoint de duplicados): possíveis duplicados no cliente. Conta como
+ * candidato o mesmo nome completo, ou o primeiro e o último nome iguais com a mesma data de
+ * nascimento. Sem acentos nem maiúsculas.
+ */
+export function possiveisDuplicados<T extends { nome: string; dataNascimento: string }>(
+  estudantes: readonly T[],
+  nome: string,
+  dataNascimento?: string,
+): T[] {
+  const partes = normalizarTexto(nome).split(/\s+/).filter(Boolean)
+  if (partes.length < 2) return []
+  const completo = partes.join(' ')
+  const extremos = `${partes[0]} ${partes.at(-1)}`
+  return estudantes.filter((e) => {
+    const outras = normalizarTexto(e.nome).split(/\s+/).filter(Boolean)
+    if (outras.join(' ') === completo) return true
+    return (
+      Boolean(dataNascimento) &&
+      e.dataNascimento === dataNascimento &&
+      `${outras[0]} ${outras.at(-1)}` === extremos
+    )
+  })
 }

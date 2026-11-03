@@ -39,24 +39,31 @@ export function paraEntradaAuditoria(dto: S['EntradaAuditoriaDto']): EntradaAudi
   return { ...dto, accaoRotulo: i18n._(ACCOES_AUDITORIA[dto.accao]) }
 }
 
-/** Papéis do backend SIS com o nome que a escola usa. */
+/** Papéis do backend SIS com o nome que a escola usa e o que cada um faz (docs/rbac.md). */
 const PAPEL = {
   DIRECTOR_GERAL: {
     nome: msg`Director geral`,
-    descricao: msg`Acompanha toda a escola e gere as contas.`,
+    descricao: msg`Consulta toda a escola, sem alterar.`,
   },
   DIRECTOR_PEDAGOGICO: {
     nome: msg`Director pedagógico`,
-    descricao: msg`Planos curriculares, calendário e corpo docente.`,
+    descricao: msg`Disciplinas de cada classe; consulta a estrutura académica.`,
   },
   CHEFE_SECRETARIA: {
     nome: msg`Chefe da secretaria`,
-    descricao: msg`Toda a secretaria, incluindo anos lectivos, turmas e currículo.`,
+    descricao: msg`Toda a secretaria: anos lectivos, turmas, estudantes, matrículas e docentes.`,
   },
-  SECRETARIO: { nome: msg`Secretário`, descricao: msg`Estudantes, matrículas e documentos.` },
-  FINANCEIRO: { nome: msg`Financeiro`, descricao: msg`Consulta da secretaria.` },
-  GESTOR_TI: { nome: msg`Gestor de TI`, descricao: msg`Contas de utilizador e auditoria.` },
-  ADMIN: { nome: msg`Administrador`, descricao: msg`Acesso total.` },
+  SECRETARIO: {
+    nome: msg`Secretário`,
+    descricao: msg`Regista e matricula estudantes; consulta turmas e currículo.`,
+  },
+  FINANCEIRO: { nome: msg`Financeiro`, descricao: msg`Área financeira (ainda sem funções).` },
+  GESTOR_TI: { nome: msg`Gestor de TI`, descricao: msg`Cria, altera e desactiva as contas.` },
+  ADMIN: {
+    nome: msg`Administrador`,
+    descricao: msg`Disciplinas de cada classe; activa e encerra os anos lectivos.`,
+  },
+  TEACHER: { nome: msg`Docente`, descricao: msg`Conta criada com o registo do professor.` },
 } satisfies Record<Papel, unknown>
 
 export const rotuloPapel = (papel: string) =>

@@ -1,4 +1,6 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
+import userEvent from '@testing-library/user-event'
+import { http, HttpResponse } from 'msw'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { contasQuery, perfisQuery } from '@/entities/administracao'
 import { anosLectivosQuery } from '@/entities/ano-lectivo'
@@ -9,9 +11,10 @@ import { professoresQuery, professorQuery } from '@/entities/professor'
 import { turmaQuery, turmasQuery } from '@/entities/turma'
 import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
+import { definirAnoSis, referenciaSis } from '@/shared/api/sis'
 import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { renderizarEm } from '@/test/renderizar'
-import { handlersSis } from '@/test/sis'
+import { anosSis, handlersSis, meSis } from '@/test/sis'
 import { criarQueryClient } from './query-client'
 
 // Staging: todas as áreas no backend SIS, sem simulação
@@ -34,6 +37,16 @@ describe('API real: referência', () => {
     expect(anos[0]?.soLeitura).toBe(true)
   })
 
+  it('usa startDate e endDate quando o backend os devolve', async () => {
+    server.use(
+      http.get('/sis/academic-years', () =>
+        HttpResponse.json([{ ...anosSis[0], startDate: '2026-02-02', endDate: '2026-12-11' }]),
+      ),
+    )
+    const [ano] = await cliente().fetchQuery(anosLectivosQuery())
+    expect([ano?.dataInicio, ano?.dataFim]).toEqual(['2026-02-02', '2026-12-11'])
+  })
+
   it('classes ligadas ao ciclo pelo id numérico, ordenadas pelo número do nome', async () => {
     const classes = await cliente().fetchQuery(classesQuery())
     expect(classes.map((c) => [c.designacao, c.ciclo, c.ordem, c.activa])).toEqual([
@@ -43,11 +56,12 @@ describe('API real: referência', () => {
     ])
   })
 
-  it('árvore de ciclos conta as turmas de cada classe', async () => {
+  it('árvore de ciclos conta as turmas de cada classe no ano em contexto', async () => {
     const ciclos = await cliente().fetchQuery(ciclosQuery())
     expect(ciclos.map((c) => c.designacao)).toEqual(['I Ciclo', 'II Ciclo'])
     const setima = ciclos[0]!.classes[0]!
-    expect(setima).toMatchObject({ designacao: '7.ª classe', turmas: 3, planos: 1 })
+    // 7.ª A e 7.ª B de 2026/2027; a 7.ª A de 2025/2026 é de outro ano
+    expect(setima).toMatchObject({ designacao: '7.ª classe', turmas: 2, planos: 1 })
   })
 
   it('disciplinas: em uso quando alguma classe as tem', async () => {
@@ -69,8 +83,19 @@ describe('API real: turmas', () => {
       ['7.ª A', '7.ª classe', 'Manhã'],
       ['7.ª B', '7.ª classe', 'Tarde'],
     ])
-    // Sem lotação no backend: a turma nunca aparece como cheia
+    // Lotação do backend (capacity) e inscritos do relatório da turma (classId − 10)
+    expect(pagina.turmas.map((t) => [t.inscritos, t.lotacaoMaxima, t.vagas])).toEqual([
+      [10, 40, 30],
+      [11, 40, 29],
+    ])
     expect(pagina.turmas.every((t) => !t.turmaCheia)).toBe(true)
+  })
+
+  it('outro ano: as turmas pedem-se com o academicYearId desse ano', async () => {
+    const pagina = await cliente().fetchQuery(
+      turmasQuery({ anoLectivoId: 'ano-sis-2025', estado: 'ACTIVA', page: 1 }),
+    )
+    expect(pagina.turmas.map((t) => t.id)).toEqual(['turma-antiga'])
   })
 
   it('turmas inactivas contam como encerradas; detalhe pelo uuid', async () => {
@@ -128,8 +153,17 @@ describe('API real: professores e contas', () => {
     const c = cliente()
     const lista = await c.fetchQuery(professoresQuery({ anoLectivoId: 'ano-sis-2026' }))
     expect(lista.professores.map((p) => [p.nome, p.disciplinasTexto])).toEqual([
-      ['Mário Kiala', 'Ciências Exactas'],
+      ['Mário Kiala', 'Matemática'],
     ])
+    // Atribuir uma disciplina: só aparecem os professores que a podem leccionar
+    const paraMatematica = await c.fetchQuery(
+      professoresQuery({ anoLectivoId: 'ano-sis-2026', disciplinaId: 'disc-mat' }),
+    )
+    expect(paraMatematica.professores.map((p) => p.id)).toEqual(['prof-1'])
+    const paraPortugues = await c.fetchQuery(
+      professoresQuery({ anoLectivoId: 'ano-sis-2026', disciplinaId: 'disc-port' }),
+    )
+    expect(paraPortugues.professores).toEqual([])
     const prof = await c.fetchQuery(professorQuery('prof-1', 'ano-sis-2026'))
     expect(prof.atribuicoes).toEqual([
       expect.objectContaining({ turma: '7.ª A', classe: '7.ª classe', disciplina: 'Matemática' }),
@@ -157,12 +191,90 @@ describe('API real: ecrãs', () => {
     expect(within(tabela).getAllByText('7.ª classe').length).toBeGreaterThan(0)
   })
 
-  it('o que o backend ainda não tem diz que não está disponível', async () => {
-    renderizarEm('/calendario')
-    expect(
-      await screen.findByText(/ainda não está disponível no servidor/, undefined, {
-        timeout: 10_000,
+  it('relatórios: contagens do ano por sexo, ciclo e turma', async () => {
+    server.use(
+      http.get('/sis/auth/me', () =>
+        HttpResponse.json({ ...meSis, permissions: [...meSis.permissions, 'reports:read'] }),
+      ),
+    )
+    renderizarEm('/relatorios')
+    expect(await screen.findByRole('heading', { name: 'Estudantes por ciclo' })).toBeInTheDocument()
+    // Resumo: 12 rapazes + 15 raparigas
+    const total = screen.getAllByText('Estudantes').find((el) => el.tagName === 'DT')!
+    expect(total.nextElementSibling).toHaveTextContent('27')
+    const ciclos = screen.getByRole('table', { name: 'Estudantes por ciclo e sexo' })
+    // I Ciclo (id 1): 5 + 6; II Ciclo (id 2): 10 + 12
+    expect(within(ciclos).getByRole('row', { name: /I Ciclo 5 6 11/ })).toBeInTheDocument()
+    expect(within(ciclos).getByRole('row', { name: /II Ciclo 10 12 22/ })).toBeInTheDocument()
+    const turmas = screen.getByRole('table', { name: 'Estudantes por turma' })
+    expect(within(turmas).getByRole('row', { name: /7.ª A 7.ª classe 10/ })).toBeInTheDocument()
+  })
+
+  it('sem nenhum ano, o chefe da secretaria cria o primeiro (1 Set a 31 Jul)', async () => {
+    const criados: unknown[] = []
+    const anos: Record<string, unknown>[] = []
+    server.use(
+      http.get('/sis/academic-years', () => HttpResponse.json(anos)),
+      http.post('/sis/academic-years', async ({ request }) => {
+        const corpo = (await request.json()) as { label: string; startYear: number }
+        criados.push(corpo)
+        anos.push({
+          id: 1,
+          uuid: 'ano-novo',
+          label: corpo.label,
+          startYear: corpo.startYear,
+          isActive: false,
+          isClosed: false,
+        })
+        return new HttpResponse(null, { status: 201 })
       }),
-    ).toBeInTheDocument()
+    )
+    const { router } = renderizarEm('/anos-lectivos')
+    expect(await screen.findByText('Ainda não há anos lectivos')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'Criar o ano lectivo' }))
+    const folha = await screen.findByRole('dialog')
+    const botao = within(folha).getByRole('button', { name: /^Criar \d{4}\/\d{4}$/ })
+    const designacao = botao.textContent!.replace('Criar ', '')
+    await userEvent.click(botao)
+    // O POST responde sem corpo: o ano lê-se da lista e abre-se a sua página
+    await waitFor(() => expect(router.state.location.pathname).toBe('/anos-lectivos/ano-novo'), {
+      timeout: 10_000,
+    })
+    expect(criados).toEqual([{ label: designacao, startYear: Number(designacao.slice(0, 4)) }])
+  })
+
+  it('o que o backend ainda não tem não aparece: nem no menu, nem pelo endereço', async () => {
+    const { router } = renderizarEm('/calendario')
+    const menu = await screen.findByRole('navigation', { name: 'Principal' }, { timeout: 10_000 })
+    expect(within(menu).getByRole('link', { name: 'Estudantes' })).toBeInTheDocument()
+    expect(within(menu).queryByRole('link', { name: 'Calendário' })).toBeNull()
+    expect(within(menu).queryByRole('link', { name: 'Documentos' })).toBeNull()
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'))
+  })
+})
+
+describe('API real: guia de integração (03/11)', () => {
+  it('consultas anuais levam academicYearId; os catálogos pedem também includeUnused', async () => {
+    const urls: string[] = []
+    server.events.on('request:start', ({ request }) => {
+      urls.push(new URL(request.url).pathname + new URL(request.url).search)
+    })
+    const c = cliente()
+    await c.fetchQuery(referenciaSis.classes())
+    await c.fetchQuery(referenciaSis.estudantes())
+    server.events.removeAllListeners()
+    expect(urls).toContain('/sis/grades?academicYearId=1&includeUnused=true')
+    expect(urls).toContain('/sis/students?academicYearId=1')
+  })
+
+  it('sem nenhum ano lectivo, as listas anuais ficam vazias sem pedir ao servidor', async () => {
+    definirAnoSis(null)
+    const pedidos: string[] = []
+    server.events.on('request:start', ({ request }) => {
+      pedidos.push(new URL(request.url).pathname)
+    })
+    await expect(cliente().fetchQuery(referenciaSis.turmas())).resolves.toEqual([])
+    server.events.removeAllListeners()
+    expect(pedidos).not.toContain('/sis/classes')
   })
 })

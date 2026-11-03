@@ -7,8 +7,10 @@ import { TabelaResultados } from '@/features/registar-resultados'
 import { TEMPOS } from '@/shared/config/constantes'
 import { useCan } from '@/shared/lib/permissoes'
 import { ErroDeRota, Esqueleto } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/turmas/$turmaId/resultados')({
+  beforeLoad: () => exigir('resultadosFinais'),
   loader: ({ context: { queryClient }, params: { turmaId } }) =>
     Promise.all([
       queryClient.ensureQueryData(turmaQuery(turmaId)),

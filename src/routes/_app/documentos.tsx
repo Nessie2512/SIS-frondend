@@ -34,6 +34,7 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../-acesso'
 
 const TIPOS = [
   'DECLARACAO_MATRICULA',
@@ -61,6 +62,7 @@ const CAMPOS_ORDEM: Record<string, string> = {
 }
 
 export const Route = createFileRoute('/_app/documentos')({
+  beforeLoad: () => exigir('documentosOficiais'),
   validateSearch: pesquisaDocumentos,
   loader: ({ context: { queryClient }, location, cause }) => {
     const { q, ordem, ...resto } = pesquisaDocumentos.parse(location.search)
@@ -108,11 +110,11 @@ function useColunas(
       c.accessor('estudanteNome', {
         header: t`Estudante`,
         cell: (info) => {
-          const processo = info.row.original.numeroProcesso
+          const codigo = info.row.original.numeroProcesso
           return (
             <span className="flex flex-col">
               <span>{info.getValue()}</span>
-              <span className="tabular text-secundario text-texto-2">{t`Processo n.º ${processo}`}</span>
+              <span className="tabular text-secundario text-texto-2">{t`Código de estudante: ${codigo}`}</span>
             </span>
           )
         },
@@ -290,7 +292,7 @@ function EcraDocumentos() {
               {...c}
               type="search"
               data-atalho="pesquisa"
-              placeholder={t`Estudante, processo, número ou código`}
+              placeholder={t`Estudante, código de estudante, número ou código`}
               prefixo={<Search aria-hidden />}
               value={texto}
               onChange={(e) => pesquisar(e.target.value)}

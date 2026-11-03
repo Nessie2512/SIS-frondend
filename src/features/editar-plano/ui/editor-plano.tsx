@@ -45,7 +45,14 @@ export function EditorPlano({ plano, podeEditar }: Props) {
             return (
               <li key={linha.disciplinaId} className="flex items-center gap-2">
                 <div className="min-w-0 flex-1">
-                  {podeEditar ? (
+                  {plano.semCargaHoraria ? (
+                    <div className="flex min-h-9 items-center gap-3 py-2">
+                      <span className="tabular w-12 text-legenda font-semibold text-texto-3">
+                        {linha.sigla}
+                      </span>
+                      {nome}
+                    </div>
+                  ) : podeEditar ? (
                     <EdicaoNoSitio
                       rotulo={nome}
                       valor={String(horas)}
@@ -77,12 +84,14 @@ export function EditorPlano({ plano, podeEditar }: Props) {
           })}
         </ul>
       )}
-      <p className="tabular flex justify-between border-t border-linha pt-3 font-medium">
-        <span>
-          <Trans>Total semanal</Trans>
-        </span>
-        <span>{t`${total} h`}</span>
-      </p>
+      {!plano.semCargaHoraria && (
+        <p className="tabular flex justify-between border-t border-linha pt-3 font-medium">
+          <span>
+            <Trans>Total semanal</Trans>
+          </span>
+          <span>{t`${total} h`}</span>
+        </p>
+      )}
       {podeEditar && <AcrescentarDisciplina plano={plano} />}
     </section>
   )
@@ -103,14 +112,14 @@ function AcrescentarDisciplina({ plano }: { plano: Plano }) {
   function submeter() {
     const disciplina = disponiveis.find((d) => d.id === disciplinaId)
     if (!disciplina) return setErro({ campo: 'disciplina', mensagem: t`Escolha uma disciplina.` })
-    if (validarHoras(horas)) {
+    if (!plano.semCargaHoraria && validarHoras(horas)) {
       return setErro({ campo: 'horas', mensagem: t`Indique entre 1 e 10 horas por semana.` })
     }
     acrescentar({
       disciplinaId: disciplina.id,
       disciplina: disciplina.nome,
       sigla: disciplina.sigla,
-      horasSemanais: Number(horas),
+      horasSemanais: plano.semCargaHoraria ? 0 : Number(horas),
     })
     setDisciplinaId(null)
     setHoras('2')
@@ -147,23 +156,25 @@ function AcrescentarDisciplina({ plano }: { plano: Plano }) {
           />
         )}
       </Campo>
-      <Campo
-        rotulo={t`Horas por semana`}
-        erro={erro?.campo === 'horas' ? erro.mensagem : undefined}
-        className="w-36"
-      >
-        {(c) => (
-          <Entrada
-            {...c}
-            inputMode="numeric"
-            value={horas}
-            onChange={(e) => {
-              setHoras(e.target.value)
-              setErro(undefined)
-            }}
-          />
-        )}
-      </Campo>
+      {!plano.semCargaHoraria && (
+        <Campo
+          rotulo={t`Horas por semana`}
+          erro={erro?.campo === 'horas' ? erro.mensagem : undefined}
+          className="w-36"
+        >
+          {(c) => (
+            <Entrada
+              {...c}
+              inputMode="numeric"
+              value={horas}
+              onChange={(e) => {
+                setHoras(e.target.value)
+                setErro(undefined)
+              }}
+            />
+          )}
+        </Campo>
+      )}
       <Button type="submit" className="mt-[22px]">
         <Plus aria-hidden className="size-4 stroke-[1.5]" />
         <Trans>Acrescentar</Trans>

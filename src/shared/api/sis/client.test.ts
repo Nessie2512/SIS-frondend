@@ -41,6 +41,39 @@ describe('problemaDoSis', () => {
     expect(problemaDoSis(500, null).title).toBe('Pedido falhou (500)')
   })
 
+  it('lê problem+json (formato de 30/10), com código de negócio e erros por campo', () => {
+    const problema = problemaDoSis(409, {
+      type: 'about:blank',
+      title: 'Conflict',
+      status: 409,
+      detail: 'Student already enrolled',
+      code: 'DUPLICATE_ENROLLMENT',
+      requestId: 'r-1',
+      errors: [{ field: 'studentId', message: 'already enrolled' }, 'classId must be an integer'],
+    })
+    expect(problema).toMatchObject({
+      title: 'Conflict',
+      detail: 'Student already enrolled',
+      code: 'DUPLICATE_ENROLLMENT',
+      requestId: 'r-1',
+    })
+    expect(problema.errors.map((e) => e.campo)).toEqual(['studentId', 'classId'])
+  })
+
+  it('códigos genéricos do problem+json (FORBIDDEN) ficam pelo estado HTTP', () => {
+    const problema = problemaDoSis(403, { title: 'Forbidden', status: 403, code: 'FORBIDDEN' })
+    expect(problema.code).toBe('PERMISSAO_NEGADA')
+  })
+
+  it('disciplina fora das especialidades (422) é DOCENTE_NAO_HABILITADO', () => {
+    const problema = problemaDoSis(422, {
+      title: 'Unprocessable Entity',
+      status: 422,
+      detail: 'Teacher is not qualified to teach the subject with ID "2".',
+    })
+    expect(problema.code).toBe('DOCENTE_NAO_HABILITADO')
+  })
+
   it('lê campos compostos', () => {
     expect(paraErroDeCampo('address.city should not be empty').campo).toBe('address.city')
     expect(paraErroDeCampo('Algo falhou').campo).toBe('Algo')
@@ -57,7 +90,9 @@ describe('apiSis', () => {
         return HttpResponse.json({ success: true, data: [{ id: 1, name: 'I Ciclo' }] })
       }),
     )
-    const { data } = await apiSis.GET('/academic-levels')
+    const { data } = await apiSis.GET('/academic-levels', {
+      params: { query: { academicYearId: 1 } },
+    })
     expect(autorizacao).toBe('Bearer abc')
     expect(data).toEqual([{ id: 1, name: 'I Ciclo' }])
   })
@@ -100,7 +135,9 @@ describe('apiSis', () => {
     const fim = vi.fn()
     const desligar = sessao.aoTerminar(fim)
     server.use(http.get('/sis/students', () => erroNest(401, 'Unauthorized', 'Unauthorized')))
-    await apiSis.GET('/students').catch(() => undefined)
+    await apiSis
+      .GET('/students', { params: { query: { academicYearId: 1 } } })
+      .catch(() => undefined)
     expect(fim).toHaveBeenCalledWith('expirada')
     expect(sessao.tokenAcesso()).toBeNull()
     desligar()

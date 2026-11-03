@@ -14,5 +14,6 @@ export {
   comEstadoConta,
   paraConta,
   rotuloEstadoUtilizador,
+  rotuloPapel,
 } from './model/mapeadores'
 export { administracaoKeys, auditoriaQuery, contasQuery, perfisQuery } from './api/queries'

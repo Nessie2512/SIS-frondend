@@ -98,7 +98,7 @@ function EscolherEstudante({
       }
     >
       <div className="flex flex-col gap-3">
-        <Campo rotulo={t`Estudante`} descricao={t`Nome ou número de processo.`}>
+        <Campo rotulo={t`Estudante`} descricao={t`Nome ou código de estudante.`}>
           {(c) => (
             <Entrada
               {...c}
@@ -123,7 +123,7 @@ function EscolherEstudante({
               aria-busy={isPlaceholderData || undefined}
             >
               {resultados.map((e) => {
-                const processo = e.numeroProcesso
+                const codigo = e.numeroProcesso
                 return (
                   <li key={e.id}>
                     <button
@@ -133,7 +133,7 @@ function EscolherEstudante({
                     >
                       <span className="font-medium">{e.nome}</span>
                       <span className="tabular text-secundario text-texto-2">
-                        {t`Processo n.º ${processo}`}
+                        {t`Código de estudante: ${codigo}`}
                         {e.matricula && <> · {e.matricula}</>}
                       </span>
                     </button>

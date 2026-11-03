@@ -5,8 +5,10 @@ import { BookOpen, ListTree } from 'lucide-react'
 import { classesQuery } from '@/entities/classe'
 import { TEMPOS } from '@/shared/config/constantes'
 import { ErroDeRota, Esqueleto } from '@/shared/ui'
+import { exigir } from '../-acesso'
 
 export const Route = createFileRoute('/_app/curriculo')({
+  beforeLoad: () => exigir('curriculo'),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(classesQuery()),
   pendingComponent: () => <Esqueleto className="h-96 w-full" />,
   pendingMs: TEMPOS.esqueletoAtraso,

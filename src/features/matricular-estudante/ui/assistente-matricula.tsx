@@ -41,6 +41,17 @@ const CAMPO_SERVIDOR: Record<string, [FieldPath<DadosMatricula>, number]> = {
   encarregados: ['encarregados', 1],
   classeId: ['classeId', 3],
   turmaId: ['turmaId', 3],
+  // Campos do backend SIS (CreateStudentDto, NewEnrollmentInputDto)
+  name: ['estudante.nome', 0],
+  birthDate: ['estudante.dataNascimento', 0],
+  documentoIdentificacao: ['estudante.documentoIdentificacao', 0],
+  documentNumber: ['estudante.documentoIdentificacao', 0],
+  fatherName: ['encarregados', 1],
+  fatherContact: ['encarregados', 1],
+  motherName: ['encarregados', 1],
+  motherContact: ['encarregados', 1],
+  primaryGuardian: ['encarregados', 1],
+  classId: ['turmaId', 3],
 }
 
 /**
@@ -162,6 +173,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
     const primeiro = erro.errors.find((e) => CAMPO_SERVIDOR[e.campo])
     if (primeiro) {
       const [campo, destino] = CAMPO_SERVIDOR[primeiro.campo]!
+      setTentou(true)
       for (const e of erro.errors) {
         const alvo = CAMPO_SERVIDOR[e.campo]
         if (alvo) setError(alvo[0], { message: e.mensagem })
@@ -169,6 +181,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
       irPara(destino)
       return requestAnimationFrame(() => setFocus(campo))
     }
+    setTentou(true)
     setError('root.servidor', { message: mensagemDeErro(erro) })
   }
 
@@ -285,7 +298,7 @@ function MatriculaConcluida({
 }) {
   const { t } = useLingui()
   const nome = matricula.estudanteNome
-  const processo = matricula.numeroProcesso
+  const codigo = matricula.numeroProcesso
   const emFalta = matricula.documentosEmFalta
   return (
     <section aria-labelledby="concluida" className="flex max-w-xl flex-col items-start gap-5">
@@ -295,7 +308,8 @@ function MatriculaConcluida({
           {t`Matrícula de ${nome} registada`}
         </h2>
         <p className="tabular text-texto-2">
-          {t`Processo ${processo}`} · {matricula.classe} · {matricula.turma ?? t`sem turma`}
+          {t`Código de estudante: ${codigo}`} · {matricula.classe} ·{' '}
+          {matricula.turma ?? t`sem turma`}
         </p>
       </div>
       <EtiquetaEstado tom={matricula.estadoTom}>{matricula.estadoRotulo}</EtiquetaEstado>

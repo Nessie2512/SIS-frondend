@@ -2,7 +2,14 @@ import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { estudanteKeys, estudanteQuery, paraEstudante, type Estudante } from '@/entities/estudante'
+import {
+  alterarDocumentoSis,
+  estudanteKeys,
+  estudanteQuery,
+  paraEstudante,
+  recarregarEstudantesSis,
+  type Estudante,
+} from '@/entities/estudante'
 import { api, eApiError, type Dto } from '@/shared/api'
 import { naoDisponivel } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
@@ -73,8 +80,27 @@ export function useEditarEstudante(estudanteId: string) {
     }
   }
 
+  /** Backend SIS: documento de identificação (PUT /students/{uuid}/identity), pessimista. */
+  async function guardarDocumento(texto: string) {
+    try {
+      await alterarDocumentoSis(estudanteId, texto)
+      await Promise.all([
+        recarregarEstudantesSis(qc),
+        qc.invalidateQueries({ queryKey: estudanteKeys.detalhe(estudanteId) }),
+      ])
+      anunciar.educado(i18n._(msg`Alteração guardada.`))
+    } catch (erro) {
+      const deCampo = eApiError(erro)
+        ? erro.errors.find((e) => e.campo === 'documentNumber' || e.campo === 'documentType')
+            ?.mensagem
+        : undefined
+      throw new Error(deCampo ?? mensagemDeErro(erro), { cause: erro })
+    }
+  }
+
   return {
     guardar,
+    guardarDocumento,
     conflito,
     /** Mantém o valor que está no servidor */
     manterActual: () => setConflito(null),

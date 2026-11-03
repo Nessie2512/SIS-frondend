@@ -5,6 +5,8 @@ import { estudanteKeys } from '@/entities/estudante'
 import { matriculaKeys } from '@/entities/matricula'
 import { turmaKeys, type Inscrito } from '@/entities/turma'
 import { api, eApiError } from '@/shared/api'
+import { apiSis, idNumerico, naoDisponivel, referenciaSis, sisKeys } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { notificar, notificarComDesfazer } from '@/shared/ui'
@@ -41,6 +43,24 @@ export function useColocarNaTurma(
     scope: { id: `quadro:${classeId}` },
     mutationFn: async ({ cartao, origem, destino, motivo, excepcao }: Colocacao) => {
       const matriculaId = cartao.matriculaId
+      if (eReal('turmas')) {
+        // Backend SIS: colocar quem não tem turma é a matrícula directa (POST /enrollments);
+        // mudar de turma ou retirar ainda não tem rota
+        if (origem !== SEM_TURMA || destino === SEM_TURMA) naoDisponivel('MUDAR_DE_TURMA')
+        const [estudantes, turmas, anos] = await Promise.all([
+          qc.fetchQuery(referenciaSis.estudantes(anoLectivoId)),
+          qc.fetchQuery(referenciaSis.turmas(anoLectivoId)),
+          qc.fetchQuery(referenciaSis.anos()),
+        ])
+        await apiSis.POST('/enrollments', {
+          body: {
+            studentId: idNumerico(estudantes, cartao.estudanteId),
+            classId: idNumerico(turmas, destino),
+            academicYearId: idNumerico(anos, anoLectivoId),
+          },
+        })
+        return
+      }
       if (destino === SEM_TURMA) {
         await api.DELETE('/inscricoes/{matriculaId}', { params: { path: { matriculaId } } })
       } else if (origem === SEM_TURMA) {
@@ -79,6 +99,8 @@ export function useColocarNaTurma(
     onSuccess: (_r, c) => {
       if (c.semDesfazer) return
       const antes = qc.getQueryData<Quadro>(chave)
+      // Backend SIS: a matrícula não se desfaz (não há rota para retirar da turma)
+      if (eReal('turmas')) return notificar.sucesso(frase(antes, c))
       notificarComDesfazer(frase(antes, c), () =>
         mutacao.mutate({
           cartao: { ...c.cartao, turmaId: c.destino === SEM_TURMA ? null : c.destino },
@@ -96,6 +118,7 @@ export function useColocarNaTurma(
         qc.invalidateQueries({ queryKey: turmaKeys.todas }),
         qc.invalidateQueries({ queryKey: matriculaKeys.todas }),
         qc.invalidateQueries({ queryKey: estudanteKeys.todos, refetchType: 'none' }),
+        qc.invalidateQueries({ queryKey: sisKeys.lista('students') }),
       ]),
   })
 

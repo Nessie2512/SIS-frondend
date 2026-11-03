@@ -1,7 +1,7 @@
 import { i18n, type MessageDescriptor } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
-import type { DtoSis, ProfessorSis } from '@/shared/api/sis'
+import type { DisciplinaSis, DtoSis, ProfessorSis } from '@/shared/api/sis'
 import type {
   Atribuicao,
   EstadoProfessor,
@@ -84,7 +84,18 @@ export function paraPaginaProfessores(dto: Dto<'PaginaProfessorDto'>): PaginaPro
  * Backend SIS: o professor não traz contactos, carga lectiva nem disciplinas habilitadas; a área
  * de formação (teacherField) faz de texto das disciplinas. Inactivo = desligado.
  */
-export function paraProfessorResumoDoSis(dto: ProfessorSis): ProfessorResumo {
+/**
+ * Backend SIS: as disciplinas do professor são as especialidades (specialtySubjectIds), as
+ * únicas em que se lhe pode atribuir turma. Sem a lista das disciplinas, mostra-se a área.
+ */
+export function paraProfessorResumoDoSis(
+  dto: ProfessorSis,
+  disciplinaPorId?: Map<number, DisciplinaSis>,
+): ProfessorResumo {
+  const disciplinas = (dto.specialtySubjectIds ?? []).flatMap((n) => {
+    const d = disciplinaPorId?.get(n)
+    return d ? [{ id: d.uuid, nome: d.name, sigla: d.code }] : []
+  })
   return comEstado(
     {
       id: dto.uuid,
@@ -93,9 +104,11 @@ export function paraProfessorResumoDoSis(dto: ProfessorSis): ProfessorResumo {
       estado: 'ACTIVO',
       estadoRotulo: '',
       estadoTom: 'neutra',
-      disponivel: false,
-      disciplinas: [],
-      disciplinasTexto: dto.teacherField,
+      disponivel: dto.isActive,
+      disciplinas,
+      disciplinasTexto: disciplinas.length
+        ? disciplinas.map((d) => d.nome).join(', ')
+        : dto.teacherField,
       cargaLectiva: 0,
       cargaMaxima: 0,
       ocupacao: 0,
@@ -117,9 +130,10 @@ export function paraProfessorDoSis(
   dto: ProfessorSis,
   atribuicoes: DtoSis<'TeacherAssignmentOutputDto'>[],
   ref: ReferenciasAtribuicao,
+  disciplinaPorId?: Map<number, DisciplinaSis>,
 ): Professor {
   return {
-    ...paraProfessorResumoDoSis(dto),
+    ...paraProfessorResumoDoSis(dto, disciplinaPorId),
     habilitacao: dto.educationalAttainment,
     dataAdmissao: '',
     atribuicoes: atribuicoes

@@ -74,6 +74,23 @@ servidor». MSW e fixtures só são iniciados pelos testes automatizados (`pnpm 
 o browser continua a falar com `/sis` na própria origem para evitar CORS; o destino é configurado
 pela rewrite do Render.
 
+### Testar contra o backend local
+
+1. No `SIS-backend`, siga a secção «Testes locais com o frontend» do README: `.env`, a API em
+   `http://localhost:3000` (`docker compose up --build`, ou `docker compose up -d postgres`,
+   `pnpm db:preparar` e `pnpm start:dev`) e `pnpm dados:locais`. Ficam criadas uma conta por perfil,
+   o ano 2026/2027 activo, classes, turmas, professores e estudantes.
+2. Aqui: `pnpm dev` e abrir `http://localhost:5173`. Não é preciso mudar nada: o
+   `.env.development` já aponta o proxy `/sis` para `http://localhost:3000`.
+3. Entrar com as contas `*.dev@bma.com` (palavra-passe `DEV_USERS_PASSWORD` do `.env` do
+   backend). O que cada perfil vê segue o `AccessGuard` do backend: por exemplo, só `chefe.dev`
+   inscreve estudantes em turmas, e `admin.dev` e `pedagogico.dev` recebem 403 ao ler classes
+   (lacuna conhecida do backend).
+
+Se o login falhar com «sem ligação», a API não está a responder em `:3000`. Se der 401 ao
+recarregar a página, o browser não guardou o cookie de renovação: use Chrome, Edge ou Firefox em
+`localhost` (não `127.0.0.1`).
+
 ### Staging no Render (serviço do ramo Dev)
 
 O serviço é `schoolie-frondend-staging` (https://schoolie-frondend-staging.onrender.com). Se foi
@@ -102,20 +119,25 @@ ela só fica activa se o serviço sincronizar com o Blueprint. Se o frontend for
 serviço Render ou tiver sido criado manualmente, configurar nele `VITE_SIS_BASE=/sis` e a
 reescrita `/sis/*` para o backend antes do fallback da SPA.
 
-O que o staging faz com o contrato de 30/10:
+O que a aplicação faz com o backend SIS (guia de integração de 03/11):
 
-| Área          | Ler                                  | Escrever                                                                                    |
-| ------------- | ------------------------------------ | ------------------------------------------------------------------------------------------- |
-| Sessão        | `/auth/me`, renovação por cookie     | entrar, sair                                                                                |
-| Anos lectivos | lista e estado                       | criar, activar (encerrar, reabrir, duplicar: não)                                           |
-| Currículo     | ciclos, classes, disciplinas         | criar ciclo e classe, renomear e desactivar classe; criar, inactivar e reactivar disciplina |
-| Turmas        | lista, filtros, ficha (sem ocupação) | criar (nome automático), encerrar                                                           |
-| Estudantes    | lista com pesquisa, ficha            | — (editar dados: não)                                                                       |
-| Professores   | lista, ficha com atribuições do ano  | —                                                                                           |
-| Contas        | contas e perfis                      | —                                                                                           |
+| Área          | Ler                                                      | Escrever                                                                                                  |
+| ------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Sessão        | `/auth/me`, renovação por cookie                         | entrar, sair; alterar a própria palavra-passe                                                             |
+| Anos lectivos | lista, estado, datas, etapas da abertura                 | criar (chefe da secretaria); activar e encerrar (admin); reabrir e duplicar: não                          |
+| Currículo     | ciclos, classes, disciplinas (catálogo completo), planos | criar ciclo e classe, renomear e desactivar classe; disciplinas; juntar e retirar disciplinas do plano    |
+| Turmas        | lista, filtros, ficha com lotação e inscritos            | criar (nome automático e lotação), encerrar                                                               |
+| Estudantes    | lista e ficha do ano, possíveis duplicados               | registar e matricular (`POST /students` + `POST /enrollments`), alterar o documento, anular               |
+| Professores   | lista e ficha do ano, docentes de cada turma             | registar (o servidor cria a conta, o email e o número de agente), atribuir a turma e disciplina, desligar |
+| Contas        | contas e perfis (só o gestor de TI)                      | criar, mudar o perfil, desactivar (só o gestor de TI)                                                     |
+| Relatórios    | contagens por sexo (ano, ciclo, turma), docentes         | —                                                                                                         |
 
-Matrículas, encarregados, documentos, percurso, ocorrências, calendário, planos, renovação,
-transferências, importação, relatórios, tarefas, auditoria e painel: «não disponível».
+Tudo o que é anual leva `academicYearId` (o id numérico do ano no cabeçalho): estudantes, turmas,
+docentes, atribuições, classes, disciplinas, ciclos e relatórios (`shared/api/sis/referencia.ts`).
+O código do estudante só existe depois da primeira matrícula directa. Encarregados, documentos
+oficiais, percurso, ocorrências, calendário, versões do plano, renovação, transferências,
+importação, tarefas, auditoria e painel: «não disponível» (sem endpoint). O backend exige pai e mãe
+(nome e telefone).
 
 Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
 
@@ -125,10 +147,12 @@ Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do back
 - **Sessão**: `POST /auth/login` dá o token (só em memória) e o cookie de renovação; `GET /auth/me`
   dá nome, papel e permissões, traduzidas para as da interface (`shared/config/papeis.ts`). Um 401
   a meio do trabalho renova uma vez por `POST /auth/refresh` e repete o pedido; recarregar a página
-  recupera a sessão pelo mesmo cookie. O proxy do Vite reescreve o caminho do cookie para `/sis`;
-  a reescrita do Render não o faz, por isso o backend deve emitir o cookie com `Path=/`.
-- **Erros**: formato do NestJS, não problem+json; `shared/api/sis/erros.ts` converte-os em
-  `ApiError` (mensagens do class-validator → erros por campo).
+  recupera a sessão pelo mesmo cookie, emitido pelo backend com `Path=/` (o proxy do Vite e a
+  reescrita do Render deixam-no como vem).
+- **Erros**: problem+json (RFC 9457) e o formato antigo do NestJS; `shared/api/sis/erros.ts`
+  converte ambos em `ApiError` (mensagens do class-validator → erros por campo).
+- **Respostas sem corpo**: várias escritas (`POST /students`, `POST /classes`…) respondem sem
+  corpo; o cliente aceita-as e o frontend relê a lista para encontrar o registo criado.
   Regras: tipos de API só nos `schema.d.ts`; componentes recebem o modelo de vista, nunca o DTO;
   fixtures de dados só em `src/mocks/` e exclusivamente para testes.
 

@@ -1,5 +1,6 @@
 import { Trans, useLingui } from '@lingui/react/macro'
-import { formatarTelefone, type Estudante } from '@/entities/estudante'
+import { formatarTelefone, lerDocumento, type Estudante } from '@/entities/estudante'
+import { eReal } from '@/shared/config/ligacao'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { useCan } from '@/shared/lib/permissoes'
 import { Button, Dialogo, EdicaoNoSitio } from '@/shared/ui'
@@ -15,7 +16,11 @@ interface Props {
 export function DadosEstudante({ estudante, soLeitura }: Props) {
   const { t } = useLingui()
   const podeEscrever = useCan('estudantes:escrever')
-  const { guardar, conflito, manterActual, guardarOMeu } = useEditarEstudante(estudante.id)
+  const { guardar, guardarDocumento, conflito, manterActual, guardarOMeu } = useEditarEstudante(
+    estudante.id,
+  )
+  // Backend SIS: só o documento de identificação se altera; nome, telefone e morada não
+  const sis = eReal('estudantes')
 
   const razao = !podeEscrever
     ? undefined // sem permissão: nem se oferece a edição
@@ -33,7 +38,7 @@ export function DadosEstudante({ estudante, soLeitura }: Props) {
     campo: CampoEditavel,
     extra: Partial<Parameters<typeof EdicaoNoSitio>[0]> = {},
   ) =>
-    podeEscrever ? (
+    podeEscrever && !sis ? (
       <EdicaoNoSitio
         rotulo={ROTULOS[campo]}
         valor={estudante[campo]}
@@ -59,18 +64,33 @@ export function DadosEstudante({ estudante, soLeitura }: Props) {
           atalhoEditar: true,
           validar: (v) => (v.split(/\s+/).length < 2 ? t`Escreva o nome completo.` : undefined),
         })}
-        {/* Número de processo é imutável: sempre texto, nunca campo (guia 2.4) */}
-        <Linha rotulo={t`Número de processo`} valor={estudante.numeroProcesso} tabular />
+        {/* O código de estudante é imutável: sempre texto, nunca campo (guia 2.4) */}
+        <Linha rotulo={t`Código de estudante`} valor={estudante.numeroProcesso} tabular />
         <Linha
           rotulo={t`Data de nascimento`}
           valor={formatarDataCivil(estudante.dataNascimento)}
           tabular
         />
-        <Linha
-          rotulo={t`Documento de identificação`}
-          valor={estudante.documentoIdentificacao}
-          tabular
-        />
+        {sis && podeEscrever ? (
+          <EdicaoNoSitio
+            rotulo={t`Documento de identificação`}
+            valor={estudante.documentoIdentificacao}
+            aoGuardar={guardarDocumento}
+            desactivadoPorque={razao}
+            autoComplete="off"
+            validar={(v) =>
+              lerDocumento(v)
+                ? undefined
+                : t`Escreva o tipo e o número, por exemplo BI 002145678LA043.`
+            }
+          />
+        ) : (
+          <Linha
+            rotulo={t`Documento de identificação`}
+            valor={estudante.documentoIdentificacao}
+            tabular
+          />
+        )}
         <Linha rotulo={t`Naturalidade`} valor={estudante.naturalidade} />
         {editavel('telefone', {
           inputMode: 'tel',
