@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { Link } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Controller, useFormContext, useWatch } from 'react-hook-form'
 import { duplicadosQuery } from '@/entities/estudante'
 import { TEMPOS } from '@/shared/config/constantes'
@@ -31,6 +31,13 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
   const dataNascimento = useWatch({ control, name: 'estudante.dataNascimento' })
   const duplicado = useWatch({ control, name: 'duplicado' })
   const e = errors.estudante
+
+  // Um erro num campo opcional (por exemplo, devolvido pelo servidor) abre a secção: senão ficava escondido
+  const opcionais = useRef<HTMLDetailsElement>(null)
+  const erroOpcional = Boolean(e?.documentoIdentificacao || e?.telefone)
+  useEffect(() => {
+    if (erroOpcional && opcionais.current) opcionais.current.open = true
+  }, [erroOpcional])
 
   // Espera um pouco depois de escrever antes de procurar (guia 5.6)
   const [nomeEstavel, setNomeEstavel] = useState(nome)
@@ -150,7 +157,10 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
       </div>
 
       {/* Campos opcionais recolhidos (guia 1.1: divulgação progressiva) */}
-      <details className="group rounded-cartao bg-superficie ring-1 ring-linha open:pb-4">
+      <details
+        ref={opcionais}
+        className="group rounded-cartao bg-superficie ring-1 ring-linha open:pb-4"
+      >
         <summary className="cursor-pointer list-none px-4 py-3 text-acento">
           <Trans>Mais dados (opcionais)</Trans>
         </summary>

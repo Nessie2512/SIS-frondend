@@ -1,6 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { useEffect } from 'react'
 import { ChevronLeft } from 'lucide-react'
 import * as z from 'zod/mini'
 import { classesQuery } from '@/entities/classe'
@@ -8,6 +9,7 @@ import { DistribuirAutomaticamente } from '@/features/distribuir-turmas'
 import { QuadroTurmas } from '@/features/inscrever-na-turma'
 import { quadroQuery } from '@/features/inscrever-na-turma/model/quadro'
 import { TEMPOS } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
 import { useCan } from '@/shared/lib/permissoes'
 import { Aviso, Campo, ErroDeRota, Esqueleto, Selector } from '@/shared/ui'
 
@@ -34,6 +36,13 @@ function EcraQuadro() {
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: classes = [] } = useQuery(classesQuery())
   const podeDistribuir = useCan('turmas:escrever')
+  const real = eReal('turmas')
+
+  // As classes do backend SIS não têm o id 'c7' por omissão: abre na primeira classe
+  useEffect(() => {
+    if (classes.length > 0 && !classes.some((c) => c.id === classeId))
+      void navigate({ search: { classeId: classes[0]!.id }, replace: true })
+  }, [classes, classeId, navigate])
 
   return (
     <section className="flex flex-col gap-6">
@@ -57,7 +66,7 @@ function EcraQuadro() {
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          {anoLectivoId && !soLeitura && podeDistribuir && (
+          {anoLectivoId && !soLeitura && podeDistribuir && !real && (
             <DistribuirAutomaticamente
               anoLectivoId={anoLectivoId}
               classeId={classeId}
@@ -76,6 +85,14 @@ function EcraQuadro() {
           </Campo>
         </div>
       </div>
+      {real && !soLeitura && (
+        <Aviso>
+          <Trans>
+            Largar um estudante sem turma numa turma matricula-o nela. Mudar de turma ou retirar da
+            turma ainda não está disponível no servidor.
+          </Trans>
+        </Aviso>
+      )}
       {soLeitura && (
         <Aviso tom="leitura">
           <Trans>O ano lectivo está encerrado. O quadro está só de leitura.</Trans>

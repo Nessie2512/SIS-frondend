@@ -3277,6 +3277,10 @@ msgstr "Já tem uma vista com este nome. Escolha outro."
 msgid "Justificação"
 msgstr "Justificação"
 
+#: src/routes/_app/turmas/quadro.tsx
+msgid "Largar um estudante sem turma numa turma matricula-o nela. Mudar de turma ou retirar da turma ainda não está disponível no servidor."
+msgstr "Largar um estudante sem turma numa turma matricula-o nela. Mudar de turma ou retirar da turma ainda não está disponível no servidor."
+
 #: src/entities/calendario/ui/grelha-ano.tsx
 msgid "Legenda"
 msgstr "Legenda"

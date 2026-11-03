@@ -173,6 +173,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
     const primeiro = erro.errors.find((e) => CAMPO_SERVIDOR[e.campo])
     if (primeiro) {
       const [campo, destino] = CAMPO_SERVIDOR[primeiro.campo]!
+      setTentou(true)
       for (const e of erro.errors) {
         const alvo = CAMPO_SERVIDOR[e.campo]
         if (alvo) setError(alvo[0], { message: e.mensagem })
@@ -180,6 +181,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
       irPara(destino)
       return requestAnimationFrame(() => setFocus(campo))
     }
+    setTentou(true)
     setError('root.servidor', { message: mensagemDeErro(erro) })
   }
 

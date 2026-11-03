@@ -3278,6 +3278,10 @@ msgstr "You already have a view with this name. Choose another."
 msgid "Justificação"
 msgstr "Justification"
 
+#: src/routes/_app/turmas/quadro.tsx
+msgid "Largar um estudante sem turma numa turma matricula-o nela. Mudar de turma ou retirar da turma ainda não está disponível no servidor."
+msgstr "Dropping a student without a class into a class enrols them in it. Changing class or removing from a class is not yet available on the server."
+
 #: src/entities/calendario/ui/grelha-ano.tsx
 msgid "Legenda"
 msgstr "Legend"
