@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import { differenceInYears } from 'date-fns'
 import type { Dto } from '@/shared/api'
-import type { EstudanteSis } from '@/shared/api/sis'
+import type { DtoSis, EstudanteSis } from '@/shared/api/sis'
 import type {
   DocumentoEstudante,
   Encarregado,
@@ -159,4 +159,48 @@ export function paraEstudanteDoSis(dto: EstudanteSis): Estudante {
     morada: dto.address || null,
     naturalidade: dto.nationality || null,
   }
+}
+
+/** A matrícula activa no ano (GET /enrollments?studentId), já com classe e turma. */
+export function comMatriculaDoSis(
+  estudante: Estudante,
+  matricula: DtoSis<'EnrollmentListItemDto'> | undefined,
+): Estudante {
+  if (!matricula) return estudante
+  return {
+    ...estudante,
+    matricula: `${matricula.grade.name} · ${matricula.class.name}`,
+    matriculaId: matricula.uuid,
+    turmaId: matricula.class.uuid,
+    semTurma: false,
+  }
+}
+
+/**
+ * Backend SIS: os encarregados são o pai e a mãe da ficha (nome e contacto). O principal é o
+ * do contacto em primaryGuardian.
+ */
+export function encarregadosDoSis(dto: EstudanteSis): Encarregado[] {
+  const pais = [
+    {
+      id: `${dto.uuid}-pai`,
+      nome: dto.fatherName,
+      parentesco: i18n._(msg`Pai`),
+      telefone: dto.fatherContact,
+    },
+    {
+      id: `${dto.uuid}-mae`,
+      nome: dto.motherName,
+      parentesco: i18n._(msg`Mãe`),
+      telefone: dto.motherContact,
+    },
+  ]
+  return pais
+    .filter((p) => p.nome?.trim())
+    .map((p) => ({
+      ...p,
+      email: null,
+      principal: Boolean(p.telefone) && p.telefone === dto.primaryGuardian,
+      outrosEducandos: 0,
+    }))
 }

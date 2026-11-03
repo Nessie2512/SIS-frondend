@@ -5,6 +5,8 @@ import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
 import {
+  comMatriculaDoSis,
+  encarregadosDoSis,
   paraDocumento,
   paraEncarregado,
   paraEstudante,
@@ -51,11 +53,20 @@ export function estudanteQuery(id: string) {
     queryFn: async ({ signal, client }) => {
       if (eReal('estudantes')) {
         // A ficha é do ano em contexto: o backend só a devolve a quem tem matrícula nesse ano
+        const academicYearId = await idDoAnoSis(client)
         const { data } = await apiSis.GET('/students/{uuid}', {
-          params: { path: { uuid: id }, ...doAno(await idDoAnoSis(client)) },
+          params: { path: { uuid: id }, ...doAno(academicYearId) },
           signal,
         })
-        return paraEstudanteDoSis(data as EstudanteSis)
+        const dto = data as EstudanteSis
+        // A matrícula activa no ano: classe e turma na ficha (GET /enrollments?studentId)
+        const { data: matriculas } = await apiSis.GET('/enrollments', {
+          params: {
+            query: { academicYearId, studentId: dto.id, status: 'ACTIVE', pageSize: 1 },
+          },
+          signal,
+        })
+        return comMatriculaDoSis(paraEstudanteDoSis(dto), matriculas?.data[0])
       }
       const { data } = await api.GET('/estudantes/{id}', { params: { path: { id } }, signal })
       return paraEstudante(data!)
@@ -95,7 +106,15 @@ export function documentosQuery(id: string) {
 export function encarregadosQuery(id: string) {
   return queryOptions({
     queryKey: estudanteKeys.encarregados(id),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }) => {
+      if (eReal('estudantes')) {
+        // Backend SIS: pai e mãe vêm na ficha do estudante (só leitura)
+        const { data } = await apiSis.GET('/students/{uuid}', {
+          params: { path: { uuid: id }, ...doAno(await idDoAnoSis(client)) },
+          signal,
+        })
+        return encarregadosDoSis(data as EstudanteSis)
+      }
       const { data } = await api.GET('/estudantes/{id}/encarregados', {
         params: { path: { id } },
         signal,

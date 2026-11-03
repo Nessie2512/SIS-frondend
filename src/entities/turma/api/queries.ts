@@ -1,13 +1,21 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '@/shared/api'
-import { apiSis, porId, referenciaSis, sisKeys } from '@/shared/api/sis'
+import {
+  apiSis,
+  porId,
+  referenciaSis,
+  sisKeys,
+  type EstudanteSis,
+  type TurmaSis,
+} from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { paraInscrito, paraPaginaTurmas, paraTurma, paraTurmaDoSis } from '../model/mapeadores'
 import type {
   DocenteTurma,
   FiltrosTurma,
+  Inscrito,
   PaginaTurmas,
   ResultadoFinal,
   Turma,
@@ -63,7 +71,23 @@ export function turmaQuery(id: string) {
 export function inscritosQuery(turmaId: string) {
   return queryOptions({
     queryKey: turmaKeys.inscritos(turmaId),
-    queryFn: async ({ signal }) => {
+    queryFn: async ({ signal, client }): Promise<Inscrito[]> => {
+      if (eReal('turmas')) {
+        // Backend SIS: os estudantes com matrícula na turma (GET /students?classId)
+        const { turma } = await turmaSisPorUuid(client, turmaId)
+        const { data } = await apiSis.GET('/students', {
+          params: { query: { academicYearId: turma.academicYearId, classId: turma.id } },
+          signal,
+        })
+        return ((data ?? []) as EstudanteSis[]).map((e) => ({
+          matriculaId: e.uuid,
+          estudanteId: e.uuid,
+          turmaId,
+          nome: e.name,
+          numeroProcesso: e.studentCode ?? '',
+          fotografiaUrl: null,
+        }))
+      }
       const { data } = await api.GET('/turmas/{id}/inscritos', {
         params: { path: { id: turmaId } },
         signal,
@@ -153,17 +177,45 @@ async function comOcupacao<T extends Turma>(
   ])
   const dto = turmas.find((t) => t.uuid === turma.id)
   if (!dto) return turma
-  const inscritos = await client
-    .fetchQuery(inscritosSisQuery(dto.academicYearId, dto.id))
-    .catch(() => undefined)
+  const [inscritos, professores] = await Promise.all([
+    client.fetchQuery(inscritosSisQuery(dto.academicYearId, dto.id)).catch(() => undefined),
+    // O director de turma vem pelo id do professor: o nome está na lista do ano
+    dto.classDirectorTeacherId != null
+      ? client.fetchQuery(referenciaSis.professores(ano)).catch(() => undefined)
+      : undefined,
+  ])
   return {
     ...turma,
     ...paraTurmaDoSis(
       dto,
       classes.find((c) => c.id === dto.gradeId),
       inscritos,
+      professores,
     ),
   }
+}
+
+/**
+ * Backend SIS: a turma em bruto pelo uuid, no ano em contexto ou noutro, com o uuid do ano.
+ * Serve às escritas, que pedem os ids numéricos e o updatedAt lido.
+ */
+export async function turmaSisPorUuid(
+  client: QueryClient,
+  uuid: string,
+): Promise<{ turma: TurmaSis; ano: string }> {
+  const noContexto = (await client.fetchQuery(referenciaSis.turmas())).find((t) => t.uuid === uuid)
+  if (noContexto) {
+    const anos = await client.fetchQuery(referenciaSis.anos())
+    const ano = anos.find((a) => a.id === noContexto.academicYearId)?.uuid ?? ''
+    return { turma: noContexto, ano }
+  }
+  for (const ano of await client.fetchQuery(referenciaSis.anos())) {
+    const turma = (await client.fetchQuery(referenciaSis.turmas(ano.uuid))).find(
+      (t) => t.uuid === uuid,
+    )
+    if (turma) return { turma, ano: ano.uuid }
+  }
+  throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
 }
 
 /** Sem filtros nem páginas no backend: filtra-se e pagina-se aqui, com as mesmas regras. */

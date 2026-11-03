@@ -75,6 +75,9 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     period: 'AFTERNOON',
     isActive: true,
     capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
   {
     id: 20,
@@ -85,6 +88,9 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     period: 'MORNING',
     isActive: true,
     capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
   {
     id: 22,
@@ -95,6 +101,9 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     period: 'INTEGRAL',
     isActive: false,
     capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
   {
     id: 23,
@@ -105,6 +114,9 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     period: 'MORNING',
     isActive: true,
     capacity: 40,
+    room: null,
+    classDirectorTeacherId: null,
+    updatedAt: '2026-11-03T10:00:00.000Z',
   },
 ]
 
@@ -147,6 +159,51 @@ export const estudantesSis: EstudanteSis[] = [
   estudante(1, { name: 'João Baptista', sex: 'M' }),
   estudante(2, { name: 'Conceição Neto', sex: 'F', birthDate: '2012-04-12T00:00:00.000Z' }),
   estudante(3, { name: 'Ana Domingos', sex: 'F', isActive: false, documentType: 'N/A' }),
+]
+
+type MatriculaSis = DtoSis<'EnrollmentListItemDto'>
+
+const refEstudante = (e: EstudanteSis) => ({
+  id: e.id,
+  uuid: e.uuid,
+  name: e.name,
+  studentCode: e.studentCode ?? null,
+  sex: e.sex === 'F' ? ('F' as const) : ('M' as const),
+})
+const refTurma = (id: number) => {
+  const t = turmasSis.find((x) => x.id === id)!
+  return { id: t.id, uuid: t.uuid, name: t.name }
+}
+const refClasse = (turmaId: number) => {
+  const c = classesSis.find((x) => x.id === turmasSis.find((t) => t.id === turmaId)!.gradeId)!
+  return { id: c.id, uuid: c.uuid, name: c.name }
+}
+
+/** João na 7.ª A e Conceição na 7.ª B, no ano em curso (GET /enrollments). */
+export const matriculasSis: MatriculaSis[] = [
+  { e: 0, turma: 20, data: '2026-09-02T09:00:00.000Z' },
+  { e: 1, turma: 21, data: '2026-09-03T09:00:00.000Z' },
+].map(({ e, turma, data }, i) => ({
+  uuid: `mat-${i + 1}`,
+  academicYearId: 1,
+  enrollmentDate: data,
+  status: 'ACTIVE' as const,
+  student: refEstudante(estudantesSis[e]!),
+  class: refTurma(turma),
+  grade: refClasse(turma),
+}))
+
+/** Uma confirmação à espera de pagamento: Ana, para a 7.ª B. */
+export const confirmacoesSis: DtoSis<'ConfirmationListItemDto'>[] = [
+  {
+    uuid: 'conf-1',
+    academicYearId: 1,
+    confirmationDate: '2026-09-04T09:00:00.000Z',
+    status: 'PENDING_PAYMENT',
+    student: refEstudante(estudantesSis[2]!),
+    class: refTurma(21),
+    grade: refClasse(21),
+  },
 ]
 
 export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
@@ -348,5 +405,36 @@ export function handlersSis() {
       }),
     ),
     http.get('/sis/teachers/reports/year', () => HttpResponse.json({ count: 4 })),
+    http.get('/sis/enrollments', ({ request }) => {
+      const ano = anoDaConsulta(request)
+      if (!ano) return SEM_ANO()
+      const q = new URL(request.url).searchParams
+      const num = (k: string) => (q.get(k) ? Number(q.get(k)) : undefined)
+      const lista = matriculasSis.filter(
+        (m) =>
+          m.academicYearId === ano &&
+          (num('gradeId') === undefined || m.grade.id === num('gradeId')) &&
+          (num('classId') === undefined || m.class.id === num('classId')) &&
+          (num('studentId') === undefined || m.student.id === num('studentId')) &&
+          (!q.get('status') || m.status === q.get('status')),
+      )
+      const page = num('page') ?? 1
+      const pageSize = num('pageSize') ?? 25
+      return HttpResponse.json({
+        data: lista.slice((page - 1) * pageSize, page * pageSize),
+        total: lista.length,
+        page,
+        pageSize,
+        totalPages: Math.max(1, Math.ceil(lista.length / pageSize)),
+      })
+    }),
+    http.get('/sis/enrollments/confirmations', ({ request }) => {
+      const ano = anoDaConsulta(request)
+      if (!ano) return SEM_ANO()
+      const estado = new URL(request.url).searchParams.get('status')
+      return HttpResponse.json(
+        confirmacoesSis.filter((c) => c.academicYearId === ano && (!estado || c.status === estado)),
+      )
+    }),
   ]
 }

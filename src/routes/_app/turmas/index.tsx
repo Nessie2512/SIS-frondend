@@ -239,6 +239,7 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
   const podeEditar = usePode('editarTurma')
   const podeResultados = usePode('resultadosFinais')
   const podeLista = usePode('listaNominal')
+  const podeListaPdf = usePode('listaNominalPdf')
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const ano = anos.find((a) => a.id === anoLectivoId)
   const { data: turma } = useQuery({ ...turmaQuery(id ?? ''), enabled: Boolean(id) })
@@ -274,7 +275,7 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
                     <Trans>Imprimir lista</Trans>
                   </Link>
                 </Button>
-                <BotaoGerarListaNominal turmaId={turma.id} />
+                {podeListaPdf && <BotaoGerarListaNominal turmaId={turma.id} />}
               </>
             )}
             {podeAtribuir && !soLeitura && !turma.encerrada && <EncerrarTurma turma={turma} />}

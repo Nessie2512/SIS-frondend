@@ -266,7 +266,11 @@ export interface paths {
         delete: operations["ClassController_delete"];
         options?: never;
         head?: never;
-        patch?: never;
+        /**
+         * Editar a turma: nome, turno, lotação, sala e director de turma
+         * @description Só os campos enviados mudam. 409 CLASS_MODIFIED se expectedUpdatedAt não coincidir, 409 CLASS_CAPACITY_BELOW_ENROLLED, 409 ACADEMIC_YEAR_CLOSED, 409 CLASS_NAME_ALREADY_EXISTS, 400 CLASS_DIRECTOR_NOT_ASSIGNED.
+         */
+        patch: operations["ClassController_update"];
         trace?: never;
     };
     "/classes/search": {
@@ -653,7 +657,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Listar as matrículas do ano lectivo
+         * @description Paginada e ordenada pelo nome do estudante. Filtros: classe, turma, estado e pesquisa por nome ou código de estudante.
+         */
+        get: operations["EnrollmentController_list"];
         put?: never;
         /** Criar uma matrícula após validar o ano e a lotação da turma */
         post: operations["EnrollmentController_createEnrollment"];
@@ -670,7 +678,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        get?: never;
+        /**
+         * Listar as confirmações de matrícula do ano lectivo
+         * @description Por exemplo, as que esperam pagamento: status=PENDING_PAYMENT.
+         */
+        get: operations["EnrollmentController_confirmations"];
         put?: never;
         /** Solicitar confirmação de matrícula */
         post: operations["EnrollmentController_createConfirmation"];
@@ -1240,6 +1252,32 @@ export interface components {
             isActive: boolean;
             /** @example 40 */
             capacity: number;
+            /** @example Sala 12 */
+            room: string | null;
+            /**
+             * @description ID interno do professor director de turma
+             * @example 7
+             */
+            classDirectorTeacherId: number | null;
+            /**
+             * @description Última alteração (ISO 8601); enviar em expectedUpdatedAt ao editar
+             * @example 2026-11-03T10:00:00.000Z
+             */
+            updatedAt: string | null;
+        };
+        UpdateClassDto: {
+            /** @example 7.ª A */
+            name?: string;
+            /** @enum {string} */
+            period?: "MORNING" | "AFTERNOON" | "NIGHT" | "INTEGRAL";
+            /** @description Não pode ficar abaixo dos estudantes já matriculados (409 CLASS_CAPACITY_BELOW_ENROLLED) */
+            capacity?: number;
+            /** @description Sala; null ou vazio retira a sala */
+            room?: string | null;
+            /** @description ID interno do professor director; tem de ter uma atribuição activa na turma (400 CLASS_DIRECTOR_NOT_ASSIGNED). null retira */
+            classDirectorTeacherId?: number | null;
+            /** @description updatedAt lido antes de editar; se a turma mudou entretanto, responde 409 CLASS_MODIFIED */
+            expectedUpdatedAt?: string;
         };
         CreateAcademicYearDto: {
             /**
@@ -1427,6 +1465,65 @@ export interface components {
              * @example c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f
              */
             confirmationUuid: string;
+        };
+        EnrollmentStudentRefDto: {
+            /** @example 1 */
+            id: number;
+            /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
+            uuid: string;
+            /** @example 7.ª A */
+            name: string;
+            /** @example BMA20260001 */
+            studentCode: string | null;
+            /** @enum {string} */
+            sex: "M" | "F";
+        };
+        EnrollmentRefDto: {
+            /** @example 1 */
+            id: number;
+            /** @example a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d */
+            uuid: string;
+            /** @example 7.ª A */
+            name: string;
+        };
+        EnrollmentListItemDto: {
+            uuid: string;
+            /** @example 1 */
+            academicYearId: number;
+            /** @description Data da matrícula (ISO 8601) */
+            enrollmentDate: string;
+            /** @enum {string} */
+            status: "ACTIVE" | "CLOSED" | "COMPLETED";
+            student: components["schemas"]["EnrollmentStudentRefDto"];
+            /** @description Turma */
+            class: components["schemas"]["EnrollmentRefDto"];
+            /** @description Classe */
+            grade: components["schemas"]["EnrollmentRefDto"];
+        };
+        EnrollmentPageDto: {
+            data: components["schemas"]["EnrollmentListItemDto"][];
+            /** @example 120 */
+            total: number;
+            /** @example 1 */
+            page: number;
+            /** @example 25 */
+            pageSize: number;
+            /** @example 5 */
+            totalPages: number;
+        };
+        ConfirmationListItemDto: {
+            uuid: string;
+            /** @example 1 */
+            academicYearId: number;
+            /** @description Data do pedido (ISO 8601) */
+            confirmationDate: string;
+            /** @enum {string} */
+            status: "PENDING_PAYMENT" | "CONFIRMED" | "REJECTED";
+            student: components["schemas"]["EnrollmentStudentRefDto"];
+            /** @description Turma */
+            class: components["schemas"]["EnrollmentRefDto"];
+            /** @description Classe */
+            grade: components["schemas"]["EnrollmentRefDto"];
         };
         CreateConfirmationDto: {
             /** @example 12 */
@@ -2429,6 +2526,46 @@ export interface operations {
             };
             /** @description Erro ao processar a desativação. */
             422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    ClassController_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateClassDto"];
+            };
+        };
+        responses: {
+            /** @description Turma actualizada. */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassOutputDto"];
+                };
+            };
+            /** @description Turma não encontrada. */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Conflito com o estado actual da turma. */
+            409: {
                 headers: {
                     [name: string]: unknown;
                 };
@@ -3519,6 +3656,39 @@ export interface operations {
             };
         };
     };
+    EnrollmentController_list: {
+        parameters: {
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID interno da classe */
+                gradeId?: number;
+                /** @description ID interno da turma */
+                classId?: number;
+                /** @description ID interno do estudante (a matrícula dele no ano) */
+                studentId?: number;
+                status?: "ACTIVE" | "CLOSED" | "COMPLETED";
+                /** @description Parte do nome ou do código de estudante */
+                search?: string;
+                page?: number;
+                pageSize?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentPageDto"];
+                };
+            };
+        };
+    };
     EnrollmentController_createEnrollment: {
         parameters: {
             query?: never;
@@ -3538,6 +3708,33 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content?: never;
+            };
+        };
+    };
+    EnrollmentController_confirmations: {
+        parameters: {
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                status?: "PENDING_PAYMENT" | "CONFIRMED" | "REJECTED";
+                /** @description ID interno da classe */
+                gradeId?: number;
+                /** @description ID interno da turma */
+                classId?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ConfirmationListItemDto"][];
+                };
             };
         };
     };

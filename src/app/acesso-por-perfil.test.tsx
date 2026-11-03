@@ -69,11 +69,11 @@ describe('A interface adapta-se ao perfil de quem entrou', () => {
       'Professores',
       'Currículo',
     ])
-    // Sem a lista de matrículas no servidor, Matrículas abre o assistente
+    // A lista de matrículas já existe no servidor: Matrículas abre-a
     const menu = screen.getByRole('navigation', { name: 'Principal' })
     expect(within(menu).getByRole('link', { name: 'Matrículas' })).toHaveAttribute(
       'href',
-      '/matriculas/nova',
+      '/matriculas?page=1',
     )
     expect(screen.getByRole('link', { name: 'Matricular estudante' })).toBeInTheDocument()
     const areas = screen.getByRole('heading', { name: 'As suas áreas' }).parentElement!
@@ -114,7 +114,9 @@ describe('A interface adapta-se ao perfil de quem entrou', () => {
     expect(await screen.findByRole('heading', { name: 'João Baptista' }, { timeout: 10_000 }))
     expect(screen.queryByRole('tab')).toBeNull()
     expect(screen.queryByRole('button', { name: 'Transferir' })).toBeNull()
-    expect(screen.queryByRole('link', { name: 'Imprimir ficha' })).toBeNull()
+    expect(screen.getByRole('link', { name: 'Imprimir ficha' })).toBeInTheDocument()
+    // A matrícula do ano vem de GET /enrollments?studentId
+    expect(screen.getByText('7.ª classe · 7.ª A')).toBeInTheDocument()
 
     await userEvent.setup().click(screen.getByRole('button', { name: 'Situação' }))
     const opcoes = (await screen.findAllByRole('menuitem')).map((o) => o.textContent)

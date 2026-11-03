@@ -17,7 +17,12 @@ export const FUNCIONALIDADES = {
   // Áreas (menu lateral e rotas)
   inicio: {},
   estudantes: { permissoes: ['estudantes:ler'] },
-  matriculas: { permissoes: ['matriculas:ler'], semServidor: true },
+  matriculas: { permissoes: ['matriculas:ler'] },
+  /** Confirmar com os documentos e anular uma matrícula (o backend só aprova pagamentos) */
+  confirmarMatriculas: { permissoes: ['matriculas:aprovar'], semServidor: true },
+  /** No backend toda a matrícula tem turma; ordenar a lista é só pelo nome */
+  matriculasSemTurma: { semServidor: true },
+  ordenarMatriculas: { semServidor: true },
   matricular: { permissoes: ['matriculas:escrever'] },
   turmas: { permissoes: ['turmas:ler'] },
   distribuirTurmas: { permissoes: ['turmas:ler'] },
@@ -44,12 +49,15 @@ export const FUNCIONALIDADES = {
   /** Desistência e reingresso; anular o processo existe no backend */
   desistencia: { permissoes: ['estudantes:escrever'], semServidor: true },
   anularProcesso: { permissoes: ['estudantes:escrever'] },
-  imprimirFicha: { permissoes: ['estudantes:ler'], semServidor: true },
+  imprimirFicha: { permissoes: ['estudantes:ler'] },
 
   // Turmas e professores
-  editarTurma: { permissoes: ['turmas:escrever'], semServidor: true },
+  editarTurma: { permissoes: ['turmas:escrever'] },
   resultadosFinais: { permissoes: ['turmas:ler'], semServidor: true },
-  listaNominal: { permissoes: ['turmas:ler'], semServidor: true },
+  /** Imprimir a lista da turma no navegador */
+  listaNominal: { permissoes: ['turmas:ler'] },
+  /** Gerar a lista nominal em PDF, em segundo plano */
+  listaNominalPdf: { permissoes: ['turmas:ler'], semServidor: true },
   distribuicaoAutomatica: { permissoes: ['turmas:escrever'], semServidor: true },
   documentosProfessor: { permissoes: ['professores:ler'], semServidor: true },
 

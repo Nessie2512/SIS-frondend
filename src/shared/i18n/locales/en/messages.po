@@ -664,6 +664,10 @@ msgstr "The import failed. No student was created."
 msgid "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 msgstr "The class list is being generated. Follow it on the task board."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "A lotação não pode ficar abaixo dos estudantes já matriculados na turma."
+msgstr "Capacity cannot be lower than the students already enrolled in the class."
+
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "A lotação vai de 10 a 60 estudantes."
 msgstr "Capacity ranges from 10 to 60 students."
@@ -1577,10 +1581,6 @@ msgstr "Confirm enrolment"
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Confirmar matrículas"
 msgstr "Confirm enrolments"
-
-#: src/routes/-casca/areas.tsx
-msgid "Confirmar, matricular e renovar."
-msgstr "Confirm, enrol and renew."
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Confirmar…"
@@ -3298,6 +3298,10 @@ msgid "Já existe uma disciplina com este nome ou sigla."
 msgstr "A subject with this name or abbreviation already exists."
 
 #: src/shared/lib/erros-dominio.ts
+msgid "Já existe uma turma com esta designação neste ano lectivo."
+msgstr "A class with this name already exists in this school year."
+
+#: src/shared/lib/erros-dominio.ts
 msgid "Já há um ano lectivo em curso. Encerre-o primeiro."
 msgstr "There is already a school year in progress. Close it first."
 
@@ -3400,6 +3404,7 @@ msgstr "Maximum capacity reached"
 msgid "M"
 msgstr "M"
 
+#: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Mãe"
 msgstr "Mother"
@@ -3529,6 +3534,10 @@ msgstr "Enrolments to renew"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Matrículas confirmadas sem turma"
 msgstr "Confirmed enrolments without a class"
+
+#: src/routes/-casca/areas.tsx
+msgid "Matrículas do ano e novas matrículas."
+msgstr "The year’s enrolments and new enrolments."
 
 #: src/routes/_app/estudantes/importar.tsx
 msgid "Matrículas em {designacao}"
@@ -3983,6 +3992,10 @@ msgstr "The school year is closed. You can only view it."
 msgid "O ano passa a ser o ano em curso."
 msgstr "The year becomes the current year."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "O director de turma tem de ser um professor que lecciona nesta turma."
+msgstr "The class tutor must be a teacher who teaches this class."
+
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
 msgstr "The document is no longer valid on verification. It stays in the history, struck through and with the reason."
@@ -4233,6 +4246,7 @@ msgstr "Page {pagina} of {totalPaginas}"
 msgid "Paginação"
 msgstr "Pagination"
 
+#: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Pai"
 msgstr "Father"

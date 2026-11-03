@@ -39,6 +39,9 @@ export type CodigoErroDominio =
   | 'FINANCEIRO_INDISPONIVEL'
   /** Staging só com a API real: o backend SIS ainda não tem este endpoint */
   | 'NAO_DISPONIVEL'
+  | 'LOTACAO_ABAIXO_DOS_INSCRITOS'
+  | 'DIRECTOR_NAO_LECCIONA'
+  | 'TURMA_DUPLICADA'
 
 export interface ErroDeCampo {
   campo: string

@@ -15,7 +15,7 @@ import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { ordemParaApi, ordemParaUrl, ordenacaoDoUrl } from '@/shared/lib/ordenacao'
 import { cn } from '@/shared/lib/cn'
 import { useFiltrarEmTransicao } from '@/shared/lib/transicoes'
-import { useCan } from '@/shared/lib/permissoes'
+import { podeAgora, usePode } from '@/shared/lib/permissoes'
 import { formatarInstante } from '@/shared/lib/datas'
 import {
   Button,
@@ -33,7 +33,6 @@ import {
   type EtiquetaFiltro,
 } from '@/shared/ui'
 import { exigir } from '../../-acesso'
-import { podeAgora } from '@/shared/lib/permissoes'
 
 const ESTADOS = ['PENDENTE', 'CONFIRMADA', 'CONCLUIDA'] as const
 
@@ -93,6 +92,8 @@ const nomeDaMatricula = (m: Matricula) => m.estudanteNome
 
 function useColunas(): ColunaTabela<Matricula>[] {
   const { t } = useLingui()
+  // Sem documentos dos estudantes no servidor, a coluna diria «Completos» a todas
+  const comDocumentos = usePode('documentosEstudante')
   return useMemo(() => {
     const c = colunasDe<Matricula>()
     return [
@@ -126,17 +127,21 @@ function useColunas(): ColunaTabela<Matricula>[] {
           </span>
         ),
       }),
-      c.accessor('documentosEmFalta', {
-        header: t`Documentos`,
-        cell: (info) => {
-          const n = info.getValue()
-          return n ? (
-            <EtiquetaEstado tom="aviso">{t`${n} em falta`}</EtiquetaEstado>
-          ) : (
-            <span className="text-texto-3">{t`Completos`}</span>
-          )
-        },
-      }),
+      ...(comDocumentos
+        ? [
+            c.accessor('documentosEmFalta', {
+              header: t`Documentos`,
+              cell: (info) => {
+                const n = info.getValue()
+                return n ? (
+                  <EtiquetaEstado tom="aviso">{t`${n} em falta`}</EtiquetaEstado>
+                ) : (
+                  <span className="text-texto-3">{t`Completos`}</span>
+                )
+              },
+            }),
+          ]
+        : []),
       c.accessor('estadoRotulo', {
         header: t`Estado`,
         cell: (info) => (
@@ -152,7 +157,7 @@ function useColunas(): ColunaTabela<Matricula>[] {
         ),
       }),
     ]
-  }, [t])
+  }, [t, comDocumentos])
 }
 
 /** Matrículas por ano, classe e estado (guia 2.5). */
@@ -172,7 +177,10 @@ function EcraMatriculas() {
     enabled: Boolean(anoLectivoId),
   })
   const colunas = useColunas()
-  const podeConfirmar = useCan('matriculas:aprovar') && !soLeitura
+  const podeConfirmar = usePode('confirmarMatriculas') && !soLeitura
+  const podeRenovar = usePode('renovarMatriculas')
+  const comSemTurma = usePode('matriculasSemTurma')
+  const ordenaNoServidor = usePode('ordenarMatriculas')
   const total = data?.total ?? 0
   const pagina = data?.page ?? filtros.page
   const totalPaginas = data?.totalPaginas ?? 1
@@ -213,11 +221,13 @@ function EcraMatriculas() {
         <Can permissao="matriculas:escrever">
           {!soLeitura && (
             <div className="flex gap-2">
-              <Button asChild>
-                <Link to="/matriculas/renovar">
-                  <Trans>Renovar em lote</Trans>
-                </Link>
-              </Button>
+              {podeRenovar && (
+                <Button asChild>
+                  <Link to="/matriculas/renovar">
+                    <Trans>Renovar em lote</Trans>
+                  </Link>
+                </Button>
+              )}
               <Button asChild variante="primario">
                 <Link to="/matriculas/nova" data-atalho="novo">
                   <Plus aria-hidden />
@@ -266,7 +276,7 @@ function EcraMatriculas() {
             { valor: 'TODAS', rotulo: t`Todas` },
             { valor: 'PENDENTE', rotulo: t`A confirmar` },
             { valor: 'CONFIRMADA', rotulo: t`Confirmadas` },
-            { valor: 'SEM_TURMA', rotulo: t`Sem turma` },
+            ...(comSemTurma ? [{ valor: 'SEM_TURMA', rotulo: t`Sem turma` }] : []),
           ]}
         />
       </div>
@@ -302,6 +312,8 @@ function EcraMatriculas() {
           aoMudarOrdenacao={(o) =>
             filtrar(() => navigate({ search: (s) => ({ ...s, ordem: ordemParaUrl(o), page: 1 }) }))
           }
+          // Backend SIS: a lista vem ordenada pelo nome do estudante
+          semOrdenacao={!ordenaNoServidor}
           colunas={colunas}
           dados={data?.matriculas}
           idDaLinha={(m) => m.id}

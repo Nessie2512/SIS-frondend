@@ -23,17 +23,21 @@ import {
   EstadoVazio,
   PreVisualizacaoImpressao,
 } from '@/shared/ui'
+import { podeAgora, usePode } from '@/shared/lib/permissoes'
 import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/imprimir/estudante/$estudanteId')({
   beforeLoad: () => exigir('imprimirFicha'),
   loader: async ({ context: { queryClient }, params: { estudanteId } }) => {
     try {
+      // Documentos e percurso só onde o servidor os tem
       await Promise.all([
         queryClient.ensureQueryData(estudanteQuery(estudanteId)),
-        queryClient.ensureQueryData(documentosQuery(estudanteId)),
         queryClient.ensureQueryData(encarregadosQuery(estudanteId)),
-        queryClient.ensureQueryData(percursoQuery(estudanteId)),
+        podeAgora('documentosEstudante')
+          ? queryClient.ensureQueryData(documentosQuery(estudanteId))
+          : null,
+        podeAgora('percurso') ? queryClient.ensureQueryData(percursoQuery(estudanteId)) : null,
       ])
     } catch (erro) {
       if (eApiError(erro) && erro.status === 404) throw notFound()
@@ -68,16 +72,24 @@ function Par({ rotulo, valor }: { rotulo: string; valor: ReactNode }) {
   )
 }
 
-/** Ficha do estudante para imprimir (guia 7.6): dados, encarregados, documentos e percurso. */
+/**
+ * Ficha do estudante para imprimir (guia 7.6): dados, encarregados, documentos e percurso.
+ * Com o backend SIS: dados, matrícula do ano e pai e mãe; sem documentos nem percurso.
+ */
 function FichaImpressa() {
   const { t } = useLingui()
   const { estudanteId } = Route.useParams()
+  const comDocumentos = usePode('documentosEstudante')
+  const comPercurso = usePode('percurso')
   const { data: e } = useQuery(estudanteQuery(estudanteId))
-  const { data: documentos } = useQuery(documentosQuery(estudanteId))
+  const { data: documentos } = useQuery({
+    ...documentosQuery(estudanteId),
+    enabled: comDocumentos,
+  })
   const { data: encarregados } = useQuery(encarregadosQuery(estudanteId))
-  const { data: percurso } = useQuery(percursoQuery(estudanteId))
+  const { data: percurso } = useQuery({ ...percursoQuery(estudanteId), enabled: comPercurso })
   const { data: eu } = useQuery(meQuery())
-  if (!e || !documentos || !encarregados || !percurso) {
+  if (!e || !encarregados || (comDocumentos && !documentos) || (comPercurso && !percurso)) {
     return <Esqueleto className="h-[60vh] w-full" />
   }
 
@@ -151,66 +163,70 @@ function FichaImpressa() {
         )}
       </Seccao>
 
-      <Seccao titulo={t`Documentos`}>
-        <table className="w-full border-collapse text-left">
-          <caption className="sr-only">{t`Documentos de ${nome}`}</caption>
-          <thead>
-            <tr className="border-b border-linha text-legenda text-texto-2">
-              <th scope="col" className="py-1 font-medium">
-                <Trans>Documento</Trans>
-              </th>
-              <th scope="col" className="w-32 py-1 font-medium">
-                <Trans>Estado</Trans>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {documentos.map((d) => (
-              <tr key={d.id} className="border-b border-linha">
-                <td className="py-1">
-                  {d.designacao}
-                  {d.obrigatorio && <span className="text-texto-3"> · {t`obrigatório`}</span>}
-                </td>
-                <td className={d.estado === 'EM_FALTA' ? 'py-1 font-medium' : 'py-1'}>
-                  {ESTADO_DOC[d.estado]}
-                </td>
+      {documentos && (
+        <Seccao titulo={t`Documentos`}>
+          <table className="w-full border-collapse text-left">
+            <caption className="sr-only">{t`Documentos de ${nome}`}</caption>
+            <thead>
+              <tr className="border-b border-linha text-legenda text-texto-2">
+                <th scope="col" className="py-1 font-medium">
+                  <Trans>Documento</Trans>
+                </th>
+                <th scope="col" className="w-32 py-1 font-medium">
+                  <Trans>Estado</Trans>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Seccao>
+            </thead>
+            <tbody>
+              {documentos.map((d) => (
+                <tr key={d.id} className="border-b border-linha">
+                  <td className="py-1">
+                    {d.designacao}
+                    {d.obrigatorio && <span className="text-texto-3"> · {t`obrigatório`}</span>}
+                  </td>
+                  <td className={d.estado === 'EM_FALTA' ? 'py-1 font-medium' : 'py-1'}>
+                    {ESTADO_DOC[d.estado]}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Seccao>
+      )}
 
-      <Seccao titulo={t`Percurso`}>
-        <table className="w-full border-collapse text-left">
-          <caption className="sr-only">{t`Percurso de ${nome}`}</caption>
-          <thead>
-            <tr className="border-b border-linha text-legenda text-texto-2">
-              <th scope="col" className="w-24 py-1 font-medium">
-                <Trans>Data</Trans>
-              </th>
-              <th scope="col" className="w-24 py-1 font-medium">
-                <Trans>Ano</Trans>
-              </th>
-              <th scope="col" className="py-1 font-medium">
-                <Trans>Registo</Trans>
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            {percurso.map((p) => (
-              <tr key={p.id} className="border-b border-linha align-top">
-                <td className="tabular py-1">{formatarDataCivil(p.data.slice(0, 10))}</td>
-                <td className="tabular py-1">{p.anoLectivo}</td>
-                <td className="py-1">
-                  <span className="text-texto-2">{p.tipoRotulo}: </span>
-                  {p.descricao}
-                  {p.motivo && <span className="text-texto-3"> ({p.motivo})</span>}
-                </td>
+      {percurso && (
+        <Seccao titulo={t`Percurso`}>
+          <table className="w-full border-collapse text-left">
+            <caption className="sr-only">{t`Percurso de ${nome}`}</caption>
+            <thead>
+              <tr className="border-b border-linha text-legenda text-texto-2">
+                <th scope="col" className="w-24 py-1 font-medium">
+                  <Trans>Data</Trans>
+                </th>
+                <th scope="col" className="w-24 py-1 font-medium">
+                  <Trans>Ano</Trans>
+                </th>
+                <th scope="col" className="py-1 font-medium">
+                  <Trans>Registo</Trans>
+                </th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </Seccao>
+            </thead>
+            <tbody>
+              {percurso.map((p) => (
+                <tr key={p.id} className="border-b border-linha align-top">
+                  <td className="tabular py-1">{formatarDataCivil(p.data.slice(0, 10))}</td>
+                  <td className="tabular py-1">{p.anoLectivo}</td>
+                  <td className="py-1">
+                    <span className="text-texto-2">{p.tipoRotulo}: </span>
+                    {p.descricao}
+                    {p.motivo && <span className="text-texto-3"> ({p.motivo})</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </Seccao>
+      )}
 
       <footer className="mt-auto border-t border-linha pt-3 text-secundario text-texto-3">
         {t`Emitida em ${emitida} por ${autor}`}

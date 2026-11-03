@@ -1349,6 +1349,57 @@
       }
     },
     "/classes/{id}": {
+      "patch": {
+        "description": "Só os campos enviados mudam. 409 CLASS_MODIFIED se expectedUpdatedAt não coincidir, 409 CLASS_CAPACITY_BELOW_ENROLLED, 409 ACADEMIC_YEAR_CLOSED, 409 CLASS_NAME_ALREADY_EXISTS, 400 CLASS_DIRECTOR_NOT_ASSIGNED.",
+        "operationId": "ClassController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateClassDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Turma actualizada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClassOutputDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Turma não encontrada."
+          },
+          "409": {
+            "description": "Conflito com o estado actual da turma."
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Editar a turma: nome, turno, lotação, sala e director de turma",
+        "tags": [
+          "Classes (Turmas)"
+        ]
+      },
       "delete": {
         "operationId": "ClassController_delete",
         "parameters": [
@@ -4871,6 +4922,113 @@
       }
     },
     "/enrollments": {
+      "get": {
+        "description": "Paginada e ordenada pelo nome do estudante. Filtros: classe, turma, estado e pesquisa por nome ou código de estudante.",
+        "operationId": "EnrollmentController_list",
+        "parameters": [
+          {
+            "name": "academicYearId",
+            "required": true,
+            "in": "query",
+            "description": "ID numérico do ano lectivo",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "gradeId",
+            "required": false,
+            "in": "query",
+            "description": "ID interno da classe",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "classId",
+            "required": false,
+            "in": "query",
+            "description": "ID interno da turma",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "studentId",
+            "required": false,
+            "in": "query",
+            "description": "ID interno do estudante (a matrícula dele no ano)",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "CLOSED",
+                "COMPLETED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Parte do nome ou do código de estudante",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 25,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnrollmentPageDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar as matrículas do ano lectivo",
+        "tags": [
+          "Enrollments"
+        ]
+      },
       "post": {
         "operationId": "EnrollmentController_createEnrollment",
         "parameters": [],
@@ -4901,6 +5059,77 @@
       }
     },
     "/enrollments/confirmations": {
+      "get": {
+        "description": "Por exemplo, as que esperam pagamento: status=PENDING_PAYMENT.",
+        "operationId": "EnrollmentController_confirmations",
+        "parameters": [
+          {
+            "name": "academicYearId",
+            "required": true,
+            "in": "query",
+            "description": "ID numérico do ano lectivo",
+            "schema": {
+              "example": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING_PAYMENT",
+                "CONFIRMED",
+                "REJECTED"
+              ]
+            }
+          },
+          {
+            "name": "gradeId",
+            "required": false,
+            "in": "query",
+            "description": "ID interno da classe",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "classId",
+            "required": false,
+            "in": "query",
+            "description": "ID interno da turma",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConfirmationListItemDto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Listar as confirmações de matrícula do ano lectivo",
+        "tags": [
+          "Enrollments"
+        ]
+      },
       "post": {
         "operationId": "EnrollmentController_createConfirmation",
         "parameters": [],
@@ -7257,6 +7486,23 @@
           "capacity": {
             "type": "number",
             "example": 40
+          },
+          "room": {
+            "type": "string",
+            "nullable": true,
+            "example": "Sala 12"
+          },
+          "classDirectorTeacherId": {
+            "type": "number",
+            "nullable": true,
+            "description": "ID interno do professor director de turma",
+            "example": 7
+          },
+          "updatedAt": {
+            "type": "string",
+            "nullable": true,
+            "description": "Última alteração (ISO 8601); enviar em expectedUpdatedAt ao editar",
+            "example": "2026-11-03T10:00:00.000Z"
           }
         },
         "required": [
@@ -7267,8 +7513,48 @@
           "academicYearId",
           "period",
           "isActive",
-          "capacity"
+          "capacity",
+          "room",
+          "classDirectorTeacherId",
+          "updatedAt"
         ]
+      },
+      "UpdateClassDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "7.ª A"
+          },
+          "period": {
+            "type": "string",
+            "enum": [
+              "MORNING",
+              "AFTERNOON",
+              "NIGHT",
+              "INTEGRAL"
+            ]
+          },
+          "capacity": {
+            "type": "number",
+            "minimum": 1,
+            "description": "Não pode ficar abaixo dos estudantes já matriculados (409 CLASS_CAPACITY_BELOW_ENROLLED)"
+          },
+          "room": {
+            "type": "string",
+            "nullable": true,
+            "description": "Sala; null ou vazio retira a sala"
+          },
+          "classDirectorTeacherId": {
+            "type": "number",
+            "nullable": true,
+            "description": "ID interno do professor director; tem de ter uma atribuição activa na turma (400 CLASS_DIRECTOR_NOT_ASSIGNED). null retira"
+          },
+          "expectedUpdatedAt": {
+            "type": "string",
+            "description": "updatedAt lido antes de editar; se a turma mudou entretanto, responde 409 CLASS_MODIFIED"
+          }
+        }
       },
       "CreateAcademicYearDto": {
         "type": "object",
@@ -7618,6 +7904,202 @@
         },
         "required": [
           "confirmationUuid"
+        ]
+      },
+      "EnrollmentStudentRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "uuid": {
+            "type": "string",
+            "example": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+          },
+          "name": {
+            "type": "string",
+            "example": "7.ª A"
+          },
+          "studentCode": {
+            "type": "string",
+            "nullable": true,
+            "example": "BMA20260001"
+          },
+          "sex": {
+            "type": "string",
+            "enum": [
+              "M",
+              "F"
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "uuid",
+          "name",
+          "studentCode",
+          "sex"
+        ]
+      },
+      "EnrollmentRefDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "uuid": {
+            "type": "string",
+            "example": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+          },
+          "name": {
+            "type": "string",
+            "example": "7.ª A"
+          }
+        },
+        "required": [
+          "id",
+          "uuid",
+          "name"
+        ]
+      },
+      "EnrollmentListItemDto": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "academicYearId": {
+            "type": "number",
+            "example": 1
+          },
+          "enrollmentDate": {
+            "type": "string",
+            "description": "Data da matrícula (ISO 8601)"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ACTIVE",
+              "CLOSED",
+              "COMPLETED"
+            ]
+          },
+          "student": {
+            "$ref": "#/components/schemas/EnrollmentStudentRefDto"
+          },
+          "class": {
+            "description": "Turma",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EnrollmentRefDto"
+              }
+            ]
+          },
+          "grade": {
+            "description": "Classe",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EnrollmentRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "uuid",
+          "academicYearId",
+          "enrollmentDate",
+          "status",
+          "student",
+          "class",
+          "grade"
+        ]
+      },
+      "EnrollmentPageDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EnrollmentListItemDto"
+            }
+          },
+          "total": {
+            "type": "number",
+            "example": 120
+          },
+          "page": {
+            "type": "number",
+            "example": 1
+          },
+          "pageSize": {
+            "type": "number",
+            "example": 25
+          },
+          "totalPages": {
+            "type": "number",
+            "example": 5
+          }
+        },
+        "required": [
+          "data",
+          "total",
+          "page",
+          "pageSize",
+          "totalPages"
+        ]
+      },
+      "ConfirmationListItemDto": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "academicYearId": {
+            "type": "number",
+            "example": 1
+          },
+          "confirmationDate": {
+            "type": "string",
+            "description": "Data do pedido (ISO 8601)"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING_PAYMENT",
+              "CONFIRMED",
+              "REJECTED"
+            ]
+          },
+          "student": {
+            "$ref": "#/components/schemas/EnrollmentStudentRefDto"
+          },
+          "class": {
+            "description": "Turma",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EnrollmentRefDto"
+              }
+            ]
+          },
+          "grade": {
+            "description": "Classe",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/EnrollmentRefDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "uuid",
+          "academicYearId",
+          "confirmationDate",
+          "status",
+          "student",
+          "class",
+          "grade"
         ]
       },
       "CreateConfirmationDto": {

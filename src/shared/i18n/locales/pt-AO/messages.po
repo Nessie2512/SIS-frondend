@@ -663,6 +663,10 @@ msgstr "A importação falhou. Nenhum estudante foi criado."
 msgid "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 msgstr "A lista nominal está a ser gerada. Acompanhe no quadro de tarefas."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "A lotação não pode ficar abaixo dos estudantes já matriculados na turma."
+msgstr "A lotação não pode ficar abaixo dos estudantes já matriculados na turma."
+
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "A lotação vai de 10 a 60 estudantes."
 msgstr "A lotação vai de 10 a 60 estudantes."
@@ -1576,10 +1580,6 @@ msgstr "Confirmar matrícula"
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Confirmar matrículas"
 msgstr "Confirmar matrículas"
-
-#: src/routes/-casca/areas.tsx
-msgid "Confirmar, matricular e renovar."
-msgstr "Confirmar, matricular e renovar."
 
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
 msgid "Confirmar…"
@@ -3297,6 +3297,10 @@ msgid "Já existe uma disciplina com este nome ou sigla."
 msgstr "Já existe uma disciplina com este nome ou sigla."
 
 #: src/shared/lib/erros-dominio.ts
+msgid "Já existe uma turma com esta designação neste ano lectivo."
+msgstr "Já existe uma turma com esta designação neste ano lectivo."
+
+#: src/shared/lib/erros-dominio.ts
 msgid "Já há um ano lectivo em curso. Encerre-o primeiro."
 msgstr "Já há um ano lectivo em curso. Encerre-o primeiro."
 
@@ -3399,6 +3403,7 @@ msgstr "Lotação máxima atingida"
 msgid "M"
 msgstr "M"
 
+#: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Mãe"
 msgstr "Mãe"
@@ -3528,6 +3533,10 @@ msgstr "Matrículas a renovar"
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Matrículas confirmadas sem turma"
 msgstr "Matrículas confirmadas sem turma"
+
+#: src/routes/-casca/areas.tsx
+msgid "Matrículas do ano e novas matrículas."
+msgstr "Matrículas do ano e novas matrículas."
 
 #: src/routes/_app/estudantes/importar.tsx
 msgid "Matrículas em {designacao}"
@@ -3982,6 +3991,10 @@ msgstr "O ano lectivo está encerrado. Só é possível consultar."
 msgid "O ano passa a ser o ano em curso."
 msgstr "O ano passa a ser o ano em curso."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "O director de turma tem de ser um professor que lecciona nesta turma."
+msgstr "O director de turma tem de ser um professor que lecciona nesta turma."
+
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
 msgstr "O documento deixa de ser válido na verificação. Continua no histórico, riscado e com o motivo."
@@ -4232,6 +4245,7 @@ msgstr "Página {pagina} de {totalPaginas}"
 msgid "Paginação"
 msgstr "Paginação"
 
+#: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
 msgid "Pai"
 msgstr "Pai"

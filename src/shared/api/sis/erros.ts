@@ -32,6 +32,11 @@ const CODIGOS_SIS: Record<string, string> = {
   ENROLLMENT_REQUIRES_ACTIVE_ACADEMIC_YEAR: 'ANO_NAO_ACTIVO',
   ENROLLMENT_REQUIRES_ACTIVE_CLASS: 'TURMA_INACTIVA',
   CLASS_ACADEMIC_YEAR_MISMATCH: 'TURMA_DE_OUTRO_ANO',
+  CLASS_MODIFIED: 'VERSAO_DESACTUALIZADA',
+  CLASS_CAPACITY_BELOW_ENROLLED: 'LOTACAO_ABAIXO_DOS_INSCRITOS',
+  CLASS_DIRECTOR_NOT_ASSIGNED: 'DIRECTOR_NAO_LECCIONA',
+  CLASS_NAME_ALREADY_EXISTS: 'TURMA_DUPLICADA',
+  ACADEMIC_YEAR_CLOSED: 'ANO_ENCERRADO',
 }
 
 /** Códigos genéricos do backend que a interface já trata pelo estado HTTP. */
@@ -58,6 +63,8 @@ function doProblemJson(status: number, corpo: CorpoProblema): ProblemaSis {
     code: naoHabilitado
       ? 'DOCENTE_NAO_HABILITADO'
       : ((codigo && CODIGOS_SIS[codigo]) ??
+        // Servidores anteriores ao 03/11 mandavam code CONFLICT e o código só em detail
+        CODIGOS_SIS[texto(corpo.detail) ?? ''] ??
         (codigo && !CODIGOS_GENERICOS.has(codigo) ? codigo : codigoDoEstado(status))),
     requestId: texto(corpo.requestId),
   }

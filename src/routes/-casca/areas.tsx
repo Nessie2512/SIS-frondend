@@ -44,7 +44,7 @@ export function useAreas(): { principais: Area[]; definicoes: Area } {
         ligacao: { to: '/matriculas', search: { page: 1 } },
         icone: <ClipboardList />,
         rotulo: t`Matrículas`,
-        descricao: t`Confirmar, matricular e renovar.`,
+        descricao: t`Matrículas do ano e novas matrículas.`,
         atalho: 'g m',
       }
     : pode('matricular')
