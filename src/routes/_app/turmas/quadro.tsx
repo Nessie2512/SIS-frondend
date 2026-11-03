@@ -10,10 +10,12 @@ import { QuadroTurmas } from '@/features/inscrever-na-turma'
 import { quadroQuery } from '@/features/inscrever-na-turma/model/quadro'
 import { TEMPOS } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
-import { useCan } from '@/shared/lib/permissoes'
+import { usePode } from '@/shared/lib/permissoes'
 import { Aviso, Campo, ErroDeRota, Esqueleto, Selector } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/turmas/quadro')({
+  beforeLoad: () => exigir('distribuirTurmas'),
   validateSearch: z.object({ classeId: z.catch(z._default(z.string(), 'c7'), 'c7') }),
   loaderDeps: ({ search: { classeId } }) => ({ classeId }),
   loader: ({ context: { queryClient, anoLectivoId }, deps: { classeId } }) =>
@@ -35,7 +37,7 @@ function EcraQuadro() {
   const { classeId } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: classes = [] } = useQuery(classesQuery())
-  const podeDistribuir = useCan('turmas:escrever')
+  const podeDistribuir = usePode('distribuicaoAutomatica')
   const real = eReal('turmas')
 
   // As classes do backend SIS não têm o id 'c7' por omissão: abre na primeira classe
@@ -59,14 +61,20 @@ function EcraQuadro() {
             <Trans>Distribuição por turmas</Trans>
           </h1>
           <p className="text-secundario text-texto-2">
-            <Trans>
-              Arraste os estudantes entre turmas, ou use o menu de cada cartão. Mudar de turma pede
-              o motivo.
-            </Trans>
+            {real ? (
+              <Trans>
+                Arraste os estudantes sem turma para uma turma, ou use o menu de cada cartão.
+              </Trans>
+            ) : (
+              <Trans>
+                Arraste os estudantes entre turmas, ou use o menu de cada cartão. Mudar de turma
+                pede o motivo.
+              </Trans>
+            )}
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          {anoLectivoId && !soLeitura && podeDistribuir && !real && (
+          {anoLectivoId && !soLeitura && podeDistribuir && (
             <DistribuirAutomaticamente
               anoLectivoId={anoLectivoId}
               classeId={classeId}

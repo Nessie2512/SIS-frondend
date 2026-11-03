@@ -23,8 +23,10 @@ import {
   EstadoVazio,
   PreVisualizacaoImpressao,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/imprimir/estudante/$estudanteId')({
+  beforeLoad: () => exigir('imprimirFicha'),
   loader: async ({ context: { queryClient }, params: { estudanteId } }) => {
     try {
       await Promise.all([

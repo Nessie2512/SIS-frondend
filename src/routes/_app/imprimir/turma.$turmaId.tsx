@@ -8,8 +8,10 @@ import { inscritosQuery, turmaQuery } from '@/entities/turma'
 import { meQuery } from '@/entities/utilizador'
 import { formatarInstante } from '@/shared/lib/datas'
 import { CabecalhoImpressao, ErroDeRota, Esqueleto, PreVisualizacaoImpressao } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/imprimir/turma/$turmaId')({
+  beforeLoad: () => exigir('listaNominal'),
   loader: ({ context: { queryClient }, params: { turmaId } }) =>
     Promise.all([
       queryClient.ensureQueryData(turmaQuery(turmaId)),

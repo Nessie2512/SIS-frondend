@@ -17,7 +17,7 @@ import { OcorrenciasEstudante } from '@/features/registar-ocorrencia'
 import { ListaDocumentos } from '@/features/marcar-documento'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
-import { useCan } from '@/shared/lib/permissoes'
+import { useCan, usePode } from '@/shared/lib/permissoes'
 import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import {
   Avatar,
@@ -31,6 +31,7 @@ import {
   Separador,
   Separadores,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 const SEPARADORES = [
   'resumo',
@@ -42,6 +43,7 @@ const SEPARADORES = [
 ] as const
 
 export const Route = createFileRoute('/_app/estudantes/$estudanteId')({
+  beforeLoad: () => exigir('estudantes'),
   // O separador activo vive no URL: a ficha pode ser partilhada já no separador certo (guia 4.2)
   validateSearch: z.object({
     separador: z.catch(z._default(z.enum(SEPARADORES), 'resumo'), 'resumo'),
@@ -66,17 +68,36 @@ export const Route = createFileRoute('/_app/estudantes/$estudanteId')({
 function FichaEstudante() {
   const { t } = useLingui()
   const { estudanteId } = Route.useParams()
-  const { separador } = Route.useSearch()
+  const { separador: pedido } = Route.useSearch()
   const { soLeitura } = Route.useRouteContext()
   const podeRectificar = useCan('estudantes:escrever') // também registar ocorrências
   const podeEmitir = useCan('documentos:emitir')
   const podeMatricular = useCan('matriculas:escrever')
+  const podeTransferir = usePode('transferir')
+  const podeDesistencia = usePode('desistencia')
+  const podeAnular = usePode('anularProcesso')
+  const podeMudarSituacao = podeDesistencia || podeAnular
+  const podeImprimir = usePode('imprimirFicha')
+  // Separadores que o utilizador pode abrir (guia 2.7); os outros não aparecem
+  const visiveis: Record<(typeof SEPARADORES)[number], boolean> = {
+    resumo: true,
+    percurso: usePode('percurso'),
+    documentos: usePode('documentosEstudante'),
+    encarregados: usePode('encarregados'),
+    ocorrencias: usePode('ocorrencias'),
+    oficiais: usePode('documentosOficiais'),
+  }
+  const separador = visiveis[pedido] ? pedido : 'resumo'
+  const comSeparadores = SEPARADORES.filter((s) => visiveis[s]).length > 1
   const { anoLectivoId } = Route.useRouteContext()
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const ano = anos.find((a) => a.id === anoLectivoId)
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: e } = useQuery(estudanteQuery(estudanteId))
-  const { data: documentos } = useQuery(documentosQuery(estudanteId))
+  const { data: documentos } = useQuery({
+    ...documentosQuery(estudanteId),
+    enabled: visiveis.documentos,
+  })
   if (!e) return <FichaEsqueleto />
   const emFalta = e.documentosEmFalta
   const codigo = e.numeroProcesso
@@ -111,16 +132,18 @@ function FichaEstudante() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
-          {podeRectificar && !soLeitura && e.estado === 'ACTIVO' && (
+          {podeTransferir && !soLeitura && e.estado === 'ACTIVO' && (
             <TransferirEstudante estudante={e} />
           )}
-          {podeRectificar && !soLeitura && <MenuSituacao estudante={e} />}
-          <Button asChild>
-            <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
-              <Printer aria-hidden className="size-4 stroke-[1.5]" />
-              <Trans>Imprimir ficha</Trans>
-            </Link>
-          </Button>
+          {podeMudarSituacao && !soLeitura && <MenuSituacao estudante={e} />}
+          {podeImprimir && (
+            <Button asChild>
+              <Link to="/imprimir/estudante/$estudanteId" params={{ estudanteId }}>
+                <Printer aria-hidden className="size-4 stroke-[1.5]" />
+                <Trans>Imprimir ficha</Trans>
+              </Link>
+            </Button>
+          )}
         </div>
       </header>
 
@@ -133,26 +156,41 @@ function FichaEstudante() {
           })
         }
       >
-        <ListaSeparadores rotulo={t`Ficha do estudante`}>
-          <Separador valor="resumo">
-            <Trans>Resumo</Trans>
-          </Separador>
-          <Separador valor="percurso">
-            <Trans>Percurso</Trans>
-          </Separador>
-          <Separador valor="documentos" contador={documentos ? emFalta || undefined : undefined}>
-            <Trans>Documentos</Trans>
-          </Separador>
-          <Separador valor="encarregados">
-            <Trans>Encarregados</Trans>
-          </Separador>
-          <Separador valor="ocorrencias">
-            <Trans>Ocorrências</Trans>
-          </Separador>
-          <Separador valor="oficiais">
-            <Trans>Documentos oficiais</Trans>
-          </Separador>
-        </ListaSeparadores>
+        {comSeparadores && (
+          <ListaSeparadores rotulo={t`Ficha do estudante`}>
+            <Separador valor="resumo">
+              <Trans>Resumo</Trans>
+            </Separador>
+            {visiveis.percurso && (
+              <Separador valor="percurso">
+                <Trans>Percurso</Trans>
+              </Separador>
+            )}
+            {visiveis.documentos && (
+              <Separador
+                valor="documentos"
+                contador={documentos ? emFalta || undefined : undefined}
+              >
+                <Trans>Documentos</Trans>
+              </Separador>
+            )}
+            {visiveis.encarregados && (
+              <Separador valor="encarregados">
+                <Trans>Encarregados</Trans>
+              </Separador>
+            )}
+            {visiveis.ocorrencias && (
+              <Separador valor="ocorrencias">
+                <Trans>Ocorrências</Trans>
+              </Separador>
+            )}
+            {visiveis.oficiais && (
+              <Separador valor="oficiais">
+                <Trans>Documentos oficiais</Trans>
+              </Separador>
+            )}
+          </ListaSeparadores>
+        )}
 
         <PainelSeparador value="resumo" className="flex flex-col gap-6 pt-6">
           {e.estado === 'ACTIVO' && !e.matriculaId && !soLeitura && podeMatricular && ano && (
@@ -164,43 +202,53 @@ function FichaEstudante() {
           )}
           <DadosEstudante estudante={e} soLeitura={soLeitura} />
         </PainelSeparador>
-        <PainelSeparador value="percurso" className="pt-6">
-          <PercursoEstudante
-            estudanteId={estudanteId}
-            podeRectificar={podeRectificar && !soLeitura}
-          />
-        </PainelSeparador>
-        <PainelSeparador value="documentos" className="pt-6">
-          {documentos ? (
-            <div className="flex flex-col gap-6">
-              <CartaoMatricula estudante={e} documentos={documentos} soLeitura={soLeitura} />
-              <ListaDocumentos
-                estudanteId={estudanteId}
-                documentos={documentos}
-                soLeitura={soLeitura}
-              />
-            </div>
-          ) : (
-            <Esqueleto className="h-64 w-full" />
-          )}
-        </PainelSeparador>
-        <PainelSeparador value="encarregados" className="pt-6">
-          <EncarregadosEstudante
-            estudanteId={estudanteId}
-            nome={e.nome}
-            podeEditar={podeRectificar && !soLeitura}
-          />
-        </PainelSeparador>
-        <PainelSeparador value="ocorrencias" className="pt-6">
-          <OcorrenciasEstudante
-            estudanteId={estudanteId}
-            nome={e.nome}
-            podeRegistar={podeRectificar && !soLeitura}
-          />
-        </PainelSeparador>
-        <PainelSeparador value="oficiais" className="pt-6">
-          <DocumentosOficiais estudanteId={estudanteId} nome={e.nome} podeEmitir={podeEmitir} />
-        </PainelSeparador>
+        {visiveis.percurso && (
+          <PainelSeparador value="percurso" className="pt-6">
+            <PercursoEstudante
+              estudanteId={estudanteId}
+              podeRectificar={podeRectificar && !soLeitura}
+            />
+          </PainelSeparador>
+        )}
+        {visiveis.documentos && (
+          <PainelSeparador value="documentos" className="pt-6">
+            {documentos ? (
+              <div className="flex flex-col gap-6">
+                <CartaoMatricula estudante={e} documentos={documentos} soLeitura={soLeitura} />
+                <ListaDocumentos
+                  estudanteId={estudanteId}
+                  documentos={documentos}
+                  soLeitura={soLeitura}
+                />
+              </div>
+            ) : (
+              <Esqueleto className="h-64 w-full" />
+            )}
+          </PainelSeparador>
+        )}
+        {visiveis.encarregados && (
+          <PainelSeparador value="encarregados" className="pt-6">
+            <EncarregadosEstudante
+              estudanteId={estudanteId}
+              nome={e.nome}
+              podeEditar={podeRectificar && !soLeitura}
+            />
+          </PainelSeparador>
+        )}
+        {visiveis.ocorrencias && (
+          <PainelSeparador value="ocorrencias" className="pt-6">
+            <OcorrenciasEstudante
+              estudanteId={estudanteId}
+              nome={e.nome}
+              podeRegistar={podeRectificar && !soLeitura}
+            />
+          </PainelSeparador>
+        )}
+        {visiveis.oficiais && (
+          <PainelSeparador value="oficiais" className="pt-6">
+            <DocumentosOficiais estudanteId={estudanteId} nome={e.nome} podeEmitir={podeEmitir} />
+          </PainelSeparador>
+        )}
       </Separadores>
     </article>
   )

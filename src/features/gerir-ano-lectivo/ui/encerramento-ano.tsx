@@ -23,6 +23,7 @@ import {
   notificar,
 } from '@/shared/ui'
 import { useEncerrarAno } from '../model/use-accoes-ano'
+import { usePode } from '@/shared/lib/permissoes'
 
 type Pendencia = Encerramento['pendencias'][number]
 
@@ -109,6 +110,9 @@ export function EncerramentoAno({ ano }: { ano: AnoLectivo }) {
 
 function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerramento }) {
   const { t } = useLingui()
+  const podeMatriculas = usePode('matriculas')
+  const podeQuadro = usePode('distribuirTurmas')
+  const podeResultados = usePode('resultadosFinais')
   const n = pendencia.quantidade
   const resolvida = n === 0
   const TITULO = {
@@ -137,7 +141,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
               : `${plural(n, { one: 'Falta #.', other: 'Faltam #.' })} ${AJUDA[pendencia.tipo]}`}
           </span>
         </div>
-        {!resolvida && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
+        {!resolvida && podeMatriculas && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
           <Link
             to="/matriculas"
             search={{ estado: 'PENDENTE', page: 1 }}
@@ -146,7 +150,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
             <Trans>Ver matrículas</Trans>
           </Link>
         )}
-        {!resolvida && pendencia.tipo === 'CONFIRMADAS_SEM_TURMA' && (
+        {!resolvida && podeQuadro && pendencia.tipo === 'CONFIRMADAS_SEM_TURMA' && (
           <Link
             to="/turmas/quadro"
             className="text-secundario whitespace-nowrap text-acento hover:underline"
@@ -155,7 +159,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
           </Link>
         )}
       </div>
-      {!resolvida && pendencia.tipo === 'RESULTADOS_EM_FALTA' && (
+      {!resolvida && podeResultados && pendencia.tipo === 'RESULTADOS_EM_FALTA' && (
         <ul
           aria-label={t`Turmas com resultados em falta`}
           className="ml-8 flex flex-wrap gap-x-4 gap-y-1 text-secundario"

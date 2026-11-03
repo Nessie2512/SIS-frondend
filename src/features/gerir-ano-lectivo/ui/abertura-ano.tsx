@@ -13,8 +13,9 @@ import {
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
 import { eReal } from '@/shared/config/ligacao'
+import { podeUsar, type Funcionalidade } from '@/shared/config/funcionalidades'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
-import { useCan } from '@/shared/lib/permissoes'
+import { useCan, usePermissoesStore } from '@/shared/lib/permissoes'
 import { Button, Dialogo, Esqueleto, notificar } from '@/shared/ui'
 import { useActivarAno, useDuplicarTurmas } from '../model/use-accoes-ano'
 
@@ -167,6 +168,15 @@ function LigacaoNoAno({
   )
 }
 
+const ECRA_DA_ETAPA: Partial<Record<Etapa['id'], Funcionalidade>> = {
+  CALENDARIO: 'calendario',
+  TURMAS: 'turmas',
+  RENOVACAO: 'renovarMatriculas',
+  MATRICULAS: 'matricular',
+  DISTRIBUICAO: 'distribuirTurmas',
+  DOCENTES: 'turmas',
+}
+
 function AccaoEtapa({
   etapa,
   ano,
@@ -181,7 +191,11 @@ function AccaoEtapa({
   const { t } = useLingui()
   // Activar o ano é do ADMIN no backend SIS (@Roles), não de quem cria o ano
   const podeActivar = useCan('anos:activar')
+  const permissoes = usePermissoesStore((e) => e.permissoes)
   const rotulo = t`Abrir: ${titulo}`
+  // Cada etapa abre um ecrã: só se mostra a quem o pode abrir (guia 2.7)
+  const ecra = ECRA_DA_ETAPA[etapa.id]
+  if (ecra && !podeUsar(ecra, permissoes)) return null
   switch (etapa.id) {
     case 'CALENDARIO':
       return (

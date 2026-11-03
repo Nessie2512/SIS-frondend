@@ -34,6 +34,7 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../-acesso'
 
 const TIPOS = [
   'DECLARACAO_MATRICULA',
@@ -61,6 +62,7 @@ const CAMPOS_ORDEM: Record<string, string> = {
 }
 
 export const Route = createFileRoute('/_app/documentos')({
+  beforeLoad: () => exigir('documentosOficiais'),
   validateSearch: pesquisaDocumentos,
   loader: ({ context: { queryClient }, location, cause }) => {
     const { q, ordem, ...resto } = pesquisaDocumentos.parse(location.search)

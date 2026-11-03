@@ -30,6 +30,7 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 const ACCOES = Object.keys(ACCOES_AUDITORIA) as AccaoAuditoria[]
 
@@ -40,6 +41,7 @@ const pesquisaAuditoria = z.object({
 })
 
 export const Route = createFileRoute('/_app/definicoes/auditoria')({
+  beforeLoad: () => exigir('auditoria'),
   validateSearch: pesquisaAuditoria,
   loader: ({ context: { queryClient }, location, cause }) => {
     const { q, ...resto } = pesquisaAuditoria.parse(location.search)

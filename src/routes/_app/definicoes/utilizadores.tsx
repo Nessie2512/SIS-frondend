@@ -36,6 +36,7 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 const ESTADOS = ['ACTIVO', 'INACTIVO'] as const
 
@@ -46,6 +47,7 @@ const pesquisaUtilizadores = z.object({
 })
 
 export const Route = createFileRoute('/_app/definicoes/utilizadores')({
+  beforeLoad: () => exigir('utilizadores'),
   validateSearch: pesquisaUtilizadores,
   loader: ({ context: { queryClient }, location, cause }) => {
     const { q, ...resto } = pesquisaUtilizadores.parse(location.search)

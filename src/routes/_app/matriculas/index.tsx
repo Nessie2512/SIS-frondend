@@ -1,7 +1,7 @@
 import { plural } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, Link, redirect, useNavigate } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useMemo } from 'react'
 import * as z from 'zod/mini'
@@ -32,6 +32,8 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
+import { podeAgora } from '@/shared/lib/permissoes'
 
 const ESTADOS = ['PENDENTE', 'CONFIRMADA', 'CONCLUIDA'] as const
 
@@ -56,6 +58,12 @@ const CAMPOS_ORDEM: Record<string, string> = {
 }
 
 export const Route = createFileRoute('/_app/matriculas/')({
+  // Sem a lista de matrículas (por permissão ou no servidor), quem matricula vai ao assistente
+  beforeLoad: () => {
+    if (!podeAgora('matriculas') && podeAgora('matricular'))
+      throw redirect({ to: '/matriculas/nova', replace: true })
+    exigir('matriculas')
+  },
   validateSearch: pesquisaMatriculas,
   // Sem loaderDeps: mudar filtro ou página mantém o ecrã e os resultados anteriores
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {

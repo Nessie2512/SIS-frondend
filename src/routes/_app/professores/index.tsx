@@ -45,6 +45,7 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 const ESTADOS = ['ACTIVO', 'LICENCA', 'SUSPENSO', 'DESLIGADO'] as const
 
@@ -67,6 +68,7 @@ const CAMPOS_ORDEM: Record<string, string> = {
 }
 
 export const Route = createFileRoute('/_app/professores/')({
+  beforeLoad: () => exigir('professores'),
   validateSearch: pesquisaProfessores,
   // Sem loaderDeps: pesquisar ou filtrar mantém o ecrã e os resultados anteriores
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {

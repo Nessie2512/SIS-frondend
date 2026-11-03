@@ -6,8 +6,10 @@ import { NovoAnoLectivo } from '@/features/gerir-ano-lectivo'
 import { formatarDataCivil } from '@/shared/lib/datas'
 import { useCan } from '@/shared/lib/permissoes'
 import { Aviso, ErroDeRota, Esqueleto, EstadoVazio, EtiquetaEstado } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/anos-lectivos/')({
+  beforeLoad: () => exigir('anosLectivos'),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(anosLectivosQuery()),
   errorComponent: ErroDeRota,
   component: EcraAnosLectivos,

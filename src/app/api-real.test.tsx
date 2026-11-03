@@ -14,7 +14,7 @@ import { sessao } from '@/shared/api'
 import { definirAnoSis, referenciaSis } from '@/shared/api/sis'
 import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { renderizarEm } from '@/test/renderizar'
-import { anosSis, handlersSis } from '@/test/sis'
+import { anosSis, handlersSis, meSis } from '@/test/sis'
 import { criarQueryClient } from './query-client'
 
 // Staging: todas as áreas no backend SIS, sem simulação
@@ -192,6 +192,11 @@ describe('API real: ecrãs', () => {
   })
 
   it('relatórios: contagens do ano por sexo, ciclo e turma', async () => {
+    server.use(
+      http.get('/sis/auth/me', () =>
+        HttpResponse.json({ ...meSis, permissions: [...meSis.permissions, 'reports:read'] }),
+      ),
+    )
     renderizarEm('/relatorios')
     expect(await screen.findByRole('heading', { name: 'Estudantes por ciclo' })).toBeInTheDocument()
     // Resumo: 12 rapazes + 15 raparigas
@@ -238,13 +243,13 @@ describe('API real: ecrãs', () => {
     expect(criados).toEqual([{ label: designacao, startYear: Number(designacao.slice(0, 4)) }])
   })
 
-  it('o que o backend ainda não tem diz que não está disponível', async () => {
-    renderizarEm('/calendario')
-    expect(
-      await screen.findByText(/ainda não está disponível no servidor/, undefined, {
-        timeout: 10_000,
-      }),
-    ).toBeInTheDocument()
+  it('o que o backend ainda não tem não aparece: nem no menu, nem pelo endereço', async () => {
+    const { router } = renderizarEm('/calendario')
+    const menu = await screen.findByRole('navigation', { name: 'Principal' }, { timeout: 10_000 })
+    expect(within(menu).getByRole('link', { name: 'Estudantes' })).toBeInTheDocument()
+    expect(within(menu).queryByRole('link', { name: 'Calendário' })).toBeNull()
+    expect(within(menu).queryByRole('link', { name: 'Documentos' })).toBeNull()
+    await waitFor(() => expect(router.state.location.pathname).toBe('/'))
   })
 })
 

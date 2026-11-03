@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Printer } from 'lucide-react'
 import { useMemo } from 'react'
-import { useCan } from '@/shared/lib/permissoes'
+import { useCan, usePode } from '@/shared/lib/permissoes'
 // zod/mini nas rotas: os esquemas de pesquisa vão no JavaScript inicial e o mini pesa uma fracção
 import * as z from 'zod/mini'
 import {
@@ -34,6 +34,7 @@ import {
   TabelaDados,
   type ColunaTabela,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 // Filtros, página e turma aberta vivem no URL; valores inválidos regressam ao padrão (guia 4.6, 7.1)
 const pesquisaTurmas = z.object({
@@ -46,6 +47,7 @@ const pesquisaTurmas = z.object({
 })
 
 export const Route = createFileRoute('/_app/turmas/')({
+  beforeLoad: () => exigir('turmas'),
   validateSearch: pesquisaTurmas,
   // Sem loaderDeps: mudar filtro ou página mantém o ecrã e os resultados anteriores
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
@@ -234,6 +236,9 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
   const { t } = useLingui()
   const { anoLectivoId, soLeitura } = Route.useRouteContext()
   const podeAtribuir = useCan('turmas:escrever')
+  const podeEditar = usePode('editarTurma')
+  const podeResultados = usePode('resultadosFinais')
+  const podeLista = usePode('listaNominal')
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const ano = anos.find((a) => a.id === anoLectivoId)
   const { data: turma } = useQuery({ ...turmaQuery(id ?? ''), enabled: Boolean(id) })
@@ -254,18 +259,24 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
                 <Trans>Abrir no quadro</Trans>
               </Link>
             </Button>
-            <Button asChild>
-              <Link to="/turmas/$turmaId/resultados" params={{ turmaId: turma.id }}>
-                <Trans>Resultados finais</Trans>
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link to="/imprimir/turma/$turmaId" params={{ turmaId: turma.id }}>
-                <Printer aria-hidden className="size-4 stroke-[1.5]" />
-                <Trans>Imprimir lista</Trans>
-              </Link>
-            </Button>
-            <BotaoGerarListaNominal turmaId={turma.id} />
+            {podeResultados && (
+              <Button asChild>
+                <Link to="/turmas/$turmaId/resultados" params={{ turmaId: turma.id }}>
+                  <Trans>Resultados finais</Trans>
+                </Link>
+              </Button>
+            )}
+            {podeLista && (
+              <>
+                <Button asChild>
+                  <Link to="/imprimir/turma/$turmaId" params={{ turmaId: turma.id }}>
+                    <Printer aria-hidden className="size-4 stroke-[1.5]" />
+                    <Trans>Imprimir lista</Trans>
+                  </Link>
+                </Button>
+                <BotaoGerarListaNominal turmaId={turma.id} />
+              </>
+            )}
             {podeAtribuir && !soLeitura && !turma.encerrada && <EncerrarTurma turma={turma} />}
           </>
         )
@@ -300,7 +311,7 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
           <DadosTurma
             turma={turma}
             anoLectivoId={ano.id}
-            podeEditar={podeAtribuir}
+            podeEditar={podeAtribuir && podeEditar}
             desactivadoPorque={
               soLeitura
                 ? t`O ano lectivo está encerrado. Só é possível consultar.`

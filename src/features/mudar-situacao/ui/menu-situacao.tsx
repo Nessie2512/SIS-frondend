@@ -7,6 +7,7 @@ import type { Estudante } from '@/entities/estudante'
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
+import { usePode } from '@/shared/lib/permissoes'
 import { AreaTexto, Button, Campo, Dialogo, notificar, SelectorData } from '@/shared/ui'
 import { useMudarSituacao, type AccaoSituacao } from '../model/use-mudar-situacao'
 
@@ -17,7 +18,9 @@ import { useMudarSituacao, type AccaoSituacao } from '../model/use-mudar-situaca
 export function MenuSituacao({ estudante }: { estudante: Estudante }) {
   const { t } = useLingui()
   const [accao, setAccao] = useState<AccaoSituacao>()
-  const opcoes: { accao: AccaoSituacao; rotulo: string; descricao: string }[] =
+  const podeDesistencia = usePode('desistencia') // também o reingresso
+  const podeAnular = usePode('anularProcesso')
+  const todas: { accao: AccaoSituacao; rotulo: string; descricao: string }[] =
     estudante.estado === 'ACTIVO'
       ? [
           {
@@ -40,6 +43,7 @@ export function MenuSituacao({ estudante }: { estudante: Estudante }) {
             },
           ]
         : []
+  const opcoes = todas.filter((o) => (o.accao === 'ANULACAO' ? podeAnular : podeDesistencia))
   if (!opcoes.length) return null
 
   return (

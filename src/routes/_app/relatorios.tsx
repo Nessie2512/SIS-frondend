@@ -5,8 +5,10 @@ import { CatalogoRelatorios, ContagensAno, ExportacoesRecentes } from '@/feature
 import { eReal } from '@/shared/config/ligacao'
 import { TEMPOS } from '@/shared/config/constantes'
 import { ErroDeRota, Esqueleto, EstadoVazio } from '@/shared/ui'
+import { exigir } from '../-acesso'
 
 export const Route = createFileRoute('/_app/relatorios')({
+  beforeLoad: () => exigir('relatorios'),
   // Backend SIS: sem catálogo de relatórios em ficheiro; as contagens carregam no ecrã
   loader: ({ context: { queryClient } }) =>
     eReal('estudantes') ? undefined : queryClient.ensureQueryData(catalogoQuery()),
