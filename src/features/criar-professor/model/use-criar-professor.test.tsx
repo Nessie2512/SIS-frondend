@@ -28,6 +28,7 @@ describe('novo professor no backend SIS', () => {
         bairro: 'Maianga',
         municipio: 'Luanda',
         provincia: 'Luanda',
+        disciplinas: ['disc-mat', 'disc-port'],
         area: 'STEM',
         habilitacao: "Bachelor's degree",
         supervisor: false,
@@ -50,6 +51,7 @@ describe('novo professor no backend SIS', () => {
         isSupervisor: false,
         teacherField: 'STEM',
         educationalAttainment: "Bachelor's degree",
+        specialtySubjectIds: [100, 101],
       },
     })
     expect(criado).toMatchObject({ uuid: 'prof-novo' })

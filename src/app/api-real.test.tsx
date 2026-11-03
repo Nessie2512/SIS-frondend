@@ -153,8 +153,17 @@ describe('API real: professores e contas', () => {
     const c = cliente()
     const lista = await c.fetchQuery(professoresQuery({ anoLectivoId: 'ano-sis-2026' }))
     expect(lista.professores.map((p) => [p.nome, p.disciplinasTexto])).toEqual([
-      ['Mário Kiala', 'Ciências Exactas'],
+      ['Mário Kiala', 'Matemática'],
     ])
+    // Atribuir uma disciplina: só aparecem os professores que a podem leccionar
+    const paraMatematica = await c.fetchQuery(
+      professoresQuery({ anoLectivoId: 'ano-sis-2026', disciplinaId: 'disc-mat' }),
+    )
+    expect(paraMatematica.professores.map((p) => p.id)).toEqual(['prof-1'])
+    const paraPortugues = await c.fetchQuery(
+      professoresQuery({ anoLectivoId: 'ano-sis-2026', disciplinaId: 'disc-port' }),
+    )
+    expect(paraPortugues.professores).toEqual([])
     const prof = await c.fetchQuery(professorQuery('prof-1', 'ano-sis-2026'))
     expect(prof.atribuicoes).toEqual([
       expect.objectContaining({ turma: '7.ª A', classe: '7.ª classe', disciplina: 'Matemática' }),

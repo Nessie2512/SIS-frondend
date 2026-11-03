@@ -835,6 +835,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/teachers/{uuid}/specialties": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Definir as disciplinas que o professor pode leccionar (necessárias para lhe atribuir turmas) */
+        put: operations["TeacherController_updateSpecialties"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/teachers/{uuid}/assignments": {
         parameters: {
             query?: never;
@@ -1455,6 +1472,14 @@ export interface components {
              */
             isSupervisor: boolean;
             /**
+             * @description IDs numéricos das disciplinas que pode leccionar (sem elas não recebe atribuições)
+             * @example [
+             *       3,
+             *       5
+             *     ]
+             */
+            specialtySubjectIds?: number[];
+            /**
              * @example STEM
              * @enum {string}
              */
@@ -1498,10 +1523,28 @@ export interface components {
             teacherField: string;
             /** @example Bachelor's degree */
             educationalAttainment: string;
+            /**
+             * @description IDs numéricos das disciplinas que pode leccionar
+             * @example [
+             *       3,
+             *       5
+             *     ]
+             */
+            specialtySubjectIds: number[];
         };
         TeacherReportResponseDto: {
             /** @example 8 */
             count: number;
+        };
+        UpdateTeacherSpecialtyDto: {
+            /**
+             * @description IDs numéricos das disciplinas de especialidade
+             * @example [
+             *       3,
+             *       5
+             *     ]
+             */
+            specialtySubjectIds: number[];
         };
         CreateAssignmentDto: {
             /**
@@ -3861,6 +3904,31 @@ export interface operations {
             cookie?: never;
         };
         requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TeacherOutputDto"];
+                };
+            };
+        };
+    };
+    TeacherController_updateSpecialties: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateTeacherSpecialtyDto"];
+            };
+        };
         responses: {
             200: {
                 headers: {

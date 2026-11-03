@@ -49,13 +49,16 @@ function doProblemJson(status: number, corpo: CorpoProblema): ProblemaSis {
         return [{ campo: texto(field) ?? texto(campo) ?? paraErroDeCampo(m).campo, mensagem: m }]
       })
     : []
+  // A atribuição de turma recusa disciplinas fora das especialidades só com o texto (422)
+  const naoHabilitado = /not qualified to teach/i.test(texto(corpo.detail) ?? '')
   return {
     title: texto(corpo.title) ?? `Pedido falhou (${status})`,
     detail: texto(corpo.detail),
     errors,
-    code:
-      (codigo && CODIGOS_SIS[codigo]) ??
-      (codigo && !CODIGOS_GENERICOS.has(codigo) ? codigo : codigoDoEstado(status)),
+    code: naoHabilitado
+      ? 'DOCENTE_NAO_HABILITADO'
+      : ((codigo && CODIGOS_SIS[codigo]) ??
+        (codigo && !CODIGOS_GENERICOS.has(codigo) ? codigo : codigoDoEstado(status))),
     requestId: texto(corpo.requestId),
   }
 }

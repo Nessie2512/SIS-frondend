@@ -5998,6 +5998,52 @@
         ]
       }
     },
+    "/teachers/{uuid}/specialties": {
+      "put": {
+        "operationId": "TeacherController_updateSpecialties",
+        "parameters": [
+          {
+            "name": "uuid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateTeacherSpecialtyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TeacherOutputDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Definir as disciplinas que o professor pode leccionar (necessárias para lhe atribuir turmas)",
+        "tags": [
+          "Teachers Profiles"
+        ]
+      }
+    },
     "/teachers/{uuid}/assignments": {
       "post": {
         "operationId": "TeacherController_assignToClass",
@@ -7657,6 +7703,17 @@
             "example": false,
             "description": "Define se o professor atua como coordenador/supervisor de curso"
           },
+          "specialtySubjectIds": {
+            "example": [
+              3,
+              5
+            ],
+            "description": "IDs numéricos das disciplinas que pode leccionar (sem elas não recebe atribuições)",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          },
           "teacherField": {
             "type": "string",
             "enum": [
@@ -7746,6 +7803,17 @@
           "educationalAttainment": {
             "type": "string",
             "example": "Bachelor's degree"
+          },
+          "specialtySubjectIds": {
+            "example": [
+              3,
+              5
+            ],
+            "description": "IDs numéricos das disciplinas que pode leccionar",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
           }
         },
         "required": [
@@ -7761,7 +7829,8 @@
           "isActive",
           "isSupervisor",
           "teacherField",
-          "educationalAttainment"
+          "educationalAttainment",
+          "specialtySubjectIds"
         ]
       },
       "TeacherReportResponseDto": {
@@ -7774,6 +7843,25 @@
         },
         "required": [
           "count"
+        ]
+      },
+      "UpdateTeacherSpecialtyDto": {
+        "type": "object",
+        "properties": {
+          "specialtySubjectIds": {
+            "example": [
+              3,
+              5
+            ],
+            "description": "IDs numéricos das disciplinas de especialidade",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "specialtySubjectIds"
         ]
       },
       "CreateAssignmentDto": {

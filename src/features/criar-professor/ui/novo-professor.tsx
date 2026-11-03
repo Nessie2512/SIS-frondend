@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
+import { EscolherDisciplinas } from '@/entities/disciplina'
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -46,6 +47,7 @@ const CAMPO_DO_SERVIDOR: Record<string, string> = {
   nationality: 'nacionalidade',
   teacherField: 'area',
   educationalAttainment: 'habilitacao',
+  specialtySubjectIds: 'disciplinas',
 }
 
 /** Novo professor (backend SIS: POST /teachers), em folha lateral (guia 7.3). */
@@ -54,6 +56,7 @@ export function NovoProfessor() {
   const criar = useCriarProfessor()
   const [aberta, setAberta] = useState(false)
   const [pessoa, setPessoa] = useState<DadosPessoa>(PESSOA_VAZIA)
+  const [disciplinas, setDisciplinas] = useState<string[]>([])
   const [area, setArea] = useState<AreaFormacao | null>(null)
   const [habilitacao, setHabilitacao] = useState<Habilitacao | null>(null)
   const [supervisor, setSupervisor] = useState(false)
@@ -68,6 +71,7 @@ export function NovoProfessor() {
     bairro: t`Bairro`,
     municipio: t`Município`,
     provincia: t`Província`,
+    disciplinas: t`Disciplinas que pode leccionar`,
     area: t`Área de formação`,
     habilitacao: t`Habilitação`,
   }
@@ -77,6 +81,7 @@ export function NovoProfessor() {
 
   function limpar() {
     setPessoa(PESSOA_VAZIA)
+    setDisciplinas([])
     setArea(null)
     setHabilitacao(null)
     setSupervisor(false)
@@ -87,12 +92,13 @@ export function NovoProfessor() {
   function gravar() {
     const locais: Record<string, string> = {}
     for (const campo of camposPessoaEmFalta(pessoa)) locais[campo] = t`Preencha este campo.`
+    if (!disciplinas.length) locais.disciplinas = t`Escolha pelo menos uma disciplina.`
     if (!area) locais.area = t`Escolha a área de formação.`
     if (!habilitacao) locais.habilitacao = t`Escolha a habilitação.`
     setErros(locais)
     setErroGeral(undefined)
     if (Object.keys(locais).length || !area || !habilitacao) return
-    const pedido: NovoProfessor = { ...pessoa, area, habilitacao, supervisor }
+    const pedido: NovoProfessor = { ...pessoa, disciplinas, area, habilitacao, supervisor }
     criar.mutate(pedido, {
       onSuccess: () => {
         const nome = pessoa.nome.trim()
@@ -147,6 +153,13 @@ export function NovoProfessor() {
           {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
           <ResumoErros erros={resumo} />
           <CamposPessoa valor={pessoa} aoMudar={setPessoa} erros={erros} />
+          <EscolherDisciplinas
+            legenda={t`Disciplinas que pode leccionar`}
+            valor={disciplinas}
+            aoMudar={setDisciplinas}
+            erro={erros.disciplinas}
+            obrigatorio
+          />
           <Campo rotulo={t`Área de formação`} erro={erros.area} obrigatorio>
             {(c) => (
               <Selector

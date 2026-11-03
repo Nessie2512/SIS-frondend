@@ -65,6 +65,15 @@ describe('problemaDoSis', () => {
     expect(problema.code).toBe('PERMISSAO_NEGADA')
   })
 
+  it('disciplina fora das especialidades (422) é DOCENTE_NAO_HABILITADO', () => {
+    const problema = problemaDoSis(422, {
+      title: 'Unprocessable Entity',
+      status: 422,
+      detail: 'Teacher is not qualified to teach the subject with ID "2".',
+    })
+    expect(problema.code).toBe('DOCENTE_NAO_HABILITADO')
+  })
+
   it('lê campos compostos', () => {
     expect(paraErroDeCampo('address.city should not be empty').campo).toBe('address.city')
     expect(paraErroDeCampo('Algo falhou').campo).toBe('Algo')

@@ -6,8 +6,10 @@ import { Check, ChevronLeft, Lock } from 'lucide-react'
 import * as z from 'zod/mini'
 import { CargaLectiva, professorQuery, type Professor } from '@/entities/professor'
 import { MenuEstadoProfessor } from '@/features/alterar-estado-professor'
+import { EspecialidadesProfessor } from '@/features/especialidades-professor'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
 import { Can } from '@/shared/lib/can'
 import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import { formatarDataCivil } from '@/shared/lib/datas'
@@ -85,6 +87,10 @@ function FichaProfessor() {
           </p>
         </div>
         <Can permissao="professores:escrever">
+          {/* Backend SIS: só se atribui turma nas disciplinas do professor */}
+          {eReal('professores') && p.estado === 'ACTIVO' && (
+            <EspecialidadesProfessor professor={p} />
+          )}
           <MenuEstadoProfessor professor={p} anoLectivoId={anoLectivoId ?? ''} />
         </Can>
       </header>

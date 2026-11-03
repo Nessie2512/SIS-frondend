@@ -162,6 +162,8 @@ export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
     nationality: 'Angolana',
     isActive: true,
     isSupervisor: false,
+    // Pode leccionar Matemática (a única disciplina em que se lhe atribui turma)
+    specialtySubjectIds: [100],
     teacherField: 'Ciências Exactas',
     educationalAttainment: 'Licenciatura em Matemática',
   },

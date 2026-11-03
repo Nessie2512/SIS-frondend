@@ -946,6 +946,10 @@ msgstr "There are no school years yet"
 msgid "Ainda não há anos lectivos."
 msgstr "There are no school years yet."
 
+#: src/entities/disciplina/ui/escolher-disciplinas.tsx
+msgid "Ainda não há disciplinas activas."
+msgstr "There are no active subjects yet."
+
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "Ainda não há estudantes inscritos nesta turma."
 msgstr "There are no students enrolled in this class yet."
@@ -1326,6 +1330,7 @@ msgstr "Cancelled."
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/emitir-documento/ui/emitir-global.tsx
 #: src/features/emitir-documento/ui/emitir-lote.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
@@ -1974,12 +1979,21 @@ msgstr "Subject {nome} deleted."
 msgid "Disciplinar"
 msgstr "Disciplinary"
 
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/curriculo.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Disciplinas"
 msgstr "Subjects"
+
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Disciplinas de {nome}"
+msgstr "Subjects of {nome}"
+
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Disciplinas de {nome} guardadas."
+msgstr "Subjects of {nome} saved."
 
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Disciplinas de cada classe; activa e encerra os anos lectivos."
@@ -1992,6 +2006,11 @@ msgstr "Subjects of each grade; views the academic structure."
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Disciplinas do plano"
 msgstr "Plan subjects"
+
+#: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Disciplinas que pode leccionar"
+msgstr "Subjects they can teach"
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -2468,6 +2487,11 @@ msgstr "Choose the type to see the document."
 #: src/shared/ui/selector-data.tsx
 msgid "Escolha o último dia do período."
 msgstr "Choose the last day of the period."
+
+#: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Escolha pelo menos uma disciplina."
+msgstr "Choose at least one subject."
 
 #: src/routes/_app/calendario.tsx
 msgid "Escolha um dia para ver o que acontece e acrescentar um evento."
@@ -2974,6 +2998,7 @@ msgid "Guardado"
 msgstr "Saved"
 
 #: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
 #: src/features/gerir-contas/ui/mudar-papel.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
@@ -5063,6 +5088,10 @@ msgstr "Situation"
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Só consultar"
 msgstr "View only"
+
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Só nestas disciplinas se pode atribuir uma turma ao professor."
+msgstr "The teacher can only be assigned a class in these subjects."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."

@@ -51,23 +51,27 @@ export function professorQuery(id: string, anoLectivoId: string) {
   })
 }
 
-/** Backend SIS: lista inteira; pesquisa, estado e ordem aplicam-se aqui. */
+/**
+ * Backend SIS: os docentes do ano; pesquisa, estado e ordem aplicam-se aqui. Filtrar por
+ * disciplina deixa só os que a têm nas especialidades (os únicos a quem se pode atribuir).
+ */
 async function paginaDoSis(client: QueryClient, f: FiltrosProfessores): Promise<PaginaProfessores> {
   const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
-  const todos = (await client.fetchQuery(referenciaSis.professores(f.anoLectivoId))).map(
-    paraProfessorResumoDoSis,
-  )
-  // Sem disciplinas habilitadas no backend: filtrar por disciplina dá a lista vazia
-  const filtrados = f.disciplinaId
-    ? []
-    : todos
-        .filter(
-          (p) =>
-            !termo ||
-            normalizarTexto(p.nome).includes(termo) ||
-            normalizarTexto(p.numeroAgente).includes(termo),
-        )
-        .filter((p) => !f.estado || p.estado === f.estado)
+  const [professores, disciplinas] = await Promise.all([
+    client.fetchQuery(referenciaSis.professores(f.anoLectivoId)),
+    client.fetchQuery(referenciaSis.disciplinas(f.anoLectivoId)),
+  ])
+  const disciplinaPorId = porId(disciplinas)
+  const todos = professores.map((p) => paraProfessorResumoDoSis(p, disciplinaPorId))
+  const filtrados = todos
+    .filter((p) => !f.disciplinaId || p.disciplinas.some((d) => d.id === f.disciplinaId))
+    .filter(
+      (p) =>
+        !termo ||
+        normalizarTexto(p.nome).includes(termo) ||
+        normalizarTexto(p.numeroAgente).includes(termo),
+    )
+    .filter((p) => !f.estado || p.estado === f.estado)
   const ordenados = ordenarLocal(filtrados, f.ordenar ?? 'nome')
   const { itens, total, page, totalPaginas } = paginarLocal(
     ordenados,
@@ -112,5 +116,6 @@ async function professorDoSis(
         return d && { uuid: d.uuid, nome: d.name }
       },
     },
+    disciplinaPorId,
   )
 }

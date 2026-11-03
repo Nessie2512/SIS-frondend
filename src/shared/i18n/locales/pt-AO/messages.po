@@ -945,6 +945,10 @@ msgstr "Ainda não há anos lectivos"
 msgid "Ainda não há anos lectivos."
 msgstr "Ainda não há anos lectivos."
 
+#: src/entities/disciplina/ui/escolher-disciplinas.tsx
+msgid "Ainda não há disciplinas activas."
+msgstr "Ainda não há disciplinas activas."
+
 #: src/routes/_app/imprimir/turma.$turmaId.tsx
 msgid "Ainda não há estudantes inscritos nesta turma."
 msgstr "Ainda não há estudantes inscritos nesta turma."
@@ -1325,6 +1329,7 @@ msgstr "Cancelado."
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/emitir-documento/ui/emitir-global.tsx
 #: src/features/emitir-documento/ui/emitir-lote.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
@@ -1973,12 +1978,21 @@ msgstr "Disciplina {nome} eliminada."
 msgid "Disciplinar"
 msgstr "Disciplinar"
 
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
 #: src/features/gerir-disciplinas/ui/lista-disciplinas.tsx
 #: src/routes/_app/curriculo.tsx
 #: src/routes/_app/professores/$professorId.tsx
 #: src/routes/_app/professores/index.tsx
 msgid "Disciplinas"
 msgstr "Disciplinas"
+
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Disciplinas de {nome}"
+msgstr "Disciplinas de {nome}"
+
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Disciplinas de {nome} guardadas."
+msgstr "Disciplinas de {nome} guardadas."
 
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Disciplinas de cada classe; activa e encerra os anos lectivos."
@@ -1991,6 +2005,11 @@ msgstr "Disciplinas de cada classe; consulta a estrutura académica."
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Disciplinas do plano"
 msgstr "Disciplinas do plano"
+
+#: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Disciplinas que pode leccionar"
+msgstr "Disciplinas que pode leccionar"
 
 #: src/features/marcar-documento/ui/lista-documentos.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
@@ -2467,6 +2486,11 @@ msgstr "Escolha o tipo para ver o documento."
 #: src/shared/ui/selector-data.tsx
 msgid "Escolha o último dia do período."
 msgstr "Escolha o último dia do período."
+
+#: src/features/criar-professor/ui/novo-professor.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Escolha pelo menos uma disciplina."
+msgstr "Escolha pelo menos uma disciplina."
 
 #: src/routes/_app/calendario.tsx
 msgid "Escolha um dia para ver o que acontece e acrescentar um evento."
@@ -2973,6 +2997,7 @@ msgid "Guardado"
 msgstr "Guardado"
 
 #: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
 #: src/features/gerir-contas/ui/mudar-papel.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
@@ -5062,6 +5087,10 @@ msgstr "Situação"
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Só consultar"
 msgstr "Só consultar"
+
+#: src/features/especialidades-professor/ui/especialidades-professor.tsx
+msgid "Só nestas disciplinas se pode atribuir uma turma ao professor."
+msgstr "Só nestas disciplinas se pode atribuir uma turma ao professor."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Só o rascunho se edita. Para mudar um plano vigente, crie uma nova versão."
