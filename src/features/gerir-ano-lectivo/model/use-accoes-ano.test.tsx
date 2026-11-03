@@ -5,7 +5,7 @@ import { server } from '@/mocks/node'
 import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { escutarEscritas, hookComCliente } from '@/test/hook-sis'
 import { anosSis, handlersSis } from '@/test/sis'
-import { useActivarAno, useCriarAno } from './use-accoes-ano'
+import { useActivarAno, useCriarAno, useEncerrarAno } from './use-accoes-ano'
 
 // As acções do ano recarregam o router no fim; aqui só interessa o pedido e a resposta
 vi.mock('@tanstack/react-router', async (original) => ({
@@ -39,12 +39,21 @@ describe('anos lectivos no backend SIS', () => {
     expect(ano).toEqual({ id: 'ano-sis-2027' })
   })
 
-  it('activar pelo uuid, sem depender da resposta', async () => {
+  it('activar com PATCH pelo uuid, sem depender da resposta', async () => {
     const pedidos = escutarEscritas()
     const { result } = hookComCliente(() => useActivarAno('ano-sis-2025'))
     await act(() => result.current.mutateAsync())
     expect(pedidos.map((p) => `${p.metodo} ${p.caminho}`)).toEqual([
-      'PUT /academic-years/ano-sis-2025/activate',
+      'PATCH /academic-years/ano-sis-2025/activate',
+    ])
+  })
+
+  it('encerrar com PATCH /academic-years/{id}/close (o servidor conclui as matrículas activas)', async () => {
+    const pedidos = escutarEscritas()
+    const { result } = hookComCliente(() => useEncerrarAno('ano-sis-2026'))
+    await act(() => result.current.mutateAsync('2026/2027'))
+    expect(pedidos.map((p) => `${p.metodo} ${p.caminho}`)).toEqual([
+      'PATCH /academic-years/ano-sis-2026/close',
     ])
   })
 })

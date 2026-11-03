@@ -1,9 +1,7 @@
 import { msg } from '@lingui/core/macro'
 import { Trans, useLingui } from '@lingui/react/macro'
-import { useQuery } from '@tanstack/react-query'
 import { Plus } from 'lucide-react'
 import { useState } from 'react'
-import { ciclosQuery } from '@/entities/classe'
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -46,7 +44,6 @@ const CAMPO_DO_SERVIDOR: Record<string, string> = {
   name: 'nome',
   birthDate: 'dataNascimento',
   nationality: 'nacionalidade',
-  academicLevelId: 'cicloId',
   teacherField: 'area',
   educationalAttainment: 'habilitacao',
 }
@@ -55,10 +52,8 @@ const CAMPO_DO_SERVIDOR: Record<string, string> = {
 export function NovoProfessor() {
   const { t, i18n } = useLingui()
   const criar = useCriarProfessor()
-  const { data: ciclos = [] } = useQuery(ciclosQuery())
   const [aberta, setAberta] = useState(false)
   const [pessoa, setPessoa] = useState<DadosPessoa>(PESSOA_VAZIA)
-  const [cicloId, setCicloId] = useState<string | null>(null)
   const [area, setArea] = useState<AreaFormacao | null>(null)
   const [habilitacao, setHabilitacao] = useState<Habilitacao | null>(null)
   const [supervisor, setSupervisor] = useState(false)
@@ -73,7 +68,6 @@ export function NovoProfessor() {
     bairro: t`Bairro`,
     municipio: t`Município`,
     provincia: t`Província`,
-    cicloId: t`Ciclo`,
     area: t`Área de formação`,
     habilitacao: t`Habilitação`,
   }
@@ -83,7 +77,6 @@ export function NovoProfessor() {
 
   function limpar() {
     setPessoa(PESSOA_VAZIA)
-    setCicloId(null)
     setArea(null)
     setHabilitacao(null)
     setSupervisor(false)
@@ -94,13 +87,12 @@ export function NovoProfessor() {
   function gravar() {
     const locais: Record<string, string> = {}
     for (const campo of camposPessoaEmFalta(pessoa)) locais[campo] = t`Preencha este campo.`
-    if (!cicloId) locais.cicloId = t`Escolha o ciclo.`
     if (!area) locais.area = t`Escolha a área de formação.`
     if (!habilitacao) locais.habilitacao = t`Escolha a habilitação.`
     setErros(locais)
     setErroGeral(undefined)
-    if (Object.keys(locais).length || !cicloId || !area || !habilitacao) return
-    const pedido: NovoProfessor = { ...pessoa, cicloId, area, habilitacao, supervisor }
+    if (Object.keys(locais).length || !area || !habilitacao) return
+    const pedido: NovoProfessor = { ...pessoa, area, habilitacao, supervisor }
     criar.mutate(pedido, {
       onSuccess: () => {
         const nome = pessoa.nome.trim()
@@ -133,7 +125,7 @@ export function NovoProfessor() {
         aoMudar={setAberta}
         pendente={criar.isPending}
         titulo={t`Novo professor`}
-        descricao={t`O número de agente é atribuído pelo servidor.`}
+        descricao={t`O servidor atribui o número de agente, o email da escola e a palavra-passe inicial.`}
         rodape={
           <>
             <Button
@@ -155,16 +147,6 @@ export function NovoProfessor() {
           {erroGeral && <Aviso tom="erro">{erroGeral}</Aviso>}
           <ResumoErros erros={resumo} />
           <CamposPessoa valor={pessoa} aoMudar={setPessoa} erros={erros} />
-          <Campo rotulo={t`Ciclo`} erro={erros.cicloId} obrigatorio>
-            {(c) => (
-              <Selector
-                {...c}
-                opcoes={ciclos.map((x) => ({ valor: x.id, rotulo: x.designacao }))}
-                valor={cicloId}
-                aoMudar={setCicloId}
-              />
-            )}
-          </Campo>
           <Campo rotulo={t`Área de formação`} erro={erros.area} obrigatorio>
             {(c) => (
               <Selector

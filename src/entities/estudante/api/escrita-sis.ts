@@ -3,6 +3,7 @@ import type { QueryClient } from '@tanstack/react-query'
 import { ApiError } from '@/shared/api'
 import {
   apiSis,
+  doAno,
   idNumerico,
   referenciaSis,
   sisKeys,
@@ -51,46 +52,82 @@ export function lerDocumento(
 }
 
 /**
- * POST /students responde 201 sem corpo (o caso de uso devolve void): o estudante criado
- * procura-se na lista pelo nome e data de nascimento, ficando o mais recente (id maior).
+ * POST /students devolve o estudante criado, com o id interno que a matrícula pede. Sem
+ * matrícula, o estudante ainda não aparece nas listagens do ano (guia de integração, 1); por
+ * isso a resposta é a única forma de o encontrar. Servidores antigos respondiam sem corpo:
+ * aí procura-se na lista pelo nome e data de nascimento (só encontra quem já tem matrícula).
  */
 export async function criarEstudanteSis(qc: QueryClient, dados: NovoEstudanteSis) {
-  await apiSis.POST('/students', { body: dados as unknown as DtoSis<'CreateStudentDto'> })
+  const { data } = await apiSis.POST('/students', {
+    body: dados as unknown as DtoSis<'CreateStudentDto'>,
+  })
+  const criado = data as EstudanteSis | undefined
+  if (criado?.uuid && criado.id) return criado
   const todos = await qc.fetchQuery({ ...referenciaSis.estudantes(), staleTime: 0 })
   const nome = dados.name.trim().toLowerCase()
-  const criado = todos
+  const encontrado = todos
     .filter(
       (e) =>
         e.name.trim().toLowerCase() === nome && dataCivilDoSis(e.birthDate) === dados.birthDate,
     )
     .sort((a, b) => b.id - a.id)[0]
-  if (!criado) throw new ApiError(404, { title: 'ESTUDANTE_CRIADO_NAO_ENCONTRADO' })
-  return criado
+  if (!encontrado) throw new ApiError(404, { title: 'ESTUDANTE_CRIADO_NAO_ENCONTRADO' })
+  return encontrado
 }
 
 /**
- * POST /students/enroll: o backend pede os ids numéricos do estudante, da turma e do ano.
- * Só o chefe da secretaria tem este âmbito (student-approval); os outros recebem 403.
+ * POST /enrollments (guia de integração, 3): matrícula directa com os ids numéricos do
+ * estudante, da turma e do ano. O backend valida ano e turma activos, a turma do mesmo ano e a
+ * lotação (409), e atribui o código do estudante se ainda não o tiver.
  */
 export async function matricularSis(
   qc: QueryClient,
   pedido: { estudante: EstudanteSis | string; turmaId: string; anoLectivoId: string },
 ) {
-  const [estudantes, turmas, anos] = await Promise.all([
+  const [estudante, turmas, anos] = await Promise.all([
     typeof pedido.estudante === 'string'
-      ? qc.fetchQuery(referenciaSis.estudantes())
-      : Promise.resolve([pedido.estudante]),
-    qc.fetchQuery(referenciaSis.turmas()),
+      ? estudanteEmQualquerAno(qc, pedido.estudante)
+      : Promise.resolve(pedido.estudante),
+    qc.fetchQuery(referenciaSis.turmas(pedido.anoLectivoId)),
     qc.fetchQuery(referenciaSis.anos()),
   ])
-  const uuid = typeof pedido.estudante === 'string' ? pedido.estudante : pedido.estudante.uuid
-  await apiSis.POST('/students/enroll', {
+  await apiSis.POST('/enrollments', {
     body: {
-      studentId: idNumerico(estudantes, uuid),
+      studentId: estudante.id,
       classId: idNumerico(turmas, pedido.turmaId),
       academicYearId: idNumerico(anos, pedido.anoLectivoId),
     },
   })
+}
+
+/**
+ * Um estudante já registado, pelo uuid. As listagens são por ano e só trazem quem lá tem
+ * matrícula: procura-se no ano em contexto e depois nos outros, do mais recente para trás.
+ */
+async function estudanteEmQualquerAno(qc: QueryClient, uuid: string): Promise<EstudanteSis> {
+  const noContexto = (await qc.fetchQuery(referenciaSis.estudantes())).find((e) => e.uuid === uuid)
+  if (noContexto) return noContexto
+  const anos = [...(await qc.fetchQuery(referenciaSis.anos()))].sort(
+    (a, b) => b.startYear - a.startYear,
+  )
+  for (const ano of anos) {
+    const achado = (await qc.fetchQuery(referenciaSis.estudantes(ano.uuid))).find(
+      (e) => e.uuid === uuid,
+    )
+    if (achado) return achado
+  }
+  throw new ApiError(404, { title: 'REFERENCIA_NAO_ENCONTRADA', detail: uuid })
+}
+
+/** O estudante como ficou depois da matrícula (já com o código), lido no ano da matrícula. */
+export async function estudanteNoAnoSis(qc: QueryClient, uuid: string, anoLectivoId: string) {
+  const { data } = await apiSis.GET('/students/{uuid}', {
+    params: {
+      path: { uuid },
+      ...doAno(idNumerico(await qc.fetchQuery(referenciaSis.anos()), anoLectivoId)),
+    },
+  })
+  return data as EstudanteSis
 }
 
 /** PUT /students/{uuid}/identity: tipo e número do documento. */

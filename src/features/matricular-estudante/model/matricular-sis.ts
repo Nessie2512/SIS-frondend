@@ -3,6 +3,7 @@ import { msg } from '@lingui/core/macro'
 import type { QueryClient } from '@tanstack/react-query'
 import {
   criarEstudanteSis,
+  estudanteNoAnoSis,
   lerDocumento,
   matricularSis,
   type NovoEstudanteSis,
@@ -85,34 +86,36 @@ export function paraNovoEstudanteSis(dados: DadosMatricula): NovoEstudanteSis {
 }
 
 /**
- * Backend SIS: cria o estudante (POST /students) e, havendo turma, matricula-o
- * (POST /students/enroll). Matricular é do chefe da secretaria: para os outros papéis, ou sem
- * turma escolhida, o estudante fica criado e a matrícula fica a confirmar.
+ * Backend SIS (guia de integração, 3): primeiro o cadastro (POST /students), depois, havendo
+ * turma, a matrícula directa (POST /enrollments), que atribui o código do estudante. Sem turma,
+ * ou para quem não pode matricular (403), o estudante fica criado e a matrícula a confirmar.
  */
 export async function matricularNoSis(
   qc: QueryClient,
   dados: DadosMatricula,
   anoLectivoId: string,
 ): Promise<Matricula> {
-  const estudante = await criarEstudanteSis(qc, paraNovoEstudanteSis(dados))
+  let estudante = await criarEstudanteSis(qc, paraNovoEstudanteSis(dados))
   let confirmada = false
   if (dados.turmaId) {
     try {
       await matricularSis(qc, { estudante, turmaId: dados.turmaId, anoLectivoId })
       confirmada = true
+      // Já matriculado: aparece no ano e traz o código atribuído na matrícula
+      estudante = await estudanteNoAnoSis(qc, estudante.uuid, anoLectivoId).catch(() => estudante)
     } catch (erro) {
       if (!eApiError(erro) || erro.status !== 403) throw erro
     }
   }
   const [classes, turmas] = await Promise.all([
-    qc.fetchQuery(referenciaSis.classes()),
-    qc.fetchQuery(referenciaSis.turmas()),
+    qc.fetchQuery(referenciaSis.classes(anoLectivoId)),
+    qc.fetchQuery(referenciaSis.turmas(anoLectivoId)),
   ])
   return paraMatricula({
     id: '',
     estudanteId: estudante.uuid,
     estudanteNome: estudante.name,
-    numeroProcesso: estudante.studentCode,
+    numeroProcesso: estudante.studentCode ?? '',
     anoLectivoId,
     classeId: dados.classeId,
     classeDesignacao: classes.find((c) => c.uuid === dados.classeId)?.name ?? '',

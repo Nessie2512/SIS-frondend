@@ -31,6 +31,12 @@ export type CodigoErroDominio =
   | 'MATRICULA_POR_CONFIRMAR'
   | 'ENCARREGADO_EXISTENTE'
   | 'ULTIMO_ENCARREGADO'
+  /** Matrícula no backend SIS (guia de integração, 3): ano ou turma inactivos, turma de outro ano */
+  | 'ANO_NAO_ACTIVO'
+  | 'TURMA_INACTIVA'
+  | 'TURMA_DE_OUTRO_ANO'
+  /** A aprovação de confirmações depende da verificação financeira (HTTP 503) */
+  | 'FINANCEIRO_INDISPONIVEL'
   /** Staging só com a API real: o backend SIS ainda não tem este endpoint */
   | 'NAO_DISPONIVEL'
 

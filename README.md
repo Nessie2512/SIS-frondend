@@ -119,23 +119,25 @@ ela só fica activa se o serviço sincronizar com o Blueprint. Se o frontend for
 serviço Render ou tiver sido criado manualmente, configurar nele `VITE_SIS_BASE=/sis` e a
 reescrita `/sis/*` para o backend antes do fallback da SPA.
 
-O que o staging faz com o contrato de 30/10 (consumo integral, 02/11):
+O que a aplicação faz com o backend SIS (guia de integração de 03/11):
 
-| Área          | Ler                                        | Escrever                                                                                                                   |
-| ------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
-| Sessão        | `/auth/me`, renovação por cookie           | entrar, sair                                                                                                               |
-| Anos lectivos | lista, estado, datas                       | criar, activar (encerrar, reabrir, duplicar: não)                                                                          |
-| Currículo     | ciclos, classes, disciplinas, plano/classe | criar ciclo e classe, renomear e desactivar classe; disciplinas; juntar e retirar disciplinas do plano (sem carga horária) |
-| Turmas        | lista, filtros, ficha (sem ocupação)       | criar (nome automático), encerrar                                                                                          |
-| Estudantes    | lista, ficha, possíveis duplicados         | matricular (criar + inscrever na turma), alterar o documento, anular                                                       |
-| Professores   | lista, ficha, docentes de cada turma       | registar, atribuir a turma e disciplina, desligar                                                                          |
-| Contas        | contas e perfis                            | criar, mudar o perfil, desactivar                                                                                          |
-| Relatórios    | contagens por sexo (ano, ciclo, turma)     | —                                                                                                                          |
+| Área          | Ler                                                      | Escrever                                                                                                  |
+| ------------- | -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Sessão        | `/auth/me`, renovação por cookie                         | entrar, sair; alterar a própria palavra-passe                                                             |
+| Anos lectivos | lista, estado, datas, etapas da abertura                 | criar (chefe da secretaria); activar e encerrar (admin); reabrir e duplicar: não                          |
+| Currículo     | ciclos, classes, disciplinas (catálogo completo), planos | criar ciclo e classe, renomear e desactivar classe; disciplinas; juntar e retirar disciplinas do plano    |
+| Turmas        | lista, filtros, ficha com lotação e inscritos            | criar (nome automático e lotação), encerrar                                                               |
+| Estudantes    | lista e ficha do ano, possíveis duplicados               | registar e matricular (`POST /students` + `POST /enrollments`), alterar o documento, anular               |
+| Professores   | lista e ficha do ano, docentes de cada turma             | registar (o servidor cria a conta, o email e o número de agente), atribuir a turma e disciplina, desligar |
+| Contas        | contas e perfis (só o gestor de TI)                      | criar, mudar o perfil, desactivar (só o gestor de TI)                                                     |
+| Relatórios    | contagens por sexo (ano, ciclo, turma), docentes         | —                                                                                                         |
 
-Encarregados, documentos oficiais, percurso, ocorrências, calendário, versões do plano,
-renovação, transferências, importação, tarefas, auditoria e painel: «não disponível» (sem
-endpoint). Inscrever um estudante numa turma pede `student-approval` (só o chefe da secretaria);
-para os outros perfis a matrícula fica por confirmar. O backend exige pai e mãe (nome e telefone).
+Tudo o que é anual leva `academicYearId` (o id numérico do ano no cabeçalho): estudantes, turmas,
+docentes, atribuições, classes, disciplinas, ciclos e relatórios (`shared/api/sis/referencia.ts`).
+O código do estudante só existe depois da primeira matrícula directa. Encarregados, documentos
+oficiais, percurso, ocorrências, calendário, versões do plano, renovação, transferências,
+importação, tarefas, auditoria e painel: «não disponível» (sem endpoint). O backend exige pai e mãe
+(nome e telefone).
 
 Notas do backend SIS (detalhe no documento de lacunas entregue à equipa do backend):
 

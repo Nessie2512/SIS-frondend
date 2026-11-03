@@ -12,7 +12,9 @@ import {
 } from '@/entities/ano-lectivo'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
+import { eReal } from '@/shared/config/ligacao'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
+import { useCan } from '@/shared/lib/permissoes'
 import { Button, Dialogo, Esqueleto, notificar } from '@/shared/ui'
 import { useActivarAno, useDuplicarTurmas } from '../model/use-accoes-ano'
 
@@ -177,6 +179,8 @@ function AccaoEtapa({
   titulo: string
 }) {
   const { t } = useLingui()
+  // Activar o ano é do ADMIN no backend SIS (@Roles), não de quem cria o ano
+  const podeActivar = useCan('anos:activar')
   const rotulo = t`Abrir: ${titulo}`
   switch (etapa.id) {
     case 'CALENDARIO':
@@ -186,7 +190,8 @@ function AccaoEtapa({
         </LigacaoNoAno>
       )
     case 'TURMAS':
-      return etapa.estado === 'FEITA' ? (
+      // O backend SIS não duplica turmas: criam-se uma a uma no ecrã de turmas
+      return etapa.estado === 'FEITA' || eReal('turmas') ? (
         <LigacaoNoAno ano={ano} to="/turmas" rotulo={rotulo}>
           <Trans>Abrir</Trans>
         </LigacaoNoAno>
@@ -218,7 +223,7 @@ function AccaoEtapa({
         </LigacaoNoAno>
       )
     case 'ACTIVAR':
-      return podeGerir && etapa.estado === 'POR_FAZER' ? <BotaoActivar ano={ano} /> : null
+      return podeActivar && etapa.estado === 'POR_FAZER' ? <BotaoActivar ano={ano} /> : null
     default:
       return null
   }

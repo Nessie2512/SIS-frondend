@@ -40,20 +40,31 @@ const dados = (alterar: Partial<DadosMatricula> = {}): DadosMatricula => ({
   ...alterar,
 })
 
-/** O backend real responde sem corpo; o estudante novo aparece na lista seguinte. */
+const novo = {
+  ...estudantesSis[0]!,
+  id: 40,
+  uuid: 'est-novo',
+  name: 'Kiala Ngola Bento',
+  birthDate: '04/03/2013',
+  studentCode: null,
+}
+
+/**
+ * Backend de 03/11: POST /students devolve o estudante criado, ainda sem código; a matrícula
+ * directa (POST /enrollments) atribui-o, e a ficha do ano passa a trazê-lo.
+ */
 function backendQueCria() {
-  return escutarEscritas({}, (pedido) => {
-    if (pedido.caminho !== '/students') return
-    const novo = { ...estudantesSis[0]!, id: 40, uuid: 'est-novo', studentCode: 'BMA20260040' }
-    server.use(
-      http.get('/sis/students', () =>
-        HttpResponse.json([
-          ...estudantesSis,
-          { ...novo, name: 'Kiala Ngola Bento', birthDate: '04/03/2013' },
-        ]),
-      ),
-    )
-  })
+  const pedidos = escutarEscritas({ 'POST /students': novo })
+  server.use(
+    http.get('/sis/students/est-novo', ({ request }) => {
+      if (!new URL(request.url).searchParams.get('academicYearId')) {
+        return HttpResponse.json({ title: 'Bad Request', status: 400 }, { status: 400 })
+      }
+      const matriculado = pedidos.some((p) => p.caminho === '/enrollments')
+      return HttpResponse.json({ ...novo, studentCode: matriculado ? 'BMA20260040' : null })
+    }),
+  )
+  return pedidos
 }
 
 describe('assistente de matrícula no backend SIS', () => {
@@ -87,7 +98,7 @@ describe('assistente de matrícula no backend SIS', () => {
     const matricula = await matricularNoSis(new QueryClient(), dados(), 'ano-sis-2026')
     expect(pedidos.map((p) => `${p.metodo} ${p.caminho}`)).toEqual([
       'POST /students',
-      'POST /students/enroll',
+      'POST /enrollments',
     ])
     expect(pedidos[1]?.corpo).toEqual({ studentId: 40, classId: 20, academicYearId: 1 })
     expect(matricula).toMatchObject({
@@ -102,7 +113,7 @@ describe('assistente de matrícula no backend SIS', () => {
   it('quem não pode matricular (403) deixa o estudante criado e a matrícula a confirmar', async () => {
     backendQueCria()
     server.use(
-      http.post('/sis/students/enroll', () =>
+      http.post('/sis/enrollments', () =>
         HttpResponse.json({ title: 'Forbidden', status: 403 }, { status: 403 }),
       ),
     )
@@ -119,5 +130,35 @@ describe('assistente de matrícula no backend SIS', () => {
     )
     expect(pedidos.map((p) => p.caminho)).toEqual(['/students'])
     expect(matricula).toMatchObject({ estado: 'PENDENTE', turma: null })
+    // Ainda sem matrícula, ainda sem código de estudante
+    expect(matricula.numeroProcesso).toBe('')
+  })
+
+  it('servidor antigo sem corpo no POST /students: encontra o estudante na lista do ano', async () => {
+    const pedidos = escutarEscritas({}, (pedido) => {
+      if (pedido.caminho !== '/students') return
+      server.use(
+        http.get('/sis/students', () =>
+          HttpResponse.json([...estudantesSis, { ...novo, studentCode: 'BMA20260040' }]),
+        ),
+      )
+    })
+    await matricularNoSis(new QueryClient(), dados(), 'ano-sis-2026')
+    expect(pedidos[1]?.corpo).toEqual({ studentId: 40, classId: 20, academicYearId: 1 })
+  })
+
+  it('turma cheia (409 CLASS_CAPACITY_EXCEEDED): explica e não dá a matrícula como feita', async () => {
+    backendQueCria()
+    server.use(
+      http.post('/sis/enrollments', () =>
+        HttpResponse.json(
+          { title: 'Conflict', status: 409, code: 'CLASS_CAPACITY_EXCEEDED' },
+          { status: 409, headers: { 'Content-Type': 'application/problem+json' } },
+        ),
+      ),
+    )
+    await expect(matricularNoSis(new QueryClient(), dados(), 'ano-sis-2026')).rejects.toMatchObject(
+      { status: 409, code: 'LOTACAO_ESGOTADA' },
+    )
   })
 })

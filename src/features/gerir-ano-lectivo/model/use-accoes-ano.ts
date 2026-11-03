@@ -23,7 +23,11 @@ export function useEncerrarAno(anoLectivoId: string) {
   return useMutation({
     mutationKey: ['anos-lectivos', anoLectivoId, 'encerrar'],
     mutationFn: async (confirmacao: string) => {
-      if (eReal('anos')) naoDisponivel('ENCERRAR_ANO')
+      // Backend SIS: PATCH /academic-years/{id}/close (só ADMIN) conclui as matrículas activas
+      if (eReal('anos')) {
+        await apiSis.PATCH('/academic-years/{id}/close', { params: { path: { id: anoLectivoId } } })
+        return
+      }
       const { data } = await api.POST('/anos-lectivos/{id}/encerrar', {
         params: { path: { id: anoLectivoId } },
         body: { confirmacao },
@@ -99,8 +103,9 @@ export function useActivarAno(anoLectivoId: string) {
     mutationKey: ['anos-lectivos', anoLectivoId, 'activar'],
     mutationFn: async () => {
       if (eReal('anos')) {
-        await apiSis.PUT('/academic-years/{uuid}/activate', {
-          params: { path: { uuid: anoLectivoId } },
+        // PATCH /academic-years/{id}/activate aceita o uuid; só o ADMIN pode (@Roles)
+        await apiSis.PATCH('/academic-years/{id}/activate', {
+          params: { path: { id: anoLectivoId } },
         })
         return
       }

@@ -5,7 +5,7 @@ import { docentesQuery } from '@/entities/turma'
 import { server } from '@/mocks/node'
 import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { escutarEscritas, hookComCliente } from '@/test/hook-sis'
-import { atribuicoesSis, handlersSis } from '@/test/sis'
+import { atribuicoesSis, handlersSis, professoresSis } from '@/test/sis'
 import { useAtribuirDocente } from './use-atribuir-docente'
 
 beforeEach(() => {
@@ -30,7 +30,9 @@ describe('docentes da turma no backend SIS', () => {
   it('atribuir: POST /teachers/{uuid}/assignments com disciplina, turma e ano numéricos', async () => {
     const pedidos = escutarEscritas()
     const { result } = hookComCliente(() => useAtribuirDocente('turma-7b'))
+    // Depois de gravar, o Mário passa a docente da 7.ª B (GET /teachers?classId=21)
     server.use(
+      http.get('/sis/teachers', () => HttpResponse.json(professoresSis)),
       http.get('/sis/teachers/:uuid/assignments', () =>
         HttpResponse.json([
           ...atribuicoesSis,

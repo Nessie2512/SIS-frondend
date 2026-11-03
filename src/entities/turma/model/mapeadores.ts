@@ -19,12 +19,19 @@ const TURNO_DO_SIS = {
 } satisfies Record<TurmaSis['period'], Turno>
 
 /**
- * Backend SIS: a turma refere a classe pelo id numérico. Sem sala, lotação, inscritos nem
- * director de turma no contrato: a ocupação mostra-se como "por publicar" (lotação 0).
+ * Backend SIS: a turma refere a classe pelo id numérico e traz a lotação (capacity, 40 por
+ * omissão). Os inscritos contam-se à parte (relatório da turma); sem essa contagem, a ocupação
+ * mostra-se como "por publicar" (lotação 0). Sem sala nem director de turma no contrato.
  * Turma inactiva = encerrada.
  */
-export function paraTurmaDoSis(dto: TurmaSis, classe: ClasseSis | undefined): Turma {
+export function paraTurmaDoSis(
+  dto: TurmaSis,
+  classe: ClasseSis | undefined,
+  inscritos?: number,
+): Turma {
   const turno = TURNO_DO_SIS[dto.period]
+  const lotacao = inscritos === undefined ? 0 : dto.capacity
+  const vagas = Math.max(0, lotacao - (inscritos ?? 0))
   return {
     id: dto.uuid,
     designacao: dto.name,
@@ -33,11 +40,11 @@ export function paraTurmaDoSis(dto: TurmaSis, classe: ClasseSis | undefined): Tu
     turno,
     turnoRotulo: i18n._(ROTULO_TURNO[turno]),
     sala: null,
-    lotacaoMaxima: 0,
-    inscritos: 0,
-    vagas: 0,
-    ocupacao: 0,
-    turmaCheia: false,
+    lotacaoMaxima: lotacao,
+    inscritos: inscritos ?? 0,
+    vagas,
+    ocupacao: lotacao ? Math.min(1, (inscritos ?? 0) / lotacao) : 0,
+    turmaCheia: lotacao > 0 && vagas === 0,
     encerrada: !dto.isActive,
     directorTurma: null,
   }

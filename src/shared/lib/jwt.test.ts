@@ -30,19 +30,32 @@ describe('permissões do backend SIS', () => {
       'turmas:escrever',
       'matriculas:aprovar',
       'estudantes:escrever',
-      'administracao:escrever',
+      'conta:editar',
     ])
       expect(p).toContain(esperada)
     // O âmbito curriculum (disciplinas por classe) não é dele
     expect(p).not.toContain('planos:escrever')
+    // Contas dos outros e activar ou encerrar o ano: só por papel (@Roles), noutros perfis
+    expect(p).not.toContain('administracao:ler')
+    expect(p).not.toContain('anos:activar')
   })
 
-  it('secretário: cria estudantes e abre a matrícula, mas não aprova nem gere anos', () => {
+  it('secretário: cria e matricula estudantes (/enrollments), mas não altera processos nem anos', () => {
     const p = permissoesDoPapel('SECRETARIO')
     expect(p).toContain('matriculas:escrever')
-    expect(p).not.toContain('matriculas:aprovar')
+    expect(p).toContain('matriculas:aprovar')
     expect(p).not.toContain('anos:gerir')
     expect(p).not.toContain('estudantes:escrever')
+  })
+
+  it('gestor de TI gere as contas; admin activa e encerra os anos (rotas com @Roles)', () => {
+    expect(permissoesDoPapel('GESTOR_TI')).toEqual(
+      expect.arrayContaining(['administracao:ler', 'administracao:escrever']),
+    )
+    expect(permissoesDoSis(['curriculum:read'], 'ADMIN')).toContain('anos:activar')
+    expect(permissoesDoSis(['users:write'], 'CHEFE_SECRETARIA')).not.toContain(
+      'administracao:escrever',
+    )
   })
 
   it('director pedagógico e admin: só as disciplinas de cada classe', () => {

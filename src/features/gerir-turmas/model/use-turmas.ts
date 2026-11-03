@@ -38,10 +38,10 @@ export function useCriarTurma(anoLectivoId: string) {
     mutationFn: async ({ classeDesignacao, ...dados }: NovaTurma & { chave: string }) => {
       const { chave, ...corpo } = dados
       if (eReal('turmas')) {
-        // Sem sala nem lotação no backend; classe e ano vão pelo id numérico
+        // Sem sala no backend; a lotação vai em capacity; classe e ano pelo id numérico
         const [turmas, classes, anos] = await Promise.all([
-          qc.fetchQuery({ ...referenciaSis.turmas(), staleTime: 0 }),
-          qc.fetchQuery(referenciaSis.classes()),
+          qc.fetchQuery({ ...referenciaSis.turmas(anoLectivoId), staleTime: 0 }),
+          qc.fetchQuery(referenciaSis.classes(anoLectivoId)),
           qc.fetchQuery(referenciaSis.anos()),
         ])
         const gradeId = idNumerico(classes, corpo.classeId)
@@ -54,10 +54,19 @@ export function useCriarTurma(anoLectivoId: string) {
           irmas.map((t) => t.name),
         )
         await apiSis.POST('/classes', {
-          body: { name: nome, gradeId, academicYearId, period: PERIODO[corpo.turno] },
+          body: {
+            name: nome,
+            gradeId,
+            academicYearId,
+            period: PERIODO[corpo.turno],
+            capacity: corpo.lotacaoMaxima,
+          },
         })
         // O backend responde 201 sem corpo: a turma criada lê-se da lista, pelo nome
-        const depois = await qc.fetchQuery({ ...referenciaSis.turmas(), staleTime: 0 })
+        const depois = await qc.fetchQuery({
+          ...referenciaSis.turmas(anoLectivoId),
+          staleTime: 0,
+        })
         const criada = depois.find(
           (t) => t.name === nome && t.gradeId === gradeId && t.academicYearId === academicYearId,
         )
@@ -65,6 +74,7 @@ export function useCriarTurma(anoLectivoId: string) {
         return paraTurmaDoSis(
           criada,
           classes.find((c) => c.id === gradeId),
+          0,
         )
       }
       const { data } = await api.POST('/turmas', {

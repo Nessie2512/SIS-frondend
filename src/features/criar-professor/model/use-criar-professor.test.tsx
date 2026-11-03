@@ -14,10 +14,10 @@ beforeEach(() => {
 afterEach(() => definirAreasReais([]))
 
 describe('novo professor no backend SIS', () => {
-  it('POST /teachers com a morada em partes e o ciclo pelo id numérico', async () => {
-    const pedidos = escutarEscritas()
+  it('POST /teachers sem email, palavra-passe nem ciclo; devolve o docente criado', async () => {
+    const pedidos = escutarEscritas({ 'POST /teachers': { id: 51, uuid: 'prof-novo' } })
     const { result } = hookComCliente(() => useCriarProfessor())
-    await act(() =>
+    const criado = await act(() =>
       result.current.mutateAsync({
         ...PESSOA_VAZIA,
         nome: 'Helena Capita',
@@ -28,7 +28,6 @@ describe('novo professor no backend SIS', () => {
         bairro: 'Maianga',
         municipio: 'Luanda',
         provincia: 'Luanda',
-        cicloId: 'nivel-ii',
         area: 'STEM',
         habilitacao: "Bachelor's degree",
         supervisor: false,
@@ -49,10 +48,10 @@ describe('novo professor no backend SIS', () => {
         },
         nationality: 'Angolana',
         isSupervisor: false,
-        academicLevelId: 2,
         teacherField: 'STEM',
         educationalAttainment: "Bachelor's degree",
       },
     })
+    expect(criado).toMatchObject({ uuid: 'prof-novo' })
   })
 })

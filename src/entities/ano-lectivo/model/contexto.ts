@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import { definirAnoSis } from '@/shared/api/sis'
 
 /**
  * Ano lectivo em contexto (guia 2.5, 4.2): vive no cabeçalho e todas as listas o assumem.
@@ -15,3 +16,7 @@ export const useContextoAno = create<EstadoContexto>()(
     name: 'secretaria:ano-lectivo',
   }),
 )
+
+// As consultas anuais do backend SIS (academicYearId) seguem o ano do cabeçalho
+definirAnoSis(useContextoAno.getState().anoLectivoId)
+useContextoAno.subscribe((estado) => definirAnoSis(estado.anoLectivoId))

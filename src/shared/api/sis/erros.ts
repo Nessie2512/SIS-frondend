@@ -26,6 +26,14 @@ type CorpoProblema = {
   errors?: unknown
 }
 
+/** Códigos do backend SIS → códigos de domínio que a interface já sabe explicar. */
+const CODIGOS_SIS: Record<string, string> = {
+  CLASS_CAPACITY_EXCEEDED: 'LOTACAO_ESGOTADA',
+  ENROLLMENT_REQUIRES_ACTIVE_ACADEMIC_YEAR: 'ANO_NAO_ACTIVO',
+  ENROLLMENT_REQUIRES_ACTIVE_CLASS: 'TURMA_INACTIVA',
+  CLASS_ACADEMIC_YEAR_MISMATCH: 'TURMA_DE_OUTRO_ANO',
+}
+
 /** Códigos genéricos do backend que a interface já trata pelo estado HTTP. */
 const CODIGOS_GENERICOS = new Set(['FORBIDDEN', 'UNAUTHORIZED', 'BAD_REQUEST', 'NOT_FOUND'])
 
@@ -45,7 +53,9 @@ function doProblemJson(status: number, corpo: CorpoProblema): ProblemaSis {
     title: texto(corpo.title) ?? `Pedido falhou (${status})`,
     detail: texto(corpo.detail),
     errors,
-    code: codigo && !CODIGOS_GENERICOS.has(codigo) ? codigo : codigoDoEstado(status),
+    code:
+      (codigo && CODIGOS_SIS[codigo]) ??
+      (codigo && !CODIGOS_GENERICOS.has(codigo) ? codigo : codigoDoEstado(status)),
     requestId: texto(corpo.requestId),
   }
 }
@@ -93,5 +103,6 @@ export function paraErroDeCampo(mensagem: string): ErroDeCampo {
 
 function codigoDoEstado(status: number) {
   if (status === 403) return 'PERMISSAO_NEGADA'
+  if (status === 503) return 'FINANCEIRO_INDISPONIVEL'
   return undefined
 }

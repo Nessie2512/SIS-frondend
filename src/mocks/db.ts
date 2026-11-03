@@ -44,6 +44,7 @@ export const UTILIZADORES: (S['MeDto'] & { palavraPasse: string })[] = [
       'auditoria:ler',
       'relatorios:ler',
       'anos:gerir',
+      'anos:activar',
     ],
   },
   {

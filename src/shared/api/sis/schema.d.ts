@@ -304,7 +304,7 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/academic-years/{uuid}/activate": {
+    "/academic-years/{id}/activate": {
         parameters: {
             query?: never;
             header?: never;
@@ -312,13 +312,30 @@ export interface paths {
             cookie?: never;
         };
         get?: never;
-        /** Ativar um ano letivo */
-        put: operations["AcademicYearController_activate"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        /** Ativar um ano letivo */
+        patch: operations["AcademicYearController_activate"];
+        trace?: never;
+    };
+    "/academic-years/{id}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Encerrar o ano letivo e concluir matrículas ativas */
+        patch: operations["AcademicYearController_close"];
         trace?: never;
     };
     "/academic-years/{uuid}": {
@@ -629,6 +646,57 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/enrollments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Criar uma matrícula após validar o ano e a lotação da turma */
+        post: operations["EnrollmentController_createEnrollment"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enrollments/confirmations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Solicitar confirmação de matrícula */
+        post: operations["EnrollmentController_createConfirmation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enrollments/confirmations/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Aprovar uma confirmação após validação de conformidade financeira */
+        post: operations["EnrollmentController_approve"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/teachers": {
         parameters: {
             query?: never;
@@ -835,7 +903,7 @@ export interface paths {
         delete: operations["UserController_deactivate"];
         options?: never;
         head?: never;
-        /** Actualizar email, perfil de acesso ou PIN */
+        /** Actualizar o próprio email/password ou gerir outra conta como GESTOR_TI */
         patch: operations["UserController_update"];
         trace?: never;
     };
@@ -960,7 +1028,7 @@ export interface components {
              */
             name: string;
             /**
-             * @description Descrição opcional
+             * @description Descrição opcional (máximo de 500 caracteres)
              * @example Ensino Primário Obrigatório
              */
             description?: string;
@@ -988,7 +1056,7 @@ export interface components {
              */
             name?: string;
             /**
-             * @description Descrição opcional
+             * @description Descrição opcional (máximo de 500 caracteres)
              * @example Ensino Primário Obrigatório
              */
             description?: string;
@@ -1110,6 +1178,11 @@ export interface components {
              * @enum {string}
              */
             period: "MORNING" | "AFTERNOON" | "NIGHT" | "INTEGRAL";
+            /**
+             * @description Lotação máxima da turma (padrão: 40 estudantes)
+             * @example 40
+             */
+            capacity?: number;
         };
         ClassOutputDto: {
             /**
@@ -1148,6 +1221,8 @@ export interface components {
              * @example true
              */
             isActive: boolean;
+            /** @example 40 */
+            capacity: number;
         };
         CreateAcademicYearDto: {
             /**
@@ -1170,6 +1245,16 @@ export interface components {
             uuid: string;
             label: string;
             startYear: number;
+            /**
+             * @description Primeiro dia abrangido pelo ano letivo (ISO 8601)
+             * @example 2026-09-01
+             */
+            startDate: string;
+            /**
+             * @description Último dia abrangido pelo ano letivo (ISO 8601)
+             * @example 2027-07-31
+             */
+            endDate: string;
             isActive: boolean;
             isClosed: boolean;
         };
@@ -1251,7 +1336,7 @@ export interface components {
             /** @example e3b0c442-98fc-4c14-951b-2424262d4685 */
             uuid: string;
             /** @example SCH-2026-8941 */
-            studentCode: string;
+            studentCode: Record<string, never>;
             /** @example Artur Manuel Silva */
             name: string;
             /** @example M */
@@ -1326,6 +1411,14 @@ export interface components {
              */
             confirmationUuid: string;
         };
+        CreateConfirmationDto: {
+            /** @example 12 */
+            studentId: number;
+            /** @example 10 */
+            classId: number;
+            /** @example 20 */
+            academicYearId: number;
+        };
         TeacherAddressDto: {
             /** @example Centralidade do Sequele, Bloco 8 */
             streetAndNumber: string;
@@ -1361,11 +1454,6 @@ export interface components {
              * @example false
              */
             isSupervisor: boolean;
-            /**
-             * @description ID referencial do nível académico (Ex: Ensino Médio)
-             * @example 2
-             */
-            academicLevelId: number;
             /**
              * @example STEM
              * @enum {string}
@@ -1406,8 +1494,6 @@ export interface components {
             isActive: boolean;
             /** @example false */
             isSupervisor: boolean;
-            /** @example 2 */
-            academicLevelId: number;
             /** @example STEM */
             teacherField: string;
             /** @example Bachelor's degree */
@@ -1486,7 +1572,7 @@ export interface components {
              * @example SECRETARIO
              * @enum {string}
              */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /**
              * @description Password com 12 a 128 caracteres; é armazenado como hash.
              * @example Uma frase-senha segura com 12+ caracteres
@@ -1499,7 +1585,7 @@ export interface components {
             /** @example maria@bma.com */
             email: string;
             /** @enum {string} */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /** @example EMP-2026-0123 */
             employeeNumber: string;
             /** @example Maria António Manuel */
@@ -1522,7 +1608,7 @@ export interface components {
             /** @example maria@bma.com */
             email?: string;
             /** @enum {string} */
-            role?: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role?: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /**
              * @description Novo password com 12 a 128 caracteres.
              * @example Uma nova frase-senha com pelo menos 12 caracteres
@@ -1554,7 +1640,7 @@ export interface components {
              * @example SECRETARIO
              * @enum {string}
              */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /**
              * @example [
              *       "students:read",
@@ -1574,7 +1660,19 @@ export type $defs = Record<string, never>;
 export interface operations {
     SubjectController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                /** @description Código total ou parcial */
+                code?: string;
+                isActive?: "true" | "false";
+                /** @description ID do nível académico */
+                academicLevelId?: number;
+                /** @description true: catálogo completo, incluindo o que ainda não tem turmas no ano indicado */
+                includeUnused?: "true" | "false";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1616,7 +1714,10 @@ export interface operations {
     };
     SubjectController_findByCode: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 code: string;
@@ -1637,7 +1738,10 @@ export interface operations {
     };
     SubjectController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 /** @description Subject UUID */
@@ -1749,7 +1853,17 @@ export interface operations {
     };
     AcademicLevelController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                isActive?: "true" | "false";
+                /** @description Descrição total ou parcial */
+                description?: string;
+                /** @description true: catálogo completo, incluindo o que ainda não tem turmas no ano indicado */
+                includeUnused?: "true" | "false";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1791,7 +1905,10 @@ export interface operations {
     };
     AcademicLevelController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 id: string;
@@ -1838,7 +1955,15 @@ export interface operations {
     AcademicLevelController_findByName: {
         parameters: {
             query: {
-                name: string;
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                isActive?: "true" | "false";
+                /** @description Descrição total ou parcial */
+                description?: string;
+                /** @description true: catálogo completo, incluindo o que ainda não tem turmas no ano indicado */
+                includeUnused?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -1858,7 +1983,23 @@ export interface operations {
     };
     GradeController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                isActive?: "true" | "false";
+                /** @description Descrição total ou parcial */
+                description?: string;
+                /** @description Código total ou parcial */
+                code?: string;
+                /** @description ID do nível académico */
+                academicLevelId?: number;
+                /** @description ID da disciplina */
+                subjectId?: number;
+                /** @description true: catálogo completo, incluindo o que ainda não tem turmas no ano indicado */
+                includeUnused?: "true" | "false";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1909,7 +2050,10 @@ export interface operations {
     };
     GradeController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 /** @description Identificador público universal (UUID) da classe */
@@ -1978,7 +2122,10 @@ export interface operations {
     };
     GradeController_findSubjectsByGrade: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 /** @description UUID da grade */
@@ -2072,8 +2219,21 @@ export interface operations {
     GradeController_findByName: {
         parameters: {
             query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
                 /** @description Nome exato da classe a pesquisar */
                 name: string;
+                isActive?: "true" | "false";
+                /** @description Descrição total ou parcial */
+                description?: string;
+                /** @description Código total ou parcial */
+                code?: string;
+                /** @description ID do nível académico */
+                academicLevelId?: number;
+                /** @description ID da disciplina */
+                subjectId?: number;
+                /** @description true: catálogo completo, incluindo o que ainda não tem turmas no ano indicado */
+                includeUnused?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2136,7 +2296,19 @@ export interface operations {
     };
     ClassController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
+                /** @description Nome parcial da turma */
+                name?: string;
+                /** @description ID interno da classe curricular */
+                gradeId?: number;
+                /** @description ID interno do nível académico */
+                academicLevelId?: number;
+                period?: "MORNING" | "AFTERNOON" | "NIGHT" | "INTEGRAL";
+                capacity?: number;
+                isActive?: "true" | "false";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2224,8 +2396,17 @@ export interface operations {
     ClassController_findByName: {
         parameters: {
             query: {
+                /** @description ID numérico do ano letivo */
+                academicYearId: number;
                 /** @description Nome exato da turma a pesquisar */
                 name: string;
+                /** @description ID interno da classe curricular */
+                gradeId?: number;
+                /** @description ID interno do nível académico */
+                academicLevelId?: number;
+                period?: "MORNING" | "AFTERNOON" | "NIGHT" | "INTEGRAL";
+                capacity?: number;
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2298,7 +2479,28 @@ export interface operations {
             query?: never;
             header?: never;
             path: {
-                uuid: string;
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcademicYearOutputDto"];
+                };
+            };
+        };
+    };
+    AcademicYearController_close: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
             };
             cookie?: never;
         };
@@ -2380,7 +2582,47 @@ export interface operations {
     };
     StudentController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Sexo dos estudantes */
+                sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2447,7 +2689,47 @@ export interface operations {
     };
     StudentController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Sexo dos estudantes */
+                sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
+            };
             header?: never;
             path: {
                 uuid: string;
@@ -2490,7 +2772,45 @@ export interface operations {
     StudentController_findByDocument: {
         parameters: {
             query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Sexo dos estudantes */
+                sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
                 documentNumber: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2521,6 +2841,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2551,6 +2900,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2581,6 +2959,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2611,6 +3018,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2641,6 +3077,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2671,6 +3136,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2701,6 +3195,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2731,6 +3254,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2761,6 +3313,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2791,6 +3372,35 @@ export interface operations {
                 nationality?: string;
                 /** @description Sexo dos estudantes */
                 sex?: "M" | "F";
+                /** @description UUID do estudante */
+                uuid?: string;
+                /** @description Código escolar do estudante */
+                studentCode?: string;
+                /** @description Nome completo ou parcial */
+                name?: string;
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                /** @description Número do documento */
+                documentNumber?: string;
+                /** @description Nome do pai */
+                fatherName?: string;
+                /** @description Nome da mãe */
+                motherName?: string;
+                /** @description Idioma preferencial */
+                bestLanguage?: string;
+                /** @description Prefixo familiar */
+                familyPrefix?: string;
+                /** @description Endereço total ou parcial */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Contacto do pai */
+                fatherContact?: string;
+                /** @description Contacto da mãe */
+                motherContact?: string;
+                /** @description Contacto do encarregado principal */
+                primaryGuardian?: string;
+                /** @description Filtrar o estado ativo do perfil */
+                isActive?: "true" | "false";
             };
             header?: never;
             path?: never;
@@ -2866,9 +3476,102 @@ export interface operations {
             };
         };
     };
-    TeacherController_findAll: {
+    EnrollmentController_createEnrollment: {
         parameters: {
             query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewEnrollmentInputDto"];
+            };
+        };
+        responses: {
+            /** @description Matrícula criada. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnrollmentController_createConfirmation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CreateConfirmationDto"];
+            };
+        };
+        responses: {
+            /** @description Confirmação criada. */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    EnrollmentController_approve: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    TeacherController_findAll: {
+        parameters: {
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Nome completo ou parcial do docente */
+                name?: string;
+                sex?: "M" | "F";
+                teacherField?: "STEM" | "BUSINESS" | "MEDICINE" | "ARTS";
+                educationalAttainment?: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
+                isActive?: "true" | "false";
+                isSupervisor?: "true" | "false";
+                /** @description Código profissional do docente */
+                teacherCode?: string;
+                /** @description Número de agente/registo exato */
+                registrationNumber?: string;
+                /** @description Endereço do docente */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Email do docente */
+                email?: string;
+                /** @description ID interno da disciplina de especialidade */
+                specialtySubjectId?: number;
+                /** @description ID da disciplina atribuída no ano letivo */
+                subjectId?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2910,7 +3613,37 @@ export interface operations {
     };
     TeacherController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Nome completo ou parcial do docente */
+                name?: string;
+                sex?: "M" | "F";
+                teacherField?: "STEM" | "BUSINESS" | "MEDICINE" | "ARTS";
+                educationalAttainment?: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
+                isActive?: "true" | "false";
+                isSupervisor?: "true" | "false";
+                /** @description Código profissional do docente */
+                teacherCode?: string;
+                /** @description Número de agente/registo exato */
+                registrationNumber?: string;
+                /** @description Endereço do docente */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Email do docente */
+                email?: string;
+                /** @description ID interno da disciplina de especialidade */
+                specialtySubjectId?: number;
+                /** @description ID da disciplina atribuída no ano letivo */
+                subjectId?: number;
+            };
             header?: never;
             path: {
                 uuid: string;
@@ -3093,8 +3826,35 @@ export interface operations {
     TeacherController_findByRegistration: {
         parameters: {
             query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Nome completo ou parcial do docente */
+                name?: string;
+                sex?: "M" | "F";
+                teacherField?: "STEM" | "BUSINESS" | "MEDICINE" | "ARTS";
+                educationalAttainment?: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
+                isActive?: "true" | "false";
+                isSupervisor?: "true" | "false";
+                /** @description Código profissional do docente */
+                teacherCode?: string;
                 /** @description Número de registo exato do professor */
                 registrationNumber: string;
+                /** @description Endereço do docente */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Email do docente */
+                email?: string;
+                /** @description ID interno da disciplina de especialidade */
+                specialtySubjectId?: number;
+                /** @description ID da disciplina atribuída no ano letivo */
+                subjectId?: number;
             };
             header?: never;
             path?: never;
@@ -3114,7 +3874,37 @@ export interface operations {
     };
     TeacherController_findAllAssignmentsByTeacher: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Nome completo ou parcial do docente */
+                name?: string;
+                sex?: "M" | "F";
+                teacherField?: "STEM" | "BUSINESS" | "MEDICINE" | "ARTS";
+                educationalAttainment?: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
+                isActive?: "true" | "false";
+                isSupervisor?: "true" | "false";
+                /** @description Código profissional do docente */
+                teacherCode?: string;
+                /** @description Número de agente/registo exato */
+                registrationNumber?: string;
+                /** @description Endereço do docente */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Email do docente */
+                email?: string;
+                /** @description ID interno da disciplina de especialidade */
+                specialtySubjectId?: number;
+                /** @description ID da disciplina atribuída no ano letivo */
+                subjectId?: number;
+            };
             header?: never;
             path: {
                 uuid: string;
@@ -3160,7 +3950,37 @@ export interface operations {
     };
     TeacherController_findAssignmentById: {
         parameters: {
-            query?: never;
+            query: {
+                /** @description ID numérico do ano lectivo */
+                academicYearId: number;
+                /** @description ID numérico do ciclo (AcademicLevel) associado à grade da turma */
+                academicLevelId?: number;
+                /** @description ID numérico da turma */
+                classId?: number;
+                /** @description Nacionalidade exacta (sem diferenciar maiúsculas) */
+                nationality?: string;
+                /** @description Nome completo ou parcial do docente */
+                name?: string;
+                sex?: "M" | "F";
+                teacherField?: "STEM" | "BUSINESS" | "MEDICINE" | "ARTS";
+                educationalAttainment?: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
+                isActive?: "true" | "false";
+                isSupervisor?: "true" | "false";
+                /** @description Código profissional do docente */
+                teacherCode?: string;
+                /** @description Número de agente/registo exato */
+                registrationNumber?: string;
+                /** @description Endereço do docente */
+                address?: string;
+                /** @description Data de nascimento no formato YYYY-MM-DD */
+                birthDate?: string;
+                /** @description Email do docente */
+                email?: string;
+                /** @description ID interno da disciplina de especialidade */
+                specialtySubjectId?: number;
+                /** @description ID da disciplina atribuída no ano letivo */
+                subjectId?: number;
+            };
             header?: never;
             path: {
                 uuid: string;

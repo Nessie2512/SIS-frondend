@@ -11,6 +11,7 @@ import { professoresQuery, professorQuery } from '@/entities/professor'
 import { turmaQuery, turmasQuery } from '@/entities/turma'
 import { server } from '@/mocks/node'
 import { sessao } from '@/shared/api'
+import { definirAnoSis, referenciaSis } from '@/shared/api/sis'
 import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { renderizarEm } from '@/test/renderizar'
 import { anosSis, handlersSis } from '@/test/sis'
@@ -55,11 +56,12 @@ describe('API real: referência', () => {
     ])
   })
 
-  it('árvore de ciclos conta as turmas de cada classe', async () => {
+  it('árvore de ciclos conta as turmas de cada classe no ano em contexto', async () => {
     const ciclos = await cliente().fetchQuery(ciclosQuery())
     expect(ciclos.map((c) => c.designacao)).toEqual(['I Ciclo', 'II Ciclo'])
     const setima = ciclos[0]!.classes[0]!
-    expect(setima).toMatchObject({ designacao: '7.ª classe', turmas: 3, planos: 1 })
+    // 7.ª A e 7.ª B de 2026/2027; a 7.ª A de 2025/2026 é de outro ano
+    expect(setima).toMatchObject({ designacao: '7.ª classe', turmas: 2, planos: 1 })
   })
 
   it('disciplinas: em uso quando alguma classe as tem', async () => {
@@ -81,8 +83,19 @@ describe('API real: turmas', () => {
       ['7.ª A', '7.ª classe', 'Manhã'],
       ['7.ª B', '7.ª classe', 'Tarde'],
     ])
-    // Sem lotação no backend: a turma nunca aparece como cheia
+    // Lotação do backend (capacity) e inscritos do relatório da turma (classId − 10)
+    expect(pagina.turmas.map((t) => [t.inscritos, t.lotacaoMaxima, t.vagas])).toEqual([
+      [10, 40, 30],
+      [11, 40, 29],
+    ])
     expect(pagina.turmas.every((t) => !t.turmaCheia)).toBe(true)
+  })
+
+  it('outro ano: as turmas pedem-se com o academicYearId desse ano', async () => {
+    const pagina = await cliente().fetchQuery(
+      turmasQuery({ anoLectivoId: 'ano-sis-2025', estado: 'ACTIVA', page: 1 }),
+    )
+    expect(pagina.turmas.map((t) => t.id)).toEqual(['turma-antiga'])
   })
 
   it('turmas inactivas contam como encerradas; detalhe pelo uuid', async () => {
@@ -223,5 +236,31 @@ describe('API real: ecrãs', () => {
         timeout: 10_000,
       }),
     ).toBeInTheDocument()
+  })
+})
+
+describe('API real: guia de integração (03/11)', () => {
+  it('consultas anuais levam academicYearId; os catálogos pedem também includeUnused', async () => {
+    const urls: string[] = []
+    server.events.on('request:start', ({ request }) => {
+      urls.push(new URL(request.url).pathname + new URL(request.url).search)
+    })
+    const c = cliente()
+    await c.fetchQuery(referenciaSis.classes())
+    await c.fetchQuery(referenciaSis.estudantes())
+    server.events.removeAllListeners()
+    expect(urls).toContain('/sis/grades?academicYearId=1&includeUnused=true')
+    expect(urls).toContain('/sis/students?academicYearId=1')
+  })
+
+  it('sem nenhum ano lectivo, as listas anuais ficam vazias sem pedir ao servidor', async () => {
+    definirAnoSis(null)
+    const pedidos: string[] = []
+    server.events.on('request:start', ({ request }) => {
+      pedidos.push(new URL(request.url).pathname)
+    })
+    await expect(cliente().fetchQuery(referenciaSis.turmas())).resolves.toEqual([])
+    server.events.removeAllListeners()
+    expect(pedidos).not.toContain('/sis/classes')
   })
 })

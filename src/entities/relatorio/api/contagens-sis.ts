@@ -31,7 +31,8 @@ type Consulta = { academicYearId: number; academicLevelId?: number; classId?: nu
 
 /**
  * Backend SIS: os relatórios são contagens (GET /students/reports/*, /teachers/reports/*),
- * sempre dentro de um ano lectivo. Por ano: rapazes + raparigas; por ciclo: o mesmo com
+ * sempre dentro de um ano lectivo. Os de estudantes respondem { count, students } e os de
+ * docentes { count }; aqui só se usa count. Por ano: rapazes + raparigas; por ciclo: o mesmo com
  * academicLevelId; por turma: o total com classId; professores do ano.
  */
 export function contagensSisQuery(anoLectivoId: string) {
@@ -40,9 +41,9 @@ export function contagensSisQuery(anoLectivoId: string) {
     queryFn: async ({ signal, client }): Promise<Contagens> => {
       const [anos, niveis, turmas, classes] = await Promise.all([
         client.fetchQuery(referenciaSis.anos()),
-        client.fetchQuery(referenciaSis.niveis()),
-        client.fetchQuery(referenciaSis.turmas()),
-        client.fetchQuery(referenciaSis.classes()),
+        client.fetchQuery(referenciaSis.niveis(anoLectivoId)),
+        client.fetchQuery(referenciaSis.turmas(anoLectivoId)),
+        client.fetchQuery(referenciaSis.classes(anoLectivoId)),
       ])
       const academicYearId = idNumerico(anos, anoLectivoId)
       const opcoes = (query: Consulta) => ({ params: { query }, signal })

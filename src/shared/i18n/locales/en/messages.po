@@ -684,6 +684,7 @@ msgstr "Getting the task status"
 msgid "A ordem das classes define a classe seguinte na renovação. Uma classe em uso não se elimina: inactiva-se."
 msgstr "The order of the grades defines the next grade on renewal. A grade in use is not deleted: it is deactivated."
 
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
 #: src/features/gerir-contas/ui/nova-conta.tsx
 msgid "A palavra-passe tem de 12 a 128 caracteres."
 msgstr "The password must have 12 to 128 characters."
@@ -743,6 +744,10 @@ msgstr "The class is closed."
 #: src/features/gerir-turmas/ui/encerrar-turma.tsx
 msgid "A turma fica só de leitura e deixa de receber inscrições. Os docentes atribuídos terminam hoje."
 msgstr "The class becomes read-only and stops accepting enrolments. Assigned teachers end today."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "A verificação financeira não está disponível de momento. A confirmação não foi aprovada; tente mais tarde."
+msgstr "The financial check is not available at the moment. The confirmation was not approved; try again later."
 
 #: src/features/editar-plano/ui/accoes-plano.tsx
 msgid "A versão {versao} passa a vigente e a versão {versaoVigente} fica arquivada. Depois de publicada não se edita: para mudar, cria-se outra versão."
@@ -824,14 +829,6 @@ msgstr "Quick actions"
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Acesso"
 msgstr "Access"
-
-#: src/entities/administracao/model/mapeadores.ts
-msgid "Acesso total."
-msgstr "Full access."
-
-#: src/entities/administracao/model/mapeadores.ts
-msgid "Acompanha toda a escola e gere as contas."
-msgstr "Oversees the whole school and manages accounts."
 
 #: src/features/editar-plano/ui/editor-plano.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
@@ -1015,6 +1012,10 @@ msgstr "Change saved."
 msgid "Alterar estado"
 msgstr "Change status"
 
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+msgid "Alterar palavra-passe"
+msgstr "Change password"
+
 #: src/entities/administracao/model/mapeadores.ts
 msgid "Alterou"
 msgstr "Changed"
@@ -1154,6 +1155,10 @@ msgstr "Area"
 msgid "Área de formação"
 msgstr "Field of study"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Área financeira (ainda sem funções)."
+msgstr "Finance area (no functions yet)."
+
 #: src/entities/plano/model/mapeadores.ts
 msgid "Arquivado"
 msgstr "Archived"
@@ -1177,6 +1182,10 @@ msgstr "Assignments are made per class and subject."
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "As disciplinas aparecem aqui quando o plano for publicado."
 msgstr "Subjects appear here when the plan is published."
+
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+msgid "As duas palavras-passe não são iguais."
+msgstr "The two passwords do not match."
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "As matrículas confirmadas ficam concluídas com o resultado registado."
@@ -1307,6 +1316,7 @@ msgstr "Calendar {designacao}"
 msgid "Cancelado."
 msgstr "Cancelled."
 
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/confirmar-matricula/ui/anular-matricula.tsx
 #: src/features/confirmar-matricula/ui/confirmar-lote.tsx
@@ -1380,7 +1390,6 @@ msgstr "Full"
 msgid "ciclo"
 msgstr "cycle"
 
-#: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/gerar-relatorio/ui/contagens.tsx
 msgid "Ciclo"
 msgstr "Cycle"
@@ -1550,8 +1559,8 @@ msgid "Confortável"
 msgstr "Comfortable"
 
 #: src/entities/administracao/model/mapeadores.ts
-msgid "Consulta da secretaria."
-msgstr "School office read access."
+msgid "Consulta toda a escola, sem alterar."
+msgstr "Views the whole school, without changing anything."
 
 #: src/routes/_app/definicoes/perfis.tsx
 msgid "Consultar e alterar"
@@ -1560,6 +1569,10 @@ msgstr "View and edit"
 #: src/routes/_app/definicoes/index.tsx
 msgid "Conta"
 msgstr "Account"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Conta criada com o registo do professor."
+msgstr "Account created when the teacher is registered."
 
 #: src/routes/-casca/menu-utilizador.tsx
 msgid "Conta de {nome}"
@@ -1572,10 +1585,6 @@ msgstr "Account of {nome} created."
 #: src/routes/_app/relatorios.tsx
 msgid "Contagens do ano lectivo em contexto, actualizadas pelo servidor."
 msgstr "Counts for the school year in context, updated by the server."
-
-#: src/entities/administracao/model/mapeadores.ts
-msgid "Contas de utilizador e auditoria."
-msgstr "User accounts and audit."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Contínua"
@@ -1604,6 +1613,10 @@ msgstr "Runs in the background: you can leave this screen and follow it on the t
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Corrigir"
 msgstr "Fix"
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Cria, altera e desactiva as contas."
+msgstr "Creates, changes and deactivates accounts."
 
 #: src/features/gerir-ano-lectivo/ui/novo-ano.tsx
 msgid "Criar {designacao}"
@@ -1759,6 +1772,10 @@ msgstr "From {de} to {ate}"
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "De {origem} para {destino}."
 msgstr "From {origem} to {destino}."
+
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+msgid "De 12 a 128 caracteres. A sessão actual continua aberta."
+msgstr "12 to 128 characters. The current session stays open."
 
 #: src/features/gerir-contas/ui/nova-conta.tsx
 msgid "De 12 a 128 caracteres. Entregue-a à pessoa por um canal seguro."
@@ -1964,6 +1981,14 @@ msgstr "Disciplinary"
 msgid "Disciplinas"
 msgstr "Subjects"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Disciplinas de cada classe; activa e encerra os anos lectivos."
+msgstr "Subjects of each grade; activates and closes school years."
+
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Disciplinas de cada classe; consulta a estrutura académica."
+msgstr "Subjects of each grade; views the academic structure."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Disciplinas do plano"
 msgstr "Plan subjects"
@@ -2002,6 +2027,7 @@ msgstr "Distribute the students among the classes"
 msgid "Distribuir por turmas"
 msgstr "Distribute by class"
 
+#: src/entities/administracao/model/mapeadores.ts
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Docente"
 msgstr "Teacher"
@@ -2418,10 +2444,6 @@ msgstr "Choose the class to see who receives."
 msgid "Escolha a turma."
 msgstr "Choose the class."
 
-#: src/features/criar-professor/ui/novo-professor.tsx
-msgid "Escolha o ciclo."
-msgstr "Choose the cycle."
-
 #: src/features/atribuir-docente/model/esquema.ts
 msgid "Escolha o docente."
 msgstr "Choose the teacher."
@@ -2571,6 +2593,14 @@ msgid "Esta tarefa já não está disponível."
 msgstr "This task is no longer available."
 
 #: src/shared/lib/erros-dominio.ts
+msgid "Esta turma é de outro ano lectivo. Escolha uma turma do ano da matrícula."
+msgstr "This class belongs to another school year. Choose a class from the enrolment’s year."
+
+#: src/shared/lib/erros-dominio.ts
+msgid "Esta turma está encerrada e não aceita matrículas. Escolha outra turma."
+msgstr "This class is closed and does not accept enrolments. Choose another class."
+
+#: src/shared/lib/erros-dominio.ts
 msgid "Esta turma já está cheia. Escolha outra turma ou peça uma excepção."
 msgstr "This class is already full. Choose another class or request an exception."
 
@@ -2690,10 +2720,6 @@ msgstr "Students by class"
 #: src/routes/_app/index.tsx
 msgid "Estudantes sem turma"
 msgstr "Students without a class"
-
-#: src/entities/administracao/model/mapeadores.ts
-msgid "Estudantes, matrículas e documentos."
-msgstr "Students, enrolments and documents."
 
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Etapas da abertura"
@@ -2947,6 +2973,7 @@ msgstr "IT manager"
 msgid "Guardado"
 msgstr "Saved"
 
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
 #: src/features/gerir-contas/ui/mudar-papel.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
@@ -3795,6 +3822,10 @@ msgstr "New account"
 msgid "Nova disciplina"
 msgstr "New subject"
 
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+msgid "Nova palavra-passe"
+msgstr "New password"
+
 #: src/features/gerir-turmas/ui/nova-turma.tsx
 msgid "Nova turma"
 msgstr "New class"
@@ -3939,10 +3970,6 @@ msgstr "The file only has the header."
 msgid "O motivo fica no percurso do estudante."
 msgstr "The reason is recorded in the student history."
 
-#: src/features/criar-professor/ui/novo-professor.tsx
-msgid "O número de agente é atribuído pelo servidor."
-msgstr "The agent number is assigned by the server."
-
 #: src/routes/_app/curriculo/index.tsx
 msgid "O plano diz que disciplinas a classe tem e com que carga semanal."
 msgstr "The plan says which subjects the grade has and with what weekly load."
@@ -3978,6 +4005,14 @@ msgstr "The original entry stays in the student history, marked as corrected. Th
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "O resultado entra no percurso de cada estudante."
 msgstr "The result goes into each student’s history."
+
+#: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
+msgid "O servidor ainda não indica pendências. Ao encerrar, as matrículas activas do ano ficam concluídas."
+msgstr "The server does not report pending items yet. When the year is closed, its active enrolments are completed."
+
+#: src/features/criar-professor/ui/novo-professor.tsx
+msgid "O servidor atribui o número de agente, o email da escola e a palavra-passe inicial."
+msgstr "The server assigns the agent number, the school email and the initial password."
 
 #: src/features/matricular-estudante/model/matricular-sis.ts
 msgid "O servidor pede o nome e o telefone do pai e da mãe. Acrescente-os como encarregados, com o parentesco Pai e Mãe."
@@ -4144,6 +4179,10 @@ msgstr "Father"
 msgid "Palavra-passe"
 msgstr "Password"
 
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+msgid "Palavra-passe alterada. Use-a da próxima vez que entrar."
+msgstr "Password changed. Use it the next time you sign in."
+
 #: src/features/gerir-contas/ui/nova-conta.tsx
 msgid "Palavra-passe inicial"
 msgstr "Initial password"
@@ -4279,10 +4318,6 @@ msgstr "Planned"
 #: src/routes/_app/curriculo/index.tsx
 msgid "Plano da {designacao}"
 msgstr "Plan for {designacao}"
-
-#: src/entities/administracao/model/mapeadores.ts
-msgid "Planos curriculares, calendário e corpo docente."
-msgstr "Curriculum plans, calendar and teaching staff."
 
 #: src/shared/lib/erros-dominio.ts
 msgid "Pode já existir um processo para este estudante. Confirme antes de continuar."
@@ -4583,6 +4618,10 @@ msgstr "Correct: {descricao}"
 msgid "Rectificou"
 msgstr "Corrected"
 
+#: src/entities/administracao/model/mapeadores.ts
+msgid "Regista e matricula estudantes; consulta turmas e currículo."
+msgstr "Registers and enrols students; views classes and curriculum."
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "Registada"
 msgstr "Recorded"
@@ -4700,6 +4739,10 @@ msgstr "Repeats row {valor} (same name and date of birth)."
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Repetem"
 msgstr "Repeat"
+
+#: src/features/alterar-palavra-passe/ui/alterar-palavra-passe.tsx
+msgid "Repita a palavra-passe"
+msgstr "Repeat the password"
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Repor"
@@ -5037,6 +5080,10 @@ msgstr "Only active teachers qualified for {disciplina}."
 msgid "Só professores activos recebem novas atribuições."
 msgstr "Only active teachers receive new assignments."
 
+#: src/shared/lib/erros-dominio.ts
+msgid "Só se matricula num ano lectivo em curso. Active o ano primeiro."
+msgstr "Enrolment is only possible in a school year in progress. Activate the year first."
+
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Só se reabre com justificação, e fica registado na auditoria."
 msgstr "It can only be reopened with a justification, and this is recorded in the audit log."
@@ -5154,8 +5201,8 @@ msgid "Tipo de ocorrência"
 msgstr "Incident type"
 
 #: src/entities/administracao/model/mapeadores.ts
-msgid "Toda a secretaria, incluindo anos lectivos, turmas e currículo."
-msgstr "The whole school office, including school years, classes and curriculum."
+msgid "Toda a secretaria: anos lectivos, turmas, estudantes, matrículas e docentes."
+msgstr "The whole school office: school years, classes, students, enrolments and teachers."
 
 #: src/features/gerar-relatorio/ui/relatorios.tsx
 #: src/routes/_app/definicoes/auditoria.tsx

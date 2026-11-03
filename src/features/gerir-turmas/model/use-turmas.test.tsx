@@ -22,7 +22,7 @@ describe('proximoNomeDeTurma', () => {
 })
 
 describe('turmas no backend SIS', () => {
-  it('criar envia nome, classe e ano pelos ids numéricos e o turno do SIS', async () => {
+  it('criar envia nome, classe, ano, turno do SIS e a lotação (capacity)', async () => {
     // Como o backend real: 201 sem corpo; a turma nova aparece na lista seguinte
     const pedidos = escutarEscritas({}, () =>
       server.use(
@@ -48,7 +48,7 @@ describe('turmas no backend SIS', () => {
       {
         metodo: 'POST',
         caminho: '/classes',
-        corpo: { name: '7.ª C', gradeId: 10, academicYearId: 1, period: 'NIGHT' },
+        corpo: { name: '7.ª C', gradeId: 10, academicYearId: 1, period: 'NIGHT', capacity: 40 },
       },
     ])
     expect(criada).toMatchObject({ id: 'nova', designacao: '7.ª C', classe: '7.ª classe' })

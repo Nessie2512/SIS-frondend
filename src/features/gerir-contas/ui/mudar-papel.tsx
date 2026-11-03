@@ -1,7 +1,7 @@
 import { Trans, useLingui } from '@lingui/react/macro'
 import { useState } from 'react'
 import { rotuloPapel, type Conta } from '@/entities/administracao'
-import { ePapel, PAPEIS, type Papel } from '@/shared/config/papeis'
+import { ePapel, PAPEIS_DE_CONTA, type Papel } from '@/shared/config/papeis'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { Aviso, Button, Campo, Dialogo, notificar, Selector } from '@/shared/ui'
@@ -68,7 +68,7 @@ export function MudarPapel({ conta }: { conta: Conta }) {
             {(c) => (
               <Selector
                 {...c}
-                opcoes={PAPEIS.map((p) => ({ valor: p, rotulo: rotuloPapel(p) }))}
+                opcoes={PAPEIS_DE_CONTA.map((p) => ({ valor: p, rotulo: rotuloPapel(p) }))}
                 valor={papel}
                 aoMudar={(v) => setPapel(v as Papel | null)}
               />

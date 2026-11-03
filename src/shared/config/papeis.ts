@@ -14,9 +14,14 @@ export const PAPEIS = [
   'FINANCEIRO',
   'GESTOR_TI',
   'ADMIN',
+  // Docentes (o Teacher herda de utilizador): ainda sem área na secretaria
+  'TEACHER',
 ] as const
 
 export type Papel = (typeof PAPEIS)[number]
+
+/** Papéis que se escolhem ao criar ou mudar uma conta: o docente nasce com o registo do professor. */
+export const PAPEIS_DE_CONTA = PAPEIS.filter((p) => p !== 'TEACHER')
 
 /** Permissões do backend (core/auth/permissions.ts). */
 type PermissaoSis =
@@ -44,10 +49,13 @@ type PermissaoSis =
  * ecrãs abrirem e dizerem "não disponível" em vez de desaparecerem.
  */
 const TRADUCAO: Record<PermissaoSis, readonly string[]> = {
-  'users:read': ['administracao:ler'],
-  'users:write': ['administracao:ler', 'administracao:escrever'],
+  // users:* é a própria conta (GET/PATCH /users/{uuid}); gerir as contas dos outros é do
+  // gestor de TI, por papel (ver PERMISSOES_POR_PAPEL)
+  'users:read': [],
+  'users:write': ['conta:editar'],
   'students:read': ['estudantes:ler', 'matriculas:ler', 'calendario:ler'],
-  'students:write': ['estudantes:ler', 'estudantes:escrever', 'documentos:emitir'],
+  // Alterar a identidade e anular pedem student-management; aqui só o que não muda o processo
+  'students:write': ['estudantes:ler', 'documentos:emitir'],
   // Criar o estudante abre o assistente de matrícula; matricular pede student-approval
   'student-entry:write': ['estudantes:ler', 'matriculas:escrever'],
   'student-approval:write': ['matriculas:ler', 'matriculas:escrever', 'matriculas:aprovar'],
@@ -69,7 +77,18 @@ const TRADUCAO: Record<PermissaoSis, readonly string[]> = {
   'finance:read': [],
   'finance:write': [],
   'reports:read': ['relatorios:ler'],
-  'audit:read': ['administracao:ler', 'auditoria:ler'],
+  'audit:read': ['auditoria:ler'],
+}
+
+/**
+ * Rotas com @Roles no backend: o RolesGuard decide pelo papel, não pelas permissões que
+ * /auth/me devolve. Acrescentam-se ao que vem do servidor.
+ */
+const PERMISSOES_POR_PAPEL: Partial<Record<Papel, readonly string[]>> = {
+  // POST/GET/DELETE /users: só o gestor de TI cria, lista e desactiva contas
+  GESTOR_TI: ['administracao:ler', 'administracao:escrever'],
+  // PATCH /academic-years/{id}/activate e /close
+  ADMIN: ['anos:activar'],
 }
 
 function ePermissaoSis(valor: string): valor is PermissaoSis {
@@ -103,25 +122,37 @@ const PERMISSOES_SIS_DO_PAPEL: Record<Papel, readonly PermissaoSis[]> = {
     'academic:write',
     'finance:write',
   ],
-  SECRETARIO: ['students:read', 'classes:read', 'academic:read', 'student-entry:write'],
+  SECRETARIO: [
+    'students:read',
+    'classes:read',
+    'students:write',
+    'student-entry:write',
+    'student-approval:write',
+    'academic:read',
+  ],
   FINANCEIRO: ['finance:read', 'finance:write', 'reports:read'],
   GESTOR_TI: ['users:read', 'users:write', 'audit:read'],
   ADMIN: ['curriculum:read', 'curriculum:write', 'academic:read'],
   DIRECTOR_PEDAGOGICO: ['curriculum:read', 'curriculum:write', 'academic:read', 'reports:read'],
+  TEACHER: [],
 }
 
-const traduzir = (permissoes: readonly string[]) => [
-  ...new Set(permissoes.filter(ePermissaoSis).flatMap((p) => TRADUCAO[p])),
+const traduzir = (permissoes: readonly string[], papel?: Papel) => [
+  ...new Set([
+    ...permissoes.filter(ePermissaoSis).flatMap((p) => TRADUCAO[p]),
+    ...((papel && PERMISSOES_POR_PAPEL[papel]) ?? []),
+  ]),
 ]
 
 export const PERMISSOES_DO_PAPEL: Record<Papel, readonly string[]> = {
-  DIRECTOR_GERAL: traduzir(PERMISSOES_SIS_DO_PAPEL.DIRECTOR_GERAL),
-  DIRECTOR_PEDAGOGICO: traduzir(PERMISSOES_SIS_DO_PAPEL.DIRECTOR_PEDAGOGICO),
-  CHEFE_SECRETARIA: traduzir(PERMISSOES_SIS_DO_PAPEL.CHEFE_SECRETARIA),
-  SECRETARIO: traduzir(PERMISSOES_SIS_DO_PAPEL.SECRETARIO),
-  FINANCEIRO: traduzir(PERMISSOES_SIS_DO_PAPEL.FINANCEIRO),
-  GESTOR_TI: traduzir(PERMISSOES_SIS_DO_PAPEL.GESTOR_TI),
-  ADMIN: traduzir(PERMISSOES_SIS_DO_PAPEL.ADMIN),
+  DIRECTOR_GERAL: traduzir(PERMISSOES_SIS_DO_PAPEL.DIRECTOR_GERAL, 'DIRECTOR_GERAL'),
+  DIRECTOR_PEDAGOGICO: traduzir(PERMISSOES_SIS_DO_PAPEL.DIRECTOR_PEDAGOGICO, 'DIRECTOR_PEDAGOGICO'),
+  CHEFE_SECRETARIA: traduzir(PERMISSOES_SIS_DO_PAPEL.CHEFE_SECRETARIA, 'CHEFE_SECRETARIA'),
+  SECRETARIO: traduzir(PERMISSOES_SIS_DO_PAPEL.SECRETARIO, 'SECRETARIO'),
+  FINANCEIRO: traduzir(PERMISSOES_SIS_DO_PAPEL.FINANCEIRO, 'FINANCEIRO'),
+  GESTOR_TI: traduzir(PERMISSOES_SIS_DO_PAPEL.GESTOR_TI, 'GESTOR_TI'),
+  ADMIN: traduzir(PERMISSOES_SIS_DO_PAPEL.ADMIN, 'ADMIN'),
+  TEACHER: traduzir(PERMISSOES_SIS_DO_PAPEL.TEACHER, 'TEACHER'),
 }
 
 /** Só leitura da secretaria: quando não se sabe o papel de quem entrou. */
@@ -148,6 +179,7 @@ export function permissoesDoSis(
   permissoes: readonly string[],
   papel: string | undefined,
 ): string[] {
-  const traduzidas = traduzir(permissoes)
-  return traduzidas.length ? traduzidas : permissoesDoPapel(papel)
+  const doServidor = permissoes.filter(ePermissaoSis)
+  if (!doServidor.length) return permissoesDoPapel(papel)
+  return traduzir(doServidor, ePapel(papel) ? papel : undefined)
 }

@@ -3,7 +3,7 @@ import { UserPlus } from 'lucide-react'
 import { useState } from 'react'
 import { rotuloPapel } from '@/entities/administracao'
 import { eApiError } from '@/shared/api'
-import { PAPEIS, type Papel } from '@/shared/config/papeis'
+import { PAPEIS_DE_CONTA, type Papel } from '@/shared/config/papeis'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { camposPessoaEmFalta, PESSOA_VAZIA, type DadosPessoa } from '@/shared/lib/pessoa'
@@ -150,7 +150,7 @@ export function NovaConta() {
             {(c) => (
               <Selector
                 {...c}
-                opcoes={PAPEIS.map((p) => ({ valor: p, rotulo: rotuloPapel(p) }))}
+                opcoes={PAPEIS_DE_CONTA.map((p) => ({ valor: p, rotulo: rotuloPapel(p) }))}
                 valor={papel}
                 aoMudar={(v) => setPapel(v as Papel | null)}
               />

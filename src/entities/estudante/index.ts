@@ -33,6 +33,7 @@ export {
   alterarDocumentoSis,
   anularEstudanteSis,
   criarEstudanteSis,
+  estudanteNoAnoSis,
   lerDocumento,
   matricularSis,
   recarregarEstudantesSis,

@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 import { api } from '@/shared/api'
-import { apiSis, porId, referenciaSis } from '@/shared/api/sis'
+import { apiSis, doAno, idDoAnoSis, porId, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
@@ -54,7 +54,9 @@ export function professorQuery(id: string, anoLectivoId: string) {
 /** Backend SIS: lista inteira; pesquisa, estado e ordem aplicam-se aqui. */
 async function paginaDoSis(client: QueryClient, f: FiltrosProfessores): Promise<PaginaProfessores> {
   const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
-  const todos = (await client.fetchQuery(referenciaSis.professores())).map(paraProfessorResumoDoSis)
+  const todos = (await client.fetchQuery(referenciaSis.professores(f.anoLectivoId))).map(
+    paraProfessorResumoDoSis,
+  )
   // Sem disciplinas habilitadas no backend: filtrar por disciplina dá a lista vazia
   const filtrados = f.disciplinaId
     ? []
@@ -82,14 +84,15 @@ async function professorDoSis(
   anoLectivoId: string,
   signal: AbortSignal,
 ) {
+  // A ficha e as atribuições pedem o ano (guia de integração, 1)
+  const academicYearId = await idDoAnoSis(client, anoLectivoId)
+  const params = { path: { uuid }, ...doAno(academicYearId) }
   const [professor, atribuicoes, turmas, classes, disciplinas, anos] = await Promise.all([
-    apiSis.GET('/teachers/{uuid}', { params: { path: { uuid } }, signal }).then((r) => r.data!),
-    apiSis
-      .GET('/teachers/{uuid}/assignments', { params: { path: { uuid } }, signal })
-      .then((r) => r.data!),
-    client.fetchQuery(referenciaSis.turmas()),
-    client.fetchQuery(referenciaSis.classes()),
-    client.fetchQuery(referenciaSis.disciplinas()),
+    apiSis.GET('/teachers/{uuid}', { params, signal }).then((r) => r.data!),
+    apiSis.GET('/teachers/{uuid}/assignments', { params, signal }).then((r) => r.data!),
+    client.fetchQuery(referenciaSis.turmas(anoLectivoId)),
+    client.fetchQuery(referenciaSis.classes(anoLectivoId)),
+    client.fetchQuery(referenciaSis.disciplinas(anoLectivoId)),
     client.fetchQuery(referenciaSis.anos()),
   ])
   const ano = anos.find((a) => a.uuid === anoLectivoId)

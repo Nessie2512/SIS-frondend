@@ -36,6 +36,10 @@ const POR_CODIGO: Record<CodigoErroDominio, MessageDescriptor> = {
   RENOVACAO_APLICADA: msg`A renovação para este ano já foi feita. As matrículas que faltem fazem-se uma a uma.`,
   EVENTO_FIXO: msg`Os feriados nacionais vêm da lei e não se apagam.`,
   DISCIPLINA_EM_USO: msg`Esta disciplina já foi usada num plano e não se elimina. Pode inactivá-la.`,
+  ANO_NAO_ACTIVO: msg`Só se matricula num ano lectivo em curso. Active o ano primeiro.`,
+  TURMA_INACTIVA: msg`Esta turma está encerrada e não aceita matrículas. Escolha outra turma.`,
+  TURMA_DE_OUTRO_ANO: msg`Esta turma é de outro ano lectivo. Escolha uma turma do ano da matrícula.`,
+  FINANCEIRO_INDISPONIVEL: msg`A verificação financeira não está disponível de momento. A confirmação não foi aprovada; tente mais tarde.`,
   NAO_DISPONIVEL: msg`Esta parte ainda não está disponível no servidor. Aparece aqui quando o backend a publicar.`,
 }
 

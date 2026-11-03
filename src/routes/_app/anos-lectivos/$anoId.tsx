@@ -48,7 +48,7 @@ function EcraAnoLectivo() {
       </div>
 
       {ano.estado === 'PLANEADO' && <AberturaAno ano={ano} podeGerir={podeGerir} />}
-      {ano.estado === 'EM_CURSO' && <EncerramentoAno ano={ano} podeGerir={podeGerir} />}
+      {ano.estado === 'EM_CURSO' && <EncerramentoAno ano={ano} />}
       {ano.estado === 'ENCERRADO' && (
         <div className="flex flex-col gap-4">
           <Aviso tom="leitura">

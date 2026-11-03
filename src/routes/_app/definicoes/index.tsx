@@ -3,7 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { LogOut } from 'lucide-react'
 import { meQuery, sair } from '@/entities/utilizador'
+import { AlterarPalavraPasse } from '@/features/alterar-palavra-passe'
 import type { Lingua } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
+import { useCan } from '@/shared/lib/permissoes'
 import { usePreferencias, type Densidade, type PreferenciaTema } from '@/shared/lib/preferencias'
 import { recarregar } from '@/shared/lib/recarregar'
 import { Avatar, Button, ControloSegmentado, ErroDeRota } from '@/shared/ui'
@@ -39,6 +42,8 @@ function Definicoes() {
     definirLingua,
   } = usePreferencias()
   const { data: eu } = useQuery(meQuery())
+  // A própria conta (PATCH /users/{uuid}): o backend SIS deixa cada um mudar a palavra-passe
+  const podeEditarConta = useCan('conta:editar') && eReal('utilizadores')
 
   return (
     <section className="flex max-w-3xl flex-col gap-8">
@@ -123,6 +128,7 @@ function Definicoes() {
               <span className="font-medium">{eu.nome}</span>
               <span className="text-secundario text-texto-2">{eu.email}</span>
             </div>
+            {podeEditarConta && <AlterarPalavraPasse utilizadorId={eu.id} />}
             <Button onClick={() => void sair()}>
               <LogOut aria-hidden className="size-4 stroke-[1.5]" />
               <Trans>Terminar sessão</Trans>

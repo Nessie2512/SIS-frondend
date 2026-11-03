@@ -1,7 +1,7 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '@/shared/api'
-import { apiSis, porId, referenciaSis } from '@/shared/api/sis'
+import { apiSis, porId, referenciaSis, sisKeys } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { paraInscrito, paraPaginaTurmas, paraTurma, paraTurmaDoSis } from '../model/mapeadores'
@@ -44,9 +44,14 @@ export function turmaQuery(id: string) {
     queryKey: turmaKeys.detalhe(id),
     queryFn: async ({ signal, client }) => {
       if (eReal('turmas')) {
-        const turma = (await turmasDoSis(client)).find((t) => t.id === id)
-        if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
-        return turma
+        // Primeiro no ano em contexto; uma ligação para a turma de outro ano procura nos outros
+        const noContexto = (await turmasDoSis(client)).find((t) => t.id === id)
+        if (noContexto) return comOcupacao(client, noContexto, noContexto.anoLectivoId)
+        for (const ano of await client.fetchQuery(referenciaSis.anos())) {
+          const turma = (await turmasDoSis(client, ano.uuid)).find((t) => t.id === id)
+          if (turma) return comOcupacao(client, turma, ano.uuid)
+        }
+        throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
       }
       const { data } = await api.GET('/turmas/{id}', { params: { path: { id } }, signal })
       return paraTurma(data!)
@@ -100,11 +105,14 @@ export function resultadosQuery(turmaId: string) {
   })
 }
 
-/** Backend SIS: todas as turmas, já com a classe e o ano (uuid) de cada uma. */
-async function turmasDoSis(client: QueryClient): Promise<(Turma & { anoLectivoId: string })[]> {
+/** Backend SIS: as turmas de um ano (o do contexto, por omissão), com a classe e o ano. */
+async function turmasDoSis(
+  client: QueryClient,
+  ano?: string,
+): Promise<(Turma & { anoLectivoId: string })[]> {
   const [turmas, classes, anos] = await Promise.all([
-    client.fetchQuery(referenciaSis.turmas()),
-    client.fetchQuery(referenciaSis.classes()),
+    client.fetchQuery(referenciaSis.turmas(ano)),
+    client.fetchQuery(referenciaSis.classes(ano)),
     client.fetchQuery(referenciaSis.anos()),
   ])
   const classePorId = porId(classes)
@@ -115,9 +123,52 @@ async function turmasDoSis(client: QueryClient): Promise<(Turma & { anoLectivoId
   }))
 }
 
+/**
+ * Inscritos numa turma: GET /students/reports/class conta os estudantes matriculados nela.
+ * Guarda-se sob as chaves dos estudantes, para matricular ou anular actualizar a ocupação.
+ */
+function inscritosSisQuery(academicYearId: number, classId: number) {
+  return queryOptions({
+    queryKey: [...sisKeys.lista('students'), 'turma', classId] as const,
+    queryFn: async ({ signal }) =>
+      (
+        await apiSis.GET('/students/reports/class', {
+          params: { query: { academicYearId, classId } },
+          signal,
+        })
+      ).data?.count ?? 0,
+    staleTime: FRESCURA.lista,
+  })
+}
+
+/** A turma com a ocupação real (lotação do backend e inscritos contados). */
+async function comOcupacao<T extends Turma>(
+  client: QueryClient,
+  turma: T,
+  ano: string,
+): Promise<T> {
+  const [turmas, classes] = await Promise.all([
+    client.fetchQuery(referenciaSis.turmas(ano)),
+    client.fetchQuery(referenciaSis.classes(ano)),
+  ])
+  const dto = turmas.find((t) => t.uuid === turma.id)
+  if (!dto) return turma
+  const inscritos = await client
+    .fetchQuery(inscritosSisQuery(dto.academicYearId, dto.id))
+    .catch(() => undefined)
+  return {
+    ...turma,
+    ...paraTurmaDoSis(
+      dto,
+      classes.find((c) => c.id === dto.gradeId),
+      inscritos,
+    ),
+  }
+}
+
 /** Sem filtros nem páginas no backend: filtra-se e pagina-se aqui, com as mesmas regras. */
 async function paginaDoSis(client: QueryClient, filtros: FiltrosTurma): Promise<PaginaTurmas> {
-  const todas = (await turmasDoSis(client))
+  const todas = (await turmasDoSis(client, filtros.anoLectivoId))
     .filter((t) => t.anoLectivoId === filtros.anoLectivoId)
     .filter((t) => !filtros.classeId || t.classeId === filtros.classeId)
     .filter((t) => !filtros.turno || t.turno === filtros.turno)
@@ -126,10 +177,11 @@ async function paginaDoSis(client: QueryClient, filtros: FiltrosTurma): Promise<
   const porPagina = PAGINACAO.porPagina
   const totalPaginas = Math.max(1, Math.ceil(todas.length / porPagina))
   const page = Math.min(Math.max(1, filtros.page), totalPaginas)
+  const pagina = todas.slice((page - 1) * porPagina, page * porPagina)
   return {
-    turmas: todas
-      .slice((page - 1) * porPagina, page * porPagina)
-      .map(({ anoLectivoId: _, ...t }) => t),
+    turmas: await Promise.all(
+      pagina.map(({ anoLectivoId: _, ...t }) => comOcupacao(client, t, filtros.anoLectivoId)),
+    ),
     total: todas.length,
     page,
     totalPaginas,
@@ -138,33 +190,37 @@ async function paginaDoSis(client: QueryClient, filtros: FiltrosTurma): Promise<
 
 /**
  * Backend SIS: uma linha por disciplina da classe da turma (subjectIds), com o professor
- * atribuído. As atribuições só se lêem por professor (GET /teachers/{uuid}/assignments), por
- * isso pedem-se as de todos os professores activos. Sem data de início nem fim no backend:
- * com várias atribuições activas à mesma disciplina, a mais recente (id maior) é a actual e as
- * outras ficam no histórico.
+ * atribuído. Os docentes da turma pedem-se com o filtro classId (guia de integração, 1) e as
+ * atribuições de cada um com o mesmo filtro. Sem data de início nem fim no backend: com várias
+ * atribuições activas à mesma disciplina, a mais recente (id maior) é a actual e as outras
+ * ficam no histórico.
  */
 async function docentesDoSis(
   client: QueryClient,
   turmaId: string,
   signal: AbortSignal,
 ): Promise<DocenteTurma[]> {
-  const [turmas, classes, disciplinas, professores] = await Promise.all([
+  const [turmas, classes, disciplinas] = await Promise.all([
     client.fetchQuery(referenciaSis.turmas()),
     client.fetchQuery(referenciaSis.classes()),
     client.fetchQuery(referenciaSis.disciplinas()),
-    client.fetchQuery(referenciaSis.professores()),
   ])
   const turma = turmas.find((t) => t.uuid === turmaId)
   if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
   const classe = classes.find((c) => c.id === turma.gradeId)
   const disciplinaPorId = porId(disciplinas)
+  const filtro = { academicYearId: turma.academicYearId, classId: turma.id }
+  const { data: professores = [] } = await apiSis.GET('/teachers', {
+    params: { query: filtro },
+    signal,
+  })
   const atribuicoes = (
     await Promise.all(
       professores
         .filter((p) => p.isActive)
         .map(async (p) => {
           const { data } = await apiSis.GET('/teachers/{uuid}/assignments', {
-            params: { path: { uuid: p.uuid } },
+            params: { path: { uuid: p.uuid }, query: filtro },
             signal,
           })
           return (data ?? []).map((a) => ({ ...a, professor: p }))

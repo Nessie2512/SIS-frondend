@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { api, eApiError } from '@/shared/api'
-import { apiSis, porId, referenciaSis, SEM_AVISO_403 } from '@/shared/api/sis'
+import { apiSis, doAno, idDoAnoSis, porId, referenciaSis, SEM_AVISO_403 } from '@/shared/api/sis'
 import { FRESCURA } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { paraPlano, paraPlanoResumo, planoDoSis, planoResumoDoSis } from '../model/mapeadores'
@@ -46,13 +46,15 @@ export function planoQuery(id: string) {
 async function planoDoSisPorClasse(client: QueryClient, classeId: string, signal: AbortSignal) {
   try {
     const { data } = await apiSis.GET('/grades/{gradeId}/subjects', {
-      params: { path: { gradeId: classeId } },
+      params: { path: { gradeId: classeId }, ...doAno(await idDoAnoSis(client)) },
       headers: { [SEM_AVISO_403]: '1' },
       signal,
     })
     return planoDoSis(classeId, data!.subjects)
   } catch (erro) {
-    if (!eApiError(erro) || erro.status !== 403) throw erro
+    // 403: sem o âmbito curriculum. 404: a classe ainda não tem turmas no ano, e o backend só
+    // a encontra pelo ano. Em ambos, as disciplinas lêem-se da lista das classes
+    if (!eApiError(erro) || (erro.status !== 403 && erro.status !== 404)) throw erro
   }
   const [classes, disciplinas] = await Promise.all([
     client.fetchQuery(referenciaSis.classes()),
