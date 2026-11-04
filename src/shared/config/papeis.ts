@@ -3,8 +3,8 @@
  *
  * GET /auth/me devolve `permissions` no vocabulário do backend ("students:read",
  * "student-entry:write"); permissoesDoSis() traduz para o da interface ("estudantes:ler").
- * Quando nenhuma é reconhecida, vale a tabela por papel abaixo (provisória). Em qualquer caso,
- * isto só esconde ou desactiva o que não se pode fazer: quem decide é o servidor (403).
+ * A lista traduzida é a fonte de apresentação no modo real; o servidor continua a
+ * ser a autoridade final e pode recusar a ação com 403.
  */
 export const PAPEIS = [
   'DIRECTOR_GERAL',
@@ -14,6 +14,7 @@ export const PAPEIS = [
   'FINANCEIRO',
   'GESTOR_TI',
   'ADMIN',
+  'TEACHER',
 ] as const
 
 export type Papel = (typeof PAPEIS)[number]
@@ -36,14 +37,13 @@ const CHEFIA = [
   'professores:escrever',
   'curriculo:escrever',
   'calendario:escrever',
-  'anos:gerir',
   'administracao:ler',
 ]
 
 const ADMINISTRACAO = ['administracao:ler', 'administracao:escrever']
 
 export const PERMISSOES_DO_PAPEL: Record<Papel, readonly string[]> = {
-  DIRECTOR_GERAL: [...CHEFIA, ...ADMINISTRACAO],
+  DIRECTOR_GERAL: CHEFIA,
   DIRECTOR_PEDAGOGICO: [
     ...LEITURA,
     'curriculo:escrever',
@@ -54,7 +54,8 @@ export const PERMISSOES_DO_PAPEL: Record<Papel, readonly string[]> = {
   SECRETARIO: SECRETARIA,
   FINANCEIRO: LEITURA,
   GESTOR_TI: [...LEITURA, ...ADMINISTRACAO],
-  ADMIN: [...CHEFIA, ...ADMINISTRACAO],
+  ADMIN: [...CHEFIA, 'anos:gerir'],
+  TEACHER: LEITURA,
 }
 
 export function ePapel(valor: unknown): valor is Papel {
@@ -111,14 +112,10 @@ function traduzir(permissao: string): string[] {
 }
 
 /**
- * Permissões do backend → permissões da interface. Nenhuma reconhecida (vocabulário novo ou
- * lista vazia) → tabela do papel, para a interface não ficar sem nada por um nome desconhecido.
+ * Permissões devolvidas pelo backend → permissões da interface. Um vocabulário desconhecido
+ * não deve conceder permissões com base apenas no papel.
  */
-export function permissoesDoSis(
-  permissoes: readonly string[],
-  papel: string | undefined,
-): string[] {
+export function permissoesDoSis(permissoes: readonly string[]): string[] {
   const traduzidas = permissoes.flatMap(traduzir)
-  if (!traduzidas.length) return permissoesDoPapel(papel)
   return [...new Set(traduzidas)]
 }

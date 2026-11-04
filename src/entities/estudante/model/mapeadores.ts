@@ -135,7 +135,7 @@ export function paraEstudanteDoSis(dto: EstudanteSis): Estudante {
   const dataNascimento = dataCivilDoSis(dto.birthDate)
   return {
     id: dto.uuid,
-    numeroProcesso: dto.studentCode,
+    numeroProcesso: dto.studentCode ?? null,
     nome: dto.name,
     dataNascimento,
     idade: Number.isFinite(dto.age) ? dto.age : idade(dataNascimento),

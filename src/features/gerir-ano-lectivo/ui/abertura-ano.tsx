@@ -10,6 +10,7 @@ import {
   type Abertura,
   type AnoLectivo,
 } from '@/entities/ano-lectivo'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -24,7 +25,47 @@ type Etapa = Abertura['etapas'][number]
  */
 export function AberturaAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir: boolean }) {
   const { t } = useLingui()
-  const { data: abertura } = useQuery(aberturaQuery(ano.id))
+  const sisReal = eReal('anos')
+  const designacao = ano.designacao
+  const estadoRotulo = ano.estadoRotulo
+  const { data: abertura } = useQuery({
+    ...aberturaQuery(ano.id),
+    enabled: !sisReal,
+  })
+  const activar = useActivarAno(ano.id)
+  if (sisReal) {
+    return (
+      <section aria-labelledby="abertura-titulo" className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1">
+          <h2 id="abertura-titulo" className="text-titulo-seccao">
+            <Trans>Abertura do ano</Trans>
+          </h2>
+          <p className="text-secundario text-texto-2">
+            <Trans>Estado actual: {estadoRotulo}.</Trans>
+          </p>
+        </div>
+        {ano.estado === 'PLANEADO' && podeGerir && (
+          <div className="flex justify-end">
+            <Button
+              variante="primario"
+              aCarregar={activar.isPending}
+              onClick={() =>
+                activar.mutate(undefined, {
+                  onSuccess: () => {
+                    notificar.sucesso(t`O ano ${designacao} foi activado.`)
+                    anunciar.educado(t`O ano ${designacao} foi activado.`)
+                  },
+                  onError: (erro) => notificar.erro(mensagemDeErro(erro)),
+                })
+              }
+            >
+              <Trans>Activar o ano {designacao}</Trans>
+            </Button>
+          </div>
+        )}
+      </section>
+    )
+  }
   if (!abertura) return <Esqueleto className="h-96 w-full" />
   const feitas = abertura.etapas.filter((e) => e.estado === 'FEITA').length
   const total = abertura.etapas.filter((e) => e.estado !== 'OPCIONAL').length

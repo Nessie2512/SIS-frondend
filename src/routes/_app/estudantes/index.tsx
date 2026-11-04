@@ -89,7 +89,7 @@ export const Route = createFileRoute('/_app/estudantes/')({
                 ...resto,
               }),
             ),
-            queryClient.ensureQueryData(classesQuery()),
+            queryClient.ensureQueryData(classesQuery(anoLectivoId)),
           ])
         : null,
     )
@@ -164,7 +164,7 @@ function EcraEstudantes() {
   // deixava temporizadores antigos por cancelar e o URL ficava com texto truncado
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => () => clearTimeout(espera.current), [])
-  const { data: classes = [] } = useQuery(classesQuery())
+  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId ?? ''))
   const { data, isPlaceholderData, isError, refetch } = useQuery({
     ...estudantesQuery({
       anoLectivoId: anoLectivoId ?? '',
@@ -488,7 +488,11 @@ function EcraEstudantes() {
 function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: () => void }) {
   const { t } = useLingui()
   const navigate = useNavigate()
-  const { data: e } = useQuery({ ...estudanteQuery(id ?? ''), enabled: Boolean(id) })
+  const { anoLectivoId } = Route.useRouteContext()
+  const { data: e } = useQuery({
+    ...estudanteQuery(id ?? '', anoLectivoId ?? ''),
+    enabled: Boolean(id),
+  })
   const processo = e?.numeroProcesso
   const idade = e?.idade ?? 0
   const emFalta = e?.documentosEmFalta ?? 0

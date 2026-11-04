@@ -39,13 +39,13 @@ export function useCriarTurma(anoLectivoId: string) {
       const { chave, ...corpo } = dados
       if (eReal('turmas')) {
         // Sem sala nem lotação no backend; classe e ano vão pelo id numérico
-        const [turmas, classes, anos] = await Promise.all([
-          qc.fetchQuery({ ...referenciaSis.turmas(), staleTime: 0 }),
-          qc.fetchQuery(referenciaSis.classes()),
-          qc.fetchQuery(referenciaSis.anos()),
+        const anos = await qc.fetchQuery(referenciaSis.anos())
+        const academicYearId = idNumerico(anos, anoLectivoId)
+        const [turmas, classes] = await Promise.all([
+          qc.fetchQuery({ ...referenciaSis.turmas(academicYearId), staleTime: 0 }),
+          qc.fetchQuery(referenciaSis.classes(academicYearId, true)),
         ])
         const gradeId = idNumerico(classes, corpo.classeId)
-        const academicYearId = idNumerico(anos, anoLectivoId)
         const irmas = turmas.filter(
           (t) => t.gradeId === gradeId && t.academicYearId === academicYearId,
         )
@@ -105,16 +105,18 @@ export function useCriarTurma(anoLectivoId: string) {
 }
 
 /** Encerrar turma: pessimista, com motivo; só sem estudantes inscritos. */
-export function useEncerrarTurma() {
+export function useEncerrarTurma(anoLectivoId: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationKey: ['turmas', 'encerrar'],
     mutationFn: async ({ turmaId, motivo }: { turmaId: string; motivo: string }) => {
       if (eReal('turmas')) {
         // Backend SIS: desactivar a turma (sem motivo no contrato); a classe vem da lista
+        const anos = await qc.fetchQuery(referenciaSis.anos())
+        const academicYearId = idNumerico(anos, anoLectivoId)
         const [{ data }, classes] = await Promise.all([
           apiSis.DELETE('/classes/{id}', { params: { path: { id: turmaId } } }),
-          qc.fetchQuery(referenciaSis.classes()),
+          qc.fetchQuery(referenciaSis.classes(academicYearId, true)),
         ])
         return paraTurmaDoSis(
           data!,

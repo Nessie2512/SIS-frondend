@@ -19,8 +19,8 @@ const TURNO_DO_SIS = {
 } satisfies Record<TurmaSis['period'], Turno>
 
 /**
- * Backend SIS: a turma refere a classe pelo id numérico. Sem sala, lotação, inscritos nem
- * director de turma no contrato: a ocupação mostra-se como "por publicar" (lotação 0).
+ * Backend SIS: a turma refere a classe pelo id numérico. Sem lotação nem inscritos no contrato:
+ * a ocupação mostra-se como "por publicar" (lotação 0).
  * Turma inactiva = encerrada.
  */
 export function paraTurmaDoSis(dto: TurmaSis, classe: ClasseSis | undefined): Turma {
@@ -32,14 +32,14 @@ export function paraTurmaDoSis(dto: TurmaSis, classe: ClasseSis | undefined): Tu
     classe: classe?.name ?? '',
     turno,
     turnoRotulo: i18n._(ROTULO_TURNO[turno]),
-    sala: null,
+    sala: dto.room ?? null,
     lotacaoMaxima: 0,
     inscritos: 0,
     vagas: 0,
     ocupacao: 0,
     turmaCheia: false,
     encerrada: !dto.isActive,
-    directorTurma: null,
+    directorTurma: dto.director ? { professorId: dto.director, nome: '' } : null,
   }
 }
 

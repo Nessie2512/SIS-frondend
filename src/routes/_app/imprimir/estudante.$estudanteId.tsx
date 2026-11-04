@@ -14,6 +14,7 @@ import {
 } from '@/entities/estudante'
 import { meQuery } from '@/entities/utilizador'
 import { eApiError } from '@/shared/api'
+import { eReal } from '@/shared/config/ligacao'
 import { formatarDataCivil, formatarInstante } from '@/shared/lib/datas'
 import {
   Avatar,
@@ -25,14 +26,16 @@ import {
 } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/imprimir/estudante/$estudanteId')({
-  loader: async ({ context: { queryClient }, params: { estudanteId } }) => {
+  loader: async ({ context: { queryClient, anoLectivoId }, params: { estudanteId } }) => {
     try {
       await Promise.all([
-        queryClient.ensureQueryData(estudanteQuery(estudanteId)),
+        queryClient.ensureQueryData(estudanteQuery(estudanteId, anoLectivoId ?? '')),
         queryClient.ensureQueryData(documentosQuery(estudanteId)),
-        queryClient.ensureQueryData(encarregadosQuery(estudanteId)),
         queryClient.ensureQueryData(percursoQuery(estudanteId)),
       ])
+      if (!eReal('estudantes')) {
+        await queryClient.ensureQueryData(encarregadosQuery(estudanteId))
+      }
     } catch (erro) {
       if (eApiError(erro) && erro.status === 404) throw notFound()
       throw erro
@@ -70,14 +73,20 @@ function Par({ rotulo, valor }: { rotulo: string; valor: ReactNode }) {
 function FichaImpressa() {
   const { t } = useLingui()
   const { estudanteId } = Route.useParams()
-  const { data: e } = useQuery(estudanteQuery(estudanteId))
+  const { anoLectivoId } = Route.useRouteContext()
+  const sisReal = eReal('estudantes')
+  const { data: e } = useQuery(estudanteQuery(estudanteId, anoLectivoId ?? ''))
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
-  const { data: encarregados } = useQuery(encarregadosQuery(estudanteId))
+  const { data: encarregados } = useQuery({
+    ...encarregadosQuery(estudanteId),
+    enabled: !sisReal,
+  })
   const { data: percurso } = useQuery(percursoQuery(estudanteId))
   const { data: eu } = useQuery(meQuery())
-  if (!e || !documentos || !encarregados || !percurso) {
+  if (!e || !documentos || (!sisReal && !encarregados) || !percurso) {
     return <Esqueleto className="h-[60vh] w-full" />
   }
+  const encarregadosVisiveis = encarregados ?? []
 
   const nome = e.nome
   const processo = e.numeroProcesso
@@ -127,13 +136,20 @@ function FichaImpressa() {
       </Seccao>
 
       <Seccao titulo={t`Encarregados de educação`}>
-        {encarregados.length === 0 ? (
+        {sisReal ? (
+          <p className="text-texto-2">
+            <Trans>
+              Os dados dos pais e do encarregado principal fazem parte do perfil do estudante. A
+              gestão de encarregados separados ainda não está disponível.
+            </Trans>
+          </p>
+        ) : encarregadosVisiveis.length === 0 ? (
           <p className="text-texto-2">
             <Trans>Nenhum encarregado registado.</Trans>
           </p>
         ) : (
           <ul className="flex flex-col gap-1">
-            {encarregados.map((enc) => (
+            {encarregadosVisiveis.map((enc) => (
               <li key={enc.id}>
                 <span className="font-medium">{enc.nome}</span>
                 <span className="text-texto-2">

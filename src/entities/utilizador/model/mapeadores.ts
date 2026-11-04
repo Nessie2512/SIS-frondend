@@ -21,6 +21,6 @@ export function paraUtilizadorDoSis(dto: DtoSis<'MeResponseDto'>): Utilizador {
     nome,
     primeiroNome: nome.split(' ')[0] ?? nome,
     email: dto.email,
-    permissoes: permissoesDoSis(dto.permissions, dto.role),
+    permissoes: permissoesDoSis(dto.permissions),
   }
 }

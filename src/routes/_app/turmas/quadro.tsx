@@ -16,7 +16,7 @@ export const Route = createFileRoute('/_app/turmas/quadro')({
   loaderDeps: ({ search: { classeId } }) => ({ classeId }),
   loader: ({ context: { queryClient, anoLectivoId }, deps: { classeId } }) =>
     Promise.all([
-      queryClient.ensureQueryData(classesQuery()),
+      queryClient.ensureQueryData(classesQuery(anoLectivoId ?? '')),
       anoLectivoId ? queryClient.ensureQueryData(quadroQuery(anoLectivoId, classeId)) : null,
     ]),
   pendingComponent: () => <Esqueleto className="h-[28rem] w-full" />,
@@ -32,7 +32,7 @@ function EcraQuadro() {
   const { anoLectivoId, soLeitura } = Route.useRouteContext()
   const { classeId } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const { data: classes = [] } = useQuery(classesQuery())
+  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId ?? ''))
   const podeDistribuir = useCan('turmas:escrever')
 
   return (

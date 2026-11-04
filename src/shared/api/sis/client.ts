@@ -56,7 +56,11 @@ async function lancarErro(response: Response, caminho: string): Promise<never> {
     .clone()
     .json()
     .catch(() => null)
-  const problema = problemaDoSis(response.status, corpo)
+  const problema = problemaDoSis(
+    response.status,
+    corpo,
+    response.headers.get('X-Request-Id') ?? undefined,
+  )
   // Só a entrada tem credenciais; 401 na renovação ou na saída é só sessão inexistente
   if (response.status === 401 && caminho === '/auth/login') {
     problema.code = 'CREDENCIAIS_INVALIDAS'

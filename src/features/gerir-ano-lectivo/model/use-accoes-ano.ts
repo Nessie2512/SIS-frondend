@@ -23,7 +23,12 @@ export function useEncerrarAno(anoLectivoId: string) {
   return useMutation({
     mutationKey: ['anos-lectivos', anoLectivoId, 'encerrar'],
     mutationFn: async (confirmacao: string) => {
-      if (eReal('anos')) naoDisponivel('ENCERRAR_ANO')
+      if (eReal('anos')) {
+        await apiSis.PATCH('/academic-years/{uuid}/close', {
+          params: { path: { uuid: anoLectivoId } },
+        })
+        return
+      }
       const { data } = await api.POST('/anos-lectivos/{id}/encerrar', {
         params: { path: { id: anoLectivoId } },
         body: { confirmacao },
@@ -91,7 +96,7 @@ export function useActivarAno(anoLectivoId: string) {
     mutationKey: ['anos-lectivos', anoLectivoId, 'activar'],
     mutationFn: async () => {
       if (eReal('anos')) {
-        await apiSis.PUT('/academic-years/{uuid}/activate', {
+        await apiSis.PATCH('/academic-years/{uuid}/activate', {
           params: { path: { uuid: anoLectivoId } },
         })
         return

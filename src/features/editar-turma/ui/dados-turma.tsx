@@ -22,7 +22,10 @@ export function DadosTurma({
   desactivadoPorque?: string
 }) {
   const { t } = useLingui()
-  const { guardar, conflito, manterActual, guardarOMeu } = useEditarTurma(turma.id)
+  const { guardar, conflito, manterActual, guardarOMeu } = useEditarTurma(
+    turma.id,
+    anoLectivoId,
+  )
   const { data: pagina } = useQuery({
     ...professoresQuery({ anoLectivoId, estado: 'ACTIVO', ordenar: 'nome', page: 1 }),
     enabled: podeEditar && !desactivadoPorque,
@@ -52,7 +55,11 @@ export function DadosTurma({
           <EdicaoNoSitio
             rotulo={t`Director de turma`}
             valor={turma.directorTurma?.professorId ?? null}
-            mostrar={() => turma.directorTurma?.nome ?? null}
+            mostrar={() =>
+              turma.directorTurma
+                ? (nomeDe(turma.directorTurma.professorId) ?? turma.directorTurma.nome)
+                : null
+            }
             opcoes={opcoes}
             aoGuardar={(v) => guardar('directorTurmaId', v, nomeDe(v))}
             desactivadoPorque={desactivadoPorque}
@@ -70,7 +77,11 @@ export function DadosTurma({
             <dt className="text-texto-2">
               <Trans>Director de turma</Trans>
             </dt>
-            <dd>{turma.directorTurma?.nome ?? '—'}</dd>
+            <dd>
+              {turma.directorTurma
+                ? (nomeDe(turma.directorTurma.professorId) ?? turma.directorTurma.nome ?? '—')
+                : '—'}
+            </dd>
           </div>
         </dl>
       )}

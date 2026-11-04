@@ -26,7 +26,7 @@ export function MatricularExistente({
   const [classeId, setClasseId] = useState<string | null>(null)
   const [turmaId, setTurmaId] = useState<string | null>(null)
   const [erro, setErro] = useState<string>()
-  const { data: classes = [] } = useQuery(classesQuery())
+  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId))
   const { data: pagina } = useQuery({
     ...turmasQuery({ anoLectivoId, classeId: classeId ?? undefined, estado: 'ACTIVA', page: 1 }),
     enabled: aberta && Boolean(classeId),
@@ -42,6 +42,7 @@ export function MatricularExistente({
 
   function gravar() {
     if (!classeId) return setErro(t`Escolha a classe.`)
+    if (!turmaId) return setErro(t`Escolha uma turma para concluir a matrícula.`)
     matricular.mutate(
       { classeId, turmaId },
       {
@@ -110,12 +111,12 @@ export function MatricularExistente({
           {classeId && (
             <Campo
               rotulo={t`Turma`}
-              descricao={t`Opcional. Sem turma, fica no quadro para distribuir.`}
+              obrigatorio
             >
               {(c) => (
                 <Selector
                   {...c}
-                  placeholder={t`Inscrever mais tarde`}
+                  placeholder={t`Escolha uma turma`}
                   opcoes={(pagina?.turmas ?? []).map((x) => {
                     const vagas = x.vagas
                     return {

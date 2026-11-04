@@ -6,6 +6,7 @@ import { CircleAlert, CircleCheck, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { encerramentoQuery, type AnoLectivo, type Encerramento } from '@/entities/ano-lectivo'
 import { eApiError } from '@/shared/api'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -30,12 +31,17 @@ type Pendencia = Encerramento['pendencias'][number]
  */
 export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir: boolean }) {
   const { t } = useLingui()
-  const { data: enc } = useQuery(encerramentoQuery(ano.id))
+  const sisReal = eReal('anos')
+  const { data: enc } = useQuery({
+    ...encerramentoQuery(ano.id),
+    enabled: !sisReal,
+  })
   const [aConfirmar, setAConfirmar] = useState(false)
-  if (!enc) return <Esqueleto className="h-64 w-full" />
+  if (!enc && !sisReal) return <Esqueleto className="h-64 w-full" />
 
   const designacao = ano.designacao
-  const bloqueantes = enc.pendencias.filter((p) => p.bloqueante && p.quantidade > 0).length
+  const bloqueantes =
+    enc?.pendencias.filter((p) => p.bloqueante && p.quantidade > 0).length ?? 0
   const razao = bloqueantes
     ? t`Resolva primeiro as pendências assinaladas (${bloqueantes}).`
     : undefined
@@ -47,20 +53,29 @@ export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir
           <Trans>Encerramento do ano</Trans>
         </h2>
         <p className="text-secundario text-texto-2">
-          <Trans>
-            Para encerrar, todas as matrículas têm de estar resolvidas e com o resultado final
-            registado. Depois, o ano fica só para consulta.
-          </Trans>
+          {sisReal ? (
+            <Trans>
+              O SIS encerra as matrículas activas do ano. A lista prévia de pendências ainda não
+              está disponível nesta integração.
+            </Trans>
+          ) : (
+            <Trans>
+              Para encerrar, todas as matrículas têm de estar resolvidas e com o resultado final
+              registado. Depois, o ano fica só para consulta.
+            </Trans>
+          )}
         </p>
       </div>
-      <ul
-        aria-label={t`Pendências do encerramento`}
-        className="flex flex-col divide-y divide-linha rounded-cartao bg-superficie ring-1 ring-linha"
-      >
-        {enc.pendencias.map((p) => (
-          <LinhaPendencia key={p.tipo} pendencia={p} enc={enc} />
-        ))}
-      </ul>
+      {enc && (
+        <ul
+          aria-label={t`Pendências do encerramento`}
+          className="flex flex-col divide-y divide-linha rounded-cartao bg-superficie ring-1 ring-linha"
+        >
+          {enc.pendencias.map((p) => (
+            <LinhaPendencia key={p.tipo} pendencia={p} enc={enc} />
+          ))}
+        </ul>
+      )}
       {podeGerir && (
         <div className="flex justify-end">
           {razao ? (
@@ -186,6 +201,7 @@ function DialogoEncerrar({
   aoFechar: () => void
 }) {
   const { t } = useLingui()
+  const sisReal = eReal('anos')
   const encerrar = useEncerrarAno(ano.id)
   const [texto, setTexto] = useState('')
   const [erro, setErro] = useState<string>()
@@ -236,18 +252,31 @@ function DialogoEncerrar({
     >
       <div className="flex flex-col gap-4">
         <ul className="flex list-disc flex-col gap-1 pl-5 text-secundario text-texto-2">
-          <li>
-            <Trans>As matrículas confirmadas ficam concluídas com o resultado registado.</Trans>
-          </li>
-          <li>
-            <Trans>O resultado entra no percurso de cada estudante.</Trans>
-          </li>
-          <li>
-            <Trans>As turmas ficam encerradas e o ano passa a só consulta.</Trans>
-          </li>
-          <li>
-            <Trans>Só se reabre com justificação, e fica registado na auditoria.</Trans>
-          </li>
+          {sisReal ? (
+            <>
+              <li>
+                <Trans>As matrículas activas do ano serão concluídas.</Trans>
+              </li>
+              <li>
+                <Trans>O ano passará a só consulta.</Trans>
+              </li>
+            </>
+          ) : (
+            <>
+              <li>
+                <Trans>As matrículas confirmadas ficam concluídas com o resultado registado.</Trans>
+              </li>
+              <li>
+                <Trans>O resultado entra no percurso de cada estudante.</Trans>
+              </li>
+              <li>
+                <Trans>As turmas ficam encerradas e o ano passa a só consulta.</Trans>
+              </li>
+              <li>
+                <Trans>Só se reabre com justificação, e fica registado na auditoria.</Trans>
+              </li>
+            </>
+          )}
         </ul>
         {erro && <Aviso tom="erro">{erro}</Aviso>}
         <Campo rotulo={t`Escreva ${designacao} para confirmar`}>

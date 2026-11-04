@@ -13,16 +13,34 @@ export interface ProblemaSis {
   detail?: string
   errors: ErroDeCampo[]
   code?: string
+  requestId?: string
 }
 
 type CorpoNest = {
   message?: unknown
   error?: unknown
   statusCode?: unknown
+  type?: unknown
+  title?: unknown
+  status?: unknown
+  detail?: unknown
+  code?: unknown
+  requestId?: unknown
+  errors?: unknown
 }
 
-export function problemaDoSis(status: number, corpo: unknown): ProblemaSis {
+export function problemaDoSis(status: number, corpo: unknown, requestId?: string): ProblemaSis {
   const raiz = (corpo && typeof corpo === 'object' ? corpo : {}) as CorpoNest
+  if (typeof raiz.title === 'string' || typeof raiz.detail === 'string') {
+    return {
+      title: typeof raiz.title === 'string' ? raiz.title : `Pedido falhou (${status})`,
+      detail: typeof raiz.detail === 'string' ? raiz.detail : undefined,
+      errors: paraErrosDeProblema(raiz.errors),
+      code: typeof raiz.code === 'string' ? raiz.code : codigoDoEstado(status),
+      requestId:
+        typeof raiz.requestId === 'string' ? raiz.requestId : requestId,
+    }
+  }
   const interior = (raiz.error && typeof raiz.error === 'object' ? raiz.error : raiz) as CorpoNest
   const mensagens = paraLista(interior.message ?? raiz.message)
   const titulo =
@@ -39,7 +57,24 @@ export function problemaDoSis(status: number, corpo: unknown): ProblemaSis {
     detail: mensagens.length === 1 ? mensagens[0] : undefined,
     errors,
     code: codigoDoEstado(status),
+    requestId,
   }
+}
+
+function paraErrosDeProblema(valor: unknown): ErroDeCampo[] {
+  if (!Array.isArray(valor)) return []
+  return valor.flatMap((item): ErroDeCampo[] => {
+    if (!item || typeof item !== 'object') return []
+    const erro = item as { campo?: unknown; mensagem?: unknown; code?: unknown }
+    if (typeof erro.mensagem !== 'string') return []
+    return [
+      {
+        campo: typeof erro.campo === 'string' ? erro.campo : '',
+        mensagem: erro.mensagem,
+        code: typeof erro.code === 'string' ? erro.code : undefined,
+      },
+    ]
+  })
 }
 
 function paraLista(valor: unknown): string[] {

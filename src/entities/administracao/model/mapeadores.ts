@@ -57,6 +57,7 @@ const PAPEL = {
   FINANCEIRO: { nome: msg`Financeiro`, descricao: msg`Consulta da secretaria.` },
   GESTOR_TI: { nome: msg`Gestor de TI`, descricao: msg`Contas de utilizador e auditoria.` },
   ADMIN: { nome: msg`Administrador`, descricao: msg`Acesso total.` },
+  TEACHER: { nome: msg`Docente`, descricao: msg`Consulta as informações académicas.` },
 } satisfies Record<Papel, unknown>
 
 export const rotuloPapel = (papel: string) =>

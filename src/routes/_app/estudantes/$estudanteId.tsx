@@ -46,9 +46,9 @@ export const Route = createFileRoute('/_app/estudantes/$estudanteId')({
   validateSearch: z.object({
     separador: z.catch(z._default(z.enum(SEPARADORES), 'resumo'), 'resumo'),
   }),
-  loader: async ({ context: { queryClient }, params: { estudanteId } }) => {
+  loader: async ({ context: { queryClient, anoLectivoId }, params: { estudanteId } }) => {
     try {
-      await queryClient.ensureQueryData(estudanteQuery(estudanteId))
+      await queryClient.ensureQueryData(estudanteQuery(estudanteId, anoLectivoId ?? ''))
     } catch (erro) {
       if (eApiError(erro) && erro.status === 404) throw notFound()
       throw erro
@@ -67,15 +67,14 @@ function FichaEstudante() {
   const { t } = useLingui()
   const { estudanteId } = Route.useParams()
   const { separador } = Route.useSearch()
-  const { soLeitura } = Route.useRouteContext()
+  const { soLeitura, anoLectivoId } = Route.useRouteContext()
   const podeRectificar = useCan('estudantes:escrever') // também registar ocorrências
   const podeEmitir = useCan('documentos:emitir')
   const podeMatricular = useCan('matriculas:escrever')
-  const { anoLectivoId } = Route.useRouteContext()
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const ano = anos.find((a) => a.id === anoLectivoId)
   const navigate = useNavigate({ from: Route.fullPath })
-  const { data: e } = useQuery(estudanteQuery(estudanteId))
+  const { data: e } = useQuery(estudanteQuery(estudanteId, anoLectivoId ?? ''))
   const { data: documentos } = useQuery(documentosQuery(estudanteId))
   if (!e) return <FichaEsqueleto />
   const emFalta = e.documentosEmFalta
@@ -112,7 +111,7 @@ function FichaEstudante() {
         </div>
         <div className="flex flex-wrap gap-2 sm:justify-end">
           {podeRectificar && !soLeitura && e.estado === 'ACTIVO' && (
-            <TransferirEstudante estudante={e} />
+            <TransferirEstudante estudante={e} anoLectivoId={anoLectivoId ?? ''} />
           )}
           {podeRectificar && !soLeitura && <MenuSituacao estudante={e} />}
           <Button asChild>

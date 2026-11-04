@@ -1,7 +1,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import { api, type components } from '@/shared/api'
 import { FRESCURA } from '@/shared/config/constantes'
-import { referenciaSis } from '@/shared/api/sis'
+import { naoDisponivel, referenciaSis } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 import { paraAnoLectivo, paraAnoLectivoDoSis } from '../model/mapeadores'
 
@@ -37,6 +37,7 @@ export function encerramentoQuery(anoLectivoId: string) {
   return queryOptions({
     queryKey: anoLectivoKeys.encerramento(anoLectivoId),
     queryFn: async ({ signal }): Promise<Encerramento> => {
+      if (eReal('anos')) naoDisponivel('PREVIA_ENCERRAMENTO_ANO')
       const { data } = await api.GET('/anos-lectivos/{id}/encerramento', {
         params: { path: { id: anoLectivoId } },
         signal,
@@ -52,6 +53,7 @@ export function aberturaQuery(anoLectivoId: string) {
   return queryOptions({
     queryKey: anoLectivoKeys.abertura(anoLectivoId),
     queryFn: async ({ signal }): Promise<Abertura> => {
+      if (eReal('anos')) naoDisponivel('ETAPAS_ABERTURA_ANO')
       const { data } = await api.GET('/anos-lectivos/{id}/abertura', {
         params: { path: { id: anoLectivoId } },
         signal,

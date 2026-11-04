@@ -73,11 +73,10 @@ describe('sessão no backend SIS', () => {
     await expect(meAgora()).resolves.toEqual(eu)
   })
 
-  it('permissões que o frontend não conhece: vale a tabela do papel', async () => {
+  it('permissões que o frontend não conhece não concedem permissões por papel', async () => {
     backend(me({ role: 'SECRETARIO', permissions: ['coisa-nova:read'] }))
     const eu = await entrar({ email: 's@escola.ao', palavraPasse: 'x' })
-    expect(eu.permissoes).toContain('matriculas:escrever')
-    expect(eu.permissoes).not.toContain('turmas:escrever')
+    expect(eu.permissoes).toEqual([])
   })
 
   it('credenciais erradas: 401 com código próprio e sem guardar token', async () => {

@@ -4,7 +4,7 @@ export type TomEstado = 'neutra' | 'accao' | 'sucesso' | 'aviso' | 'perigo'
 /** Linha da lista de estudantes (guia 7.1: só o que decide a acção seguinte). */
 export interface EstudanteResumo {
   id: string
-  numeroProcesso: string
+  numeroProcesso: string | null
   nome: string
   dataNascimento: string
   idade: number

@@ -48,7 +48,7 @@ describe('turmas no backend SIS', () => {
     const pedidos = escutarEscritas({
       'DELETE /classes/turma-7a': { ...turmasSis[1], isActive: false },
     })
-    const { result } = hookComCliente(() => useEncerrarTurma())
+    const { result } = hookComCliente(() => useEncerrarTurma('ano-sis-2026'))
     const turma = await act(() => result.current.mutateAsync({ turmaId: 'turma-7a', motivo: 'x' }))
     expect(pedidos.map((p) => `${p.metodo} ${p.caminho}`)).toEqual(['DELETE /classes/turma-7a'])
     await waitFor(() => expect(turma).toMatchObject({ encerrada: true, classe: '7.ª classe' }))

@@ -133,7 +133,7 @@ const estudante = (
   motherContact: '+244923000002',
   primaryGuardian: '+244923000002',
   bestLanguage: 'Português',
-  familyPrefix: {},
+  familyPrefix: 'FAM-TESTE',
   ...dados,
 })
 
@@ -156,7 +156,6 @@ export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
     nationality: 'Angolana',
     isActive: true,
     isSupervisor: false,
-    academicLevelId: 1,
     teacherField: 'Ciências Exactas',
     educationalAttainment: 'Licenciatura em Matemática',
   },

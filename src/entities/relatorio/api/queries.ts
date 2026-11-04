@@ -2,7 +2,9 @@ import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import { queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
 import { FRESCURA, SONDAGEM_TAREFAS } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
 import type { Exportacao } from '../model/tipos'
 
 export const relatorioKeys = {
@@ -21,6 +23,7 @@ export function catalogoQuery() {
   return queryOptions({
     queryKey: relatorioKeys.catalogo,
     queryFn: async ({ signal }) => {
+      if (eReal('estudantes')) naoDisponivel('RELATORIOS_SIS')
       const { data } = await api.GET('/relatorios', { signal })
       return data!
     },
@@ -33,6 +36,7 @@ export function exportacoesQuery(anoLectivoId: string) {
   return queryOptions({
     queryKey: relatorioKeys.exportacoes(anoLectivoId),
     queryFn: async ({ signal }): Promise<Exportacao[]> => {
+      if (eReal('estudantes')) naoDisponivel('RELATORIOS_SIS')
       const { data } = await api.GET('/relatorios/exportacoes', {
         params: { query: { anoLectivoId } },
         signal,

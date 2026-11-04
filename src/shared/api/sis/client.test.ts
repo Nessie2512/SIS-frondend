@@ -57,7 +57,9 @@ describe('apiSis', () => {
         return HttpResponse.json({ success: true, data: [{ id: 1, name: 'I Ciclo' }] })
       }),
     )
-    const { data } = await apiSis.GET('/academic-levels')
+    const { data } = await apiSis.GET('/academic-levels', {
+      params: { query: { academicYearId: 1 } },
+    })
     expect(autorizacao).toBe('Bearer abc')
     expect(data).toEqual([{ id: 1, name: 'I Ciclo' }])
   })
@@ -100,7 +102,9 @@ describe('apiSis', () => {
     const fim = vi.fn()
     const desligar = sessao.aoTerminar(fim)
     server.use(http.get('/sis/students', () => erroNest(401, 'Unauthorized', 'Unauthorized')))
-    await apiSis.GET('/students').catch(() => undefined)
+    await apiSis
+      .GET('/students', { params: { query: { academicYearId: 1 } } })
+      .catch(() => undefined)
     expect(fim).toHaveBeenCalledWith('expirada')
     expect(sessao.tokenAcesso()).toBeNull()
     desligar()

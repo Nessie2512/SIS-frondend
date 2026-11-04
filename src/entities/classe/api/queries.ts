@@ -1,6 +1,12 @@
 import { queryOptions } from '@tanstack/react-query'
 import { api, type components } from '@/shared/api'
-import { porId, referenciaSis, type ClasseSis, type NivelSis } from '@/shared/api/sis'
+import {
+  idNumerico,
+  porId,
+  referenciaSis,
+  type ClasseSis,
+  type NivelSis,
+} from '@/shared/api/sis'
 import { FRESCURA } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 
@@ -16,17 +22,24 @@ export interface Classe {
 
 export type Ciclo = components['schemas']['CicloDto']
 
-export const classeKeys = { todas: ['classes'] as const, ciclos: ['classes', 'ciclos'] as const }
+export const classeKeys = {
+  todas: ['classes'] as const,
+  ciclos: (anoLectivoId = '') => ['classes', 'ciclos', anoLectivoId] as const,
+}
 
 /** Dados de referência: frescura longa (guia 5.6). */
-export function classesQuery() {
+export function classesQuery(anoLectivoId = '') {
   return queryOptions({
-    queryKey: classeKeys.todas,
+    queryKey: [...classeKeys.todas, anoLectivoId] as const,
     queryFn: async ({ signal, client }) => {
       if (eReal('curriculo')) {
+        const anos = await client.fetchQuery(referenciaSis.anos())
+        const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
+        if (!ano) throw new Error('Não existe um ano letivo disponível para consultar as classes.')
+        const academicYearId = idNumerico(anos, ano.uuid)
         const [classes, niveis] = await Promise.all([
-          client.fetchQuery(referenciaSis.classes()),
-          client.fetchQuery(referenciaSis.niveis()),
+          client.fetchQuery(referenciaSis.classes(academicYearId, true)),
+          client.fetchQuery(referenciaSis.niveis(academicYearId, true)),
         ])
         return paraClassesDoSis(classes, niveis)
       }
@@ -47,15 +60,25 @@ export function classesQuery() {
 }
 
 /** Árvore de ciclos e classes, com o uso de cada classe (turmas, matrículas, planos). */
-export function ciclosQuery() {
+export function ciclosQuery(anoLectivoId = '') {
   return queryOptions({
-    queryKey: classeKeys.ciclos,
+    queryKey: classeKeys.ciclos(anoLectivoId),
     queryFn: async ({ signal, client }) => {
       if (eReal('curriculo')) {
+        const anos = await client.fetchQuery(referenciaSis.anos())
+        const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
+        if (!ano) throw new Error('Não existe um ano letivo disponível para consultar as classes.')
+        const academicYearId = idNumerico(anos, ano.uuid)
         const [classes, niveis, turmas] = await Promise.all([
-          client.fetchQuery({ ...referenciaSis.classes(), staleTime: 0 }),
-          client.fetchQuery({ ...referenciaSis.niveis(), staleTime: 0 }),
-          client.fetchQuery(referenciaSis.turmas()),
+          client.fetchQuery({
+            ...referenciaSis.classes(academicYearId, true),
+            staleTime: 0,
+          }),
+          client.fetchQuery({
+            ...referenciaSis.niveis(academicYearId, true),
+            staleTime: 0,
+          }),
+          client.fetchQuery(referenciaSis.turmas(academicYearId)),
         ])
         return paraCiclosDoSis(classes, niveis, turmas)
       }

@@ -33,22 +33,50 @@ export type ProfessorSis = DtoSis<'TeacherOutputDto'>
 export type UtilizadorSis = DtoSis<'UserOutputDto'>
 
 export const referenciaSis = {
-  niveis: () =>
+  niveis: (academicYearId: number, includeUnused = true) =>
     lista<NivelSis>(
-      'academic-levels',
-      async (signal) => (await apiSis.GET('/academic-levels', { signal })).data!,
+      `academic-levels:${academicYearId}:${includeUnused}`,
+      async (signal) =>
+        (
+          await apiSis.GET('/academic-levels', {
+            params: {
+              query: {
+                academicYearId,
+                includeUnused: includeUnused ? true : undefined,
+              },
+            },
+            signal,
+          })
+        ).data!,
       FRESCURA.referencia,
     ),
-  classes: () =>
+  classes: (academicYearId: number, includeUnused = true) =>
     lista<ClasseSis>(
-      'grades',
-      async (signal) => (await apiSis.GET('/grades', { signal })).data!,
+      `grades:${academicYearId}:${includeUnused}`,
+      async (signal) =>
+        (
+          await apiSis.GET('/grades', {
+            params: {
+              query: {
+                academicYearId,
+                includeUnused: includeUnused ? true : undefined,
+              },
+            },
+            signal,
+          })
+        ).data!,
       FRESCURA.referencia,
     ),
-  turmas: () =>
+  turmas: (academicYearId: number) =>
     lista<TurmaSis>(
-      'classes',
-      async (signal) => (await apiSis.GET('/classes', { signal })).data!,
+      `classes:${academicYearId}`,
+      async (signal) =>
+        (
+          await apiSis.GET('/classes', {
+            params: { query: { academicYearId } },
+            signal,
+          })
+        ).data!,
       FRESCURA.lista,
     ),
   anos: () =>
@@ -57,22 +85,54 @@ export const referenciaSis = {
       async (signal) => (await apiSis.GET('/academic-years', { signal })).data!,
       FRESCURA.referencia,
     ),
-  disciplinas: () =>
+  disciplinas: (academicYearId: number, includeUnused = true) =>
     lista<DisciplinaSis>(
-      'subjects',
-      async (signal) => (await apiSis.GET('/subjects', { signal })).data!,
+      `subjects:${academicYearId}:${includeUnused}`,
+      async (signal) =>
+        (
+          await apiSis.GET('/subjects', {
+            params: {
+              query: {
+                academicYearId,
+                includeUnused: includeUnused ? true : undefined,
+              },
+            },
+            signal,
+          })
+        ).data!,
       FRESCURA.referencia,
     ),
-  estudantes: () =>
+  estudantes: (academicYearId: number) =>
     lista<EstudanteSis>(
-      'students',
-      async (signal) => (await apiSis.GET('/students', { signal })).data!,
+      `students:${academicYearId}`,
+      async (signal) =>
+        (
+          await apiSis.GET('/students', {
+            params: { query: { academicYearId } },
+            signal,
+          })
+        ).data!,
       FRESCURA.lista,
     ),
-  professores: () =>
+  professores: (
+    academicYearId: number,
+    filtros: { includeUnused?: boolean; subjectId?: number } = { includeUnused: true },
+  ) =>
     lista<ProfessorSis>(
-      'teachers',
-      async (signal) => (await apiSis.GET('/teachers', { signal })).data!,
+      `teachers:${academicYearId}:${filtros.includeUnused ?? false}:${filtros.subjectId ?? ''}`,
+      async (signal) =>
+        (
+          await apiSis.GET('/teachers', {
+            params: {
+              query: {
+                academicYearId,
+                includeUnused: filtros.includeUnused,
+                subjectId: filtros.subjectId,
+              },
+            },
+            signal,
+          })
+        ).data!,
       FRESCURA.lista,
     ),
   utilizadores: () =>

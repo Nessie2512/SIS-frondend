@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { relatorioKeys, type TipoRelatorio } from '@/entities/relatorio'
 import { paraTarefa, tarefaKeys, useTarefasAcompanhadas } from '@/entities/tarefa'
 import { api, novaChaveIdempotencia } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 interface Pedido {
   tipo: TipoRelatorio
@@ -20,6 +22,7 @@ export function useGerarRelatorio() {
   return useMutation({
     mutationKey: ['relatorios', 'gerar'],
     mutationFn: async ({ tipo, ...corpo }: Pedido) => {
+      if (eReal('estudantes')) naoDisponivel('RELATORIOS_SIS')
       const { data } = await api.POST('/relatorios/{tipo}', {
         params: { path: { tipo }, header: { 'Idempotency-Key': novaChaveIdempotencia() } },
         body: corpo,

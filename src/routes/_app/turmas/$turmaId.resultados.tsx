@@ -9,9 +9,9 @@ import { useCan } from '@/shared/lib/permissoes'
 import { ErroDeRota, Esqueleto } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/turmas/$turmaId/resultados')({
-  loader: ({ context: { queryClient }, params: { turmaId } }) =>
+  loader: ({ context: { queryClient, anoLectivoId }, params: { turmaId } }) =>
     Promise.all([
-      queryClient.ensureQueryData(turmaQuery(turmaId)),
+      queryClient.ensureQueryData(turmaQuery(turmaId, anoLectivoId ?? '')),
       queryClient.ensureQueryData(resultadosQuery(turmaId)),
     ]),
   pendingComponent: () => <Esqueleto className="h-96 w-full" />,
@@ -25,9 +25,9 @@ export const Route = createFileRoute('/_app/turmas/$turmaId/resultados')({
 function EcraResultados() {
   const { t } = useLingui()
   const { turmaId } = Route.useParams()
-  const { soLeitura } = Route.useRouteContext()
+  const { soLeitura, anoLectivoId } = Route.useRouteContext()
   const podeRegistar = useCan('matriculas:escrever')
-  const { data: turma } = useQuery(turmaQuery(turmaId))
+  const { data: turma } = useQuery(turmaQuery(turmaId, anoLectivoId ?? ''))
   const { data: linhas } = useQuery(resultadosQuery(turmaId))
   if (!turma || !linhas) return <Esqueleto className="h-96 w-full" />
   const designacao = turma.designacao

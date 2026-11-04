@@ -5,6 +5,7 @@ import { UserPlus } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { encarregadosQuery, formatarTelefone, type Encarregado } from '@/entities/estudante'
 import { eApiError } from '@/shared/api'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -42,6 +43,25 @@ interface Props {
  * vezes. Acrescentar procura primeiro quem já está registado; editar muda os dados da pessoa.
  */
 export function EncarregadosEstudante({ estudanteId, nome, podeEditar }: Props) {
+  if (eReal('estudantes')) {
+    return (
+      <section aria-labelledby="encarregados-titulo" className="flex flex-col gap-4">
+        <h2 id="encarregados-titulo" className="text-titulo-seccao">
+          <Trans>Encarregados</Trans>
+        </h2>
+        <p className="text-secundario text-texto-2">
+          <Trans>
+            O SIS guarda os dados dos pais e do encarregado principal no perfil do estudante. A
+            gestão de encarregados separados ainda não está disponível.
+          </Trans>
+        </p>
+      </section>
+    )
+  }
+  return <GestaoEncarregados estudanteId={estudanteId} nome={nome} podeEditar={podeEditar} />
+}
+
+function GestaoEncarregados({ estudanteId, nome, podeEditar }: Props) {
   const { t } = useLingui()
   const { data: encarregados } = useQuery(encarregadosQuery(estudanteId))
   const retirar = useRetirarEncarregado(estudanteId)

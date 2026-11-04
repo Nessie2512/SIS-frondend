@@ -14,9 +14,50 @@ export function PassoEncarregados() {
     formState: { errors },
   } = useFormContext<DadosMatricula>()
   const { fields, append, remove } = useFieldArray({ control, name: 'encarregados' })
+  const dadosEstudante = errors.estudante
 
   return (
     <div className="flex flex-col gap-5">
+      <fieldset className="grid gap-4 rounded-cartao bg-superficie p-4 ring-1 ring-linha sm:grid-cols-2">
+        <legend className="px-1 text-subtitulo">
+          <Trans>Dados familiares</Trans>
+        </legend>
+        <Campo rotulo={t`Nome do pai`} obrigatorio erro={dadosEstudante?.fatherName?.message}>
+          {(c) => <Entrada {...c} {...register('estudante.fatherName')} />}
+        </Campo>
+        <Campo rotulo={t`Contacto do pai`} obrigatorio erro={dadosEstudante?.fatherContact?.message}>
+          {(c) => (
+            <Entrada {...c} inputMode="tel" {...register('estudante.fatherContact')} />
+          )}
+        </Campo>
+        <Campo rotulo={t`Nome da mãe`} obrigatorio erro={dadosEstudante?.motherName?.message}>
+          {(c) => <Entrada {...c} {...register('estudante.motherName')} />}
+        </Campo>
+        <Campo
+          rotulo={t`Contacto da mãe`}
+          obrigatorio
+          erro={dadosEstudante?.motherContact?.message}
+        >
+          {(c) => (
+            <Entrada {...c} inputMode="tel" {...register('estudante.motherContact')} />
+          )}
+        </Campo>
+        <Campo
+          rotulo={t`Idioma preferencial`}
+          obrigatorio
+          erro={dadosEstudante?.bestLanguage?.message}
+        >
+          {(c) => <Entrada {...c} {...register('estudante.bestLanguage')} />}
+        </Campo>
+        <Campo
+          rotulo={t`Prefixo familiar`}
+          obrigatorio
+          erro={dadosEstudante?.familyPrefix?.message}
+          descricao={t`Ex.: FAM-SILVA`}
+        >
+          {(c) => <Entrada {...c} {...register('estudante.familyPrefix')} />}
+        </Campo>
+      </fieldset>
       {fields.map((campo, i) => {
         const e = errors.encarregados?.[i]
         const numero = i + 1

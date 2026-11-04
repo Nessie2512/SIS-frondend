@@ -9,13 +9,19 @@ import { Button } from '@/shared/ui'
 import { TIPOS_DOCUMENTO, type DadosMatricula } from '../model/esquema'
 
 /** Passo 5: revisão final antes de gravar (guia 6.3), com atalhos para corrigir cada passo. */
-export function PassoRevisao({ irPara }: { irPara: (passo: number) => void }) {
+export function PassoRevisao({
+  irPara,
+  anoLectivoId,
+}: {
+  irPara: (passo: number) => void
+  anoLectivoId: string
+}) {
   const { t, i18n } = useLingui()
   const { getValues } = useFormContext<DadosMatricula>()
   const dados = getValues()
-  const { data: classes = [] } = useQuery(classesQuery())
+  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId))
   const { data: turma } = useQuery({
-    ...turmaQuery(dados.turmaId ?? ''),
+    ...turmaQuery(dados.turmaId ?? '', anoLectivoId),
     enabled: Boolean(dados.turmaId),
   })
   const classe = classes.find((c) => c.id === dados.classeId)
@@ -33,9 +39,23 @@ export function PassoRevisao({ irPara }: { irPara: (passo: number) => void }) {
           valor={e.dataNascimento ? formatarDataCivil(e.dataNascimento) : '—'}
         />
         <Linha rotulo={t`Sexo`} valor={e.sexo === 'F' ? t`Feminino` : t`Masculino`} />
-        {e.telefone && <Linha rotulo={t`Telefone`} valor={e.telefone} />}
+        <Linha rotulo={t`Documento`} valor={`${e.tipoDocumento} · ${e.documentoIdentificacao || '—'}`} />
+        <Linha rotulo={t`Nacionalidade`} valor={e.nacionalidade} />
+        <Linha
+          rotulo={t`Morada`}
+          valor={[
+            e.endereco.streetAndNumber,
+            e.endereco.neighborhood,
+            e.endereco.municipality,
+            e.endereco.province,
+          ].join(', ')}
+        />
       </Bloco>
       <Bloco titulo={t`Encarregados`} aoCorrigir={() => irPara(1)}>
+        <Linha rotulo={t`Pai`} valor={`${e.fatherName} · ${e.fatherContact}`} />
+        <Linha rotulo={t`Mãe`} valor={`${e.motherName} · ${e.motherContact}`} />
+        <Linha rotulo={t`Idioma`} valor={e.bestLanguage} />
+        <Linha rotulo={t`Prefixo familiar`} valor={e.familyPrefix} />
         {dados.encarregados.map((enc, i) => (
           <Linha
             key={i}

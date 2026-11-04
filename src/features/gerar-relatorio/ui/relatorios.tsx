@@ -53,7 +53,7 @@ function CartaoRelatorio({
   const [valor, setValor] = useState<string | null>(null)
   const [erro, setErro] = useState<string>()
   const { data: classes = [] } = useQuery({
-    ...classesQuery(),
+    ...classesQuery(anoLectivoId),
     enabled: relatorio.parametro === 'CLASSE',
   })
   const { data: turmas } = useQuery({

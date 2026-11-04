@@ -26,9 +26,11 @@ import { useTransferirEstudante } from '../model/use-transferir'
  */
 export function TransferirEstudante({
   estudante,
+  anoLectivoId,
   aoTransferir,
 }: {
   estudante: Estudante
+  anoLectivoId: string
   aoTransferir?: () => void
 }) {
   const { t } = useLingui()
@@ -41,7 +43,7 @@ export function TransferirEstudante({
   const [erros, setErros] = useState<Record<string, string>>({})
   const [erroGeral, setErroGeral] = useState<string>()
   const { data: turma } = useQuery({
-    ...turmaQuery(estudante.turmaId ?? ''),
+    ...turmaQuery(estudante.turmaId ?? '', anoLectivoId),
     enabled: aberta && Boolean(estudante.turmaId),
   })
   const nome = estudante.nome

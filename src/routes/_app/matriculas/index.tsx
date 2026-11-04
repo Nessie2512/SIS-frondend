@@ -154,7 +154,7 @@ function EcraMatriculas() {
   const { ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { filtrar, aFiltrar } = useFiltrarEmTransicao()
-  const { data: classes = [] } = useQuery(classesQuery())
+  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId ?? ''))
   const { data, isPlaceholderData, isError, refetch } = useQuery({
     ...matriculasQuery({
       anoLectivoId: anoLectivoId ?? '',

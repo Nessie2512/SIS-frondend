@@ -1,7 +1,7 @@
 import { keepPreviousData, queryOptions } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { api, ApiError } from '@/shared/api'
-import { porId, referenciaSis } from '@/shared/api/sis'
+import { idNumerico, porId, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { paraInscrito, paraPaginaTurmas, paraTurma, paraTurmaDoSis } from '../model/mapeadores'
@@ -17,7 +17,8 @@ import type {
 export const turmaKeys = {
   todas: ['turmas'] as const,
   lista: (f: FiltrosTurma) => [...turmaKeys.todas, 'lista', f] as const,
-  detalhe: (id: string) => [...turmaKeys.todas, 'detalhe', id] as const,
+  detalhe: (id: string, anoLectivoId = '') =>
+    [...turmaKeys.todas, 'detalhe', id, anoLectivoId] as const,
   inscritos: (id: string) => [...turmaKeys.detalhe(id), 'inscritos'] as const,
   docentes: (id: string) => [...turmaKeys.detalhe(id), 'docentes'] as const,
   resultados: (id: string) => [...turmaKeys.detalhe(id), 'resultados'] as const,
@@ -39,12 +40,12 @@ export function turmasQuery(filtros: FiltrosTurma) {
   })
 }
 
-export function turmaQuery(id: string) {
+export function turmaQuery(id: string, anoLectivoId = '') {
   return queryOptions({
-    queryKey: turmaKeys.detalhe(id),
+    queryKey: turmaKeys.detalhe(id, anoLectivoId),
     queryFn: async ({ signal, client }) => {
       if (eReal('turmas')) {
-        const turma = (await turmasDoSis(client)).find((t) => t.id === id)
+        const turma = (await turmasDoSis(client, anoLectivoId)).find((t) => t.id === id)
         if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
         return turma
       }
@@ -100,23 +101,30 @@ export function resultadosQuery(turmaId: string) {
 }
 
 /** Backend SIS: todas as turmas, já com a classe e o ano (uuid) de cada uma. */
-async function turmasDoSis(client: QueryClient): Promise<(Turma & { anoLectivoId: string })[]> {
-  const [turmas, classes, anos] = await Promise.all([
-    client.fetchQuery(referenciaSis.turmas()),
-    client.fetchQuery(referenciaSis.classes()),
-    client.fetchQuery(referenciaSis.anos()),
+async function turmasDoSis(
+  client: QueryClient,
+  anoLectivoId: string,
+): Promise<(Turma & { anoLectivoId: string })[]> {
+  const anos = await client.fetchQuery(referenciaSis.anos())
+  const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
+  if (!ano) throw new Error('Não existe um ano letivo disponível para consultar as turmas.')
+  const academicYearId = idNumerico(anos, ano.uuid)
+  const [turmas, classes] = await Promise.all([
+    client.fetchQuery(referenciaSis.turmas(academicYearId)),
+    client.fetchQuery(referenciaSis.classes(academicYearId, true)),
   ])
   const classePorId = porId(classes)
-  const anoPorId = porId(anos)
-  return turmas.map((t) => ({
-    ...paraTurmaDoSis(t, classePorId.get(t.gradeId)),
-    anoLectivoId: anoPorId.get(t.academicYearId)?.uuid ?? '',
-  }))
+  return turmas
+    .filter((turma) => turma.academicYearId === academicYearId)
+    .map((turma) => ({
+      ...paraTurmaDoSis(turma, classePorId.get(turma.gradeId)),
+      anoLectivoId: ano.uuid,
+    }))
 }
 
 /** Sem filtros nem páginas no backend: filtra-se e pagina-se aqui, com as mesmas regras. */
 async function paginaDoSis(client: QueryClient, filtros: FiltrosTurma): Promise<PaginaTurmas> {
-  const todas = (await turmasDoSis(client))
+  const todas = (await turmasDoSis(client, filtros.anoLectivoId))
     .filter((t) => t.anoLectivoId === filtros.anoLectivoId)
     .filter((t) => !filtros.classeId || t.classeId === filtros.classeId)
     .filter((t) => !filtros.turno || t.turno === filtros.turno)

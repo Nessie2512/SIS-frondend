@@ -14,6 +14,7 @@ import {
   Campo,
   ControloSegmentado,
   Entrada,
+  Selector,
   SelectorData,
 } from '@/shared/ui'
 import type { DadosMatricula } from '../model/esquema'
@@ -29,6 +30,7 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
   } = useFormContext<DadosMatricula>()
   const nome = useWatch({ control, name: 'estudante.nome' })
   const dataNascimento = useWatch({ control, name: 'estudante.dataNascimento' })
+  const tipoDocumento = useWatch({ control, name: 'estudante.tipoDocumento' })
   const duplicado = useWatch({ control, name: 'duplicado' })
   const e = errors.estudante
 
@@ -149,13 +151,41 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
         />
       </div>
 
-      {/* Campos opcionais recolhidos (guia 1.1: divulgação progressiva) */}
-      <details className="group rounded-cartao bg-superficie ring-1 ring-linha open:pb-4">
+      <details open className="group rounded-cartao bg-superficie ring-1 ring-linha open:pb-4">
         <summary className="cursor-pointer list-none px-4 py-3 text-acento">
-          <Trans>Mais dados (opcionais)</Trans>
+          <Trans>Dados civis e de residência</Trans>
         </summary>
         <div className="grid gap-5 px-4 sm:grid-cols-2">
-          <Campo rotulo={t`Documento de identificação`} erro={e?.documentoIdentificacao?.message}>
+          <Controller
+            control={control}
+            name="estudante.tipoDocumento"
+            render={({ field, fieldState }) => (
+              <Campo
+                rotulo={t`Tipo de documento`}
+                obrigatorio
+                erro={fieldState.error?.message}
+              >
+                {(c) => (
+                  <Selector
+                    {...c}
+                    opcoes={[
+                      { valor: 'N/A', rotulo: t`Sem documento` },
+                      { valor: 'BI', rotulo: t`Bilhete de identidade` },
+                      { valor: 'PASSPORT', rotulo: t`Passaporte` },
+                      { valor: 'BIRTH_CERTIFICATE', rotulo: t`Certidão de nascimento` },
+                    ]}
+                    valor={field.value}
+                    aoMudar={(valor) => field.onChange(valor ?? 'N/A')}
+                  />
+                )}
+              </Campo>
+            )}
+          />
+          <Campo
+            rotulo={t`Número do documento`}
+            obrigatorio={tipoDocumento !== 'N/A'}
+            erro={e?.documentoIdentificacao?.message}
+          >
             {(c) => (
               <Entrada
                 {...c}
@@ -164,21 +194,36 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
               />
             )}
           </Campo>
-          <Campo rotulo={t`Telefone`} erro={e?.telefone?.message}>
-            {(c) => (
-              <Entrada
-                {...c}
-                inputMode="tel"
-                autoComplete="off"
-                {...register('estudante.telefone')}
-              />
-            )}
+          <Campo rotulo={t`Nacionalidade`} obrigatorio erro={e?.nacionalidade?.message}>
+            {(c) => <Entrada {...c} {...register('estudante.nacionalidade')} />}
           </Campo>
-          <Campo rotulo={t`Naturalidade`}>
-            {(c) => <Entrada {...c} {...register('estudante.naturalidade')} />}
+          <Campo
+            rotulo={t`Rua e número`}
+            obrigatorio
+            erro={e?.endereco?.streetAndNumber?.message}
+          >
+            {(c) => <Entrada {...c} {...register('estudante.endereco.streetAndNumber')} />}
           </Campo>
-          <Campo rotulo={t`Morada`}>
-            {(c) => <Entrada {...c} {...register('estudante.morada')} />}
+          <Campo
+            rotulo={t`Bairro ou quarteirão`}
+            obrigatorio
+            erro={e?.endereco?.neighborhood?.message}
+          >
+            {(c) => <Entrada {...c} {...register('estudante.endereco.neighborhood')} />}
+          </Campo>
+          <Campo
+            rotulo={t`Município`}
+            obrigatorio
+            erro={e?.endereco?.municipality?.message}
+          >
+            {(c) => <Entrada {...c} {...register('estudante.endereco.municipality')} />}
+          </Campo>
+          <Campo
+            rotulo={t`Província`}
+            obrigatorio
+            erro={e?.endereco?.province?.message}
+          >
+            {(c) => <Entrada {...c} {...register('estudante.endereco.province')} />}
           </Campo>
         </div>
       </details>

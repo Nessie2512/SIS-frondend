@@ -5,13 +5,12 @@ import { Link } from '@tanstack/react-router'
 import { Check, CircleCheck } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm, type FieldPath } from 'react-hook-form'
-import type { Matricula } from '@/entities/matricula'
 import { eApiError } from '@/shared/api'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { errosDoFormulario } from '@/shared/lib/erros-formulario'
-import { Aviso, AvisoAoSair, Button, EtiquetaEstado, ResumoErros } from '@/shared/ui'
+import { Aviso, AvisoAoSair, Button, ResumoErros } from '@/shared/ui'
 import {
   CAMPOS_POR_PASSO,
   esquemaMatricula,
@@ -19,7 +18,7 @@ import {
   type DadosMatricula,
 } from '../model/esquema'
 import { useRascunhoMatricula } from '../model/rascunho'
-import { useMatricular } from '../model/use-matricular'
+import { useMatricular, type ResultadoMatricula } from '../model/use-matricular'
 import { PassoClasseTurma } from './passo-classe-turma'
 import { PassoDados } from './passo-dados'
 import { PassoDocumentos } from './passo-documentos'
@@ -35,12 +34,30 @@ interface Props {
 /** Campos do servidor (errors[].campo) para os campos do formulário e o passo onde vivem. */
 const CAMPO_SERVIDOR: Record<string, [FieldPath<DadosMatricula>, number]> = {
   nome: ['estudante.nome', 0],
+  name: ['estudante.nome', 0],
   dataNascimento: ['estudante.dataNascimento', 0],
-  telefone: ['estudante.telefone', 0],
+  birthDate: ['estudante.dataNascimento', 0],
+  sex: ['estudante.sexo', 0],
+  documentType: ['estudante.tipoDocumento', 0],
+  documentNumber: ['estudante.documentoIdentificacao', 0],
+  'address.streetAndNumber': ['estudante.endereco.streetAndNumber', 0],
+  'address.neighborhood': ['estudante.endereco.neighborhood', 0],
+  'address.municipality': ['estudante.endereco.municipality', 0],
+  'address.province': ['estudante.endereco.province', 0],
+  nationality: ['estudante.nacionalidade', 0],
+  fatherName: ['estudante.fatherName', 1],
+  fatherContact: ['estudante.fatherContact', 1],
+  motherName: ['estudante.motherName', 1],
+  motherContact: ['estudante.motherContact', 1],
+  bestLanguage: ['estudante.bestLanguage', 1],
+  familyPrefix: ['estudante.familyPrefix', 1],
+  primaryGuardian: ['encarregados', 1],
   estudante: ['estudante.nome', 0],
   encarregados: ['encarregados', 1],
   classeId: ['classeId', 3],
   turmaId: ['turmaId', 3],
+  classId: ['turmaId', 3],
+  academicYearId: ['turmaId', 3],
 }
 
 /**
@@ -51,7 +68,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
   const { t } = useLingui()
   const rascunho = useRascunhoMatricula()
   const [passo, setPasso] = useState(rascunho.passo)
-  const [concluida, setConcluida] = useState<Matricula | null>(null)
+  const [concluida, setConcluida] = useState<ResultadoMatricula | null>(null)
   const titulo = useRef<HTMLHeadingElement>(null)
   const matricular = useMatricular(anoLectivoId)
 
@@ -95,8 +112,19 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
       'estudante.nome': t`Nome completo`,
       'estudante.dataNascimento': t`Data de nascimento`,
       'estudante.sexo': t`Sexo`,
-      'estudante.documentoIdentificacao': t`Documento de identificação`,
-      'estudante.telefone': t`Telefone`,
+      'estudante.tipoDocumento': t`Tipo de documento`,
+      'estudante.documentoIdentificacao': t`Número do documento`,
+      'estudante.nacionalidade': t`Nacionalidade`,
+      'estudante.endereco.streetAndNumber': t`Rua e número`,
+      'estudante.endereco.neighborhood': t`Bairro ou quarteirão`,
+      'estudante.endereco.municipality': t`Município`,
+      'estudante.endereco.province': t`Província`,
+      'estudante.fatherName': t`Nome do pai`,
+      'estudante.fatherContact': t`Contacto do pai`,
+      'estudante.motherName': t`Nome da mãe`,
+      'estudante.motherContact': t`Contacto da mãe`,
+      'estudante.bestLanguage': t`Idioma preferencial`,
+      'estudante.familyPrefix': t`Prefixo familiar`,
       'duplicado.ignorado': t`Possível duplicado`,
       'duplicado.justificacao': t`Porque não é o mesmo estudante?`,
       encarregados: t`Encarregados`,
@@ -250,7 +278,7 @@ export function AssistenteMatricula({ anoLectivoId, anoInicio }: Props) {
           {passo === 1 && <PassoEncarregados />}
           {passo === 2 && <PassoDocumentos />}
           {passo === 3 && <PassoClasseTurma anoLectivoId={anoLectivoId} />}
-          {passo === 4 && <PassoRevisao irPara={irPara} />}
+          {passo === 4 && <PassoRevisao irPara={irPara} anoLectivoId={anoLectivoId} />}
 
           {formState.errors.root?.servidor && passo !== 0 && (
             <Aviso tom="erro">{formState.errors.root.servidor.message}</Aviso>
@@ -280,13 +308,14 @@ function MatriculaConcluida({
   matricula,
   aoContinuar,
 }: {
-  matricula: Matricula
+  matricula: ResultadoMatricula
   aoContinuar: () => void
 }) {
   const { t } = useLingui()
   const nome = matricula.estudanteNome
   const processo = matricula.numeroProcesso
   const emFalta = matricula.documentosEmFalta
+  const separador = emFalta === null || emFalta === 0 ? 'resumo' : 'documentos'
   return (
     <section aria-labelledby="concluida" className="flex max-w-xl flex-col items-start gap-5">
       <CircleCheck aria-hidden className="size-8 stroke-[1.5] text-sucesso" />
@@ -295,11 +324,15 @@ function MatriculaConcluida({
           {t`Matrícula de ${nome} registada`}
         </h2>
         <p className="tabular text-texto-2">
-          {t`Processo ${processo}`} · {matricula.classe} · {matricula.turma ?? t`sem turma`}
+          {processo ? t`Processo ${processo}` : t`Código de estudante não devolvido`} ·{' '}
+          {matricula.classe} · {matricula.turma ?? t`sem turma`}
         </p>
       </div>
-      <EtiquetaEstado tom={matricula.estadoTom}>{matricula.estadoRotulo}</EtiquetaEstado>
-      {emFalta > 0 && (
+      {emFalta === null ? (
+        <Aviso tom="informacao">
+          <Trans>O estado dos documentos não foi devolvido pelo SIS nesta resposta.</Trans>
+        </Aviso>
+      ) : emFalta > 0 ? (
         <Aviso tom="aviso">
           {plural(emFalta, {
             one: 'Falta # documento obrigatório. Pode marcá-lo na ficha quando for entregue.',
@@ -307,13 +340,13 @@ function MatriculaConcluida({
               'Faltam # documentos obrigatórios. Pode marcá-los na ficha quando forem entregues.',
           })}
         </Aviso>
-      )}
+      ) : null}
       <div className="flex gap-2">
         <Button asChild variante="primario">
           <Link
             to="/estudantes/$estudanteId"
             params={{ estudanteId: matricula.estudanteId }}
-            search={{ separador: emFalta ? 'documentos' : 'resumo' }}
+            search={{ separador }}
           >
             <Trans>Abrir ficha</Trans>
           </Link>

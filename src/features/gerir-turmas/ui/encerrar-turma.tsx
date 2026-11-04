@@ -12,9 +12,15 @@ import { useEncerrarTurma } from '../model/use-turmas'
  * Encerrar a turma (guia 2.2): fica só de leitura. Com estudantes inscritos o botão fica
  * desactivado e diz o que fazer primeiro (guia 2.7).
  */
-export function EncerrarTurma({ turma }: { turma: Turma }) {
+export function EncerrarTurma({
+  turma,
+  anoLectivoId,
+}: {
+  turma: Turma
+  anoLectivoId: string
+}) {
   const { t } = useLingui()
-  const encerrar = useEncerrarTurma()
+  const encerrar = useEncerrarTurma(anoLectivoId)
   const [aberto, setAberto] = useState(false)
   const [motivo, setMotivo] = useState('')
   const [erro, setErro] = useState<string>()

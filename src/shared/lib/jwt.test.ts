@@ -31,11 +31,18 @@ describe('permissoesDoPapel', () => {
   it('papel desconhecido não ganha permissões', () => {
     expect(permissoesDoPapel('OUTRO')).toEqual([])
   })
+
+  it('só ADMIN gere anos e só GESTOR_TI gere contas', () => {
+    expect(permissoesDoPapel('ADMIN')).toContain('anos:gerir')
+    expect(permissoesDoPapel('CHEFE_SECRETARIA')).not.toContain('anos:gerir')
+    expect(permissoesDoPapel('GESTOR_TI')).toContain('administracao:escrever')
+    expect(permissoesDoPapel('ADMIN')).not.toContain('administracao:escrever')
+  })
 })
 
 describe('permissoesDoSis', () => {
   it('traduz o vocabulário do backend para o da interface', () => {
-    const p = permissoesDoSis(['students:read', 'student-entry:write', 'academic-years:write'], 'X')
+    const p = permissoesDoSis(['students:read', 'student-entry:write', 'academic-years:write'])
     expect(p).toEqual(
       expect.arrayContaining([
         'estudantes:ler',
@@ -48,11 +55,11 @@ describe('permissoesDoSis', () => {
   })
 
   it('quem escreve turmas também pode pedir a excepção à lotação', () => {
-    expect(permissoesDoSis(['classes:write'], undefined)).toContain('inscricoes:excepcao')
+    expect(permissoesDoSis(['classes:write'])).toContain('inscricoes:excepcao')
   })
 
-  it('sem nenhuma reconhecida, vale a tabela do papel', () => {
-    expect(permissoesDoSis(['xpto:read'], 'SECRETARIO')).toEqual(permissoesDoPapel('SECRETARIO'))
-    expect(permissoesDoSis([], 'ADMIN')).toContain('administracao:escrever')
+  it('permissões desconhecidas não concedem permissões', () => {
+    expect(permissoesDoSis(['xpto:read'])).toEqual([])
+    expect(permissoesDoSis([])).toEqual([])
   })
 })

@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { estudanteKeys } from '@/entities/estudante'
 import { matriculaKeys, paraMatricula } from '@/entities/matricula'
 import { api } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 /**
  * Confirmar uma matrícula (guia 2.4): o servidor só aceita com os documentos obrigatórios
@@ -12,6 +14,7 @@ export function useConfirmarMatricula() {
   return useMutation({
     mutationKey: ['matriculas', 'confirmar'],
     mutationFn: async (matriculaId: string) => {
+      if (eReal('estudantes')) naoDisponivel('APROVAR_CONFIRMACAO_SIS')
       const { data } = await api.POST('/matriculas/{id}/confirmar', {
         params: { path: { id: matriculaId } },
       })
@@ -35,6 +38,7 @@ export function useConfirmarLote() {
   return useMutation({
     mutationKey: ['matriculas', 'confirmar-lote'],
     mutationFn: async ({ ids, chave }: { ids: string[]; chave: string }) => {
+      if (eReal('estudantes')) naoDisponivel('APROVAR_MATRICULAS_EM_LOTE')
       const { data } = await api.POST('/matriculas/confirmar', {
         params: { header: { 'Idempotency-Key': chave } },
         body: { ids },
@@ -62,6 +66,7 @@ export function useAnularMatricula() {
   return useMutation({
     mutationKey: ['matriculas', 'anular'],
     mutationFn: async ({ matriculaId, motivo }: { matriculaId: string; motivo: string }) => {
+      if (eReal('estudantes')) naoDisponivel('ANULAR_MATRICULA')
       const { data } = await api.POST('/matriculas/{id}/anular', {
         params: { path: { id: matriculaId } },
         body: { motivo },

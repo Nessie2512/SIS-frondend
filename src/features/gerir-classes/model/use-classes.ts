@@ -37,7 +37,10 @@ export function useCriarClasse() {
     mutationFn: async (pedido: { cicloId: string; designacao: string }) => {
       if (eReal('curriculo')) {
         // O backend refere o ciclo pelo id numérico
-        const niveis = await qc.fetchQuery(referenciaSis.niveis())
+        const anos = await qc.fetchQuery(referenciaSis.anos())
+        const ano = anos.find((a) => a.isActive)
+        if (!ano) throw new Error('Não existe um ano letivo ativo para consultar os ciclos.')
+        const niveis = await qc.fetchQuery(referenciaSis.niveis(ano.id, true))
         await apiSis.POST('/grades', {
           body: { name: pedido.designacao, academicLevelId: idNumerico(niveis, pedido.cicloId) },
         })

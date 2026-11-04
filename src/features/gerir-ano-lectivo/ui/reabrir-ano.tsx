@@ -3,6 +3,7 @@ import { LockOpen } from 'lucide-react'
 import { useState } from 'react'
 import type { AnoLectivo } from '@/entities/ano-lectivo'
 import { eApiError } from '@/shared/api'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { AreaTexto, Aviso, Button, Campo, Dialogo, notificar } from '@/shared/ui'
@@ -16,6 +17,7 @@ export function ReabrirAno({ ano }: { ano: AnoLectivo }) {
   const [motivo, setMotivo] = useState('')
   const [erro, setErro] = useState<string>()
   const designacao = ano.designacao
+  if (eReal('anos')) return null
 
   function fechar() {
     setAberto(false)

@@ -1,6 +1,8 @@
 import { keepPreviousData, queryOptions, useMutation, useQueryClient } from '@tanstack/react-query'
 import { estudanteKeys, paraEncarregado, type Encarregado } from '@/entities/estudante'
 import { api, type components } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 export type DadosEncarregado = components['schemas']['AcrescentarEncarregadoDto']
 
@@ -9,6 +11,7 @@ export function pesquisaEncarregadosQuery(pesquisa: string) {
   return queryOptions({
     queryKey: ['encarregados', 'pesquisa', pesquisa],
     queryFn: async ({ signal }) => {
+      if (eReal('estudantes')) naoDisponivel('GESTAO_DE_ENCARREGADOS')
       const { data } = await api.GET('/encarregados', { params: { query: { pesquisa } }, signal })
       return data!
     },
@@ -27,6 +30,7 @@ export function useAcrescentarEncarregado(estudanteId: string) {
   return useMutation({
     mutationKey: ['encarregados', estudanteId, 'acrescentar'],
     mutationFn: async ({ dados }: { dados: DadosEncarregado; nome: string }) => {
+      if (eReal('estudantes')) naoDisponivel('GESTAO_DE_ENCARREGADOS')
       const { data } = await api.POST('/estudantes/{id}/encarregados', {
         params: { path: { id: estudanteId } },
         body: dados,
@@ -59,6 +63,7 @@ export function useEditarEncarregado(estudanteId: string) {
   return useMutation({
     mutationKey: ['encarregados', estudanteId, 'editar'],
     mutationFn: async ({ id, dados }: { id: string; dados: DadosEncarregado }) => {
+      if (eReal('estudantes')) naoDisponivel('GESTAO_DE_ENCARREGADOS')
       const { data } = await api.PUT('/estudantes/{id}/encarregados/{encarregadoId}', {
         params: { path: { id: estudanteId, encarregadoId: id } },
         body: dados,
@@ -77,6 +82,7 @@ export function useRetirarEncarregado(estudanteId: string) {
     mutationKey: ['encarregados', estudanteId, 'retirar'],
     scope: { id: `encarregados-${estudanteId}` },
     mutationFn: async (encarregadoId: string) => {
+      if (eReal('estudantes')) naoDisponivel('GESTAO_DE_ENCARREGADOS')
       await api.DELETE('/estudantes/{id}/encarregados/{encarregadoId}', {
         params: { path: { id: estudanteId, encarregadoId } },
       })
@@ -99,6 +105,7 @@ export function useReligarEncarregado(estudanteId: string) {
     mutationKey: ['encarregados', estudanteId, 'religar'],
     scope: { id: `encarregados-${estudanteId}` },
     mutationFn: async ({ id, principal }: { id: string; principal: boolean }) => {
+      if (eReal('estudantes')) naoDisponivel('GESTAO_DE_ENCARREGADOS')
       await api.POST('/estudantes/{id}/encarregados', {
         params: { path: { id: estudanteId } },
         body: { encarregadoId: id, principal },

@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 import { api } from '@/shared/api'
-import { apiSis, referenciaSis } from '@/shared/api/sis'
+import { apiSis, idNumerico, naoDisponivel, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
@@ -19,7 +19,8 @@ import type { FiltrosEstudantes, PaginaEstudantes } from '../model/tipos'
 export const estudanteKeys = {
   todos: ['estudantes'] as const,
   lista: (f: FiltrosEstudantes) => [...estudanteKeys.todos, 'lista', f] as const,
-  detalhe: (id: string) => [...estudanteKeys.todos, 'detalhe', id] as const,
+  detalhe: (id: string, anoLectivoId = '') =>
+    [...estudanteKeys.todos, 'detalhe', id, anoLectivoId] as const,
   percurso: (id: string) => [...estudanteKeys.detalhe(id), 'percurso'] as const,
   documentos: (id: string) => [...estudanteKeys.detalhe(id), 'documentos'] as const,
   encarregados: (id: string) => [...estudanteKeys.detalhe(id), 'encarregados'] as const,
@@ -45,13 +46,19 @@ export function estudantesQuery(filtros: FiltrosEstudantes) {
   })
 }
 
-export function estudanteQuery(id: string) {
+export function estudanteQuery(id: string, anoLectivoId = '') {
   return queryOptions({
-    queryKey: estudanteKeys.detalhe(id),
-    queryFn: async ({ signal }) => {
+    queryKey: estudanteKeys.detalhe(id, anoLectivoId),
+    queryFn: async ({ signal, client }) => {
       if (eReal('estudantes')) {
+        const anos = await client.fetchQuery(referenciaSis.anos())
+        const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
+        if (!ano) throw new Error('Não existe um ano letivo disponível para consultar o estudante.')
         const { data } = await apiSis.GET('/students/{uuid}', {
-          params: { path: { uuid: id } },
+          params: {
+            path: { uuid: id },
+            query: { academicYearId: idNumerico(anos, ano.uuid) },
+          },
           signal,
         })
         return paraEstudanteDoSis(data!)
@@ -95,6 +102,7 @@ export function encarregadosQuery(id: string) {
   return queryOptions({
     queryKey: estudanteKeys.encarregados(id),
     queryFn: async ({ signal }) => {
+      if (eReal('estudantes')) naoDisponivel('GESTAO_DE_ENCARREGADOS')
       const { data } = await api.GET('/estudantes/{id}/encarregados', {
         params: { path: { id } },
         signal,
@@ -141,7 +149,11 @@ export function ocorrenciasQuery(id: string) {
  * turma, documentos em falta) não têm dados e devolvem a lista vazia em vez de enganar.
  */
 async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<PaginaEstudantes> {
-  const todos = (await client.fetchQuery(referenciaSis.estudantes())).map(paraEstudanteDoSis)
+  const anos = await client.fetchQuery(referenciaSis.anos())
+  const academicYearId = idNumerico(anos, f.anoLectivoId)
+  const todos = (await client.fetchQuery(referenciaSis.estudantes(academicYearId))).map(
+    paraEstudanteDoSis,
+  )
   const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
   const semDadosDeMatricula = Boolean(f.classeId || f.semTurma || f.documentosEmFalta)
   const filtrados = semDadosDeMatricula
@@ -151,7 +163,7 @@ async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<P
           (e) =>
             !termo ||
             normalizarTexto(e.nome).includes(termo) ||
-            normalizarTexto(e.numeroProcesso).includes(termo) ||
+            normalizarTexto(e.numeroProcesso ?? '').includes(termo) ||
             normalizarTexto(e.documentoIdentificacao ?? '').includes(termo),
         )
         .filter((e) => !f.estado || e.estado === f.estado)

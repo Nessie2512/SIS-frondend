@@ -6,7 +6,14 @@
 export interface paths {
     "/subjects": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+                name?: string;
+                code?: string;
+                isActive?: boolean;
+                academicLevelId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -24,7 +31,9 @@ export interface paths {
     };
     "/subjects/code/{code}": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -41,7 +50,9 @@ export interface paths {
     };
     "/subjects/{id}": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -78,7 +89,13 @@ export interface paths {
     };
     "/academic-levels": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+                name?: string;
+                isActive?: boolean;
+                description?: string;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -96,7 +113,9 @@ export interface paths {
     };
     "/academic-levels/{id}": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -114,7 +133,10 @@ export interface paths {
     };
     "/academic-levels/search": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+                name: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -131,7 +153,16 @@ export interface paths {
     };
     "/grades": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+                name?: string;
+                isActive?: boolean;
+                description?: string;
+                code?: string;
+                academicLevelId?: number;
+                subjectId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -149,7 +180,9 @@ export interface paths {
     };
     "/grades/{id}": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -167,7 +200,9 @@ export interface paths {
     };
     "/grades/{gradeId}/subjects": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -202,7 +237,16 @@ export interface paths {
     };
     "/grades/search": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+                name?: string;
+                isActive?: boolean;
+                description?: string;
+                code?: string;
+                academicLevelId?: number;
+                subjectId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -236,7 +280,9 @@ export interface paths {
     };
     "/classes": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -254,7 +300,9 @@ export interface paths {
     };
     "/classes/{id}": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -266,12 +314,22 @@ export interface paths {
         delete: operations["ClassController_delete"];
         options?: never;
         head?: never;
-        patch?: never;
+        /** Atualizar sala ou director da turma */
+        patch: operations["ClassController_update"];
         trace?: never;
     };
     "/classes/search": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+                name?: string;
+                gradeId?: number;
+                academicLevelId?: number;
+                period?: string;
+                capacity?: number;
+                isActive?: boolean;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -308,17 +366,37 @@ export interface paths {
         parameters: {
             query?: never;
             header?: never;
-            path?: never;
+            path: {
+                uuid: string;
+            };
             cookie?: never;
         };
         get?: never;
         /** Ativar um ano letivo */
-        put: operations["AcademicYearController_activate"];
+        put?: never;
         post?: never;
         delete?: never;
         options?: never;
         head?: never;
-        patch?: never;
+        patch: operations["AcademicYearController_activate"];
+        trace?: never;
+    };
+    "/academic-years/{uuid}/close": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["AcademicYearController_close"];
         trace?: never;
     };
     "/academic-years/{uuid}": {
@@ -358,7 +436,29 @@ export interface paths {
     };
     "/students": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+                uuid?: string;
+                studentCode?: string;
+                name?: string;
+                sex?: "M" | "F";
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                documentNumber?: string;
+                nationality?: string;
+                fatherName?: string;
+                fatherContact?: string;
+                motherName?: string;
+                motherContact?: string;
+                primaryGuardian?: string;
+                bestLanguage?: string;
+                familyPrefix?: string;
+                address?: string;
+                birthDate?: string;
+                isActive?: boolean;
+                academicLevelId?: number;
+                classId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -392,7 +492,9 @@ export interface paths {
     };
     "/students/{uuid}": {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -410,7 +512,10 @@ export interface paths {
     };
     "/students/search": {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+                documentNumber: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -631,7 +736,26 @@ export interface paths {
     };
     "/teachers": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+                name?: string;
+                teacherCode?: string;
+                registrationNumber?: string;
+                sex?: "M" | "F";
+                nationality?: string;
+                birthDate?: string;
+                address?: string;
+                email?: string;
+                teacherField?: string;
+                educationalAttainment?: string;
+                isSupervisor?: boolean;
+                isActive?: boolean;
+                specialtySubjectId?: number;
+                subjectId?: number;
+                academicLevelId?: number;
+                classId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -649,7 +773,9 @@ export interface paths {
     };
     "/teachers/{uuid}": {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -752,7 +878,10 @@ export interface paths {
     };
     "/teachers/search": {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+                registrationNumber: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -769,7 +898,9 @@ export interface paths {
     };
     "/teachers/{uuid}/assignments": {
         parameters: {
-            query?: never;
+            query?: {
+                academicYearId?: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -779,6 +910,59 @@ export interface paths {
         put?: never;
         /** Alocar um professor a uma turma/disciplina específica (Orquestrado por Caso de Uso) */
         post: operations["TeacherController_assignToClass"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enrollments": {
+        parameters: {
+            query?: {
+                academicYearId: number;
+                studentId?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["EnrollmentController_findAll"];
+        put?: never;
+        post: operations["EnrollmentController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enrollments/confirmations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EnrollmentController_createConfirmation"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/enrollments/confirmations/{id}/approve": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["EnrollmentController_approveConfirmation"];
         delete?: never;
         options?: never;
         head?: never;
@@ -1148,6 +1332,12 @@ export interface components {
              * @example true
              */
             isActive: boolean;
+            room?: string | null;
+            director?: string | null;
+        };
+        UpdateClassDto: {
+            room?: string | null;
+            director?: string | null;
         };
         CreateAcademicYearDto: {
             /**
@@ -1186,7 +1376,7 @@ export interface components {
              */
             sex: "M" | "F";
             /**
-             * @description Data de nascimento em formato YYYY-MM-DD (mínimo 5 anos)
+             * @description Data de nascimento em formato YYYY-MM-DD (mínimo 18 meses)
              * @example 2010-05-15
              */
             birthDate: string;
@@ -1199,7 +1389,7 @@ export interface components {
              *       "province": "Luanda"
              *     }
              */
-            address: Record<string, never>;
+            address: components["schemas"]["StudentAddressDto"] | string;
             /**
              * @description Nacionalidade do estudante
              * @example Angolana
@@ -1251,7 +1441,7 @@ export interface components {
             /** @example e3b0c442-98fc-4c14-951b-2424262d4685 */
             uuid: string;
             /** @example SCH-2026-8941 */
-            studentCode: string;
+            studentCode?: string | null;
             /** @example Artur Manuel Silva */
             name: string;
             /** @example M */
@@ -1286,7 +1476,13 @@ export interface components {
             /** @example Português */
             bestLanguage: string;
             /** @example FAM-ANTONIO */
-            familyPrefix: Record<string, never>;
+            familyPrefix: string;
+        };
+        StudentAddressDto: {
+            streetAndNumber: string;
+            neighborhood: string;
+            municipality: string;
+            province: string;
         };
         UpdateStudentIdentityDto: {
             /**
@@ -1318,6 +1514,16 @@ export interface components {
              * @example 20
              */
             academicYearId: number;
+        };
+        EnrollmentMessageDto: {
+            message: string;
+        };
+        EnrollmentConfirmationDto: {
+            confirmationId: string;
+        };
+        EnrollmentListDto: {
+            enrollments: Record<string, unknown>[];
+            confirmations: Record<string, unknown>[];
         };
         ConfirmEnrollmentInputDto: {
             /**
@@ -1362,11 +1568,6 @@ export interface components {
              */
             isSupervisor: boolean;
             /**
-             * @description ID referencial do nível académico (Ex: Ensino Médio)
-             * @example 2
-             */
-            academicLevelId: number;
-            /**
              * @example STEM
              * @enum {string}
              */
@@ -1376,6 +1577,7 @@ export interface components {
              * @enum {string}
              */
             educationalAttainment: "High School Graduate" | "Technical School certificate" | "Bachelor's degree" | "Master's degree" | "Ph.D.";
+            specialtySubjectIds?: number[];
         };
         TeacherOutputDto: {
             /**
@@ -1407,7 +1609,6 @@ export interface components {
             /** @example false */
             isSupervisor: boolean;
             /** @example 2 */
-            academicLevelId: number;
             /** @example STEM */
             teacherField: string;
             /** @example Bachelor's degree */
@@ -1486,7 +1687,7 @@ export interface components {
              * @example SECRETARIO
              * @enum {string}
              */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /**
              * @description Password com 12 a 128 caracteres; é armazenado como hash.
              * @example Uma frase-senha segura com 12+ caracteres
@@ -1499,7 +1700,7 @@ export interface components {
             /** @example maria@bma.com */
             email: string;
             /** @enum {string} */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /** @example EMP-2026-0123 */
             employeeNumber: string;
             /** @example Maria António Manuel */
@@ -1522,7 +1723,7 @@ export interface components {
             /** @example maria@bma.com */
             email?: string;
             /** @enum {string} */
-            role?: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role?: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /**
              * @description Novo password com 12 a 128 caracteres.
              * @example Uma nova frase-senha com pelo menos 12 caracteres
@@ -1554,7 +1755,7 @@ export interface components {
              * @example SECRETARIO
              * @enum {string}
              */
-            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO";
+            role: "DIRECTOR_GERAL" | "CHEFE_SECRETARIA" | "SECRETARIO" | "FINANCEIRO" | "GESTOR_TI" | "ADMIN" | "DIRECTOR_PEDAGOGICO" | "TEACHER";
             /**
              * @example [
              *       "students:read",
@@ -1574,7 +1775,14 @@ export type $defs = Record<string, never>;
 export interface operations {
     SubjectController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+                name?: string;
+                code?: string;
+                isActive?: boolean;
+                academicLevelId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1616,7 +1824,9 @@ export interface operations {
     };
     SubjectController_findByCode: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 code: string;
@@ -1637,7 +1847,9 @@ export interface operations {
     };
     SubjectController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 /** @description Subject UUID */
@@ -1749,7 +1961,13 @@ export interface operations {
     };
     AcademicLevelController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+                name?: string;
+                isActive?: boolean;
+                description?: string;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1791,7 +2009,9 @@ export interface operations {
     };
     AcademicLevelController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 id: string;
@@ -1838,6 +2058,7 @@ export interface operations {
     AcademicLevelController_findByName: {
         parameters: {
             query: {
+                academicYearId: number;
                 name: string;
             };
             header?: never;
@@ -1858,7 +2079,16 @@ export interface operations {
     };
     GradeController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+                name?: string;
+                isActive?: boolean;
+                description?: string;
+                code?: string;
+                academicLevelId?: number;
+                subjectId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -1909,7 +2139,9 @@ export interface operations {
     };
     GradeController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 /** @description Identificador público universal (UUID) da classe */
@@ -2072,6 +2304,7 @@ export interface operations {
     GradeController_findByName: {
         parameters: {
             query: {
+                academicYearId: number;
                 /** @description Nome exato da classe a pesquisar */
                 name: string;
             };
@@ -2136,7 +2369,9 @@ export interface operations {
     };
     ClassController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2221,9 +2456,37 @@ export interface operations {
             };
         };
     };
+    ClassController_update: {
+        parameters: {
+            query: {
+                academicYearId: number;
+            };
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UpdateClassDto"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClassOutputDto"];
+                };
+            };
+        };
+    };
     ClassController_findByName: {
         parameters: {
             query: {
+                academicYearId: number;
                 /** @description Nome exato da turma a pesquisar */
                 name: string;
             };
@@ -2314,6 +2577,27 @@ export interface operations {
             };
         };
     };
+    AcademicYearController_close: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AcademicYearOutputDto"];
+                };
+            };
+        };
+    };
     AcademicYearController_findById: {
         parameters: {
             query?: never;
@@ -2378,9 +2662,120 @@ export interface operations {
             };
         };
     };
-    StudentController_findAll: {
+    EnrollmentController_findAll: {
+        parameters: {
+            query: {
+                academicYearId: number;
+                studentId?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentListDto"];
+                };
+            };
+        };
+    };
+    EnrollmentController_create: {
         parameters: {
             query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewEnrollmentInputDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentMessageDto"];
+                };
+            };
+        };
+    };
+    EnrollmentController_createConfirmation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["NewEnrollmentInputDto"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentConfirmationDto"];
+                };
+            };
+        };
+    };
+    EnrollmentController_approveConfirmation: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EnrollmentMessageDto"];
+                };
+            };
+        };
+    };
+    StudentController_findAll: {
+        parameters: {
+            query: {
+                academicYearId: number;
+                uuid?: string;
+                studentCode?: string;
+                name?: string;
+                sex?: "M" | "F";
+                documentType?: "BI" | "PASSPORT" | "BIRTH_CERTIFICATE" | "N/A";
+                documentNumber?: string;
+                nationality?: string;
+                fatherName?: string;
+                fatherContact?: string;
+                motherName?: string;
+                motherContact?: string;
+                primaryGuardian?: string;
+                bestLanguage?: string;
+                familyPrefix?: string;
+                address?: string;
+                birthDate?: string;
+                isActive?: boolean;
+                academicLevelId?: number;
+                classId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2447,7 +2842,9 @@ export interface operations {
     };
     StudentController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 uuid: string;
@@ -2490,6 +2887,7 @@ export interface operations {
     StudentController_findByDocument: {
         parameters: {
             query: {
+                academicYearId: number;
                 documentNumber: string;
             };
             header?: never;
@@ -2868,7 +3266,26 @@ export interface operations {
     };
     TeacherController_findAll: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+                name?: string;
+                teacherCode?: string;
+                registrationNumber?: string;
+                sex?: "M" | "F";
+                nationality?: string;
+                birthDate?: string;
+                address?: string;
+                email?: string;
+                teacherField?: string;
+                educationalAttainment?: string;
+                isSupervisor?: boolean;
+                isActive?: boolean;
+                specialtySubjectId?: number;
+                subjectId?: number;
+                academicLevelId?: number;
+                classId?: number;
+                includeUnused?: boolean;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -2910,7 +3327,9 @@ export interface operations {
     };
     TeacherController_findById: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 uuid: string;
@@ -3093,6 +3512,7 @@ export interface operations {
     TeacherController_findByRegistration: {
         parameters: {
             query: {
+                academicYearId: number;
                 /** @description Número de registo exato do professor */
                 registrationNumber: string;
             };
@@ -3114,7 +3534,9 @@ export interface operations {
     };
     TeacherController_findAllAssignmentsByTeacher: {
         parameters: {
-            query?: never;
+            query: {
+                academicYearId: number;
+            };
             header?: never;
             path: {
                 uuid: string;

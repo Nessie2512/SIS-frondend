@@ -80,7 +80,7 @@ export const Route = createFileRoute('/_app/professores/')({
                 ...resto,
               }),
             ),
-            queryClient.ensureQueryData(disciplinasQuery()),
+            queryClient.ensureQueryData(disciplinasQuery(anoLectivoId)),
           ])
         : null,
     )
@@ -143,7 +143,7 @@ function EcraProfessores() {
   const [texto, setTexto] = useState(q ?? '')
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => () => clearTimeout(espera.current), [])
-  const { data: disciplinas = [] } = useQuery(disciplinasQuery())
+  const { data: disciplinas = [] } = useQuery(disciplinasQuery(anoLectivoId ?? ''))
   const { data, isPlaceholderData, isError, refetch } = useQuery({
     ...professoresQuery({
       anoLectivoId: anoLectivoId ?? '',

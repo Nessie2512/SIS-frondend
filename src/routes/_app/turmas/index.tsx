@@ -236,7 +236,10 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
   const podeAtribuir = useCan('turmas:escrever')
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const ano = anos.find((a) => a.id === anoLectivoId)
-  const { data: turma } = useQuery({ ...turmaQuery(id ?? ''), enabled: Boolean(id) })
+  const { data: turma } = useQuery({
+    ...turmaQuery(id ?? '', anoLectivoId ?? ''),
+    enabled: Boolean(id),
+  })
   const titulo = turma?.designacao ?? t`Turma`
 
   return (
@@ -266,7 +269,9 @@ function PainelTurma({ id, aoFechar }: { id: string | undefined; aoFechar: () =>
               </Link>
             </Button>
             <BotaoGerarListaNominal turmaId={turma.id} />
-            {podeAtribuir && !soLeitura && !turma.encerrada && <EncerrarTurma turma={turma} />}
+            {podeAtribuir && !soLeitura && !turma.encerrada && ano && (
+              <EncerrarTurma turma={turma} anoLectivoId={ano.id} />
+            )}
           </>
         )
       }

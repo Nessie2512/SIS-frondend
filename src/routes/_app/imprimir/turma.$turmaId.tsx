@@ -10,9 +10,9 @@ import { formatarInstante } from '@/shared/lib/datas'
 import { CabecalhoImpressao, ErroDeRota, Esqueleto, PreVisualizacaoImpressao } from '@/shared/ui'
 
 export const Route = createFileRoute('/_app/imprimir/turma/$turmaId')({
-  loader: ({ context: { queryClient }, params: { turmaId } }) =>
+  loader: ({ context: { queryClient, anoLectivoId }, params: { turmaId } }) =>
     Promise.all([
-      queryClient.ensureQueryData(turmaQuery(turmaId)),
+      queryClient.ensureQueryData(turmaQuery(turmaId, anoLectivoId ?? '')),
       queryClient.ensureQueryData(inscritosQuery(turmaId)),
     ]),
   errorComponent: ErroDeRota,
@@ -24,7 +24,7 @@ function ListaNominal() {
   const { t } = useLingui()
   const { turmaId } = Route.useParams()
   const { anoLectivoId } = Route.useRouteContext()
-  const { data: turma } = useQuery(turmaQuery(turmaId))
+  const { data: turma } = useQuery(turmaQuery(turmaId, anoLectivoId ?? ''))
   const { data: inscritos } = useQuery(inscritosQuery(turmaId))
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const { data: eu } = useQuery(meQuery())

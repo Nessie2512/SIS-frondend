@@ -20,7 +20,7 @@ export function PassoClasseTurma({ anoLectivoId }: { anoLectivoId: string }) {
   const classeId = useWatch({ control, name: 'classeId' })
   const transferida = useWatch({ control, name: 'transferencia.activa' })
   const turmaId = useWatch({ control, name: 'turmaId' })
-  const { data: classes = [] } = useQuery(classesQuery())
+  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId))
   const ordemEscolhida = classes.find((c) => c.id === classeId)?.ordem ?? 0
   const anteriores = classes.filter((c) => c.ordem < ordemEscolhida)
   const { data: pagina, isLoading } = useQuery({
@@ -177,23 +177,6 @@ export function PassoClasseTurma({ anoLectivoId }: { anoLectivoId: string }) {
                   <BarraOcupacao turma={turma} />
                 </label>
               ))}
-              <label className="flex cursor-pointer items-center gap-4 rounded-cartao px-4 py-3 ring-1 ring-linha has-checked:ring-2 has-checked:ring-acento">
-                <input
-                  type="radio"
-                  name="turma"
-                  checked={turmaId === null}
-                  onChange={() => setValue('turmaId', null, { shouldDirty: true })}
-                  className="size-4 accent-(--color-acento)"
-                />
-                <span className="flex flex-col">
-                  <span className="font-medium">
-                    <Trans>Inscrever na turma mais tarde</Trans>
-                  </span>
-                  <span className="text-secundario text-texto-2">
-                    <Trans>Fica na lista de estudantes sem turma, no quadro da distribuição.</Trans>
-                  </span>
-                </span>
-              </label>
             </div>
           )}
           {errors.turmaId && (

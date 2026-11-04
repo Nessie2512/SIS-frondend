@@ -192,7 +192,7 @@ function FormAtribuir({
   aoFechar: () => void
 }) {
   const { t } = useLingui()
-  const atribuir = useAtribuirDocente(turmaId)
+  const atribuir = useAtribuirDocente(turmaId, anoLectivoId)
   const substituicao = Boolean(linha.actual)
   const minimo = linha.actual && linha.actual.desde > inicioAno ? linha.actual.desde : inicioAno
   const hoje = hojeCivil()
