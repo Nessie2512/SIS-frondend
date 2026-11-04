@@ -1,82 +1,18 @@
 import { Trans, useLingui } from '@lingui/react/macro'
-import { Link, type LinkProps } from '@tanstack/react-router'
-import {
-  BookOpen,
-  CalendarDays,
-  CalendarRange,
-  ClipboardList,
-  FileSpreadsheet,
-  FileText,
-  GraduationCap,
-  Home,
-  Menu,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Presentation,
-  School,
-  Settings,
-  Users,
-  X,
-} from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import { Menu, PanelLeftClose, PanelLeftOpen, School, X } from 'lucide-react'
 import { Dialog } from 'radix-ui'
-import { useState, type ReactNode } from 'react'
+import { useState } from 'react'
 import { mostrarAtalho } from '@/shared/lib/atalhos'
 import { cn } from '@/shared/lib/cn'
 import { usePreferencias } from '@/shared/lib/preferencias'
 import { Dica } from '@/shared/ui'
+import { useAreas, type Area } from './areas'
 
 /** Larguras do menu lateral; o layout usa-as também para afastar o quadro de tarefas. */
 export const LARGURA_MENU = { expandido: '15rem', recolhido: '4rem' } as const
 
-interface Entrada {
-  ligacao: LinkProps
-  icone: ReactNode
-  rotulo: string
-  atalho?: string
-  exacto?: boolean
-}
-
-function useEntradas(): { principais: Entrada[]; definicoes: Entrada } {
-  const { t } = useLingui()
-  return {
-    principais: [
-      { ligacao: { to: '/' }, icone: <Home />, rotulo: t`Início`, atalho: 'g i', exacto: true },
-      {
-        ligacao: { to: '/estudantes', search: { page: 1 } },
-        icone: <GraduationCap />,
-        rotulo: t`Estudantes`,
-        atalho: 'g e',
-      },
-      {
-        ligacao: { to: '/matriculas', search: { page: 1 } },
-        icone: <ClipboardList />,
-        rotulo: t`Matrículas`,
-        atalho: 'g m',
-      },
-      { ligacao: { to: '/turmas' }, icone: <Users />, rotulo: t`Turmas`, atalho: 'g t' },
-      {
-        ligacao: { to: '/professores', search: { page: 1 } },
-        icone: <Presentation />,
-        rotulo: t`Professores`,
-        atalho: 'g p',
-      },
-      {
-        ligacao: { to: '/curriculo', search: { classeId: 'c7' } },
-        icone: <BookOpen />,
-        rotulo: t`Currículo`,
-      },
-      { ligacao: { to: '/calendario' }, icone: <CalendarDays />, rotulo: t`Calendário` },
-      { ligacao: { to: '/anos-lectivos' }, icone: <CalendarRange />, rotulo: t`Anos lectivos` },
-      {
-        ligacao: { to: '/documentos', search: { page: 1 } },
-        icone: <FileText />,
-        rotulo: t`Documentos`,
-      },
-      { ligacao: { to: '/relatorios' }, icone: <FileSpreadsheet />, rotulo: t`Relatórios` },
-    ],
-    definicoes: { ligacao: { to: '/definicoes' }, icone: <Settings />, rotulo: t`Definições` },
-  }
-}
+type Entrada = Area
 
 const classesItem = cn(
   'flex h-9 items-center gap-3 rounded-controlo px-2.5 text-corpo whitespace-nowrap text-texto-2 outline-none',
@@ -143,12 +79,12 @@ function Marca({ recolhido }: { recolhido: boolean }) {
 
 function ListaMenu({ recolhido, aoNavegar }: { recolhido: boolean; aoNavegar?: () => void }) {
   const { t } = useLingui()
-  const { principais } = useEntradas()
+  const { principais } = useAreas()
   return (
     <nav aria-label={t`Principal`} className="flex-1 overflow-y-auto px-3 py-2">
       <ul className="flex flex-col gap-0.5">
         {principais.map((entrada) => (
-          <li key={entrada.rotulo}>
+          <li key={entrada.id}>
             <ItemMenu entrada={entrada} recolhido={recolhido} aoNavegar={aoNavegar} />
           </li>
         ))}
@@ -165,7 +101,7 @@ export function MenuLateral() {
   const { t } = useLingui()
   const recolhido = usePreferencias((e) => e.menuRecolhido)
   const definirMenuRecolhido = usePreferencias((e) => e.definirMenuRecolhido)
-  const { definicoes } = useEntradas()
+  const { definicoes } = useAreas()
   const atalho = mostrarAtalho('mod+b')
   const rotuloAlternar = recolhido ? t`Expandir o menu` : t`Recolher o menu`
 
@@ -206,7 +142,7 @@ export function MenuLateral() {
 export function MenuMovel() {
   const { t } = useLingui()
   const [aberto, setAberto] = useState(false)
-  const { definicoes } = useEntradas()
+  const { definicoes } = useAreas()
   const fechar = () => setAberto(false)
   return (
     <Dialog.Root open={aberto} onOpenChange={setAberto}>

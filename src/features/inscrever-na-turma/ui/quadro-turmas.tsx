@@ -20,6 +20,7 @@ import { useState, type ReactNode } from 'react'
 import { BarraOcupacao, type Inscrito, type Turma } from '@/entities/turma'
 import { cn } from '@/shared/lib/cn'
 import { CURVA_PADRAO } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
 import { useCan } from '@/shared/lib/permissoes'
 import {
   AreaTexto,
@@ -89,7 +90,10 @@ type Pedido = { tipo: 'motivo' | 'excepcao'; colocacao: Colocacao }
  */
 export function QuadroTurmas({ anoLectivoId, classeId, soLeitura }: Props) {
   const { t } = useLingui()
-  const podeEscrever = useCan('turmas:escrever') && !soLeitura
+  // Backend SIS: colocar quem não tem turma é matricular (POST /enrollments), que a secretaria faz
+  const podeMatricular = useCan('matriculas:escrever')
+  const podeEscrever =
+    (useCan('turmas:escrever') || (eReal('turmas') && podeMatricular)) && !soLeitura
   const podeExcepcao = useCan('inscricoes:excepcao')
   const { data: quadro } = useQuery(quadroQuery(anoLectivoId, classeId))
   const [arrastado, setArrastado] = useState<Inscrito | null>(null)
@@ -324,7 +328,7 @@ function Cartao({
   const { t } = useLingui()
   const nome = cartao.nome
   // Matrícula por confirmar: fica no quadro, mas não se arrasta nem se move (guia 2.1, 2.7)
-  const podeMover = podeEscrever && !cartao.porConfirmar
+  const podeMover = podeEscrever && !cartao.porConfirmar && !cartao.fixo
   const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
     id: cartao.matriculaId,
     data: { cartao, origem: coluna },

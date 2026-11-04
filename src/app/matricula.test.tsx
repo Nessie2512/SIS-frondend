@@ -10,6 +10,11 @@ async function preencherDados(utilizador: ReturnType<typeof userEvent.setup>, no
   await utilizador.type(screen.getByLabelText(/Data de nascimento/), '03/04/2013')
   await utilizador.tab()
   await utilizador.click(screen.getByRole('radio', { name: 'Feminino' }))
+  await utilizador.type(screen.getByLabelText(/Nacionalidade/), 'Angolana')
+  await utilizador.type(screen.getByLabelText(/Rua e número/), 'Rua 1, n.º 12')
+  await utilizador.type(screen.getByLabelText(/Bairro ou quarteirão/), 'Cazenga')
+  await utilizador.type(screen.getByLabelText(/Município/), 'Cazenga')
+  await utilizador.type(screen.getByLabelText(/Província/), 'Luanda')
 }
 
 describe('Assistente de matrícula', () => {
@@ -24,6 +29,12 @@ describe('Assistente de matrícula', () => {
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
 
     expect(await screen.findByRole('heading', { name: 'Encarregados' })).toBeInTheDocument()
+    await utilizador.type(screen.getByLabelText(/Nome do pai/), 'Pedro Nunda')
+    await utilizador.type(screen.getByLabelText(/Contacto do pai/), '923 111 222')
+    await utilizador.type(screen.getByLabelText(/Nome da mãe/), 'Rosa Nunda')
+    await utilizador.type(screen.getByLabelText(/Contacto da mãe/), '923 111 223')
+    await utilizador.type(screen.getByLabelText(/Idioma preferencial/), 'Português')
+    await utilizador.type(screen.getByLabelText(/Prefixo familiar/), 'FAM-NUNDA')
     await utilizador.type(screen.getAllByLabelText(/Nome completo/)[0]!, 'Rosa Nunda')
     await utilizador.type(screen.getByLabelText(/Parentesco/), 'Mãe')
     await utilizador.type(screen.getByLabelText(/Telefone/), '923 111 222')

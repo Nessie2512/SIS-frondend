@@ -6,8 +6,10 @@ import { anosLectivosQuery } from '@/entities/ano-lectivo'
 import { RenovacaoMatriculas } from '@/features/renovar-matriculas'
 import { useCan } from '@/shared/lib/permissoes'
 import { Button, ErroDeRota, Esqueleto, EstadoVazio } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/matriculas/renovar')({
+  beforeLoad: () => exigir('renovarMatriculas'),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(anosLectivosQuery()),
   errorComponent: ErroDeRota,
   component: EcraRenovacao,

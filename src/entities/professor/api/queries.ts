@@ -1,6 +1,6 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 import { api } from '@/shared/api'
-import { apiSis, idNumerico, porId, referenciaSis } from '@/shared/api/sis'
+import { apiSis, doAno, idDoAnoSis, porId, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
@@ -51,23 +51,20 @@ export function professorQuery(id: string, anoLectivoId: string) {
   })
 }
 
-/** Backend SIS: lista inteira; pesquisa, estado e ordem aplicam-se aqui. */
+/**
+ * Backend SIS: os docentes do ano; pesquisa, estado e ordem aplicam-se aqui. Filtrar por
+ * disciplina deixa só os que a têm nas especialidades (os únicos a quem se pode atribuir).
+ */
 async function paginaDoSis(client: QueryClient, f: FiltrosProfessores): Promise<PaginaProfessores> {
   const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
-  const anos = await client.fetchQuery(referenciaSis.anos())
-  const academicYearId = idNumerico(anos, f.anoLectivoId)
-  const disciplinas = f.disciplinaId
-    ? await client.fetchQuery(referenciaSis.disciplinas(academicYearId, true))
-    : []
-  const todos = (
-    await client.fetchQuery(
-      referenciaSis.professores(academicYearId, {
-        includeUnused: true,
-        subjectId: f.disciplinaId ? idNumerico(disciplinas, f.disciplinaId) : undefined,
-      }),
-    )
-  ).map(paraProfessorResumoDoSis)
+  const [professores, disciplinas] = await Promise.all([
+    client.fetchQuery(referenciaSis.professores(f.anoLectivoId)),
+    client.fetchQuery(referenciaSis.disciplinas(f.anoLectivoId)),
+  ])
+  const disciplinaPorId = porId(disciplinas)
+  const todos = professores.map((p) => paraProfessorResumoDoSis(p, disciplinaPorId))
   const filtrados = todos
+    .filter((p) => !f.disciplinaId || p.disciplinas.some((d) => d.id === f.disciplinaId))
     .filter(
       (p) =>
         !termo ||
@@ -91,31 +88,24 @@ async function professorDoSis(
   anoLectivoId: string,
   signal: AbortSignal,
 ) {
-  const anos = await client.fetchQuery(referenciaSis.anos())
-  const academicYearId = idNumerico(anos, anoLectivoId)
-  const [professor, atribuicoes, turmas, classes, disciplinas] = await Promise.all([
-    apiSis
-      .GET('/teachers/{uuid}', {
-        params: { path: { uuid }, query: { academicYearId } },
-        signal,
-      })
-      .then((r) => r.data!),
-    apiSis
-      .GET('/teachers/{uuid}/assignments', {
-        params: { path: { uuid }, query: { academicYearId } },
-        signal,
-      })
-      .then((r) => r.data!),
-    client.fetchQuery(referenciaSis.turmas(academicYearId)),
-    client.fetchQuery(referenciaSis.classes(academicYearId, true)),
-    client.fetchQuery(referenciaSis.disciplinas(academicYearId, true)),
+  // A ficha e as atribuições pedem o ano (guia de integração, 1)
+  const academicYearId = await idDoAnoSis(client, anoLectivoId)
+  const params = { path: { uuid }, ...doAno(academicYearId) }
+  const [professor, atribuicoes, turmas, classes, disciplinas, anos] = await Promise.all([
+    apiSis.GET('/teachers/{uuid}', { params, signal }).then((r) => r.data!),
+    apiSis.GET('/teachers/{uuid}/assignments', { params, signal }).then((r) => r.data!),
+    client.fetchQuery(referenciaSis.turmas(anoLectivoId)),
+    client.fetchQuery(referenciaSis.classes(anoLectivoId)),
+    client.fetchQuery(referenciaSis.disciplinas(anoLectivoId)),
+    client.fetchQuery(referenciaSis.anos()),
   ])
+  const ano = anos.find((a) => a.uuid === anoLectivoId)
   const turmaPorId = porId(turmas)
   const classePorId = porId(classes)
   const disciplinaPorId = porId(disciplinas)
   return paraProfessorDoSis(
     professor,
-    atribuicoes.filter((a) => a.academicYearId === academicYearId),
+    atribuicoes.filter((a) => !ano || a.academicYearId === ano.id),
     {
       turma: (id) => {
         const t = turmaPorId.get(id)
@@ -126,5 +116,6 @@ async function professorDoSis(
         return d && { uuid: d.uuid, nome: d.name }
       },
     },
+    disciplinaPorId,
   )
 }

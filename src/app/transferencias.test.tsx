@@ -53,17 +53,38 @@ describe('Transferências', () => {
     await utilizador.type(screen.getByLabelText(/Data de nascimento/), '03/04/2011')
     await utilizador.tab()
     await utilizador.click(screen.getByRole('radio', { name: 'Feminino' }))
+    await utilizador.type(screen.getByLabelText(/Nacionalidade/), 'Angolana')
+    await utilizador.type(screen.getByLabelText(/Rua e número/), 'Rua 1, n.º 12')
+    await utilizador.type(screen.getByLabelText(/Bairro ou quarteirão/), 'Cazenga')
+    await utilizador.type(screen.getByLabelText(/Município/), 'Cazenga')
+    await utilizador.type(screen.getByLabelText(/Província/), 'Luanda')
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
+    await screen.findByRole('heading', { name: 'Encarregados' })
+    await utilizador.type(screen.getByLabelText(/Nome do pai/), 'Pedro Ndala')
+    await utilizador.type(screen.getByLabelText(/Contacto do pai/), '923 444 556')
+    await utilizador.type(screen.getByLabelText(/Nome da mãe/), 'Rosa Ndala')
+    await utilizador.type(screen.getByLabelText(/Contacto da mãe/), '923 444 555')
+    await utilizador.type(screen.getByLabelText(/Idioma preferencial/), 'Português')
+    await utilizador.type(screen.getByLabelText(/Prefixo familiar/), 'FAM-NDALA')
     await utilizador.type(await screen.findByLabelText(/Nome completo/), 'Rosa Ndala')
     await utilizador.type(screen.getByLabelText(/Parentesco/), 'Mãe')
     await utilizador.type(screen.getByLabelText(/Telefone/), '923 444 555')
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
     await screen.findByRole('heading', { name: 'Documentos' })
+    for (const documento of [
+      'Certidão de nascimento',
+      'Bilhete de identidade',
+      'Duas fotografias tipo passe',
+      'Atestado médico',
+    ]) {
+      await utilizador.click(screen.getByLabelText(documento))
+    }
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
 
     await screen.findByRole('heading', { name: 'Classe e turma' })
     await utilizador.click(await screen.findByRole('combobox', { name: /Classe/ }))
     await utilizador.click(await screen.findByRole('option', { name: /9\.ª classe/ }))
+    await utilizador.click(await screen.findByRole('radio', { name: /9\.ª A/ }))
     await utilizador.click(screen.getByLabelText(/Vem transferido de outra escola/))
     await utilizador.click(screen.getByRole('button', { name: 'Seguinte' }))
     expect(await screen.findByText('Indique a escola de origem.')).toBeInTheDocument()

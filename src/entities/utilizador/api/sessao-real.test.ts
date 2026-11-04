@@ -15,7 +15,7 @@ const me = (dados: Partial<DtoSis<'MeResponseDto'>> = {}): DtoSis<'MeResponseDto
   name: 'Domingas Chefe',
   email: 'chefe@escola.ao',
   role: 'CHEFE_SECRETARIA',
-  permissions: ['students:read', 'student-entry:write', 'academic-years:write'],
+  permissions: ['students:read', 'student-entry:write', 'academic:write'],
   ...dados,
 })
 

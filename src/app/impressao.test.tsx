@@ -42,6 +42,8 @@ describe('Impressão com pré-visualização', () => {
     expect(within(folha).getByRole('heading', { name: 'Dados pessoais' })).toBeInTheDocument()
     expect(within(folha).getByRole('table', { name: `Documentos de ${nome}` })).toBeInTheDocument()
     expect(within(folha).getByRole('table', { name: `Percurso de ${nome}` })).toBeInTheDocument()
-    expect(within(folha).getByText(`Processo ${estudante.numeroProcesso}`)).toBeInTheDocument()
+    expect(
+      within(folha).getByText(`Código de estudante: ${estudante.numeroProcesso}`),
+    ).toBeInTheDocument()
   })
 })

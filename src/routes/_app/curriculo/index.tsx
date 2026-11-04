@@ -43,7 +43,7 @@ function PlanoDaClasse() {
   const { t } = useLingui()
   const { classeId, plano: pedido } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
-  const podeEscrever = useCan('curriculo:escrever')
+  const podeEscrever = useCan('planos:escrever')
   const { data: classes = [] } = useQuery(classesQuery())
   const { data: versoes = [] } = useQuery(planosQuery(classeId))
   const id = pedido ?? versaoPorOmissao(versoes)?.id

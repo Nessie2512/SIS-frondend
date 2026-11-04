@@ -6,10 +6,11 @@ import { CircleAlert, CircleCheck, Lock } from 'lucide-react'
 import { useState } from 'react'
 import { encerramentoQuery, type AnoLectivo, type Encerramento } from '@/entities/ano-lectivo'
 import { eApiError } from '@/shared/api'
-import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
+import { eReal } from '@/shared/config/ligacao'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
+import { useCan } from '@/shared/lib/permissoes'
 import {
   Aviso,
   BarraProgresso,
@@ -22,6 +23,7 @@ import {
   notificar,
 } from '@/shared/ui'
 import { useEncerrarAno } from '../model/use-accoes-ano'
+import { usePode } from '@/shared/lib/permissoes'
 
 type Pendencia = Encerramento['pendencias'][number]
 
@@ -29,19 +31,16 @@ type Pendencia = Encerramento['pendencias'][number]
  * Encerramento do ano (guia 2.3): pendências bloqueantes à vista, cada uma com o caminho para a
  * resolver; encerrar só quando não há nenhuma, com confirmação digitada. Depois, modo de leitura.
  */
-export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir: boolean }) {
+export function EncerramentoAno({ ano }: { ano: AnoLectivo }) {
   const { t } = useLingui()
-  const sisReal = eReal('anos')
-  const { data: enc } = useQuery({
-    ...encerramentoQuery(ano.id),
-    enabled: !sisReal,
-  })
+  // Encerrar é do ADMIN no backend SIS (@Roles), como activar
+  const podeGerir = useCan('anos:activar')
+  const { data: enc } = useQuery(encerramentoQuery(ano.id))
   const [aConfirmar, setAConfirmar] = useState(false)
-  if (!enc && !sisReal) return <Esqueleto className="h-64 w-full" />
+  if (!enc) return <Esqueleto className="h-64 w-full" />
 
   const designacao = ano.designacao
-  const bloqueantes =
-    enc?.pendencias.filter((p) => p.bloqueante && p.quantidade > 0).length ?? 0
+  const bloqueantes = enc.pendencias.filter((p) => p.bloqueante && p.quantidade > 0).length
   const razao = bloqueantes
     ? t`Resolva primeiro as pendências assinaladas (${bloqueantes}).`
     : undefined
@@ -53,20 +52,21 @@ export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir
           <Trans>Encerramento do ano</Trans>
         </h2>
         <p className="text-secundario text-texto-2">
-          {sisReal ? (
-            <Trans>
-              O SIS encerra as matrículas activas do ano. A lista prévia de pendências ainda não
-              está disponível nesta integração.
-            </Trans>
-          ) : (
-            <Trans>
-              Para encerrar, todas as matrículas têm de estar resolvidas e com o resultado final
-              registado. Depois, o ano fica só para consulta.
-            </Trans>
-          )}
+          <Trans>
+            Para encerrar, todas as matrículas têm de estar resolvidas e com o resultado final
+            registado. Depois, o ano fica só para consulta.
+          </Trans>
         </p>
       </div>
-      {enc && (
+      {eReal('anos') && (
+        <Aviso tom="informacao">
+          <Trans>
+            O servidor ainda não indica pendências. Ao encerrar, as matrículas activas do ano ficam
+            concluídas.
+          </Trans>
+        </Aviso>
+      )}
+      {enc.pendencias.length > 0 && (
         <ul
           aria-label={t`Pendências do encerramento`}
           className="flex flex-col divide-y divide-linha rounded-cartao bg-superficie ring-1 ring-linha"
@@ -110,6 +110,9 @@ export function EncerramentoAno({ ano, podeGerir }: { ano: AnoLectivo; podeGerir
 
 function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerramento }) {
   const { t } = useLingui()
+  const podeMatriculas = usePode('matriculas')
+  const podeQuadro = usePode('distribuirTurmas')
+  const podeResultados = usePode('resultadosFinais')
   const n = pendencia.quantidade
   const resolvida = n === 0
   const TITULO = {
@@ -138,7 +141,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
               : `${plural(n, { one: 'Falta #.', other: 'Faltam #.' })} ${AJUDA[pendencia.tipo]}`}
           </span>
         </div>
-        {!resolvida && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
+        {!resolvida && podeMatriculas && pendencia.tipo === 'MATRICULAS_PENDENTES' && (
           <Link
             to="/matriculas"
             search={{ estado: 'PENDENTE', page: 1 }}
@@ -147,7 +150,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
             <Trans>Ver matrículas</Trans>
           </Link>
         )}
-        {!resolvida && pendencia.tipo === 'CONFIRMADAS_SEM_TURMA' && (
+        {!resolvida && podeQuadro && pendencia.tipo === 'CONFIRMADAS_SEM_TURMA' && (
           <Link
             to="/turmas/quadro"
             className="text-secundario whitespace-nowrap text-acento hover:underline"
@@ -156,7 +159,7 @@ function LinhaPendencia({ pendencia, enc }: { pendencia: Pendencia; enc: Encerra
           </Link>
         )}
       </div>
-      {!resolvida && pendencia.tipo === 'RESULTADOS_EM_FALTA' && (
+      {!resolvida && podeResultados && pendencia.tipo === 'RESULTADOS_EM_FALTA' && (
         <ul
           aria-label={t`Turmas com resultados em falta`}
           className="ml-8 flex flex-wrap gap-x-4 gap-y-1 text-secundario"
@@ -201,7 +204,6 @@ function DialogoEncerrar({
   aoFechar: () => void
 }) {
   const { t } = useLingui()
-  const sisReal = eReal('anos')
   const encerrar = useEncerrarAno(ano.id)
   const [texto, setTexto] = useState('')
   const [erro, setErro] = useState<string>()
@@ -252,31 +254,18 @@ function DialogoEncerrar({
     >
       <div className="flex flex-col gap-4">
         <ul className="flex list-disc flex-col gap-1 pl-5 text-secundario text-texto-2">
-          {sisReal ? (
-            <>
-              <li>
-                <Trans>As matrículas activas do ano serão concluídas.</Trans>
-              </li>
-              <li>
-                <Trans>O ano passará a só consulta.</Trans>
-              </li>
-            </>
-          ) : (
-            <>
-              <li>
-                <Trans>As matrículas confirmadas ficam concluídas com o resultado registado.</Trans>
-              </li>
-              <li>
-                <Trans>O resultado entra no percurso de cada estudante.</Trans>
-              </li>
-              <li>
-                <Trans>As turmas ficam encerradas e o ano passa a só consulta.</Trans>
-              </li>
-              <li>
-                <Trans>Só se reabre com justificação, e fica registado na auditoria.</Trans>
-              </li>
-            </>
-          )}
+          <li>
+            <Trans>As matrículas confirmadas ficam concluídas com o resultado registado.</Trans>
+          </li>
+          <li>
+            <Trans>O resultado entra no percurso de cada estudante.</Trans>
+          </li>
+          <li>
+            <Trans>As turmas ficam encerradas e o ano passa a só consulta.</Trans>
+          </li>
+          <li>
+            <Trans>Só se reabre com justificação, e fica registado na auditoria.</Trans>
+          </li>
         </ul>
         {erro && <Aviso tom="erro">{erro}</Aviso>}
         <Campo rotulo={t`Escreva ${designacao} para confirmar`}>

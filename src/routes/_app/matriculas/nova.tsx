@@ -4,10 +4,12 @@ import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { anosLectivosQuery } from '@/entities/ano-lectivo'
 import { AssistenteMatricula } from '@/features/matricular-estudante'
-import { useCan } from '@/shared/lib/permissoes'
+import { useCan, usePode } from '@/shared/lib/permissoes'
 import { Aviso } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/matriculas/nova')({
+  beforeLoad: () => exigir('matricular'),
   component: NovaMatricula,
 })
 
@@ -15,20 +17,23 @@ export const Route = createFileRoute('/_app/matriculas/nova')({
 function NovaMatricula() {
   const { anoLectivoId, soLeitura } = Route.useRouteContext()
   const podeMatricular = useCan('matriculas:escrever')
+  const podeLista = usePode('matriculas')
   const { data: anos = [] } = useQuery(anosLectivosQuery())
   const ano = anos.find((a) => a.id === anoLectivoId)
   const designacao = ano?.designacao
 
   return (
     <section className="flex flex-col gap-6">
-      <Link
-        to="/matriculas"
-        search={{ page: 1 }}
-        className="-ml-1 flex w-fit items-center gap-1 text-secundario text-acento"
-      >
-        <ChevronLeft aria-hidden className="size-4 stroke-[1.5]" />
-        <Trans>Matrículas</Trans>
-      </Link>
+      {podeLista && (
+        <Link
+          to="/matriculas"
+          search={{ page: 1 }}
+          className="-ml-1 flex w-fit items-center gap-1 text-secundario text-acento"
+        >
+          <ChevronLeft aria-hidden className="size-4 stroke-[1.5]" />
+          <Trans>Matrículas</Trans>
+        </Link>
+      )}
       <div className="flex flex-col gap-1">
         <h1 className="text-titulo-pagina">
           <Trans>Matricular estudante novo</Trans>

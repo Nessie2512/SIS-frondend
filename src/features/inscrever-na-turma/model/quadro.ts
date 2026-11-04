@@ -1,7 +1,16 @@
 import { queryOptions } from '@tanstack/react-query'
-import { paraInscrito, paraPaginaTurmas, type Inscrito, type Turma } from '@/entities/turma'
+import type { QueryClient } from '@tanstack/react-query'
+import {
+  paraInscrito,
+  paraPaginaTurmas,
+  paraTurmaDoSis,
+  type Inscrito,
+  type Turma,
+} from '@/entities/turma'
 import { api } from '@/shared/api'
+import { apiSis, idNumerico, referenciaSis, type EstudanteSis } from '@/shared/api/sis'
 import { FRESCURA } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
 
 /** Coluna "sem turma" do quadro. */
 export const SEM_TURMA = 'sem-turma'
@@ -27,7 +36,8 @@ const porNome = (a: Inscrito, b: Inscrito) => a.nome.localeCompare(b.nome, 'pt')
 export function quadroQuery(anoLectivoId: string, classeId: string) {
   return queryOptions({
     queryKey: quadroKeys.classe(anoLectivoId, classeId),
-    queryFn: async ({ signal }): Promise<Quadro> => {
+    queryFn: async ({ signal, client }): Promise<Quadro> => {
+      if (eReal('turmas')) return quadroDoSis(client, anoLectivoId, classeId, signal)
       const [respostaTurmas, respostaSemTurma] = await Promise.all([
         api.GET('/turmas', {
           params: { query: { anoLectivoId, classeId, estado: 'ACTIVA', pageSize: 100 } },
@@ -64,6 +74,61 @@ export function quadroQuery(anoLectivoId: string, classeId: string) {
     },
     staleTime: FRESCURA.lista,
   })
+}
+
+/**
+ * Backend SIS: os inscritos de cada turma são os estudantes com matrícula nela
+ * (GET /students?classId=…). Sem turma ficam os estudantes do ano que não estão em nenhuma
+ * turma (registados sem matrícula); o servidor não guarda a classe pretendida, por isso
+ * aparecem em todas as classes. Já matriculado, um estudante não muda de turma: não há rota.
+ */
+async function quadroDoSis(
+  client: QueryClient,
+  anoLectivoId: string,
+  classeId: string,
+  signal: AbortSignal,
+): Promise<Quadro> {
+  const [turmas, classes, anos, estudantes] = await Promise.all([
+    client.fetchQuery(referenciaSis.turmas(anoLectivoId)),
+    client.fetchQuery(referenciaSis.classes(anoLectivoId)),
+    client.fetchQuery(referenciaSis.anos()),
+    client.fetchQuery({ ...referenciaSis.estudantes(anoLectivoId), staleTime: 0 }),
+  ])
+  const academicYearId = idNumerico(anos, anoLectivoId)
+  const classe = classes.find((c) => c.uuid === classeId)
+  const doAno = turmas.filter((t) => t.academicYearId === academicYearId && t.isActive)
+  const porTurma = await Promise.all(
+    doAno.map(async (t) => {
+      const { data } = await apiSis.GET('/students', {
+        params: { query: { academicYearId, classId: t.id } },
+        signal,
+      })
+      return [t, (data ?? []) as EstudanteSis[]] as const
+    }),
+  )
+  const comTurma = new Set(porTurma.flatMap(([, lista]) => lista.map((e) => e.uuid)))
+  const cartao = (e: EstudanteSis, turmaId: string | null): Inscrito => ({
+    matriculaId: e.uuid,
+    estudanteId: e.uuid,
+    turmaId,
+    nome: e.name,
+    numeroProcesso: e.studentCode ?? '',
+    fotografiaUrl: null,
+    fixo: turmaId !== null,
+  })
+  const daClasse = porTurma.filter(([t]) => t.gradeId === classe?.id)
+  const colunas: Record<string, Inscrito[]> = {
+    [SEM_TURMA]: estudantes
+      .filter((e) => e.isActive && !comTurma.has(e.uuid))
+      .map((e) => cartao(e, null))
+      .sort(porNome),
+  }
+  for (const [t, lista] of daClasse)
+    colunas[t.uuid] = lista.map((e) => cartao(e, t.uuid)).sort(porNome)
+  return {
+    turmas: daClasse.map(([t, lista]) => paraTurmaDoSis(t, classe, lista.length)),
+    colunas,
+  }
 }
 
 /** Move um cartão entre colunas (para a actualização optimista). */

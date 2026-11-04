@@ -41,6 +41,11 @@ describe('Resumo de erros no topo dos formulários', () => {
       'Nome completo: Escreva o nome completo.',
       'Data de nascimento: Indique a data de nascimento.',
       'Sexo: Escolha o sexo.',
+      'Rua e número: Indique a rua e o número.',
+      'Bairro ou quarteirão: Indique o bairro ou quarteirão.',
+      'Município: Indique o município.',
+      'Província: Indique a província.',
+      'Nacionalidade: Indique a nacionalidade.',
     ])
     await utilizador.click(within(resumo).getByRole('button', { name: /^Data de nascimento:/ }))
     expect(screen.getByLabelText(/Data de nascimento/)).toHaveFocus()

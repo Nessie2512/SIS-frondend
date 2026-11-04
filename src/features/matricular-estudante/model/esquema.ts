@@ -165,7 +165,21 @@ export const VALORES_INICIAIS: DadosMatricula = {
 
 /** Campos validados ao sair de cada passo (guia 6.3: cada passo valida ao sair). */
 export const CAMPOS_POR_PASSO = [
-  ['estudante', 'duplicado'],
+  [
+    'estudante.nome',
+    'estudante.dataNascimento',
+    'estudante.sexo',
+    'estudante.tipoDocumento',
+    'estudante.documentoIdentificacao',
+    'estudante.endereco.streetAndNumber',
+    'estudante.endereco.neighborhood',
+    'estudante.endereco.municipality',
+    'estudante.endereco.province',
+    'estudante.nacionalidade',
+    'duplicado.candidatos',
+    'duplicado.ignorado',
+    'duplicado.justificacao',
+  ],
   [
     'encarregados',
     'estudante.fatherName',

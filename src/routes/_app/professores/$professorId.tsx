@@ -6,8 +6,10 @@ import { Check, ChevronLeft, Lock } from 'lucide-react'
 import * as z from 'zod/mini'
 import { CargaLectiva, professorQuery, type Professor } from '@/entities/professor'
 import { MenuEstadoProfessor } from '@/features/alterar-estado-professor'
+import { EspecialidadesProfessor } from '@/features/especialidades-professor'
 import { eApiError } from '@/shared/api'
 import { TEMPOS } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
 import { Can } from '@/shared/lib/can'
 import { NOME_TRANSICAO_FICHA } from '@/shared/lib/transicoes'
 import { formatarDataCivil } from '@/shared/lib/datas'
@@ -23,10 +25,13 @@ import {
   Separador,
   Separadores,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
+import { usePode } from '@/shared/lib/permissoes'
 
 const SEPARADORES = ['resumo', 'disciplinas', 'atribuicoes', 'documentos'] as const
 
 export const Route = createFileRoute('/_app/professores/$professorId')({
+  beforeLoad: () => exigir('professores'),
   validateSearch: z.object({
     separador: z.catch(z._default(z.enum(SEPARADORES), 'resumo'), 'resumo'),
   }),
@@ -50,8 +55,10 @@ export const Route = createFileRoute('/_app/professores/$professorId')({
 function FichaProfessor() {
   const { t } = useLingui()
   const { professorId } = Route.useParams()
-  const { separador } = Route.useSearch()
+  const { separador: pedido } = Route.useSearch()
   const { anoLectivoId } = Route.useRouteContext()
+  const comDocumentos = usePode('documentosProfessor')
+  const separador = pedido === 'documentos' && !comDocumentos ? 'resumo' : pedido
   const navigate = useNavigate({ from: Route.fullPath })
   const { data: p } = useQuery(professorQuery(professorId, anoLectivoId ?? ''))
   if (!p) return <FichaEsqueleto />
@@ -85,6 +92,10 @@ function FichaProfessor() {
           </p>
         </div>
         <Can permissao="professores:escrever">
+          {/* Backend SIS: só se atribui turma nas disciplinas do professor */}
+          {eReal('professores') && p.estado === 'ACTIVO' && (
+            <EspecialidadesProfessor professor={p} />
+          )}
           <MenuEstadoProfessor professor={p} anoLectivoId={anoLectivoId ?? ''} />
         </Can>
       </header>
@@ -108,9 +119,11 @@ function FichaProfessor() {
           <Separador valor="atribuicoes" contador={atribuicoes || undefined}>
             <Trans>Atribuições</Trans>
           </Separador>
-          <Separador valor="documentos" contador={p.documentosEmFalta || undefined}>
-            <Trans>Documentos</Trans>
-          </Separador>
+          {comDocumentos && (
+            <Separador valor="documentos" contador={p.documentosEmFalta || undefined}>
+              <Trans>Documentos</Trans>
+            </Separador>
+          )}
         </ListaSeparadores>
 
         <PainelSeparador value="resumo" className="pt-6">
@@ -122,9 +135,11 @@ function FichaProfessor() {
         <PainelSeparador value="atribuicoes" className="pt-6">
           <Atribuicoes professor={p} />
         </PainelSeparador>
-        <PainelSeparador value="documentos" className="pt-6">
-          <Documentos professor={p} />
-        </PainelSeparador>
+        {comDocumentos && (
+          <PainelSeparador value="documentos" className="pt-6">
+            <Documentos professor={p} />
+          </PainelSeparador>
+        )}
       </Separadores>
     </article>
   )
@@ -188,6 +203,7 @@ function Disciplinas({ professor: p }: { professor: Professor }) {
 
 function Atribuicoes({ professor: p }: { professor: Professor }) {
   const { t } = useLingui()
+  const podeTurmas = usePode('turmas')
   if (!p.atribuicoes.length) {
     return (
       <EstadoVazio
@@ -228,9 +244,13 @@ function Atribuicoes({ professor: p }: { professor: Professor }) {
           {p.atribuicoes.map((a) => (
             <tr key={a.id} className="h-linha border-b border-linha last:border-0">
               <td className="px-4 font-medium">
-                <Link to="/turmas" search={{ turma: a.turmaId }} className="hover:text-acento">
-                  {a.turma}
-                </Link>
+                {podeTurmas ? (
+                  <Link to="/turmas" search={{ turma: a.turmaId }} className="hover:text-acento">
+                    {a.turma}
+                  </Link>
+                ) : (
+                  a.turma
+                )}
               </td>
               <td className="px-4 text-texto-2">{a.classe}</td>
               <td className="px-4">{a.disciplina}</td>

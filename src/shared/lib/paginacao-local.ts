@@ -23,7 +23,7 @@ export function ordenarLocal<T>(lista: readonly T[], ordem: string | undefined):
 export function paginarLocal<T>(
   lista: readonly T[],
   pagina: number,
-  porPagina = PAGINACAO.porPagina,
+  porPagina: number = PAGINACAO.porPagina,
 ) {
   const totalPaginas = Math.max(1, Math.ceil(lista.length / porPagina))
   const page = Math.min(Math.max(1, pagina), totalPaginas)

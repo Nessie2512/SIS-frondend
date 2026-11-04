@@ -10,10 +10,12 @@ import {
   type Abertura,
   type AnoLectivo,
 } from '@/entities/ano-lectivo'
-import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { cn } from '@/shared/lib/cn'
+import { eReal } from '@/shared/config/ligacao'
+import { podeUsar, type Funcionalidade } from '@/shared/config/funcionalidades'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
+import { useCan, usePermissoesStore } from '@/shared/lib/permissoes'
 import { Button, Dialogo, Esqueleto, notificar } from '@/shared/ui'
 import { useActivarAno, useDuplicarTurmas } from '../model/use-accoes-ano'
 
@@ -206,6 +208,15 @@ function LigacaoNoAno({
   )
 }
 
+const ECRA_DA_ETAPA: Partial<Record<Etapa['id'], Funcionalidade>> = {
+  CALENDARIO: 'calendario',
+  TURMAS: 'turmas',
+  RENOVACAO: 'renovarMatriculas',
+  MATRICULAS: 'matricular',
+  DISTRIBUICAO: 'distribuirTurmas',
+  DOCENTES: 'turmas',
+}
+
 function AccaoEtapa({
   etapa,
   ano,
@@ -218,7 +229,13 @@ function AccaoEtapa({
   titulo: string
 }) {
   const { t } = useLingui()
+  // Activar o ano é do ADMIN no backend SIS (@Roles), não de quem cria o ano
+  const podeActivar = useCan('anos:activar')
+  const permissoes = usePermissoesStore((e) => e.permissoes)
   const rotulo = t`Abrir: ${titulo}`
+  // Cada etapa abre um ecrã: só se mostra a quem o pode abrir (guia 2.7)
+  const ecra = ECRA_DA_ETAPA[etapa.id]
+  if (ecra && !podeUsar(ecra, permissoes)) return null
   switch (etapa.id) {
     case 'CALENDARIO':
       return (
@@ -227,7 +244,8 @@ function AccaoEtapa({
         </LigacaoNoAno>
       )
     case 'TURMAS':
-      return etapa.estado === 'FEITA' ? (
+      // O backend SIS não duplica turmas: criam-se uma a uma no ecrã de turmas
+      return etapa.estado === 'FEITA' || eReal('turmas') ? (
         <LigacaoNoAno ano={ano} to="/turmas" rotulo={rotulo}>
           <Trans>Abrir</Trans>
         </LigacaoNoAno>
@@ -259,7 +277,7 @@ function AccaoEtapa({
         </LigacaoNoAno>
       )
     case 'ACTIVAR':
-      return podeGerir && etapa.estado === 'POR_FAZER' ? <BotaoActivar ano={ano} /> : null
+      return podeActivar && etapa.estado === 'POR_FAZER' ? <BotaoActivar ano={ano} /> : null
     default:
       return null
   }

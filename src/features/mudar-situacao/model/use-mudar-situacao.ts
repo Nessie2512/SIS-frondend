@@ -1,5 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { anularEstudanteSis } from '@/entities/estudante'
 import { api, type components } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 export type AccaoSituacao = components['schemas']['AccaoSituacao']
 
@@ -9,6 +12,12 @@ export function useMudarSituacao(estudanteId: string) {
   return useMutation({
     mutationKey: ['estudantes', estudanteId, 'situacao'],
     mutationFn: async (pedido: { accao: AccaoSituacao; data: string; motivo: string }) => {
+      if (eReal('estudantes')) {
+        // Backend SIS: só anular existe (DELETE /students/{uuid} desactiva o processo)
+        if (pedido.accao !== 'ANULACAO') naoDisponivel(pedido.accao)
+        await anularEstudanteSis(estudanteId)
+        return null
+      }
       const { data } = await api.POST('/estudantes/{id}/situacao', {
         params: { path: { id: estudanteId } },
         body: pedido,

@@ -18,7 +18,7 @@ import {
 } from '@/entities/estudante'
 import { TEMPOS } from '@/shared/config/constantes'
 import { Can } from '@/shared/lib/can'
-import { useCan } from '@/shared/lib/permissoes'
+import { useCan, usePode } from '@/shared/lib/permissoes'
 import { esperarSoAoEntrar } from '@/shared/lib/carregar-rota'
 import { cn } from '@/shared/lib/cn'
 import {
@@ -47,6 +47,7 @@ import {
   type ColunaTabela,
   type EtiquetaFiltro,
 } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 const ESTADOS = ['ACTIVO', 'TRANSFERIDO', 'DESISTENTE', 'CONCLUIDO', 'ANULADO'] as const
 type Estado = (typeof ESTADOS)[number]
@@ -73,6 +74,7 @@ const CAMPOS_ORDEM: Record<string, string> = {
 }
 
 export const Route = createFileRoute('/_app/estudantes/')({
+  beforeLoad: () => exigir('estudantes'),
   validateSearch: pesquisaEstudantes,
   // Sem loaderDeps: pesquisar ou filtrar não cria uma nova correspondência de rota nem esqueleto
   loader: ({ context: { queryClient, anoLectivoId }, location, cause }) => {
@@ -89,7 +91,7 @@ export const Route = createFileRoute('/_app/estudantes/')({
                 ...resto,
               }),
             ),
-            queryClient.ensureQueryData(classesQuery(anoLectivoId)),
+            queryClient.ensureQueryData(classesQuery()),
           ])
         : null,
     )
@@ -103,6 +105,8 @@ export const Route = createFileRoute('/_app/estudantes/')({
 
 function useColunas(): ColunaTabela<EstudanteResumo>[] {
   const { t } = useLingui()
+  // Sem documentos dos estudantes no servidor, a coluna diria «Completos» a todos
+  const comDocumentos = usePode('documentosEstudante')
   return useMemo(() => {
     const c = colunasDe<EstudanteResumo>()
     return [
@@ -120,7 +124,7 @@ function useColunas(): ColunaTabela<EstudanteResumo>[] {
         ),
       }),
       c.accessor('numeroProcesso', {
-        header: t`Processo`,
+        header: t`Código de estudante`,
         cell: (info) => <span className="tabular text-texto-2">{info.getValue()}</span>,
       }),
       c.accessor('matricula', {
@@ -132,24 +136,28 @@ function useColunas(): ColunaTabela<EstudanteResumo>[] {
           </span>
         ),
       }),
-      c.accessor('documentosEmFalta', {
-        header: t`Documentos`,
-        cell: (info) => {
-          const emFalta = info.getValue()
-          return emFalta > 0 ? (
-            <EtiquetaEstado tom="aviso">{t`${emFalta} em falta`}</EtiquetaEstado>
-          ) : (
-            <span className="text-texto-3">{t`Completos`}</span>
-          )
-        },
-      }),
+      ...(comDocumentos
+        ? [
+            c.accessor('documentosEmFalta', {
+              header: t`Documentos`,
+              cell: (info) => {
+                const emFalta = info.getValue()
+                return emFalta > 0 ? (
+                  <EtiquetaEstado tom="aviso">{t`${emFalta} em falta`}</EtiquetaEstado>
+                ) : (
+                  <span className="text-texto-3">{t`Completos`}</span>
+                )
+              },
+            }),
+          ]
+        : []),
       c.accessor('estadoRotulo', {
         header: t`Estado`,
         enableSorting: false,
         cell: (info) => <EtiquetaEstadoEstudante estudante={info.row.original} />,
       }),
     ]
-  }, [t])
+  }, [t, comDocumentos])
 }
 
 function EcraEstudantes() {
@@ -158,13 +166,15 @@ function EcraEstudantes() {
   const { estudante: aberto, q, ordem, ...filtros } = Route.useSearch()
   const navigate = useNavigate({ from: Route.fullPath })
   const { filtrar, aFiltrar } = useFiltrarEmTransicao()
-  const podeEmitir = useCan('documentos:emitir')
+  const documentosOficiais = usePode('documentosOficiais')
+  const podeEmitir = useCan('documentos:emitir') && documentosOficiais
+  const podeImportar = usePode('importarEstudantes')
   const [texto, setTexto] = useState(q ?? '')
   // Ref e não estado: com teclas mais rápidas do que as renderizações, um estado desactualizado
   // deixava temporizadores antigos por cancelar e o URL ficava com texto truncado
   const espera = useRef<ReturnType<typeof setTimeout>>(undefined)
   useEffect(() => () => clearTimeout(espera.current), [])
-  const { data: classes = [] } = useQuery(classesQuery(anoLectivoId ?? ''))
+  const { data: classes = [] } = useQuery(classesQuery())
   const { data, isPlaceholderData, isError, refetch } = useQuery({
     ...estudantesQuery({
       anoLectivoId: anoLectivoId ?? '',
@@ -263,12 +273,14 @@ function EcraEstudantes() {
         </div>
         <Can permissao="matriculas:escrever">
           <div className="flex flex-wrap gap-2">
-            <Button asChild>
-              <Link to="/estudantes/importar">
-                <FileUp aria-hidden />
-                <Trans>Importar</Trans>
-              </Link>
-            </Button>
+            {podeImportar && (
+              <Button asChild>
+                <Link to="/estudantes/importar">
+                  <FileUp aria-hidden />
+                  <Trans>Importar</Trans>
+                </Link>
+              </Button>
+            )}
             <Button asChild variante="primario">
               <Link to="/matriculas/nova" data-atalho="novo">
                 <Plus aria-hidden />
@@ -286,7 +298,7 @@ function EcraEstudantes() {
               {...c}
               type="search"
               data-atalho="pesquisa"
-              placeholder={t`Nome ou número de processo`}
+              placeholder={t`Nome ou código de estudante`}
               prefixo={<Search aria-hidden />}
               value={texto}
               onChange={(e) => pesquisar(e.target.value)}
@@ -488,12 +500,8 @@ function EcraEstudantes() {
 function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: () => void }) {
   const { t } = useLingui()
   const navigate = useNavigate()
-  const { anoLectivoId } = Route.useRouteContext()
-  const { data: e } = useQuery({
-    ...estudanteQuery(id ?? '', anoLectivoId ?? ''),
-    enabled: Boolean(id),
-  })
-  const processo = e?.numeroProcesso
+  const { data: e } = useQuery({ ...estudanteQuery(id ?? ''), enabled: Boolean(id) })
+  const codigo = e?.numeroProcesso
   const idade = e?.idade ?? 0
   const emFalta = e?.documentosEmFalta ?? 0
 
@@ -503,7 +511,7 @@ function PainelEstudante({ id, aoFechar }: { id: string | undefined; aoFechar: (
       aoMudar={(aberta) => !aberta && aoFechar()}
       nomeTransicao={NOME_TRANSICAO_FICHA}
       titulo={e?.nome ?? t`Estudante`}
-      descricao={e ? t`Processo ${processo}` : undefined}
+      descricao={e ? t`Código de estudante: ${codigo}` : undefined}
       rodape={
         id && (
           <Button asChild variante="primario">
@@ -597,6 +605,7 @@ function FiltrosAvancados({
   valores: ValoresAvancados
   aoAplicar: (v: ValoresAvancados) => void
 }) {
+  const comDocumentos = usePode('documentosEstudante')
   const { t } = useLingui()
   const [rascunho, setRascunho] = useState(valores)
   return (
@@ -629,15 +638,17 @@ function FiltrosAvancados({
           />
           <Trans>Matriculados sem turma</Trans>
         </label>
-        <label className="flex cursor-pointer items-center gap-3">
-          <input
-            type="checkbox"
-            checked={rascunho.documentosEmFalta}
-            onChange={(e) => setRascunho((r) => ({ ...r, documentosEmFalta: e.target.checked }))}
-            className="size-4 accent-(--color-acento)"
-          />
-          <Trans>Com documentos obrigatórios em falta</Trans>
-        </label>
+        {comDocumentos && (
+          <label className="flex cursor-pointer items-center gap-3">
+            <input
+              type="checkbox"
+              checked={rascunho.documentosEmFalta}
+              onChange={(e) => setRascunho((r) => ({ ...r, documentosEmFalta: e.target.checked }))}
+              className="size-4 accent-(--color-acento)"
+            />
+            <Trans>Com documentos obrigatórios em falta</Trans>
+          </label>
+        )}
         <div className="flex flex-col gap-1.5">
           <span className="text-legenda text-texto-2">
             <Trans>Sexo</Trans>

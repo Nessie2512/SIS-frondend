@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import { api } from '@/shared/api'
-import { idNumerico, referenciaSis, type DisciplinaSis } from '@/shared/api/sis'
+import { referenciaSis, type DisciplinaSis } from '@/shared/api/sis'
 import { FRESCURA } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import type { Disciplina } from '../model/tipos'
@@ -17,10 +17,9 @@ export function disciplinasQuery(anoLectivoId = '') {
         const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
         if (!ano)
           throw new Error('Não existe um ano letivo disponível para consultar as disciplinas.')
-        const academicYearId = idNumerico(anos, ano.uuid)
         const [disciplinas, classes] = await Promise.all([
-          client.fetchQuery(referenciaSis.disciplinas(academicYearId, true)),
-          client.fetchQuery(referenciaSis.classes(academicYearId, true)),
+          client.fetchQuery(referenciaSis.disciplinas(ano.uuid)),
+          client.fetchQuery(referenciaSis.classes(ano.uuid)),
         ])
         return paraDisciplinasDoSis(disciplinas, classes)
       }

@@ -51,6 +51,8 @@ export interface Inscrito {
   fotografiaUrl: string | null
   /** Matrícula por confirmar: ainda não pode ser inscrita numa turma (guia 2.1) */
   porConfirmar?: boolean
+  /** Já matriculado na turma e sem forma de mudar (backend SIS: não há rota para mover) */
+  fixo?: boolean
 }
 
 /** Disciplina do plano com o docente em vigor e o histórico de substituições (guia 2.3). */

@@ -4,8 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { perfisQuery } from '@/entities/administracao'
 import { ErroDeRota, Esqueleto } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/definicoes/perfis')({
+  beforeLoad: () => exigir('perfis'),
   loader: ({ context: { queryClient } }) => queryClient.ensureQueryData(perfisQuery()),
   errorComponent: ErroDeRota,
   component: EcraPerfis,

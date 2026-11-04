@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { paraTurma, paraTurmaDoSis, turmaKeys, type PaginaTurmas } from '@/entities/turma'
-import { api, type components } from '@/shared/api'
+import { api, ApiError, type components } from '@/shared/api'
 import { apiSis, idNumerico, referenciaSis, sisKeys } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 
@@ -38,31 +38,43 @@ export function useCriarTurma(anoLectivoId: string) {
     mutationFn: async ({ classeDesignacao, ...dados }: NovaTurma & { chave: string }) => {
       const { chave, ...corpo } = dados
       if (eReal('turmas')) {
-        // Sem sala nem lotação no backend; classe e ano vão pelo id numérico
-        const anos = await qc.fetchQuery(referenciaSis.anos())
-        const academicYearId = idNumerico(anos, anoLectivoId)
-        const [turmas, classes] = await Promise.all([
-          qc.fetchQuery({ ...referenciaSis.turmas(academicYearId), staleTime: 0 }),
-          qc.fetchQuery(referenciaSis.classes(academicYearId, true)),
+        // Sem sala no backend; a lotação vai em capacity; classe e ano pelo id numérico
+        const [turmas, classes, anos] = await Promise.all([
+          qc.fetchQuery({ ...referenciaSis.turmas(anoLectivoId), staleTime: 0 }),
+          qc.fetchQuery(referenciaSis.classes(anoLectivoId)),
+          qc.fetchQuery(referenciaSis.anos()),
         ])
         const gradeId = idNumerico(classes, corpo.classeId)
+        const academicYearId = idNumerico(anos, anoLectivoId)
         const irmas = turmas.filter(
           (t) => t.gradeId === gradeId && t.academicYearId === academicYearId,
         )
-        const { data } = await apiSis.POST('/classes', {
+        const nome = proximoNomeDeTurma(
+          classeDesignacao,
+          irmas.map((t) => t.name),
+        )
+        await apiSis.POST('/classes', {
           body: {
-            name: proximoNomeDeTurma(
-              classeDesignacao,
-              irmas.map((t) => t.name),
-            ),
+            name: nome,
             gradeId,
             academicYearId,
             period: PERIODO[corpo.turno],
+            capacity: corpo.lotacaoMaxima,
           },
         })
+        // O backend responde 201 sem corpo: a turma criada lê-se da lista, pelo nome
+        const depois = await qc.fetchQuery({
+          ...referenciaSis.turmas(anoLectivoId),
+          staleTime: 0,
+        })
+        const criada = depois.find(
+          (t) => t.name === nome && t.gradeId === gradeId && t.academicYearId === academicYearId,
+        )
+        if (!criada) throw new ApiError(404, { title: 'TURMA_CRIADA_NAO_ENCONTRADA' })
         return paraTurmaDoSis(
-          data!,
+          criada,
           classes.find((c) => c.id === gradeId),
+          0,
         )
       }
       const { data } = await api.POST('/turmas', {
@@ -105,22 +117,24 @@ export function useCriarTurma(anoLectivoId: string) {
 }
 
 /** Encerrar turma: pessimista, com motivo; só sem estudantes inscritos. */
-export function useEncerrarTurma(anoLectivoId: string) {
+export function useEncerrarTurma(anoLectivoId?: string) {
   const qc = useQueryClient()
   return useMutation({
     mutationKey: ['turmas', 'encerrar'],
     mutationFn: async ({ turmaId, motivo }: { turmaId: string; motivo: string }) => {
       if (eReal('turmas')) {
-        // Backend SIS: desactivar a turma (sem motivo no contrato); a classe vem da lista
-        const anos = await qc.fetchQuery(referenciaSis.anos())
-        const academicYearId = idNumerico(anos, anoLectivoId)
-        const [{ data }, classes] = await Promise.all([
-          apiSis.DELETE('/classes/{id}', { params: { path: { id: turmaId } } }),
-          qc.fetchQuery(referenciaSis.classes(academicYearId, true)),
+        // Backend SIS: desactivar a turma (sem motivo no contrato). Responde sem corpo:
+        // a turma actualizada lê-se da lista
+        await apiSis.DELETE('/classes/{id}', { params: { path: { id: turmaId } } })
+        const [turmas, classes] = await Promise.all([
+          qc.fetchQuery({ ...referenciaSis.turmas(anoLectivoId), staleTime: 0 }),
+          qc.fetchQuery(referenciaSis.classes(anoLectivoId)),
         ])
+        const turma = turmas.find((t) => t.uuid === turmaId)
+        if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
         return paraTurmaDoSis(
-          data!,
-          classes.find((c) => c.id === data!.gradeId),
+          turma,
+          classes.find((c) => c.id === turma.gradeId),
         )
       }
       const { data } = await api.POST('/turmas/{id}/encerrar', {

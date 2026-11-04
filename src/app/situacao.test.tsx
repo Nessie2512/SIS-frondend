@@ -62,6 +62,8 @@ describe('Anular matrícula e situação do estudante', () => {
     const folha = await screen.findByRole('dialog', { name: 'Matricular em 2026/2027' })
     await utilizador.click(within(folha).getByRole('combobox', { name: /Classe/ }))
     await utilizador.click(await screen.findByRole('option', { name: /8\.ª classe/ }))
+    await utilizador.click(within(folha).getByRole('combobox', { name: /Turma/ }))
+    await utilizador.click(await screen.findByRole('option', { name: /8\.ª A/ }))
     await utilizador.click(within(folha).getByRole('button', { name: 'Matricular' }))
     await waitFor(() =>
       expect(

@@ -29,7 +29,7 @@ export function ExportarSeleccao({ ids }: { ids: string[] }) {
       .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
     descarregarCsv('estudantes-seleccionados.csv', [
       [
-        t`Processo`,
+        t`Código de estudante`,
         t`Nome`,
         t`Data de nascimento`,
         t`Situação`,

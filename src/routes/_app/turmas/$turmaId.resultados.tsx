@@ -7,11 +7,13 @@ import { TabelaResultados } from '@/features/registar-resultados'
 import { TEMPOS } from '@/shared/config/constantes'
 import { useCan } from '@/shared/lib/permissoes'
 import { ErroDeRota, Esqueleto } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/turmas/$turmaId/resultados')({
-  loader: ({ context: { queryClient, anoLectivoId }, params: { turmaId } }) =>
+  beforeLoad: () => exigir('resultadosFinais'),
+  loader: ({ context: { queryClient }, params: { turmaId } }) =>
     Promise.all([
-      queryClient.ensureQueryData(turmaQuery(turmaId, anoLectivoId ?? '')),
+      queryClient.ensureQueryData(turmaQuery(turmaId)),
       queryClient.ensureQueryData(resultadosQuery(turmaId)),
     ]),
   pendingComponent: () => <Esqueleto className="h-96 w-full" />,
@@ -25,9 +27,9 @@ export const Route = createFileRoute('/_app/turmas/$turmaId/resultados')({
 function EcraResultados() {
   const { t } = useLingui()
   const { turmaId } = Route.useParams()
-  const { soLeitura, anoLectivoId } = Route.useRouteContext()
+  const { soLeitura } = Route.useRouteContext()
   const podeRegistar = useCan('matriculas:escrever')
-  const { data: turma } = useQuery(turmaQuery(turmaId, anoLectivoId ?? ''))
+  const { data: turma } = useQuery(turmaQuery(turmaId))
   const { data: linhas } = useQuery(resultadosQuery(turmaId))
   if (!turma || !linhas) return <Esqueleto className="h-96 w-full" />
   const designacao = turma.designacao

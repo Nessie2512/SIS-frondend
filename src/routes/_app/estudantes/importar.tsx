@@ -8,8 +8,10 @@ import { ImportarEstudantes } from '@/features/importar-estudantes'
 import { TEMPOS } from '@/shared/config/constantes'
 import { useCan } from '@/shared/lib/permissoes'
 import { Aviso, ErroDeRota, Esqueleto, EstadoVazio } from '@/shared/ui'
+import { exigir } from '../../-acesso'
 
 export const Route = createFileRoute('/_app/estudantes/importar')({
+  beforeLoad: () => exigir('importarEstudantes'),
   loader: ({ context: { queryClient } }) =>
     Promise.all([
       queryClient.ensureQueryData(classesQuery()),

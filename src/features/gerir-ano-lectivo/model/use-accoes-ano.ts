@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from '@tanstack/react-router'
-import { api } from '@/shared/api'
-import { apiSis, naoDisponivel } from '@/shared/api/sis'
+import { api, ApiError } from '@/shared/api'
+import { apiSis, naoDisponivel, referenciaSis } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 
 /**
@@ -23,10 +23,9 @@ export function useEncerrarAno(anoLectivoId: string) {
   return useMutation({
     mutationKey: ['anos-lectivos', anoLectivoId, 'encerrar'],
     mutationFn: async (confirmacao: string) => {
+      // Backend SIS: PATCH /academic-years/{id}/close (só ADMIN) conclui as matrículas activas
       if (eReal('anos')) {
-        await apiSis.PATCH('/academic-years/{uuid}/close', {
-          params: { path: { uuid: anoLectivoId } },
-        })
+        await apiSis.PATCH('/academic-years/{id}/close', { params: { path: { id: anoLectivoId } } })
         return
       }
       const { data } = await api.POST('/anos-lectivos/{id}/encerrar', {
@@ -57,16 +56,24 @@ export function useReabrirAno(anoLectivoId: string) {
 
 export function useCriarAno() {
   const recarregar = useRecarregarTudo()
+  const qc = useQueryClient()
   return useMutation({
     mutationKey: ['anos-lectivos', 'criar'],
     mutationFn: async (datas: { dataInicio: string; dataFim: string }) => {
       if (eReal('anos')) {
         // O backend só guarda o ano de início e a designação; as datas não vão para o servidor
         const inicio = Number(datas.dataInicio.slice(0, 4))
+        const designacao = `${inicio}/${inicio + 1}`
         const { data } = await apiSis.POST('/academic-years', {
-          body: { label: `${inicio}/${inicio + 1}`, startYear: inicio },
+          body: { label: designacao, startYear: inicio },
         })
-        return { id: data!.uuid }
+        // O backend responde 201 sem corpo (o caso de uso devolve void), apesar do contrato:
+        // procura-se o ano acabado de criar na lista, pela designação
+        if (data?.uuid) return { id: data.uuid }
+        const anos = await qc.fetchQuery({ ...referenciaSis.anos(), staleTime: 0 })
+        const criado = anos.find((a) => a.label === designacao)
+        if (!criado) throw new ApiError(404, { title: 'ANO_CRIADO_NAO_ENCONTRADO' })
+        return { id: criado.uuid }
       }
       const { data } = await api.POST('/anos-lectivos', { body: datas })
       return data!
@@ -96,8 +103,9 @@ export function useActivarAno(anoLectivoId: string) {
     mutationKey: ['anos-lectivos', anoLectivoId, 'activar'],
     mutationFn: async () => {
       if (eReal('anos')) {
-        await apiSis.PATCH('/academic-years/{uuid}/activate', {
-          params: { path: { uuid: anoLectivoId } },
+        // PATCH /academic-years/{id}/activate aceita o uuid; só o ADMIN pode (@Roles)
+        await apiSis.PATCH('/academic-years/{id}/activate', {
+          params: { path: { id: anoLectivoId } },
         })
         return
       }

@@ -17,5 +17,6 @@ export {
   inscritosQuery,
   docentesQuery,
   resultadosQuery,
+  turmaSisPorUuid,
 } from './api/queries'
 export { BarraOcupacao } from './ui/barra-ocupacao'

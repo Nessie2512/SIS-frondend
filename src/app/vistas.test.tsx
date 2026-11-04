@@ -40,7 +40,7 @@ describe('Vistas guardadas', () => {
     await waitFor(() => expect(screen.queryByRole('button', { name: '8.ª activos' })).toBeNull())
     await waitFor(() => expect(db.vistas.some((v) => v.nome === '8.ª activos')).toBe(false))
 
-    expect(desfazerUltima()).toBe(true)
+    await waitFor(() => expect(desfazerUltima()).toBe(true))
     expect(await screen.findByRole('button', { name: '8.ª activos' })).toBeInTheDocument()
   })
 

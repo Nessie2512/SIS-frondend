@@ -6,6 +6,8 @@ import {
   type EstadoUtilizador,
 } from '@/entities/administracao'
 import { api } from '@/shared/api'
+import { apiSis, naoDisponivel, sisKeys } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 interface Pedido {
   utilizadorId: string
@@ -22,6 +24,12 @@ export function useAlterarEstadoUtilizador() {
     mutationKey: ['utilizadores', 'estado'],
     scope: { id: 'utilizadores-estado' },
     mutationFn: async ({ utilizadorId, estado }: Pedido) => {
+      if (eReal('utilizadores')) {
+        // Backend SIS: só desactivar existe (DELETE /users/{uuid}); reactivar ainda não
+        if (estado !== 'INACTIVO') naoDisponivel('REACTIVAR_CONTA')
+        await apiSis.DELETE('/users/{uuid}', { params: { path: { uuid: utilizadorId } } })
+        return null
+      }
       const { data } = await api.POST('/utilizadores/{id}/estado', {
         params: { path: { id: utilizadorId } },
         body: { estado },
@@ -39,6 +47,9 @@ export function useAlterarEstadoUtilizador() {
     onError: (_erro, _pedido, contexto) => {
       for (const [chave, dados] of contexto?.antes ?? []) qc.setQueryData(chave, dados)
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: administracaoKeys.todos }),
+    onSettled: async () => {
+      await qc.invalidateQueries({ queryKey: sisKeys.lista('users') })
+      await qc.invalidateQueries({ queryKey: administracaoKeys.todos })
+    },
   })
 }

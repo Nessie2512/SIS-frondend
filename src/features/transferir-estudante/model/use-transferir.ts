@@ -3,6 +3,8 @@ import { estudanteKeys } from '@/entities/estudante'
 import { matriculaKeys } from '@/entities/matricula'
 import { turmaKeys } from '@/entities/turma'
 import { api } from '@/shared/api'
+import { naoDisponivel } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 export interface PedidoTransferencia {
   escolaDestino: string
@@ -19,6 +21,7 @@ export function useTransferirEstudante(estudanteId: string) {
   return useMutation({
     mutationKey: ['estudantes', estudanteId, 'transferir'],
     mutationFn: async (pedido: PedidoTransferencia) => {
+      if (eReal('estudantes')) naoDisponivel('TRANSFERENCIA_SAIDA')
       const { data } = await api.POST('/estudantes/{id}/transferir', {
         params: { path: { id: estudanteId } },
         body: pedido,

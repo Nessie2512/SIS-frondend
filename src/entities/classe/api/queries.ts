@@ -1,7 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import { api, type components } from '@/shared/api'
 import {
-  idNumerico,
   porId,
   referenciaSis,
   type ClasseSis,
@@ -36,10 +35,9 @@ export function classesQuery(anoLectivoId = '') {
         const anos = await client.fetchQuery(referenciaSis.anos())
         const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
         if (!ano) throw new Error('Não existe um ano letivo disponível para consultar as classes.')
-        const academicYearId = idNumerico(anos, ano.uuid)
         const [classes, niveis] = await Promise.all([
-          client.fetchQuery(referenciaSis.classes(academicYearId, true)),
-          client.fetchQuery(referenciaSis.niveis(academicYearId, true)),
+          client.fetchQuery(referenciaSis.classes(ano.uuid)),
+          client.fetchQuery(referenciaSis.niveis(ano.uuid)),
         ])
         return paraClassesDoSis(classes, niveis)
       }
@@ -68,17 +66,16 @@ export function ciclosQuery(anoLectivoId = '') {
         const anos = await client.fetchQuery(referenciaSis.anos())
         const ano = anos.find((a) => a.uuid === anoLectivoId) ?? anos.find((a) => a.isActive)
         if (!ano) throw new Error('Não existe um ano letivo disponível para consultar as classes.')
-        const academicYearId = idNumerico(anos, ano.uuid)
         const [classes, niveis, turmas] = await Promise.all([
           client.fetchQuery({
-            ...referenciaSis.classes(academicYearId, true),
+            ...referenciaSis.classes(ano.uuid),
             staleTime: 0,
           }),
           client.fetchQuery({
-            ...referenciaSis.niveis(academicYearId, true),
+            ...referenciaSis.niveis(ano.uuid),
             staleTime: 0,
           }),
-          client.fetchQuery(referenciaSis.turmas(academicYearId)),
+          client.fetchQuery(referenciaSis.turmas(ano.uuid)),
         ])
         return paraCiclosDoSis(classes, niveis, turmas)
       }

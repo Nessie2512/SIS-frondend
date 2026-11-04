@@ -1,8 +1,18 @@
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { comLinhas, paraPlano, planoKeys, type LinhaPlano, type Plano } from '@/entities/plano'
+import { useMutation, useQueryClient, type QueryClient } from '@tanstack/react-query'
+import {
+  comLinhas,
+  paraPlano,
+  planoDoSis,
+  planoKeys,
+  planoQuery,
+  type LinhaPlano,
+  type Plano,
+} from '@/entities/plano'
 import { api, eApiError } from '@/shared/api'
+import { apiSis, idNumerico, naoDisponivel, referenciaSis, sisKeys } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
 import { notificar, notificarComDesfazer } from '@/shared/ui'
@@ -34,6 +44,36 @@ function aplicar(plano: Plano, alteracao: Alteracao): Plano {
 }
 
 /**
+ * Backend SIS: o plano é a lista de disciplinas da classe (planoId = uuid da classe).
+ * Acrescentar e retirar usam os ids numéricos das disciplinas; não há carga horária.
+ */
+async function alterarNoSis(
+  qc: QueryClient,
+  classeId: string,
+  alteracao: Alteracao,
+): Promise<Plano> {
+  if (alteracao.tipo === 'horas') naoDisponivel('CARGA_HORARIA')
+  const disciplinas = await qc.fetchQuery(referenciaSis.disciplinas())
+  const disciplinaId =
+    alteracao.tipo === 'acrescentar' ? alteracao.linha.disciplinaId : alteracao.disciplinaId
+  const numero = idNumerico(disciplinas, disciplinaId)
+  if (alteracao.tipo === 'acrescentar') {
+    const { data } = await apiSis.POST('/grades/{gradeId}/subjects', {
+      params: { path: { gradeId: classeId } },
+      body: { subjectIds: [numero] },
+    })
+    if (data?.subjects) return planoDoSis(classeId, data.subjects)
+  } else {
+    await apiSis.DELETE('/grades/{gradeId}/subjects/{subjectId}', {
+      params: { path: { gradeId: classeId, subjectId: numero } },
+    })
+  }
+  // As classes guardam subjectIds (disciplinas em uso): a lista em bruto muda também
+  await qc.invalidateQueries({ queryKey: sisKeys.lista('grades') })
+  return qc.fetchQuery({ ...planoQuery(classeId), staleTime: 0 })
+}
+
+/**
  * Edição do rascunho do plano (guia 5.1, 5.2, 5.5): cada alteração aparece logo, corre em
  * série com If-Match da última versão conhecida; 412 mostra a versão actual do servidor.
  */
@@ -45,6 +85,7 @@ export function useEditarPlano(planoId: string) {
     mutationKey: ['editar-plano'],
     scope: { id: `plano:${planoId}` },
     mutationFn: async (alteracao: Alteracao) => {
+      if (eReal('curriculo')) return alterarNoSis(qc, planoId, alteracao)
       // Em série: a revisão é sempre a que o servidor devolveu na alteração anterior
       const revisao = qc.getQueryData<Plano>(chave)?.revisao ?? ''
       const header = { 'If-Match': revisao }

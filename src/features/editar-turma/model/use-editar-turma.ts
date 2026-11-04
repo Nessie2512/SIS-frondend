@@ -2,9 +2,10 @@ import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
-import { paraTurma, paraTurmaDoSis, turmaKeys, turmaQuery, type Turma } from '@/entities/turma'
+import type { QueryClient } from '@tanstack/react-query'
+import { paraTurma, turmaKeys, turmaQuery, turmaSisPorUuid, type Turma } from '@/entities/turma'
 import { api, eApiError, type Dto } from '@/shared/api'
-import { apiSis, idNumerico, referenciaSis } from '@/shared/api/sis'
+import { apiSis, idNumerico, referenciaSis, sisKeys } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -25,35 +26,15 @@ export interface ConflitoTurma {
  */
 export function useEditarTurma(turmaId: string, anoLectivoId: string) {
   const qc = useQueryClient()
-  const chave = turmaKeys.detalhe(turmaId)
+  const chave = turmaQuery(turmaId, anoLectivoId).queryKey
   const [conflito, setConflito] = useState<ConflitoTurma | null>(null)
 
   const mutacao = useMutation({
     mutationKey: ['editar-turma'],
     scope: { id: `turma:${turmaId}` },
     mutationFn: async (alteracao: Dto<'TurmaAlteracaoDto'> & { nomeDirector?: string }) => {
+      if (eReal('turmas')) return editarNoSis(qc, turmaId, anoLectivoId, alteracao)
       const { nomeDirector: _, ...corpo } = alteracao
-      if (eReal('turmas')) {
-        const anos = await qc.fetchQuery(referenciaSis.anos())
-        const academicYearId = idNumerico(anos, anoLectivoId)
-        const classes = await qc.fetchQuery(referenciaSis.classes(academicYearId, true))
-        const { data } = await apiSis.PATCH('/classes/{id}', {
-          params: { path: { id: turmaId }, query: { academicYearId } },
-          body: {
-            room: corpo.sala,
-            director: corpo.directorTurmaId,
-          },
-        })
-        const actualizada = paraTurmaDoSis(
-          data!,
-          classes.find((c) => c.id === data!.gradeId),
-        )
-        const nomeDirector = corpo.directorTurmaId ? alteracao.nomeDirector ?? '' : ''
-        actualizada.directorTurma = corpo.directorTurmaId
-          ? { professorId: corpo.directorTurmaId, nome: nomeDirector }
-          : null
-        return actualizada
-      }
       const { data } = await api.PATCH('/turmas/{id}', {
         params: { path: { id: turmaId }, header: {} },
         body: corpo,
@@ -83,7 +64,11 @@ export function useEditarTurma(turmaId: string, anoLectivoId: string) {
       anunciar.educado(i18n._(msg`Alteração guardada.`))
     },
     // A lista mostra a sala: marca-a como desactualizada sem a pedir já
-    onSettled: () => qc.invalidateQueries({ queryKey: turmaKeys.todas, refetchType: 'none' }),
+    onSettled: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: turmaKeys.todas, refetchType: 'none' }),
+        qc.invalidateQueries({ queryKey: sisKeys.lista('classes'), refetchType: 'none' }),
+      ]),
   })
 
   /** Para o EdicaoNoSitio: resolve se guardou; rejeita com a mensagem a mostrar no campo. */
@@ -120,4 +105,34 @@ export function useEditarTurma(turmaId: string, anoLectivoId: string) {
       await guardar(conflito.campo, conflito.meu, nomeDirector)
     },
   }
+}
+
+/**
+ * Backend SIS: PATCH /classes/{uuid} com a sala (room) e o director (id numérico do professor).
+ * Envia o updatedAt que o ecrã leu: se outra pessoa mudou a turma, o servidor responde 409
+ * CLASS_MODIFIED e o ecrã mostra o conflito. Devolve a turma relida, já com a ocupação.
+ */
+async function editarNoSis(
+  qc: QueryClient,
+  turmaId: string,
+  anoLectivoId: string,
+  alteracao: Dto<'TurmaAlteracaoDto'>,
+): Promise<Turma> {
+  const { turma, ano } = await turmaSisPorUuid(qc, turmaId)
+  const director =
+    alteracao.directorTurmaId === undefined
+      ? undefined
+      : alteracao.directorTurmaId
+        ? idNumerico(await qc.fetchQuery(referenciaSis.professores(ano)), alteracao.directorTurmaId)
+        : null
+  await apiSis.PATCH('/classes/{id}', {
+    params: { path: { id: turmaId } },
+    body: {
+      ...(alteracao.sala !== undefined ? { room: alteracao.sala } : {}),
+      ...(director !== undefined ? { classDirectorTeacherId: director } : {}),
+      ...(turma.updatedAt ? { expectedUpdatedAt: turma.updatedAt } : {}),
+    },
+  })
+  await qc.invalidateQueries({ queryKey: sisKeys.lista('classes'), refetchType: 'none' })
+  return qc.fetchQuery({ ...turmaQuery(turmaId, anoLectivoId), staleTime: 0 })
 }

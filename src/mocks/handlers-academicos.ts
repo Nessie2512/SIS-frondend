@@ -361,8 +361,8 @@ export const handlersAcademicos = [
       const sigla = corpo.sigla?.trim().toUpperCase() ?? ''
       const erros = [
         ...(nome.length < 3 ? [{ campo: 'nome', mensagem: 'Escreva o nome da disciplina.' }] : []),
-        ...(!/^[A-Z]{2,5}$/.test(sigla)
-          ? [{ campo: 'sigla', mensagem: 'A sigla tem 2 a 5 letras.' }]
+        ...(!/^(?=(?:\/?[A-Z]){2,5}$)[A-Z]+(?:\/[A-Z]+)*$/.test(sigla)
+          ? [{ campo: 'sigla', mensagem: 'A sigla tem 2 a 5 letras e pode ter uma barra (/).' }]
           : []),
       ]
       if (erros.length) return problema(422, 'Dados inválidos', { errors: erros })

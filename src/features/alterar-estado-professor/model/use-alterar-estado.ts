@@ -7,6 +7,8 @@ import {
   type Professor,
 } from '@/entities/professor'
 import { api } from '@/shared/api'
+import { apiSis, naoDisponivel, sisKeys } from '@/shared/api/sis'
+import { eReal } from '@/shared/config/ligacao'
 
 interface Pedido {
   professorId: string
@@ -23,6 +25,12 @@ export function useAlterarEstadoProfessor(anoLectivoId: string) {
     mutationKey: ['professores', 'estado'],
     scope: { id: 'professores-estado' },
     mutationFn: async ({ professorId, estado }: Pedido) => {
+      if (eReal('professores')) {
+        // Backend SIS: só desligar existe (DELETE /teachers/{uuid} desactiva o professor)
+        if (estado !== 'DESLIGADO') naoDisponivel(estado)
+        await apiSis.DELETE('/teachers/{uuid}', { params: { path: { uuid: professorId } } })
+        return null
+      }
       const { data } = await api.POST('/professores/{id}/estado', {
         params: { path: { id: professorId } },
         body: { estado },
@@ -52,6 +60,9 @@ export function useAlterarEstadoProfessor(anoLectivoId: string) {
       qc.setQueryData(contexto.detalhe, contexto.fichaAntes)
       for (const [chave, dados] of contexto.listasAntes) qc.setQueryData(chave, dados)
     },
-    onSettled: () => qc.invalidateQueries({ queryKey: professorKeys.todos }),
+    onSettled: async () => {
+      await qc.invalidateQueries({ queryKey: sisKeys.lista('teachers') })
+      await qc.invalidateQueries({ queryKey: professorKeys.todos })
+    },
   })
 }

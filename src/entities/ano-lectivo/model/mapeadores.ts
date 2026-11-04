@@ -23,10 +23,13 @@ export function paraAnoLectivo(dto: Dto<'AnoLectivoDto'>): AnoLectivo {
 }
 
 /**
- * Backend SIS: o ano só tem startYear. As datas seguem a convenção da designação "2026/2027"
- * (1 de Setembro a 31 de Julho) até o backend as publicar; servem de limites aos selectores.
+ * Backend SIS: o código de 02/11 já devolve startDate e endDate, mas o openapi.json publicado
+ * ainda não. Usam-se quando vêm; sem elas, as datas seguem a convenção da designação
+ * "2026/2027" (1 de Setembro a 31 de Julho). Servem de limites aos selectores de data.
  */
-export function paraAnoLectivoDoSis(dto: AnoSis): AnoLectivo {
+export function paraAnoLectivoDoSis(
+  dto: AnoSis & { startDate?: string; endDate?: string },
+): AnoLectivo {
   const estado: EstadoAnoLectivo = dto.isClosed
     ? 'ENCERRADO'
     : dto.isActive
@@ -35,8 +38,8 @@ export function paraAnoLectivoDoSis(dto: AnoSis): AnoLectivo {
   return {
     id: dto.uuid,
     designacao: dto.label,
-    dataInicio: `${dto.startYear}-09-01`,
-    dataFim: `${dto.startYear + 1}-07-31`,
+    dataInicio: dto.startDate?.slice(0, 10) || `${dto.startYear}-09-01`,
+    dataFim: dto.endDate?.slice(0, 10) || `${dto.startYear + 1}-07-31`,
     estado,
     estadoRotulo: i18n._(ROTULO[estado]),
     soLeitura: estado === 'ENCERRADO',

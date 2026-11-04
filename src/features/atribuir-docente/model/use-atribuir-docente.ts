@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { professorKeys } from '@/entities/professor'
-import { turmaKeys, type DocenteTurma } from '@/entities/turma'
-import { api } from '@/shared/api'
+import { docentesQuery, turmaKeys, type DocenteTurma } from '@/entities/turma'
+import { api, ApiError } from '@/shared/api'
 import { apiSis, idNumerico, referenciaSis } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 
@@ -19,31 +19,33 @@ export interface PedidoAtribuicao {
  * logo na linha; numa substituição a atribuição anterior passa para o histórico na mesma acção.
  * Se o servidor recusar, a linha volta ao que era.
  */
-export function useAtribuirDocente(turmaId: string, anoLectivoId: string) {
+export function useAtribuirDocente(turmaId: string, anoLectivoId?: string) {
   const qc = useQueryClient()
   const chave = turmaKeys.docentes(turmaId)
   return useMutation({
     mutationKey: ['turmas', turmaId, 'docentes'],
     scope: { id: `docentes-${turmaId}` },
     mutationFn: async ({ disciplinaId, professorId, desde, motivo }: PedidoAtribuicao) => {
-      if (eReal('professores')) {
-        const anos = await qc.fetchQuery(referenciaSis.anos())
-        const academicYearId = idNumerico(anos, anoLectivoId)
+      if (eReal('turmas')) {
+        // Backend SIS: POST /teachers/{uuid}/assignments com os ids numéricos (sem data nem motivo)
         const [turmas, disciplinas] = await Promise.all([
-          qc.fetchQuery(referenciaSis.turmas(academicYearId)),
-          qc.fetchQuery(referenciaSis.disciplinas(academicYearId, true)),
+          qc.fetchQuery(referenciaSis.turmas(anoLectivoId)),
+          qc.fetchQuery(referenciaSis.disciplinas(anoLectivoId)),
         ])
-        const turma = turmas.find((item) => item.uuid === turmaId)
-        if (!turma) throw new Error('A turma escolhida não pertence ao ano letivo selecionado.')
+        const turma = turmas.find((t) => t.uuid === turmaId)
+        if (!turma) throw new ApiError(404, { title: 'TURMA_NAO_ENCONTRADA' })
         await apiSis.POST('/teachers/{uuid}/assignments', {
           params: { path: { uuid: professorId } },
           body: {
             subjectId: idNumerico(disciplinas, disciplinaId),
             classId: turma.id,
-            academicYearId,
+            academicYearId: turma.academicYearId,
           },
         })
-        return
+        const linhas = await qc.fetchQuery({ ...docentesQuery(turmaId), staleTime: 0 })
+        const linha = linhas.find((l) => l.disciplinaId === disciplinaId)
+        if (!linha) throw new ApiError(404, { title: 'DISCIPLINA_NAO_ENCONTRADA' })
+        return linha
       }
       const { data } = await api.POST('/turmas/{id}/docentes', {
         params: { path: { id: turmaId } },
@@ -86,19 +88,11 @@ export function useAtribuirDocente(turmaId: string, anoLectivoId: string) {
       if (contexto) qc.setQueryData(chave, contexto.antes)
     },
     onSuccess: (linha) => {
-      if (!linha) {
-        void qc.invalidateQueries({ queryKey: chave })
-        return
-      }
       qc.setQueryData<DocenteTurma[]>(chave, (linhas) =>
         linhas?.map((l) => (l.disciplinaId === linha.disciplinaId ? linha : l)),
       )
     },
     // A carga lectiva dos professores muda com cada atribuição
-    onSettled: () =>
-      Promise.all([
-        qc.invalidateQueries({ queryKey: chave }),
-        qc.invalidateQueries({ queryKey: professorKeys.todos }),
-      ]),
+    onSettled: () => qc.invalidateQueries({ queryKey: professorKeys.todos }),
   })
 }

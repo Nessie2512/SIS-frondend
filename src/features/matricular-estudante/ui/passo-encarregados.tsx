@@ -130,8 +130,10 @@ export function PassoEncarregados() {
           <option key={p} value={p} />
         ))}
       </datalist>
-      {errors.encarregados?.root && (
-        <p className="text-secundario text-perigo">{errors.encarregados.root.message}</p>
+      {(errors.encarregados?.root ?? errors.encarregados?.message) && (
+        <p role="alert" className="text-secundario text-perigo">
+          {errors.encarregados.root?.message ?? errors.encarregados.message}
+        </p>
       )}
       <div>
         <Button

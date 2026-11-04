@@ -1,8 +1,8 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { matricularSis } from '@/entities/estudante'
 import { api, ApiError, novaChaveIdempotencia } from '@/shared/api'
-import { apiSis, idNumerico, referenciaSis } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 
 /**
@@ -15,35 +15,25 @@ export function useMatricularExistente(estudanteId: string, anoLectivoId: string
     mutationKey: ['matriculas', 'existente', estudanteId],
     mutationFn: async ({ classeId, turmaId }: { classeId: string; turmaId: string | null }) => {
       if (eReal('estudantes')) {
+        // Backend SIS: matricular é inscrever numa turma (POST /enrollments)
         if (!turmaId) {
-          throw new ApiError(400, {
-            title: i18n._(msg`Turma obrigatória`),
-            detail: i18n._(msg`Escolha uma turma para concluir a matrícula.`),
+          throw new ApiError(422, {
+            title: 'TURMA_OBRIGATORIA',
+            errors: [
+              {
+                campo: 'turmaId',
+                mensagem: i18n._(msg`O servidor só matricula numa turma. Escolha a turma.`),
+              },
+            ],
           })
         }
-        const anos = await qc.fetchQuery(referenciaSis.anos())
-        const academicYearId = idNumerico(anos, anoLectivoId)
-        const [classes, turmas, estudante] = await Promise.all([
-          qc.fetchQuery(referenciaSis.classes(academicYearId, true)),
-          qc.fetchQuery(referenciaSis.turmas(academicYearId)),
-          apiSis
-            .GET('/students/{uuid}', {
-              params: { path: { uuid: estudanteId }, query: { academicYearId } },
-            })
-            .then((r) => r.data!),
-        ])
-        const turma = turmas.find((item) => item.uuid === turmaId)
-        if (!turma || turma.gradeId !== idNumerico(classes, classeId)) {
-          throw new ApiError(409, {
-            title: i18n._(msg`Turma incompatível`),
-            detail: i18n._(msg`A turma escolhida não pertence à classe selecionada.`),
-            code: 'CLASS_ACADEMIC_YEAR_MISMATCH',
-          })
-        }
-        await apiSis.POST('/enrollments', {
-          body: { studentId: estudante.id, classId: turma.id, academicYearId },
+        await matricularSis(qc, {
+          estudante: estudanteId,
+          turmaId,
+          anoLectivoId,
+          classeId,
         })
-        return
+        return null
       }
       const { data } = await api.POST('/matriculas', {
         params: { header: { 'Idempotency-Key': novaChaveIdempotencia() } },

@@ -1,5 +1,5 @@
 import { useLingui } from '@lingui/react/macro'
-import { useRouter } from '@tanstack/react-router'
+import { useRouter, type NavigateOptions } from '@tanstack/react-router'
 import { useMemo, useState } from 'react'
 import { create } from 'zustand'
 import { accionarMarcado, useAtalhos, type Atalho } from '@/shared/lib/atalhos'
@@ -7,6 +7,7 @@ import { useComLigacao } from '@/shared/lib/ligacao'
 import { usePreferencias } from '@/shared/lib/preferencias'
 import { Aviso, desfazerUltima, RegiaoAnuncios } from '@/shared/ui'
 import { AjudaAtalhos } from './ajuda-atalhos'
+import { useAreas } from './areas'
 import { PaletaComandos } from './paleta-comandos'
 
 /**
@@ -24,6 +25,7 @@ export function Casca() {
   const router = useRouter()
   const paleta = usePaleta((e) => e.aberta)
   const [ajuda, setAjuda] = useState(false)
+  const { principais: areas } = useAreas()
 
   const atalhos = useMemo<Atalho[]>(
     () => [
@@ -43,23 +45,20 @@ export function Casca() {
         teclas: 'mod+enter',
         accao: (e) => (e.target as HTMLElement | null)?.closest('form')?.requestSubmit(),
       },
-      { teclas: 'g i', accao: () => void router.navigate({ to: '/' }) },
-      {
-        teclas: 'g e',
-        accao: () => void router.navigate({ to: '/estudantes', search: { page: 1 } }),
-      },
-      {
-        teclas: 'g m',
-        accao: () => void router.navigate({ to: '/matriculas', search: { page: 1 } }),
-      },
-      { teclas: 'g t', accao: () => void router.navigate({ to: '/turmas' }) },
-      {
-        teclas: 'g p',
-        accao: () => void router.navigate({ to: '/professores', search: { page: 1 } }),
-      },
+      // g i, g e, g m…: só para as áreas que o utilizador pode abrir
+      ...areas.flatMap((area) =>
+        area.atalho
+          ? [
+              {
+                teclas: area.atalho,
+                accao: () => void router.navigate(area.ligacao as NavigateOptions),
+              },
+            ]
+          : [],
+      ),
       { teclas: 'shift+?', accao: () => setAjuda(true) },
     ],
-    [router],
+    [router, areas],
   )
   useAtalhos(atalhos)
 

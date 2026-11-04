@@ -3,7 +3,12 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute } from '@tanstack/react-router'
 import { LogOut } from 'lucide-react'
 import { meQuery, sair } from '@/entities/utilizador'
+import { AlterarPalavraPasse } from '@/features/alterar-palavra-passe'
+import type { Lingua } from '@/shared/config/constantes'
+import { eReal } from '@/shared/config/ligacao'
+import { useCan } from '@/shared/lib/permissoes'
 import { usePreferencias, type Densidade, type PreferenciaTema } from '@/shared/lib/preferencias'
+import { recarregar } from '@/shared/lib/recarregar'
 import { Avatar, Button, ControloSegmentado, ErroDeRota } from '@/shared/ui'
 import type { ReactNode } from 'react'
 
@@ -12,18 +17,62 @@ export const Route = createFileRoute('/_app/definicoes/')({
   component: Definicoes,
 })
 
+/**
+ * Cada língua com o seu próprio nome, para quem não lê a língua actual a encontrar na lista.
+ * Por isso fora da tradução.
+ */
+const NOMES_LINGUAS: Record<Lingua, string> = {
+  // eslint-disable-next-line lingui/no-unlocalized-strings -- nome da língua na própria língua
+  'pt-AO': 'Português',
+  // eslint-disable-next-line lingui/no-unlocalized-strings -- nome da língua na própria língua
+  en: 'English',
+}
+
 /** Preferências (guia 6.1): apresentação neste navegador e a conta. */
 function Definicoes() {
   const { t } = useLingui()
-  const { tema, densidade, menuRecolhido, definirTema, definirDensidade, definirMenuRecolhido } =
-    usePreferencias()
+  const {
+    tema,
+    densidade,
+    menuRecolhido,
+    lingua,
+    definirTema,
+    definirDensidade,
+    definirMenuRecolhido,
+    definirLingua,
+  } = usePreferencias()
   const { data: eu } = useQuery(meQuery())
+  // A própria conta (PATCH /users/{uuid}): o backend SIS deixa cada um mudar a palavra-passe
+  const podeEditarConta = useCan('conta:editar') && eReal('utilizadores')
 
   return (
     <section className="flex max-w-3xl flex-col gap-8">
       <p className="text-secundario text-texto-2">
         <Trans>As preferências de apresentação ficam guardadas neste navegador.</Trans>
       </p>
+
+      <Grupo titulo={t`Língua`}>
+        <Linha
+          rotulo={t`Língua da aplicação`}
+          descricao={t`Menus, botões e mensagens. A página recarrega para aplicar a mudança.`}
+        >
+          <ControloSegmentado
+            rotulo={t`Língua da aplicação`}
+            valor={lingua}
+            aoMudar={(v) => {
+              if (v === lingua) return
+              // O catálogo e os formatos de data e número lêem a língua no arranque
+              definirLingua(v as Lingua)
+              recarregar.agora()
+            }}
+            opcoes={(Object.keys(NOMES_LINGUAS) as Lingua[]).map((l) => ({
+              valor: l,
+              rotulo: NOMES_LINGUAS[l],
+              lingua: l,
+            }))}
+          />
+        </Linha>
+      </Grupo>
 
       <Grupo titulo={t`Apresentação`}>
         <Linha
@@ -79,6 +128,7 @@ function Definicoes() {
               <span className="font-medium">{eu.nome}</span>
               <span className="text-secundario text-texto-2">{eu.email}</span>
             </div>
+            {podeEditarConta && <AlterarPalavraPasse utilizadorId={eu.id} />}
             <Button onClick={() => void sair()}>
               <LogOut aria-hidden className="size-4 stroke-[1.5]" />
               <Trans>Terminar sessão</Trans>
