@@ -23,11 +23,8 @@ export function DadosTurma({
   desactivadoPorque?: string
 }) {
   const { t } = useLingui()
-  const { guardar, conflito, manterActual, guardarOMeu } = useEditarTurma(
-    turma.id,
-    anoLectivoId,
-  )
-  // Backend SIS: o director tem de leccionar na turma; as opções são os docentes dela
+  const { guardar, conflito, manterActual, guardarOMeu } = useEditarTurma(turma.id, anoLectivoId)
+  // Backend SIS: o director é guardado pelo nome; as opções são os docentes da turma
   const soDocentes = eReal('turmas')
   const editavel = podeEditar && !desactivadoPorque
   const { data: pagina } = useQuery({
@@ -144,7 +141,10 @@ function docentesDaTurma(linhas: readonly DocenteTurma[]) {
     item.disciplinas.push(linha.disciplina)
     porProfessor.set(professorId, item)
   }
-  return [...porProfessor.values()]
-    .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
-    .map((p) => ({ id: p.id, nome: p.nome, descricao: p.disciplinas.join(', ') }))
+  return (
+    [...porProfessor.values()]
+      .sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
+      // O backend guarda o director pelo nome: o nome é o valor escolhido
+      .map((p) => ({ id: p.nome, nome: p.nome, descricao: p.disciplinas.join(', ') }))
+  )
 }

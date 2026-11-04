@@ -1,5 +1,12 @@
 import { http, HttpResponse } from 'msw'
-import { definirAnoSis, type DtoSis, type EstudanteSis } from '@/shared/api/sis'
+import {
+  definirAnoSis,
+  type ConfirmacaoSis,
+  type DtoSis,
+  type EstudanteSis,
+  type MatriculaSis,
+  type TurmaSis,
+} from '@/shared/api/sis'
 import { jwtDeTeste } from './jwt'
 
 /**
@@ -65,7 +72,7 @@ export const classesSis: DtoSis<'GradeResponseDto'>[] = [
   },
 ]
 
-export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
+export const turmasSis: TurmaSis[] = [
   {
     id: 21,
     uuid: 'turma-7b',
@@ -76,8 +83,7 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     isActive: true,
     capacity: 40,
     room: null,
-    classDirectorTeacherId: null,
-    updatedAt: '2026-11-03T10:00:00.000Z',
+    director: null,
   },
   {
     id: 20,
@@ -89,8 +95,7 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     isActive: true,
     capacity: 40,
     room: null,
-    classDirectorTeacherId: null,
-    updatedAt: '2026-11-03T10:00:00.000Z',
+    director: null,
   },
   {
     id: 22,
@@ -102,8 +107,7 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     isActive: false,
     capacity: 40,
     room: null,
-    classDirectorTeacherId: null,
-    updatedAt: '2026-11-03T10:00:00.000Z',
+    director: null,
   },
   {
     id: 23,
@@ -115,8 +119,7 @@ export const turmasSis: DtoSis<'ClassOutputDto'>[] = [
     isActive: true,
     capacity: 40,
     room: null,
-    classDirectorTeacherId: null,
-    updatedAt: '2026-11-03T10:00:00.000Z',
+    director: null,
   },
 ]
 
@@ -161,50 +164,63 @@ export const estudantesSis: EstudanteSis[] = [
   estudante(3, { name: 'Ana Domingos', sex: 'F', isActive: false, documentType: 'N/A' }),
 ]
 
-type MatriculaSis = DtoSis<'EnrollmentListItemDto'>
+const turmaDe = (id: number) => turmasSis.find((t) => t.id === id)!
 
-const refEstudante = (e: EstudanteSis) => ({
-  id: e.id,
-  uuid: e.uuid,
-  name: e.name,
-  studentCode: e.studentCode ?? null,
-  sex: e.sex === 'F' ? ('F' as const) : ('M' as const),
-})
-const refTurma = (id: number) => {
-  const t = turmasSis.find((x) => x.id === id)!
-  return { id: t.id, uuid: t.uuid, name: t.name }
-}
-const refClasse = (turmaId: number) => {
-  const c = classesSis.find((x) => x.id === turmasSis.find((t) => t.id === turmaId)!.gradeId)!
-  return { id: c.id, uuid: c.uuid, name: c.name }
-}
-
-/** João na 7.ª A e Conceição na 7.ª B, no ano em curso (GET /enrollments). */
+/**
+ * GET /enrollments?academicYearId (dev 04/11): João na 7.ª A e Conceição na 7.ª B, no ano em
+ * curso; e uma confirmação de Ana, à espera de pagamento, para a 7.ª B.
+ */
 export const matriculasSis: MatriculaSis[] = [
   { e: 0, turma: 20, data: '2026-09-02T09:00:00.000Z' },
   { e: 1, turma: 21, data: '2026-09-03T09:00:00.000Z' },
 ].map(({ e, turma, data }, i) => ({
   uuid: `mat-${i + 1}`,
+  studentId: estudantesSis[e]!.id,
+  studentUuid: estudantesSis[e]!.uuid,
+  studentName: estudantesSis[e]!.name,
+  classId: turma,
+  className: turmaDe(turma).name,
   academicYearId: 1,
   enrollmentDate: data,
-  status: 'ACTIVE' as const,
-  student: refEstudante(estudantesSis[e]!),
-  class: refTurma(turma),
-  grade: refClasse(turma),
+  status: true,
+  lifecycleStatus: 'ACTIVE' as const,
 }))
 
-/** Uma confirmação à espera de pagamento: Ana, para a 7.ª B. */
-export const confirmacoesSis: DtoSis<'ConfirmationListItemDto'>[] = [
+export const confirmacoesSis: ConfirmacaoSis[] = [
   {
     uuid: 'conf-1',
+    studentId: estudantesSis[2]!.id,
+    studentUuid: estudantesSis[2]!.uuid,
+    studentName: estudantesSis[2]!.name,
+    classId: 21,
+    className: turmaDe(21).name,
     academicYearId: 1,
     confirmationDate: '2026-09-04T09:00:00.000Z',
-    status: 'PENDING_PAYMENT',
-    student: refEstudante(estudantesSis[2]!),
-    class: refTurma(21),
-    grade: refClasse(21),
+    confirmationStatus: 'PENDING_PAYMENT',
   },
 ]
+
+/** O backend rejeita parâmetros que o DTO não declara (forbidNonWhitelisted): 400. */
+const soParametros = (request: Request, permitidos: string[]) => {
+  const desconhecidos = [...new URL(request.url).searchParams.keys()].filter(
+    (k) => !permitidos.includes(k),
+  )
+  return desconhecidos.length
+    ? HttpResponse.json(
+        {
+          type: 'about:blank',
+          title: 'Bad Request',
+          status: 400,
+          code: 'VALIDATION_ERROR',
+          errors: desconhecidos.map((k) => ({
+            field: k,
+            message: `property ${k} should not exist`,
+          })),
+        },
+        { status: 400, headers: { 'Content-Type': 'application/problem+json' } },
+      )
+    : null
+}
 
 export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
   {
@@ -223,6 +239,23 @@ export const professoresSis: DtoSis<'TeacherOutputDto'>[] = [
     specialtySubjectIds: [100],
     teacherField: 'Ciências Exactas',
     educationalAttainment: 'Licenciatura em Matemática',
+  },
+  {
+    // Registada mas ainda sem atribuições no ano: só vem com includeUnused=true
+    id: 51,
+    uuid: 'prof-2',
+    teacherCode: 'AG-002',
+    name: 'Luísa Manuel',
+    sex: 'F',
+    age: 35,
+    birthDate: '1991-03-20',
+    address: 'Viana, Luanda',
+    nationality: 'Angolana',
+    isActive: true,
+    isSupervisor: true,
+    specialtySubjectIds: [100],
+    teacherField: 'STEM',
+    educationalAttainment: "Master's degree",
   },
 ]
 
@@ -358,21 +391,51 @@ export function handlersSis() {
     ),
     http.get(
       '/sis/students',
-      anual(() => estudantesSis, todos),
+      // Como o dev 04/11: só quem tem matrícula no ano, salvo includeUnused=true
+      anual(
+        () => estudantesSis,
+        (e, ano, q) =>
+          matriculasSis.some(
+            (m) =>
+              m.studentUuid === e.uuid &&
+              m.academicYearId === ano &&
+              (!q.get('classId') || m.classId === Number(q.get('classId'))),
+          ) ||
+          (q.get('includeUnused') === 'true' &&
+            !q.get('classId') &&
+            !matriculasSis.some((m) => m.studentUuid === e.uuid && m.academicYearId === ano)),
+      ),
     ),
-    http.get('/sis/students/:uuid', porUuid(estudantesSis)),
+    // A ficha só encontra quem tem matrícula no ano (o backend ignora includeUnused aqui)
+    http.get('/sis/students/:uuid', ({ params, request }) => {
+      const ano = anoDaConsulta(request)
+      if (!ano) return SEM_ANO()
+      const matriculado = matriculasSis.some(
+        (m) => m.studentUuid === params.uuid && m.academicYearId === ano,
+      )
+      const item = estudantesSis.find((e) => e.uuid === params.uuid)
+      return item && matriculado
+        ? HttpResponse.json(item)
+        : HttpResponse.json(
+            { title: 'Not Found', status: 404, detail: 'Student not found.' },
+            { status: 404, headers: { 'Content-Type': 'application/problem+json' } },
+          )
+    }),
     http.get(
       '/sis/teachers',
       anual(
         () => professoresSis,
+        // Como o dev 04/11: só quem tem atribuições no ano, salvo includeUnused=true
         (p, ano, q) =>
-          !q.get('classId') ||
           atribuicoesSis.some(
             (a) =>
               a.teacherUuid === p.uuid &&
               a.academicYearId === ano &&
-              a.classId === Number(q.get('classId')),
-          ),
+              (!q.get('classId') || a.classId === Number(q.get('classId'))),
+          ) ||
+          (q.get('includeUnused') === 'true' &&
+            !q.get('classId') &&
+            !atribuicoesSis.some((a) => a.teacherUuid === p.uuid && a.academicYearId === ano)),
       ),
     ),
     http.get('/sis/teachers/:uuid', porUuid(professoresSis)),
@@ -406,35 +469,17 @@ export function handlersSis() {
     ),
     http.get('/sis/teachers/reports/year', () => HttpResponse.json({ count: 4 })),
     http.get('/sis/enrollments', ({ request }) => {
+      const recusado = soParametros(request, ['academicYearId', 'studentId'])
+      if (recusado) return recusado
       const ano = anoDaConsulta(request)
       if (!ano) return SEM_ANO()
-      const q = new URL(request.url).searchParams
-      const num = (k: string) => (q.get(k) ? Number(q.get(k)) : undefined)
-      const lista = matriculasSis.filter(
-        (m) =>
-          m.academicYearId === ano &&
-          (num('gradeId') === undefined || m.grade.id === num('gradeId')) &&
-          (num('classId') === undefined || m.class.id === num('classId')) &&
-          (num('studentId') === undefined || m.student.id === num('studentId')) &&
-          (!q.get('status') || m.status === q.get('status')),
-      )
-      const page = num('page') ?? 1
-      const pageSize = num('pageSize') ?? 25
+      const aluno = new URL(request.url).searchParams.get('studentId')
+      const doAluno = <T extends { academicYearId: number; studentId: number }>(x: T) =>
+        x.academicYearId === ano && (!aluno || x.studentId === Number(aluno))
       return HttpResponse.json({
-        data: lista.slice((page - 1) * pageSize, page * pageSize),
-        total: lista.length,
-        page,
-        pageSize,
-        totalPages: Math.max(1, Math.ceil(lista.length / pageSize)),
+        enrollments: matriculasSis.filter(doAluno),
+        confirmations: confirmacoesSis.filter(doAluno),
       })
-    }),
-    http.get('/sis/enrollments/confirmations', ({ request }) => {
-      const ano = anoDaConsulta(request)
-      if (!ano) return SEM_ANO()
-      const estado = new URL(request.url).searchParams.get('status')
-      return HttpResponse.json(
-        confirmacoesSis.filter((c) => c.academicYearId === ano && (!estado || c.status === estado)),
-      )
     }),
   ]
 }

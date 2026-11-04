@@ -178,20 +178,15 @@ async function comOcupacao<T extends Turma>(
   ])
   const dto = turmas.find((t) => t.uuid === turma.id)
   if (!dto) return turma
-  const [inscritos, professores] = await Promise.all([
-    client.fetchQuery(inscritosSisQuery(dto.academicYearId, dto.id)).catch(() => undefined),
-    // O director de turma vem pelo id do professor: o nome está na lista do ano
-    dto.classDirectorTeacherId != null
-      ? client.fetchQuery(referenciaSis.professores(ano)).catch(() => undefined)
-      : undefined,
-  ])
+  const inscritos = await client
+    .fetchQuery(inscritosSisQuery(dto.academicYearId, dto.id))
+    .catch(() => undefined)
   return {
     ...turma,
     ...paraTurmaDoSis(
       dto,
       classes.find((c) => c.id === dto.gradeId),
       inscritos,
-      professores,
     ),
   }
 }

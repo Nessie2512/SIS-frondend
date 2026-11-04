@@ -3,9 +3,9 @@ import { msg } from '@lingui/core/macro'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { useState } from 'react'
 import type { QueryClient } from '@tanstack/react-query'
-import { paraTurma, turmaKeys, turmaQuery, turmaSisPorUuid, type Turma } from '@/entities/turma'
+import { paraTurma, turmaKeys, turmaQuery, type Turma } from '@/entities/turma'
 import { api, eApiError, type Dto } from '@/shared/api'
-import { apiSis, idNumerico, referenciaSis, sisKeys } from '@/shared/api/sis'
+import { apiSis, sisKeys, type DtoSis } from '@/shared/api/sis'
 import { eReal } from '@/shared/config/ligacao'
 import { anunciar } from '@/shared/lib/anunciar'
 import { mensagemDeErro } from '@/shared/lib/erros-dominio'
@@ -108,9 +108,10 @@ export function useEditarTurma(turmaId: string, anoLectivoId: string) {
 }
 
 /**
- * Backend SIS: PATCH /classes/{uuid} com a sala (room) e o director (id numérico do professor).
- * Envia o updatedAt que o ecrã leu: se outra pessoa mudou a turma, o servidor responde 409
- * CLASS_MODIFIED e o ecrã mostra o conflito. Devolve a turma relida, já com a ocupação.
+ * Backend SIS: PATCH /classes/{uuid} com { room, director } (dev 04/11). O director é texto: o
+ * nome do professor escolhido entre os docentes da turma (directorTurmaId leva o nome neste
+ * modo); null retira. O backend não guarda versão, por isso não há conflito a detectar.
+ * Devolve a turma relida, já com a ocupação.
  */
 async function editarNoSis(
   qc: QueryClient,
@@ -118,20 +119,15 @@ async function editarNoSis(
   anoLectivoId: string,
   alteracao: Dto<'TurmaAlteracaoDto'>,
 ): Promise<Turma> {
-  const { turma, ano } = await turmaSisPorUuid(qc, turmaId)
-  const director =
-    alteracao.directorTurmaId === undefined
-      ? undefined
-      : alteracao.directorTurmaId
-        ? idNumerico(await qc.fetchQuery(referenciaSis.professores(ano)), alteracao.directorTurmaId)
-        : null
+  const corpo: { room?: string | null; director?: string | null } = {}
+  if (alteracao.sala !== undefined) corpo.room = alteracao.sala?.trim() || null
+  if (alteracao.directorTurmaId !== undefined) {
+    corpo.director = alteracao.directorTurmaId?.trim() || null
+  }
   await apiSis.PATCH('/classes/{id}', {
     params: { path: { id: turmaId } },
-    body: {
-      ...(alteracao.sala !== undefined ? { room: alteracao.sala } : {}),
-      ...(director !== undefined ? { classDirectorTeacherId: director } : {}),
-      ...(turma.updatedAt ? { expectedUpdatedAt: turma.updatedAt } : {}),
-    },
+    // O Swagger tipa room e director como objecto; o backend recebe texto
+    body: corpo as unknown as DtoSis<'UpdateClassDetailsDto'>,
   })
   await qc.invalidateQueries({ queryKey: sisKeys.lista('classes'), refetchType: 'none' })
   return qc.fetchQuery({ ...turmaQuery(turmaId, anoLectivoId), staleTime: 0 })

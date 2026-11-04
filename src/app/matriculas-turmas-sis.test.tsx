@@ -47,11 +47,11 @@ describe('Matrículas no backend SIS (GET /enrollments)', () => {
     expect(screen.queryByRole('radio', { name: 'Sem turma' })).toBeNull()
   })
 
-  it('«A confirmar» mostra as confirmações à espera de pagamento', async () => {
-    renderizarEm('/matriculas?page=1&estado=PENDENTE')
-    const tabela = await screen.findByRole('table', { name: 'Matrículas' }, { timeout: 10_000 })
-    expect(await within(tabela).findByRole('row', { name: /Ana Domingos .* A confirmar/ }))
-    expect(within(tabela).queryByText('João Baptista')).toBeNull()
+  it('sem rota para confirmar, o filtro «A confirmar» não aparece', async () => {
+    renderizarEm('/matriculas?page=1')
+    await screen.findByRole('table', { name: 'Matrículas' }, { timeout: 10_000 })
+    expect(screen.getByRole('radio', { name: 'Confirmadas' })).toBeInTheDocument()
+    expect(screen.queryByRole('radio', { name: 'A confirmar' })).toBeNull()
   })
 })
 
@@ -84,7 +84,7 @@ describe('Impressão com o backend SIS', () => {
 })
 
 describe('Editar a turma no backend SIS (PATCH /classes/:id)', () => {
-  it('guarda a sala com o updatedAt lido', async () => {
+  it('guarda a sala em { room }', async () => {
     const pedidos = escutarEscritas({}, (pedido) => {
       const corpo = pedido.corpo as { room?: string }
       const turma = turmasSis.find((t) => t.uuid === 'turma-7a')!
@@ -101,32 +101,9 @@ describe('Editar a turma no backend SIS (PATCH /classes/:id)', () => {
     ).toBeInTheDocument()
     await waitFor(() =>
       expect(pedidos).toEqual([
-        {
-          metodo: 'PATCH',
-          caminho: '/classes/turma-7a',
-          corpo: { room: 'Sala 12', expectedUpdatedAt: '2026-11-03T10:00:00.000Z' },
-        },
+        { metodo: 'PATCH', caminho: '/classes/turma-7a', corpo: { room: 'Sala 12' } },
       ]),
     )
-  })
-
-  it('se outra pessoa mudou a turma, mostra o conflito', async () => {
-    server.use(
-      http.patch('/sis/classes/:id', () =>
-        HttpResponse.json(
-          { title: 'Conflict', status: 409, code: 'CLASS_MODIFIED', detail: 'CLASS_MODIFIED' },
-          { status: 409, headers: { 'Content-Type': 'application/problem+json' } },
-        ),
-      ),
-    )
-    renderizarEm('/turmas?turma=turma-7b')
-    const u = userEvent.setup()
-    const painel = await screen.findByRole('dialog', { name: '7.ª B' }, { timeout: 10_000 })
-    await u.click(await within(painel).findByRole('button', { name: /^Editar Sala/ }))
-    await u.type(within(painel).getByLabelText('Sala'), 'Sala 3{Enter}')
-    expect(
-      await screen.findByRole('dialog', { name: 'Outra pessoa alterou este dado' }),
-    ).toBeInTheDocument()
   })
 
   it('o director de turma escolhe-se entre os professores da turma', async () => {
@@ -142,8 +119,90 @@ describe('Editar a turma no backend SIS (PATCH /classes/:id)', () => {
       expect(pedidos[0]).toMatchObject({
         metodo: 'PATCH',
         caminho: '/classes/turma-7a',
-        corpo: { classDirectorTeacherId: 50 },
+        // O backend guarda o director pelo nome
+        corpo: { director: 'Mário Kiala' },
       }),
     )
+  })
+})
+
+describe('Estudantes e professores com includeUnused (dev 04/11)', () => {
+  beforeEach(() => {
+    // Sem a sobreposição do topo: a lista do fake segue o backend (includeUnused)
+    server.use(...handlersSis())
+    server.use(http.get('/sis/auth/me', () => HttpResponse.json({ ...meSis, permissions: CHEFE })))
+  })
+
+  it('a tabela traz todos os estudantes, com a matrícula de cada um', async () => {
+    renderizarEm('/estudantes?page=1')
+    const tabela = await screen.findByRole('table', { name: 'Estudantes' }, { timeout: 10_000 })
+    expect(
+      await within(tabela).findByRole('row', { name: /João Baptista .* 7\.ª classe · 7\.ª A/ }),
+    )
+    expect(within(tabela).getByRole('row', { name: /Conceição Neto .* 7\.ª classe · 7\.ª B/ }))
+    // Ana não tem matrícula no ano: só vem com includeUnused
+    expect(within(tabela).getByRole('row', { name: /Ana Domingos .* Sem matrícula neste ano/ }))
+  })
+
+  it('a ficha de quem ainda não tem matrícula abre (a lista do ano supre o 404)', async () => {
+    renderizarEm('/estudantes/est-3')
+    expect(
+      await screen.findByRole('heading', { name: 'Ana Domingos' }, { timeout: 10_000 }),
+    ).toBeInTheDocument()
+    expect(screen.getByText('Sem matrícula neste ano')).toBeInTheDocument()
+  })
+
+  it('a ficha mostra a matrícula do ano lida de GET /enrollments', async () => {
+    renderizarEm('/estudantes/est-1')
+    expect(
+      await screen.findByRole('heading', { name: 'João Baptista' }, { timeout: 10_000 }),
+    ).toBeInTheDocument()
+    expect(await screen.findByText('7.ª classe · 7.ª A')).toBeInTheDocument()
+  })
+
+  it('a lista de professores traz também quem ainda não tem turma', async () => {
+    renderizarEm('/professores?page=1')
+    const tabela = await screen.findByRole('table', { name: 'Professores' }, { timeout: 10_000 })
+    expect(await within(tabela).findByText('Luísa Manuel')).toBeInTheDocument()
+    expect(within(tabela).getByText('Mário Kiala')).toBeInTheDocument()
+  })
+
+  it('a ficha do professor mostra os dados pessoais', async () => {
+    renderizarEm('/professores/prof-2')
+    expect(
+      await screen.findByRole('heading', { name: 'Luísa Manuel' }, { timeout: 10_000 }),
+    ).toBeInTheDocument()
+    for (const valor of [
+      'Feminino',
+      'Angolana',
+      'Viana, Luanda',
+      'Ciências e tecnologia',
+      'Mestrado',
+    ])
+      expect(screen.getByText(valor)).toBeInTheDocument()
+  })
+
+  it('director geral: a ficha abre sem a matrícula (GET /enrollments dá-lhe 403)', async () => {
+    server.use(
+      http.get('/sis/auth/me', () =>
+        HttpResponse.json({
+          ...meSis,
+          role: 'DIRECTOR_GERAL',
+          permissions: ['students:read', 'classes:read', 'academic:read', 'reports:read'],
+        }),
+      ),
+      http.get('/sis/enrollments', () =>
+        HttpResponse.json(
+          { title: 'Forbidden', status: 403, code: 'FORBIDDEN' },
+          { status: 403, headers: { 'Content-Type': 'application/problem+json' } },
+        ),
+      ),
+    )
+    renderizarEm('/estudantes/est-1')
+    expect(
+      await screen.findByRole('heading', { name: 'João Baptista' }, { timeout: 10_000 }),
+    ).toBeInTheDocument()
+    const menu = screen.getByRole('navigation', { name: 'Principal' })
+    expect(within(menu).queryByRole('link', { name: 'Matrículas' })).toBeNull()
   })
 })

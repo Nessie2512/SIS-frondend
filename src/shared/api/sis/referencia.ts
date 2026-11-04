@@ -2,7 +2,7 @@
 import { queryOptions } from '@tanstack/react-query'
 import { FRESCURA } from '@/shared/config/constantes'
 import { ApiError } from '../api-error'
-import { apiSis, type DtoSis } from './client'
+import { apiSis, SEM_AVISO_403, type DtoSis } from './client'
 
 /**
  * O backend devolve as listas inteiras, sem paginação, e as entidades referem-se umas às outras
@@ -62,7 +62,11 @@ function listaDoAno<T>(
 
 export type NivelSis = DtoSis<'AcademicLevelResponseDto'>
 export type ClasseSis = DtoSis<'GradeResponseDto'>
-export type TurmaSis = DtoSis<'ClassOutputDto'>
+/** O Swagger tipa room e director como objecto; o backend devolve texto (ou null). */
+export type TurmaSis = Omit<DtoSis<'ClassOutputDto'>, 'room' | 'director'> & {
+  room: string | null
+  director: string | null
+}
 export type AnoSis = DtoSis<'AcademicYearOutputDto'>
 export type DisciplinaSis = DtoSis<'SubjectResponseDto'>
 /**
@@ -74,6 +78,40 @@ export type EstudanteSis = Omit<DtoSis<'StudentOutputDto'>, 'studentCode' | 'fam
   familyPrefix?: string | null
 }
 export type ProfessorSis = DtoSis<'TeacherOutputDto'>
+
+/**
+ * GET /enrollments?academicYearId (dev 04/11): o Swagger não descreve a resposta; esta é a forma
+ * que o backend devolve (EnrollmentListResult), com as datas em ISO 8601.
+ */
+export interface MatriculaSis {
+  uuid: string
+  studentId: number
+  studentUuid: string
+  studentName: string
+  classId: number
+  className: string
+  academicYearId: number
+  enrollmentDate: string
+  status: boolean
+  lifecycleStatus: 'ACTIVE' | 'CLOSED' | 'COMPLETED'
+}
+
+export interface ConfirmacaoSis {
+  uuid: string
+  studentId: number
+  studentUuid: string
+  studentName: string
+  classId: number
+  className: string
+  academicYearId: number
+  confirmationDate: string
+  confirmationStatus: 'PENDING_PAYMENT' | 'CONFIRMED' | 'REJECTED'
+}
+
+export interface MatriculasDoAnoSis {
+  enrollments: MatriculaSis[]
+  confirmations: ConfirmacaoSis[]
+}
 export type UtilizadorSis = DtoSis<'UserOutputDto'>
 
 /** `academicYearId` na query de uma consulta anual. */
@@ -83,6 +121,11 @@ export const doAno = (academicYearId: number) => ({ query: { academicYearId } })
  * Catálogos (ciclos, classes, disciplinas): o backend só lista o que já tem turmas no ano;
  * includeUnused traz também o resto, para se poder criar a primeira turma de uma classe.
  */
+/** Listas de pessoas do ano com quem ainda não tem matrícula nem atribuição (guia §1). */
+const comNovosDoAno = (academicYearId: number) => ({
+  query: { academicYearId, includeUnused: 'true' as const },
+})
+
 const catalogoDoAno = (academicYearId: number) => ({
   query: { academicYearId, includeUnused: 'true' as const },
 })
@@ -108,7 +151,9 @@ export const referenciaSis = {
     listaDoAno<TurmaSis>(
       'classes',
       ano,
-      async (id, signal) => (await apiSis.GET('/classes', { params: doAno(id), signal })).data,
+      async (id, signal) =>
+        (await apiSis.GET('/classes', { params: doAno(id), signal })).data as
+          TurmaSis[] | undefined,
       FRESCURA.lista,
     ),
   anos: () =>
@@ -125,22 +170,56 @@ export const referenciaSis = {
         (await apiSis.GET('/subjects', { params: catalogoDoAno(id), signal })).data,
       FRESCURA.referencia,
     ),
+  /** Todos os estudantes, também os ainda sem matrícula no ano (includeUnused, guia §1). */
   estudantes: (ano?: string | null) =>
     listaDoAno<EstudanteSis>(
       'students',
       ano,
       async (id, signal) =>
-        (await apiSis.GET('/students', { params: doAno(id), signal })).data as
+        (await apiSis.GET('/students', { params: comNovosDoAno(id), signal })).data as
           EstudanteSis[] | undefined,
       FRESCURA.lista,
     ),
+  /** Todos os docentes, também os ainda sem atribuições no ano (includeUnused, guia §1). */
   professores: (ano?: string | null) =>
     listaDoAno<ProfessorSis>(
       'teachers',
       ano,
-      async (id, signal) => (await apiSis.GET('/teachers', { params: doAno(id), signal })).data,
+      async (id, signal) =>
+        (await apiSis.GET('/teachers', { params: comNovosDoAno(id), signal })).data,
       FRESCURA.lista,
     ),
+  /**
+   * Matrículas e confirmações do ano (GET /enrollments, um pedido por ano). Só ADMIN,
+   * SECRETARIO e CHEFE_SECRETARIA a podem ler: para os outros perfis o resultado é null
+   * (não se sabe), sem avisar a aplicação de permissões desactualizadas.
+   */
+  matriculas: (ano?: string | null) => {
+    const uuid = ano ?? anoEmContexto
+    return queryOptions({
+      queryKey: [...sisKeys.lista('enrollments'), uuid] as const,
+      queryFn: async ({ signal, client }): Promise<MatriculasDoAnoSis | null> => {
+        if (!uuid) return { enrollments: [], confirmations: [] }
+        const anos = await client.fetchQuery(referenciaSis.anos())
+        try {
+          const { data } = await apiSis.GET('/enrollments', {
+            params: { query: { academicYearId: idNumerico(anos, uuid) } },
+            headers: { [SEM_AVISO_403]: '1' },
+            signal,
+          })
+          const corpo = data as Partial<MatriculasDoAnoSis> | undefined
+          return {
+            enrollments: corpo?.enrollments ?? [],
+            confirmations: corpo?.confirmations ?? [],
+          }
+        } catch (erro) {
+          if (erro instanceof ApiError && erro.status === 403) return null
+          throw erro
+        }
+      },
+      staleTime: FRESCURA.lista,
+    })
+  },
   /** Só o gestor de TI lista as contas (GET /users com @Roles('GESTOR_TI')). */
   utilizadores: () =>
     lista<UtilizadorSis>(

@@ -92,7 +92,13 @@ async function professorDoSis(
   const academicYearId = await idDoAnoSis(client, anoLectivoId)
   const params = { path: { uuid }, ...doAno(academicYearId) }
   const [professor, atribuicoes, turmas, classes, disciplinas, anos] = await Promise.all([
-    apiSis.GET('/teachers/{uuid}', { params, signal }).then((r) => r.data!),
+    // includeUnused: também quem ainda não tem atribuições no ano (guia §1)
+    apiSis
+      .GET('/teachers/{uuid}', {
+        params: { path: { uuid }, query: { academicYearId, includeUnused: 'true' } },
+        signal,
+      })
+      .then((r) => r.data!),
     apiSis.GET('/teachers/{uuid}/assignments', { params, signal }).then((r) => r.data!),
     client.fetchQuery(referenciaSis.turmas(anoLectivoId)),
     client.fetchQuery(referenciaSis.classes(anoLectivoId)),

@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import { differenceInYears } from 'date-fns'
 import type { Dto } from '@/shared/api'
-import type { DtoSis, EstudanteSis } from '@/shared/api/sis'
+import type { EstudanteSis } from '@/shared/api/sis'
 import type {
   DocumentoEstudante,
   Encarregado,
@@ -161,18 +161,33 @@ export function paraEstudanteDoSis(dto: EstudanteSis): Estudante {
   }
 }
 
-/** A matrícula activa no ano (GET /enrollments?studentId), já com classe e turma. */
-export function comMatriculaDoSis(
-  estudante: Estudante,
-  matricula: DtoSis<'EnrollmentListItemDto'> | undefined,
-): Estudante {
-  if (!matricula) return estudante
+/** Matrícula de um estudante no ano, já resolvida (turma e classe pelos ids do SIS). */
+export interface MatriculaDoAno {
+  matriculaId: string
+  turmaId: string
+  /** Ex.: "7.ª classe · 7.ª A" */
+  rotulo: string
+}
+
+/**
+ * Junta ao estudante a sua situação no ano lectivo:
+ * - matricula: a matrícula do ano (activa ou concluída); sem ela, «sem matrícula»;
+ * - pendente: só uma confirmação à espera de pagamento;
+ * - undefined: o perfil não pode ler as matrículas (GET /enrollments) — mostra-se «—».
+ */
+export function comMatriculaDoSis<T extends EstudanteResumo>(
+  estudante: T,
+  situacao: { matricula: MatriculaDoAno | null; pendente: boolean } | undefined,
+): T {
+  if (!situacao) return { ...estudante, matricula: '—' }
+  const { matricula, pendente } = situacao
   return {
     ...estudante,
-    matricula: `${matricula.grade.name} · ${matricula.class.name}`,
-    matriculaId: matricula.uuid,
-    turmaId: matricula.class.uuid,
+    matricula: matricula?.rotulo ?? null,
+    matriculaId: matricula?.matriculaId ?? null,
+    turmaId: matricula?.turmaId ?? null,
     semTurma: false,
+    matriculaPendente: !matricula && pendente,
   }
 }
 

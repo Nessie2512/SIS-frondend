@@ -149,6 +149,8 @@ const classesTermo = 'text-texto-2'
 
 function Resumo({ professor: p }: { professor: Professor }) {
   const { t } = useLingui()
+  const d = p.dadosPessoais
+  const idade = d?.idade
   return (
     <dl className="grid max-w-2xl grid-cols-[13rem_1fr] gap-x-6 gap-y-4 text-corpo">
       <dt className={classesTermo}>{t`N.º de agente`}</dt>
@@ -156,10 +158,37 @@ function Resumo({ professor: p }: { professor: Professor }) {
         {p.numeroAgente}
         <Lock aria-label={t`Não se altera`} className="size-3 stroke-[1.5] text-texto-3" />
       </dd>
+      {d && (
+        <>
+          <dt className={classesTermo}>{t`Sexo`}</dt>
+          <dd>{d.sexo === 'F' ? t`Feminino` : t`Masculino`}</dd>
+          <dt className={classesTermo}>{t`Data de nascimento`}</dt>
+          <dd className="tabular">
+            {d.dataNascimento ? formatarDataCivil(d.dataNascimento) : '—'}
+            {idade != null && (
+              <span className="text-texto-2">
+                {plural(idade, { one: ' · # ano', other: ' · # anos' })}
+              </span>
+            )}
+          </dd>
+          <dt className={classesTermo}>{t`Nacionalidade`}</dt>
+          <dd>{d.nacionalidade ?? '—'}</dd>
+          <dt className={classesTermo}>{t`Morada`}</dt>
+          <dd>{d.morada ?? '—'}</dd>
+          <dt className={classesTermo}>{t`Área de formação`}</dt>
+          <dd>{d.area ?? '—'}</dd>
+          <dt className={classesTermo}>{t`Supervisor`}</dt>
+          <dd>{d.supervisor ? t`Sim` : t`Não`}</dd>
+        </>
+      )}
       <dt className={classesTermo}>{t`Habilitação`}</dt>
       <dd>{p.habilitacao}</dd>
-      <dt className={classesTermo}>{t`Admitido em`}</dt>
-      <dd className="tabular">{formatarDataCivil(p.dataAdmissao)}</dd>
+      {p.dataAdmissao && (
+        <>
+          <dt className={classesTermo}>{t`Admitido em`}</dt>
+          <dd className="tabular">{formatarDataCivil(p.dataAdmissao)}</dd>
+        </>
+      )}
       <dt className={classesTermo}>{t`Telefone`}</dt>
       <dd className="tabular">{formatarTelefone(p.telefone) ?? '—'}</dd>
       <dt className={classesTermo}>{t`Email`}</dt>

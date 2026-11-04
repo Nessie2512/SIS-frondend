@@ -152,14 +152,16 @@ describe('API real: professores e contas', () => {
   it('ficha com as atribuições do ano em contexto, ligadas a turma e disciplina', async () => {
     const c = cliente()
     const lista = await c.fetchQuery(professoresQuery({ anoLectivoId: 'ano-sis-2026' }))
+    // includeUnused: também quem ainda não tem atribuições no ano (Luísa)
     expect(lista.professores.map((p) => [p.nome, p.disciplinasTexto])).toEqual([
+      ['Luísa Manuel', 'Matemática'],
       ['Mário Kiala', 'Matemática'],
     ])
     // Atribuir uma disciplina: só aparecem os professores que a podem leccionar
     const paraMatematica = await c.fetchQuery(
       professoresQuery({ anoLectivoId: 'ano-sis-2026', disciplinaId: 'disc-mat' }),
     )
-    expect(paraMatematica.professores.map((p) => p.id)).toEqual(['prof-1'])
+    expect(paraMatematica.professores.map((p) => p.id)).toEqual(['prof-2', 'prof-1'])
     const paraPortugues = await c.fetchQuery(
       professoresQuery({ anoLectivoId: 'ano-sis-2026', disciplinaId: 'disc-port' }),
     )
@@ -169,6 +171,20 @@ describe('API real: professores e contas', () => {
       expect.objectContaining({ turma: '7.ª A', classe: '7.ª classe', disciplina: 'Matemática' }),
     ])
     expect(prof.habilitacao).toBe('Licenciatura em Matemática')
+
+    // Ficha de quem não tem atribuições: abre, com os dados pessoais que o backend devolve
+    const nova = await c.fetchQuery(professorQuery('prof-2', 'ano-sis-2026'))
+    expect(nova.atribuicoes).toEqual([])
+    expect(nova.habilitacao).toBe('Mestrado')
+    expect(nova.dadosPessoais).toEqual({
+      sexo: 'F',
+      dataNascimento: '1991-03-20',
+      idade: 35,
+      morada: 'Viana, Luanda',
+      nacionalidade: 'Angolana',
+      area: 'Ciências e tecnologia',
+      supervisor: true,
+    })
   })
 
   it('contas com o papel em português; perfis contam os utilizadores', async () => {
@@ -264,7 +280,7 @@ describe('API real: guia de integração (03/11)', () => {
     await c.fetchQuery(referenciaSis.estudantes())
     server.events.removeAllListeners()
     expect(urls).toContain('/sis/grades?academicYearId=1&includeUnused=true')
-    expect(urls).toContain('/sis/students?academicYearId=1')
+    expect(urls).toContain('/sis/students?academicYearId=1&includeUnused=true')
   })
 
   it('sem nenhum ano lectivo, as listas anuais ficam vazias sem pedir ao servidor', async () => {

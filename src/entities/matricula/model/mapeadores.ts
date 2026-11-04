@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core'
 import { msg } from '@lingui/core/macro'
 import type { Dto } from '@/shared/api'
-import type { DtoSis } from '@/shared/api/sis'
+import type { MatriculaSis } from '@/shared/api/sis'
 import type { EstadoMatricula, Matricula, PaginaMatriculas } from './tipos'
 
 const ESTADO = {
@@ -41,41 +41,38 @@ export function paraPaginaMatriculas(dto: Dto<'PaginaMatriculaDto'>): PaginaMatr
 
 /**
  * Backend SIS: lifecycleStatus da matrícula → estados do ecrã. Matrícula directa já é
- * confirmada (ACTIVE); CLOSED é anulada; COMPLETED, concluída no fecho do ano. As confirmações
- * pendentes de pagamento são as matrículas «a confirmar».
+ * confirmada (ACTIVE); CLOSED é anulada; COMPLETED, concluída no fecho do ano.
  */
 export const ESTADO_DO_SIS = {
   ACTIVE: 'CONFIRMADA',
   CLOSED: 'ANULADA',
   COMPLETED: 'CONCLUIDA',
-} as const satisfies Record<DtoSis<'EnrollmentListItemDto'>['status'], EstadoMatricula>
+} as const satisfies Record<MatriculaSis['lifecycleStatus'], EstadoMatricula>
 
-export function paraMatriculaDoSis(
-  dto: DtoSis<'EnrollmentListItemDto'> | DtoSis<'ConfirmationListItemDto'>,
-): Matricula {
-  const confirmacao = 'confirmationDate' in dto
-  const codigo: EstadoMatricula = confirmacao
-    ? dto.status === 'REJECTED'
-      ? 'ANULADA'
-      : dto.status === 'CONFIRMED'
-        ? 'CONFIRMADA'
-        : 'PENDENTE'
-    : ESTADO_DO_SIS[dto.status]
+/** O que GET /enrollments não traz: código do estudante e classe (pela turma). */
+export interface ReferenciasMatricula {
+  codigoDoEstudante: (uuid: string) => string | null
+  turma: (classId: number) => { uuid: string; classeId: string; classe: string } | undefined
+}
+
+export function paraMatriculaDoSis(dto: MatriculaSis, ref: ReferenciasMatricula): Matricula {
+  const codigo = ESTADO_DO_SIS[dto.lifecycleStatus]
   const estado = ESTADO[codigo]
+  const turma = ref.turma(dto.classId)
   return {
     id: dto.uuid,
-    estudanteId: dto.student.uuid,
-    estudanteNome: dto.student.name,
-    numeroProcesso: (dto.student.studentCode as string | null | undefined) ?? '',
-    classeId: dto.grade.uuid,
-    classe: dto.grade.name,
-    turmaId: dto.class.uuid,
-    turma: dto.class.name,
+    estudanteId: dto.studentUuid,
+    estudanteNome: dto.studentName,
+    numeroProcesso: ref.codigoDoEstudante(dto.studentUuid) ?? '',
+    classeId: turma?.classeId ?? '',
+    classe: turma?.classe ?? '',
+    turmaId: turma?.uuid ?? null,
+    turma: dto.className,
     estado: codigo,
     estadoRotulo: i18n._(estado.rotulo),
     estadoTom: estado.tom,
     // O backend não tem documentos dos estudantes: a coluna não aparece no modo SIS
     documentosEmFalta: 0,
-    criadaEm: confirmacao ? dto.confirmationDate : dto.enrollmentDate,
+    criadaEm: dto.enrollmentDate,
   }
 }
