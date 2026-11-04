@@ -41,9 +41,24 @@ export interface DocumentoProfessor {
   entregue: boolean
 }
 
+/** Dados pessoais e profissionais que o backend SIS devolve na ficha do docente. */
+export interface DadosPessoaisProfessor {
+  sexo: 'M' | 'F'
+  /** AAAA-MM-DD */
+  dataNascimento: string | null
+  idade: number | null
+  morada: string | null
+  nacionalidade: string | null
+  /** Área de formação, já em texto (ex.: «Ciências e tecnologia») */
+  area: string | null
+  supervisor: boolean
+}
+
 export interface Professor extends ProfessorResumo {
   habilitacao: string
   dataAdmissao: string
+  /** Só no backend SIS; o contrato provisório não os tem */
+  dadosPessoais?: DadosPessoaisProfessor
   atribuicoes: Atribuicao[]
   documentos: DocumentoProfessor[]
   documentosEmFalta: number

@@ -11,6 +11,33 @@ import type {
   TomEstado,
 } from './tipos'
 
+/** Área de formação do SIS (teacherField) → texto. */
+export const AREAS_PROFESSOR: Record<string, MessageDescriptor> = {
+  STEM: msg`Ciências e tecnologia`,
+  BUSINESS: msg`Economia e gestão`,
+  MEDICINE: msg`Saúde`,
+  ARTS: msg`Artes e humanidades`,
+}
+
+/** Habilitação do SIS (educationalAttainment) → texto. */
+export const HABILITACOES_PROFESSOR: Record<string, MessageDescriptor> = {
+  'High School Graduate': msg`Ensino médio`,
+  'Technical School certificate': msg`Ensino técnico`,
+  "Bachelor's degree": msg`Licenciatura`,
+  "Master's degree": msg`Mestrado`,
+  'Ph.D.': msg`Doutoramento`,
+}
+
+const texto = (rotulos: Record<string, MessageDescriptor>, valor: string | null | undefined) =>
+  valor ? (rotulos[valor] ? i18n._(rotulos[valor]) : valor) : null
+
+/** Datas do SIS: «DD/MM/AAAA» ou ISO → AAAA-MM-DD. */
+function dataCivil(valor: string | null | undefined): string | null {
+  if (!valor) return null
+  const dma = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(valor.trim())
+  return dma ? `${dma[3]}-${dma[2]}-${dma[1]}` : valor.slice(0, 10)
+}
+
 export const ESTADOS_PROFESSOR = {
   ACTIVO: { rotulo: msg`Activo`, tom: 'sucesso' },
   LICENCA: { rotulo: msg`De licença`, tom: 'aviso' },
@@ -108,7 +135,7 @@ export function paraProfessorResumoDoSis(
       disciplinas,
       disciplinasTexto: disciplinas.length
         ? disciplinas.map((d) => d.nome).join(', ')
-        : dto.teacherField,
+        : (texto(AREAS_PROFESSOR, dto.teacherField) ?? ''),
       cargaLectiva: 0,
       cargaMaxima: 0,
       ocupacao: 0,
@@ -134,8 +161,18 @@ export function paraProfessorDoSis(
 ): Professor {
   return {
     ...paraProfessorResumoDoSis(dto, disciplinaPorId),
-    habilitacao: dto.educationalAttainment,
+    habilitacao: texto(HABILITACOES_PROFESSOR, dto.educationalAttainment) ?? '',
+    // O backend não devolve a data de admissão
     dataAdmissao: '',
+    dadosPessoais: {
+      sexo: dto.sex === 'F' ? 'F' : 'M',
+      dataNascimento: dataCivil(dto.birthDate),
+      idade: Number.isFinite(dto.age) ? dto.age : null,
+      morada: dto.address?.trim() || null,
+      nacionalidade: dto.nationality?.trim() || null,
+      area: texto(AREAS_PROFESSOR, dto.teacherField),
+      supervisor: dto.isSupervisor,
+    },
     atribuicoes: atribuicoes
       .filter((a) => a.isActive)
       .map((a): Atribuicao => {

@@ -1,6 +1,13 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
-import { api } from '@/shared/api'
-import { apiSis, doAno, idDoAnoSis, referenciaSis, type EstudanteSis } from '@/shared/api/sis'
+import { api, ApiError } from '@/shared/api'
+import {
+  apiSis,
+  doAno,
+  idDoAnoSis,
+  porId,
+  referenciaSis,
+  type EstudanteSis,
+} from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { normalizarTexto, ordenarLocal, paginarLocal } from '@/shared/lib/paginacao-local'
@@ -16,6 +23,7 @@ import {
   paraEstudanteDoSis,
   paraPaginaEstudantes,
 } from '../model/mapeadores'
+import type { MatriculaDoAno } from '../model/mapeadores'
 import type { FiltrosEstudantes, PaginaEstudantes } from '../model/tipos'
 
 export const estudanteKeys = {
@@ -52,21 +60,12 @@ export function estudanteQuery(id: string) {
     queryKey: estudanteKeys.detalhe(id),
     queryFn: async ({ signal, client }) => {
       if (eReal('estudantes')) {
-        // A ficha é do ano em contexto: o backend só a devolve a quem tem matrícula nesse ano
-        const academicYearId = await idDoAnoSis(client)
-        const { data } = await apiSis.GET('/students/{uuid}', {
-          params: { path: { uuid: id }, ...doAno(academicYearId) },
-          signal,
-        })
-        const dto = data as EstudanteSis
-        // A matrícula activa no ano: classe e turma na ficha (GET /enrollments?studentId)
-        const { data: matriculas } = await apiSis.GET('/enrollments', {
-          params: {
-            query: { academicYearId, studentId: dto.id, status: 'ACTIVE', pageSize: 1 },
-          },
-          signal,
-        })
-        return comMatriculaDoSis(paraEstudanteDoSis(dto), matriculas?.data[0])
+        // A ficha do ano em contexto; com a matrícula do ano (GET /enrollments)
+        const [dto, situacao] = await Promise.all([
+          estudanteDoSis(client, id, signal),
+          situacoesDoAno(client),
+        ])
+        return comMatriculaDoSis(paraEstudanteDoSis(dto), situacao?.(dto.uuid))
       }
       const { data } = await api.GET('/estudantes/{id}', { params: { path: { id } }, signal })
       return paraEstudante(data!)
@@ -109,11 +108,7 @@ export function encarregadosQuery(id: string) {
     queryFn: async ({ signal, client }) => {
       if (eReal('estudantes')) {
         // Backend SIS: pai e mãe vêm na ficha do estudante (só leitura)
-        const { data } = await apiSis.GET('/students/{uuid}', {
-          params: { path: { uuid: id }, ...doAno(await idDoAnoSis(client)) },
-          signal,
-        })
-        return encarregadosDoSis(data as EstudanteSis)
+        return encarregadosDoSis(await estudanteDoSis(client, id, signal))
       }
       const { data } = await api.GET('/estudantes/{id}/encarregados', {
         params: { path: { id } },
@@ -160,19 +155,27 @@ export function ocorrenciasQuery(id: string) {
 }
 
 /**
- * Backend SIS: os estudantes com matrícula no ano (guia de integração, 1). Filtra-se aqui o que o estudante tem (pesquisa por
- * nome, código de estudante ou documento; estado; sexo); os filtros de matrícula (classe, sem
- * turma, documentos em falta) não têm dados e devolvem a lista vazia em vez de enganar.
+ * Backend SIS: todos os estudantes do ano, matriculados ou não (includeUnused), com a matrícula
+ * de cada um lida de GET /enrollments. Filtra-se aqui: pesquisa por nome, código ou documento;
+ * estado; sexo; classe (pela turma da matrícula). «Sem turma» e «documentos em falta» não têm
+ * dados no SIS e devolvem a lista vazia em vez de enganar.
  */
 async function paginaDoSis(client: QueryClient, f: FiltrosEstudantes): Promise<PaginaEstudantes> {
-  const todos = (await client.fetchQuery(referenciaSis.estudantes(f.anoLectivoId))).map(
-    paraEstudanteDoSis,
-  )
+  const [lista, situacao, classeDaTurma] = await Promise.all([
+    client.fetchQuery(referenciaSis.estudantes(f.anoLectivoId)),
+    situacoesDoAno(client, f.anoLectivoId),
+    classesDasTurmas(client, f.anoLectivoId),
+  ])
+  const todos = lista.map((dto) => comMatriculaDoSis(paraEstudanteDoSis(dto), situacao?.(dto.uuid)))
   const termo = f.pesquisa ? normalizarTexto(f.pesquisa) : ''
-  const semDadosDeMatricula = Boolean(f.classeId || f.semTurma || f.documentosEmFalta)
-  const filtrados = semDadosDeMatricula
+  // No SIS toda a matrícula tem turma, e não há documentos: estes filtros ficam vazios
+  const semDados = Boolean(f.semTurma || f.documentosEmFalta || (f.classeId && !situacao))
+  const filtrados = semDados
     ? []
     : todos
+        .filter(
+          (e) => !f.classeId || (e.turmaId !== null && classeDaTurma(e.turmaId) === f.classeId),
+        )
         .filter(
           (e) =>
             !termo ||
@@ -209,5 +212,82 @@ export function possiveisDuplicados<T extends { nome: string; dataNascimento: st
       e.dataNascimento === dataNascimento &&
       `${outras[0]} ${outras.at(-1)}` === extremos
     )
+  })
+}
+
+/**
+ * Backend SIS: a ficha do estudante. GET /students/{uuid} só encontra quem tem matrícula no ano
+ * (o backend ignora includeUnused na ficha); quem ainda não a tem lê-se da lista do ano, que o
+ * inclui.
+ */
+async function estudanteDoSis(
+  client: QueryClient,
+  uuid: string,
+  signal: AbortSignal,
+): Promise<EstudanteSis> {
+  try {
+    const { data } = await apiSis.GET('/students/{uuid}', {
+      params: { path: { uuid }, ...doAno(await idDoAnoSis(client)) },
+      signal,
+    })
+    return data as EstudanteSis
+  } catch (erro) {
+    if (!(erro instanceof ApiError) || erro.status !== 404) throw erro
+    const doContexto = await client.fetchQuery({ ...referenciaSis.estudantes(), staleTime: 0 })
+    const achado = doContexto.find((e) => e.uuid === uuid)
+    if (!achado) throw erro
+    return achado
+  }
+}
+
+/** uuid da turma → uuid da classe, no ano dado (ou no do contexto). */
+async function classesDasTurmas(client: QueryClient, ano?: string) {
+  const [turmas, classes] = await Promise.all([
+    client.fetchQuery(referenciaSis.turmas(ano)),
+    client.fetchQuery(referenciaSis.classes(ano)),
+  ])
+  const classePorId = porId(classes)
+  const porTurma = new Map(turmas.map((t) => [t.uuid, classePorId.get(t.gradeId)?.uuid]))
+  return (turmaUuid: string) => porTurma.get(turmaUuid)
+}
+
+/** Preferência entre várias matrículas do mesmo estudante no ano: a activa, depois a concluída. */
+const ORDEM_ESTADO = { ACTIVE: 0, COMPLETED: 1, CLOSED: 2 } as const
+
+/**
+ * A situação de cada estudante no ano, a partir de GET /enrollments (um pedido para o ano
+ * todo). Devolve null quando o perfil não pode ler as matrículas.
+ */
+async function situacoesDoAno(client: QueryClient, ano?: string) {
+  const [registos, turmas, classes] = await Promise.all([
+    client.fetchQuery(referenciaSis.matriculas(ano)),
+    client.fetchQuery(referenciaSis.turmas(ano)),
+    client.fetchQuery(referenciaSis.classes(ano)),
+  ])
+  if (!registos) return null
+  const turmaPorId = porId(turmas)
+  const classePorId = porId(classes)
+  const porEstudante = new Map<string, MatriculaDoAno>()
+  const melhores = [...registos.enrollments]
+    .filter((m) => m.lifecycleStatus !== 'CLOSED')
+    .sort((a, b) => ORDEM_ESTADO[a.lifecycleStatus] - ORDEM_ESTADO[b.lifecycleStatus])
+  for (const m of melhores) {
+    if (porEstudante.has(m.studentUuid)) continue
+    const turma = turmaPorId.get(m.classId)
+    const classe = turma ? classePorId.get(turma.gradeId)?.name : undefined
+    porEstudante.set(m.studentUuid, {
+      matriculaId: m.uuid,
+      turmaId: turma?.uuid ?? '',
+      rotulo: classe ? `${classe} · ${m.className}` : m.className,
+    })
+  }
+  const pendentes = new Set(
+    registos.confirmations
+      .filter((c) => c.confirmationStatus === 'PENDING_PAYMENT')
+      .map((c) => c.studentUuid),
+  )
+  return (estudanteUuid: string) => ({
+    matricula: porEstudante.get(estudanteUuid) ?? null,
+    pendente: pendentes.has(estudanteUuid),
   })
 }

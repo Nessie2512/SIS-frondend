@@ -1,10 +1,14 @@
 import { keepPreviousData, queryOptions, type QueryClient } from '@tanstack/react-query'
 import { api } from '@/shared/api'
-import { apiSis, idDoAnoSis, idNumerico, referenciaSis } from '@/shared/api/sis'
+import { porId, referenciaSis } from '@/shared/api/sis'
 import { FRESCURA, PAGINACAO } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 import { paginarLocal } from '@/shared/lib/paginacao-local'
-import { paraMatriculaDoSis, paraPaginaMatriculas } from '../model/mapeadores'
+import {
+  paraMatriculaDoSis,
+  paraPaginaMatriculas,
+  type ReferenciasMatricula,
+} from '../model/mapeadores'
 import type { FiltrosMatriculas, PaginaMatriculas } from '../model/tipos'
 
 export const matriculaKeys = {
@@ -20,7 +24,7 @@ export function matriculasQuery(
   return queryOptions({
     queryKey: matriculaKeys.lista({ ...filtros, pageSize }),
     queryFn: async ({ signal, client }) => {
-      if (eReal('estudantes')) return paginaDoSis(client, filtros, pageSize, signal)
+      if (eReal('estudantes')) return paginaDoSis(client, filtros, pageSize)
       const { data } = await api.GET('/matriculas', {
         params: { query: { ...filtros, pageSize } },
         signal,
@@ -32,60 +36,48 @@ export function matriculasQuery(
   })
 }
 
-const ESTADO_PARA_SIS = { CONFIRMADA: 'ACTIVE', ANULADA: 'CLOSED', CONCLUIDA: 'COMPLETED' } as const
-
 /**
- * Backend SIS: GET /enrollments (paginado no servidor, pelo nome do estudante). «A confirmar»
- * são as confirmações pendentes de pagamento (GET /enrollments/confirmations). Toda a matrícula
- * do SIS tem turma: o filtro «sem turma» fica vazio.
+ * Backend SIS: GET /enrollments devolve as matrículas do ano de uma vez (sem filtros nem
+ * páginas); filtra-se, ordena-se pelo nome e pagina-se aqui. Toda a matrícula do SIS tem turma:
+ * «sem turma» fica vazio. As confirmações pendentes não entram na lista (ainda sem rota para
+ * as confirmar). Sem permissão para ler as matrículas, a lista fica vazia.
  */
 async function paginaDoSis(
   client: QueryClient,
   filtros: FiltrosMatriculas,
   pageSize: number,
-  signal: AbortSignal,
 ): Promise<PaginaMatriculas> {
   const vazia: PaginaMatriculas = { matriculas: [], total: 0, page: 1, totalPaginas: 1 }
-  if (filtros.semTurma) return vazia
-  const academicYearId = await idDoAnoSis(client, filtros.anoLectivoId)
-  const gradeId = filtros.classeId
-    ? idNumerico(
-        await client.fetchQuery(referenciaSis.classes(filtros.anoLectivoId)),
-        filtros.classeId,
-      )
-    : undefined
-
-  if (filtros.estado === 'PENDENTE') {
-    const { data } = await apiSis.GET('/enrollments/confirmations', {
-      params: { query: { academicYearId, gradeId, status: 'PENDING_PAYMENT' } },
-      signal,
-    })
-    const pagina = paginarLocal((data ?? []).map(paraMatriculaDoSis), filtros.page, pageSize)
-    return {
-      matriculas: pagina.itens,
-      total: pagina.total,
-      page: pagina.page,
-      totalPaginas: pagina.totalPaginas,
-    }
-  }
-
-  const { data } = await apiSis.GET('/enrollments', {
-    params: {
-      query: {
-        academicYearId,
-        gradeId,
-        status: filtros.estado ? ESTADO_PARA_SIS[filtros.estado] : undefined,
-        page: filtros.page,
-        pageSize,
-      },
+  if (filtros.semTurma || filtros.estado === 'PENDENTE') return vazia
+  const ano = filtros.anoLectivoId
+  const [registos, turmas, classes, estudantes] = await Promise.all([
+    client.fetchQuery(referenciaSis.matriculas(ano)),
+    client.fetchQuery(referenciaSis.turmas(ano)),
+    client.fetchQuery(referenciaSis.classes(ano)),
+    client.fetchQuery(referenciaSis.estudantes(ano)),
+  ])
+  if (!registos) return vazia
+  const turmaPorId = porId(turmas)
+  const classePorId = porId(classes)
+  const codigoPorUuid = new Map(estudantes.map((e) => [e.uuid, e.studentCode ?? null]))
+  const ref: ReferenciasMatricula = {
+    codigoDoEstudante: (uuid) => codigoPorUuid.get(uuid) ?? null,
+    turma: (id) => {
+      const t = turmaPorId.get(id)
+      const c = t && classePorId.get(t.gradeId)
+      return t && { uuid: t.uuid, classeId: c?.uuid ?? '', classe: c?.name ?? '' }
     },
-    signal,
-  })
-  if (!data) return vazia
+  }
+  const filtradas = registos.enrollments
+    .map((m) => paraMatriculaDoSis(m, ref))
+    .filter((m) => !filtros.classeId || m.classeId === filtros.classeId)
+    .filter((m) => !filtros.estado || m.estado === filtros.estado)
+    .sort((a, b) => a.estudanteNome.localeCompare(b.estudanteNome, 'pt'))
+  const pagina = paginarLocal(filtradas, filtros.page, pageSize)
   return {
-    matriculas: data.data.map(paraMatriculaDoSis),
-    total: data.total,
-    page: data.page,
-    totalPaginas: data.totalPages,
+    matriculas: pagina.itens,
+    total: pagina.total,
+    page: pagina.page,
+    totalPaginas: pagina.totalPaginas,
   }
 }

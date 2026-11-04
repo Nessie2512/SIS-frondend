@@ -17,7 +17,13 @@ export const FUNCIONALIDADES = {
   // Áreas (menu lateral e rotas)
   inicio: {},
   estudantes: { permissoes: ['estudantes:ler'] },
-  matriculas: { permissoes: ['matriculas:ler'] },
+  /**
+   * Lista de matrículas: GET /enrollments só aceita ADMIN, SECRETARIO e CHEFE_SECRETARIA, os
+   * mesmos que matriculam (o director geral lê estudantes, mas recebe 403 aqui)
+   */
+  matriculas: { permissoes: ['matriculas:escrever'] },
+  /** Filtro «A confirmar»: ainda sem rota para confirmar (aprovar responde 503) */
+  matriculasPendentes: { permissoes: ['matriculas:ler'], semServidor: true },
   /** Confirmar com os documentos e anular uma matrícula (o backend só aprova pagamentos) */
   confirmarMatriculas: { permissoes: ['matriculas:aprovar'], semServidor: true },
   /** No backend toda a matrícula tem turma; ordenar a lista é só pelo nome */

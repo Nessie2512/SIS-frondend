@@ -180,6 +180,7 @@ function EcraMatriculas() {
   const podeConfirmar = usePode('confirmarMatriculas') && !soLeitura
   const podeRenovar = usePode('renovarMatriculas')
   const comSemTurma = usePode('matriculasSemTurma')
+  const comPendentes = usePode('matriculasPendentes')
   const ordenaNoServidor = usePode('ordenarMatriculas')
   const total = data?.total ?? 0
   const pagina = data?.page ?? filtros.page
@@ -274,7 +275,7 @@ function EcraMatriculas() {
           }
           opcoes={[
             { valor: 'TODAS', rotulo: t`Todas` },
-            { valor: 'PENDENTE', rotulo: t`A confirmar` },
+            ...(comPendentes ? [{ valor: 'PENDENTE', rotulo: t`A confirmar` }] : []),
             { valor: 'CONFIRMADA', rotulo: t`Confirmadas` },
             ...(comSemTurma ? [{ valor: 'SEM_TURMA', rotulo: t`Sem turma` }] : []),
           ]}

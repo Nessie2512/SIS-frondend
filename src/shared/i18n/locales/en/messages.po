@@ -172,6 +172,10 @@ msgstr "{horas} h per week"
 msgid "{horas} h/semana"
 msgstr "{horas} h/week"
 
+#: src/routes/_app/professores/$professorId.tsx
+msgid "{idade, plural, one { · # ano} other { · # anos}}"
+msgstr "{idade, plural, one { · # year} other { · # years}}"
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "{idade, plural, one {# ano} other {# anos}}"
 msgstr "{idade, plural, one {# year old} other {# years old}}"
@@ -602,6 +606,10 @@ msgstr "Loading…"
 msgid "A classe ainda não tem plano curricular vigente."
 msgstr "The grade does not have a current curriculum plan yet."
 
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "A classe selecionada não existe no ano letivo escolhido."
+msgstr "The selected grade does not exist in the chosen school year."
+
 #: src/entities/matricula/model/mapeadores.ts
 #: src/features/confirmar-matricula/ui/cartao-matricula.tsx
 #: src/routes/_app/matriculas/index.tsx
@@ -740,6 +748,10 @@ msgstr "Your account is not allowed to enrol students."
 #: src/shared/lib/erros-dominio.ts
 msgid "A turma ainda tem estudantes. Mova-os para outra turma antes de a encerrar."
 msgstr "The class still has students. Move them to another class before closing it."
+
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "A turma escolhida não pertence à classe e ao ano letivo selecionados."
+msgstr "The chosen class does not belong to the selected grade and school year."
 
 #: src/routes/_app/turmas/index.tsx
 msgid "A turma está encerrada."
@@ -1167,6 +1179,7 @@ msgid "Área"
 msgstr "Area"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/routes/_app/professores/$professorId.tsx
 msgid "Área de formação"
 msgstr "Field of study"
 
@@ -1190,6 +1203,7 @@ msgstr "Drag students between classes, or use each card’s menu. Changing class
 msgid "Arraste os estudantes sem turma para uma turma, ou use o menu de cada cartão."
 msgstr "Drag students without a class into a class, or use each card’s menu."
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Artes e humanidades"
 msgstr "Arts and humanities"
@@ -1293,7 +1307,13 @@ msgstr "Grandfather"
 msgid "Bairro"
 msgstr "Neighbourhood"
 
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
+msgid "Bairro ou quarteirão"
+msgstr "Neighbourhood or block"
+
 #: src/features/matricular-estudante/model/esquema.ts
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Bilhete de identidade"
 msgstr "Identity card"
 
@@ -1389,6 +1409,7 @@ msgid "Catálogo"
 msgstr "Catalogue"
 
 #: src/features/matricular-estudante/model/esquema.ts
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Certidão de nascimento"
 msgstr "Birth certificate"
 
@@ -1430,6 +1451,7 @@ msgstr "Cycles and grades"
 msgid "Ciclos, classes, disciplinas e planos."
 msgstr "Cycles, grades, subjects and plans."
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Ciências e tecnologia"
 msgstr "Science and technology"
@@ -1458,6 +1480,10 @@ msgstr "grade"
 #: src/routes/_app/turmas/quadro.tsx
 msgid "Classe"
 msgstr "Grade"
+
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "Classe curricular não encontrada"
+msgstr "Grade not found"
 
 #: src/features/importar-estudantes/ui/mensagens.ts
 msgid "Classe desconhecida: «{valor}»."
@@ -1495,6 +1521,10 @@ msgstr "Code copied."
 #: src/routes/_app/matriculas/index.tsx
 msgid "Código de estudante"
 msgstr "Student code"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+msgid "Código de estudante não devolvido"
+msgstr "Student code not returned"
 
 #: src/features/emitir-documento/ui/emitir-global.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
@@ -1625,6 +1655,16 @@ msgstr "Account of {nome}"
 #: src/features/gerir-contas/ui/nova-conta.tsx
 msgid "Conta de {nome} criada."
 msgstr "Account of {nome} created."
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Contacto da mãe"
+msgstr "Mother's phone"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Contacto do pai"
+msgstr "Father's phone"
 
 #: src/routes/_app/relatorios.tsx
 msgid "Contagens do ano lectivo em contexto, actualizadas pelo servidor."
@@ -1758,6 +1798,10 @@ msgstr "Distribution criterion"
 msgid "Currículo"
 msgstr "Curriculum"
 
+#: src/features/matricular-estudante/ui/passo-dados.tsx
+msgid "Dados civis e de residência"
+msgstr "Civil and residence details"
+
 #: src/features/editar-turma/ui/dados-turma.tsx
 msgid "Dados da turma"
 msgstr "Class details"
@@ -1765,6 +1809,10 @@ msgstr "Class details"
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "Dados de {quem} guardados."
 msgstr "Details of {quem} saved."
+
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Dados familiares"
+msgstr "Family details"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
@@ -1789,6 +1837,7 @@ msgstr "Leaving date"
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+#: src/routes/_app/professores/$professorId.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Data de nascimento"
 msgstr "Date of birth"
@@ -2110,6 +2159,7 @@ msgid "Docentes"
 msgstr "Teachers"
 
 #: src/features/emitir-documento/ui/emitir-lote.tsx
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/documentos.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento"
@@ -2121,7 +2171,6 @@ msgstr "Document {numero} cancelled."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
-#: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Documento de identificação"
 msgstr "Identity document"
@@ -2182,6 +2231,7 @@ msgstr "Required documents complete: the enrolment is confirmed."
 msgid "Documentos oficiais"
 msgstr "Official documents"
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Doutoramento"
 msgstr "Doctorate"
@@ -2202,6 +2252,7 @@ msgstr "Duplicate the classes"
 msgid "Duplique a estrutura do ano em curso."
 msgstr "Duplicate the structure of the current year."
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Economia e gestão"
 msgstr "Economics and management"
@@ -2430,10 +2481,12 @@ msgstr "Fills the first class, then the next."
 msgid "Enquanto editava, o valor mudou no servidor. Escolha qual manter."
 msgstr "While you were editing, the value changed on the server. Choose which to keep."
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Ensino médio"
 msgstr "Secondary education"
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Ensino técnico"
 msgstr "Technical education"
@@ -2516,6 +2569,10 @@ msgstr "Choose the class to see who receives."
 msgid "Escolha a turma."
 msgstr "Choose the class."
 
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Escolha exatamente um encarregado principal."
+msgstr "Choose exactly one main guardian."
+
 #: src/features/atribuir-docente/model/esquema.ts
 msgid "Escolha o docente."
 msgstr "Choose the teacher."
@@ -2532,6 +2589,10 @@ msgstr "Choose the profile."
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "Escolha o sexo."
 msgstr "Choose the sex."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Escolha o tipo de documento."
+msgstr "Choose the document type."
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 msgid "Escolha o tipo para ver o documento."
@@ -2554,6 +2615,10 @@ msgstr "Choose a day to see what is happening and add an event."
 msgid "Escolha um dia para ver o que acontece."
 msgstr "Choose a day to see what is happening."
 
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "Escolha um encarregado principal."
+msgstr "Choose a main guardian."
+
 #: src/features/atribuir-docente/model/esquema.ts
 msgid "Escolha uma data dentro do ano, depois da atribuição actual."
 msgstr "Choose a date within the year, after the current assignment."
@@ -2561,6 +2626,15 @@ msgstr "Choose a date within the year, after the current assignment."
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Escolha uma disciplina."
 msgstr "Choose a subject."
+
+#: src/features/matricular-existente/ui/matricular-existente.tsx
+msgid "Escolha uma turma"
+msgstr "Choose a class"
+
+#: src/features/matricular-estudante/model/esquema.ts
+#: src/features/matricular-existente/ui/matricular-existente.tsx
+msgid "Escolha uma turma para concluir a matrícula."
+msgstr "Choose a class to complete the enrolment."
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 #: src/features/editar-plano/ui/editor-plano.tsx
@@ -2615,7 +2689,6 @@ msgid "Escreva o registo correcto."
 msgstr "Type the correct record."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
-#: src/features/matricular-estudante/model/matricular-sis.ts
 msgid "Escreva o tipo e o número, por exemplo BI 002145678LA043."
 msgstr "Type the type and the number, for example BI 002145678LA043."
 
@@ -2693,6 +2766,10 @@ msgstr "This class is already full. Choose another class or request an exception
 msgid "Estado"
 msgstr "Status"
 
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "Estado actual: {estadoRotulo}."
+msgstr "Current status: {estadoRotulo}."
+
 #: src/routes/_app/matriculas/index.tsx
 msgid "Estado da matrícula"
 msgstr "Enrolment status"
@@ -2755,6 +2832,10 @@ msgstr "student"
 #: src/routes/_app/matriculas/index.tsx
 msgid "Estudante"
 msgstr "Student"
+
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "Estudante já registado"
+msgstr "Student already registered"
 
 #: src/routes/_app/documentos.tsx
 msgid "Estudante, código de estudante, número ou código"
@@ -2823,6 +2904,10 @@ msgstr "E.g.: Environmental Education"
 #: src/features/gerir-classes/ui/arvore-classes.tsx
 msgid "Ex.: Ensino primário"
 msgstr "E.g.: Primary education"
+
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Ex.: FAM-SILVA"
+msgstr "E.g.: FAM-SILVA"
 
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Ex.: licença de maternidade"
@@ -2947,6 +3032,7 @@ msgstr "Done"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+#: src/routes/_app/professores/$professorId.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Feminino"
 msgstr "Female"
@@ -2963,10 +3049,6 @@ msgstr "National holiday: cannot be deleted"
 #: src/routes/_app/calendario.tsx
 msgid "Feriados, datas-chave e interrupções"
 msgstr "Holidays, key dates and breaks"
-
-#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
-msgid "Fica na lista de estudantes sem turma, no quadro da distribuição."
-msgstr "Stays on the list of students without a class, on the distribution board."
 
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Ficam de fora"
@@ -3113,6 +3195,15 @@ msgstr "today"
 msgid "Horas por semana"
 msgstr "Hours per week"
 
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
+msgid "Idioma"
+msgstr "Language"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Idioma preferencial"
+msgstr "Preferred language"
+
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Igual ao primeiro num evento de um só dia."
 msgstr "Same as the first for a one-day event."
@@ -3197,13 +3288,53 @@ msgstr "Enter the destination school."
 msgid "Indique a escola de origem."
 msgstr "Enter the previous school."
 
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique a nacionalidade."
+msgstr "Enter the nationality."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique a província."
+msgstr "Enter the province."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique a rua e o número."
+msgstr "Enter the street and number."
+
 #: src/features/editar-plano/ui/editor-plano.tsx
 msgid "Indique entre 1 e 10 horas por semana."
 msgstr "Enter between 1 and 10 hours per week."
 
 #: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o bairro ou quarteirão."
+msgstr "Enter the neighbourhood or block."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o idioma preferencial."
+msgstr "Enter the preferred language."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o município."
+msgstr "Enter the municipality."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o nome da mãe."
+msgstr "Enter the mother's name."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o nome do pai."
+msgstr "Enter the father's name."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o número do documento ou escolha “Sem documento”."
+msgstr "Enter the document number or choose “No document”."
+
+#: src/features/matricular-estudante/model/esquema.ts
 msgid "Indique o parentesco."
 msgstr "Enter the relationship."
+
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "Indique o prefixo familiar."
+msgstr "Enter the family prefix."
 
 #: src/features/gerir-eventos/model/esquema.ts
 msgid "Indique o último dia."
@@ -3235,17 +3366,12 @@ msgid "Inscrever acima da lotação"
 msgstr "Enrol above capacity"
 
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
-#: src/features/matricular-existente/ui/matricular-existente.tsx
 msgid "Inscrever mais tarde"
 msgstr "Place in a class later"
 
 #: src/shared/config/glossario.ts
 msgid "Inscrever na turma"
 msgstr "Place in the class"
-
-#: src/features/matricular-estudante/ui/passo-classe-turma.tsx
-msgid "Inscrever na turma mais tarde"
-msgstr "Place in the class later"
 
 #: src/shared/config/glossario.ts
 msgid "inscrição"
@@ -3329,6 +3455,7 @@ msgstr "Dropping a student without a class into a class enrols them in it. Chang
 msgid "Legenda"
 msgstr "Legend"
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Licenciatura"
 msgstr "Bachelor’s degree"
@@ -3406,12 +3533,9 @@ msgstr "M"
 
 #: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Mãe"
 msgstr "Mother"
-
-#: src/features/matricular-estudante/ui/passo-dados.tsx
-msgid "Mais dados (opcionais)"
-msgstr "More details (optional)"
 
 #: src/entities/turma/model/mapeadores.ts
 #: src/features/gerir-turmas/ui/nova-turma.tsx
@@ -3427,6 +3551,7 @@ msgstr "Keep the current one"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+#: src/routes/_app/professores/$professorId.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Masculino"
 msgstr "Male"
@@ -3575,13 +3700,15 @@ msgstr "Previous month"
 msgid "Mês seguinte"
 msgstr "Next month"
 
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Mestrado"
 msgstr "Master’s degree"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
-#: src/features/matricular-estudante/ui/passo-dados.tsx
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+#: src/routes/_app/professores/$professorId.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Morada"
 msgstr "Address"
@@ -3650,6 +3777,8 @@ msgstr "Too many requests in a row. Wait a moment and try again."
 
 #: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/gerir-contas/ui/nova-conta.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Município"
 msgstr "Municipality"
@@ -3670,6 +3799,10 @@ msgstr "No. and verification code assigned on issue"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/gerir-contas/ui/nova-conta.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
+#: src/routes/_app/professores/$professorId.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Nacionalidade"
 msgstr "Nationality"
@@ -3679,6 +3812,7 @@ msgid "Nada encontrado. Experimente o código de estudante."
 msgstr "Nothing found. Try the student code."
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/routes/_app/professores/$professorId.tsx
 msgid "Não"
 msgstr "No"
 
@@ -3753,7 +3887,6 @@ msgid "Nascimento"
 msgstr "Birth"
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
-#: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "Naturalidade"
 msgstr "Place of birth"
@@ -3862,9 +3995,19 @@ msgstr "Name"
 msgid "Nome completo"
 msgstr "Full name"
 
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Nome da mãe"
+msgstr "Mother's name"
+
 #: src/features/guardar-vista/ui/vistas-guardadas.tsx
 msgid "Nome da vista"
 msgstr "View name"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+msgid "Nome do pai"
+msgstr "Father's name"
 
 #: src/routes/_app/estudantes/index.tsx
 msgid "Nome ou código de estudante"
@@ -3938,6 +4081,10 @@ msgstr "Number"
 msgid "Número copiado."
 msgstr "Number copied."
 
+#: src/features/matricular-estudante/ui/passo-dados.tsx
+msgid "Número do documento"
+msgstr "Document number"
+
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Nunca"
 msgstr "Never"
@@ -3949,6 +4096,10 @@ msgstr "The year {anoPlaneado} is planned. Finish opening it (or activate it) be
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "O ano {designacao} está em curso."
 msgstr "The year {designacao} is in progress."
+
+#: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
+msgid "O ano {designacao} foi activado."
+msgstr "The year {designacao} was activated."
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "O ano {designacao} foi encerrado. Fica só para consulta."
@@ -4021,6 +4172,10 @@ msgstr "The status becomes Transferred and the departure is recorded in the stud
 msgid "O estado volta a Activo e o reingresso fica no percurso. Depois matricule-o no ano em curso."
 msgstr "The status returns to Active and the re-admission is recorded in the student history. Then enrol them in the current year."
 
+#: src/features/matricular-estudante/model/esquema.ts
+msgid "O estudante deve ter pelo menos 18 meses."
+msgstr "The student must be at least 18 months old."
+
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/shared/lib/erros-dominio.ts
 msgid "O estudante precisa de pelo menos um encarregado."
@@ -4045,6 +4200,10 @@ msgstr "The file only has the header."
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "O motivo fica no percurso do estudante."
 msgstr "The reason is recorded in the student history."
+
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "O perfil já foi criado com estes dados pessoais. Retome a operação com os dados originais."
+msgstr "The profile was already created with these personal details. Resume the operation with the original details."
 
 #: src/routes/_app/curriculo/index.tsx
 msgid "O plano diz que disciplinas a classe tem e com que carga semanal."
@@ -4090,10 +4249,6 @@ msgstr "The server does not report pending items yet. When the year is closed, i
 msgid "O servidor atribui o número de agente, o email da escola e a palavra-passe inicial."
 msgstr "The server assigns the agent number, the school email and the initial password."
 
-#: src/features/matricular-estudante/model/matricular-sis.ts
-msgid "O servidor pede o nome e o telefone do pai e da mãe. Acrescente-os como encarregados, com o parentesco Pai e Mãe."
-msgstr "The server requires the name and phone number of the father and the mother. Add them as guardians, with the relationship Father and Mother."
-
 #: src/features/matricular-existente/model/use-matricular-existente.ts
 msgid "O servidor só matricula numa turma. Escolha a turma."
 msgstr "The server only enrols into a class. Choose the class."
@@ -4106,6 +4261,10 @@ msgstr "Your profile does not allow importing students."
 #: src/features/editar-turma/ui/dados-turma.tsx
 msgid "O seu valor"
 msgstr "Your value"
+
+#: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
+msgid "O SIS guarda os dados dos pais e do encarregado principal no perfil do estudante. A gestão de encarregados separados ainda não está disponível."
+msgstr "The SIS keeps the parents' and main guardian's details in the student profile. Managing separate guardians is not available yet."
 
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/matricular-estudante/model/esquema.ts
@@ -4174,10 +4333,6 @@ msgstr "Optional. E.g.: change of residence."
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Opcional. Igual para todos."
 msgstr "Optional. The same for everyone."
-
-#: src/features/matricular-existente/ui/matricular-existente.tsx
-msgid "Opcional. Sem turma, fica no quadro para distribuir."
-msgstr "Optional. Without a class, it stays on the board to be distributed."
 
 #: src/shared/ui/selector.tsx
 msgid "Opções"
@@ -4248,6 +4403,7 @@ msgstr "Pagination"
 
 #: src/entities/estudante/model/mapeadores.ts
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
 msgid "Pai"
 msgstr "Father"
 
@@ -4307,6 +4463,10 @@ msgstr "Relationship"
 msgid "Passa a ser o ano em curso: o ano que todos vêem por omissão no cabeçalho."
 msgstr "It becomes the current year: the year everyone sees by default in the header."
 
+#: src/features/matricular-estudante/ui/passo-dados.tsx
+msgid "Passaporte"
+msgstr "Passport"
+
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Passo {numero} de 5: {nome}"
 msgstr "Step {numero} of 5: {nome}"
@@ -4353,6 +4513,10 @@ msgstr "Student history of {nome}"
 #: src/routes/_app/definicoes/utilizadores.tsx
 msgid "Perfil"
 msgstr "Profile"
+
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+msgid "Perfil de {nome} criado; matrícula por confirmar"
+msgstr "{nome}'s profile created; enrolment to be confirmed"
 
 #: src/routes/_app/definicoes.tsx
 #: src/routes/_app/definicoes/perfis.tsx
@@ -4459,6 +4623,12 @@ msgstr "Preferences"
 msgid "Preferências e a sua conta."
 msgstr "Preferences and your account."
 
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-encarregados.tsx
+#: src/features/matricular-estudante/ui/passo-revisao.tsx
+msgid "Prefixo familiar"
+msgstr "Family prefix"
+
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Preparar as turmas"
 msgstr "Prepare the classes"
@@ -4548,6 +4718,8 @@ msgstr "Proposal ({nPropostas})"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/gerir-contas/ui/nova-conta.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Província"
 msgstr "Province"
@@ -4927,6 +5099,8 @@ msgstr "Review"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
 #: src/features/gerir-contas/ui/nova-conta.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Rua e número"
 msgstr "Street and number"
@@ -4950,6 +5124,7 @@ msgid "Saltar para o conteúdo"
 msgstr "Skip to content"
 
 #: src/entities/estudante/model/mapeadores.ts
+#: src/entities/professor/model/mapeadores.ts
 #: src/features/criar-professor/ui/novo-professor.tsx
 msgid "Saúde"
 msgstr "Health"
@@ -5024,6 +5199,7 @@ msgid "Sem docente"
 msgstr "No teacher"
 
 #: src/features/emitir-documento/ui/emitir-lote.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Sem documento"
 msgstr "No document"
 
@@ -5093,6 +5269,7 @@ msgstr "Session locked"
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+#: src/routes/_app/professores/$professorId.tsx
 #: src/shared/ui/campos-pessoa.tsx
 msgid "Sexo"
 msgstr "Sex"
@@ -5102,6 +5279,7 @@ msgid "Sigla"
 msgstr "Abbreviation"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/routes/_app/professores/$professorId.tsx
 msgid "Sim"
 msgstr "Yes"
 
@@ -5189,6 +5367,7 @@ msgid "Sugerida"
 msgstr "Suggested"
 
 #: src/features/criar-professor/ui/novo-professor.tsx
+#: src/routes/_app/professores/$professorId.tsx
 msgid "Supervisor"
 msgstr "Supervisor"
 
@@ -5217,9 +5396,7 @@ msgstr "Background tasks"
 #: src/features/editar-estudante/ui/dados-estudante.tsx
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
-#: src/features/matricular-estudante/ui/passo-dados.tsx
 #: src/features/matricular-estudante/ui/passo-encarregados.tsx
-#: src/features/matricular-estudante/ui/passo-revisao.tsx
 #: src/routes/_app/estudantes/index.tsx
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 #: src/routes/_app/professores/$professorId.tsx
@@ -5261,6 +5438,8 @@ msgid "Tipo"
 msgstr "Type"
 
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
+#: src/features/matricular-estudante/ui/assistente-matricula.tsx
+#: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Tipo de documento"
 msgstr "Document type"
 
@@ -5400,6 +5579,10 @@ msgstr "Full class: accepts no more students."
 #: src/features/distribuir-turmas/ui/distribuir-automaticamente.tsx
 msgid "Turma de {nome}"
 msgstr "Class of {nome}"
+
+#: src/features/matricular-estudante/model/matricular-sis.ts
+msgid "Turma indisponível"
+msgstr "Class unavailable"
 
 #: src/shared/config/glossario.ts
 msgid "turmas"
