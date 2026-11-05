@@ -183,9 +183,6 @@ export function permissoesDoPapel(papel: string | undefined): string[] {
 }
 
 /** Traduz permissões do backend; o papel só acrescenta acções de rotas que usam @Roles. */
-export function permissoesDoSis(
-  permissoes: readonly string[],
-  papel?: string,
-): string[] {
+export function permissoesDoSis(permissoes: readonly string[], papel?: string): string[] {
   return traduzir(permissoes, ePapel(papel) ? papel : undefined)
 }

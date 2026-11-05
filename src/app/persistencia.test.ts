@@ -30,7 +30,10 @@ describe('dados de referência em disco', () => {
   it('só a referência vai para disco; dados pessoais nunca', () => {
     expect(eReferencia(['classes'])).toBe(true)
     expect(eReferencia(['classes', 'ciclos'])).toBe(true)
+    expect(eReferencia(['classes', 'ano-2026'])).toBe(true)
+    expect(eReferencia(['classes', 'ciclos', 'ano-2026'])).toBe(true)
     expect(eReferencia(['disciplinas'])).toBe(true)
+    expect(eReferencia(['disciplinas', 'ano-2026'])).toBe(true)
     expect(eReferencia(['anos-lectivos'])).toBe(true)
     expect(eReferencia(['calendario', 'ano-2026'])).toBe(true)
     expect(eReferencia(['estudantes', 'lista', {}])).toBe(false)

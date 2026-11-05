@@ -160,11 +160,7 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
             control={control}
             name="estudante.tipoDocumento"
             render={({ field, fieldState }) => (
-              <Campo
-                rotulo={t`Tipo de documento`}
-                obrigatorio
-                erro={fieldState.error?.message}
-              >
+              <Campo rotulo={t`Tipo de documento`} obrigatorio erro={fieldState.error?.message}>
                 {(c) => (
                   <Selector
                     {...c}
@@ -197,11 +193,7 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
           <Campo rotulo={t`Nacionalidade`} obrigatorio erro={e?.nacionalidade?.message}>
             {(c) => <Entrada {...c} {...register('estudante.nacionalidade')} />}
           </Campo>
-          <Campo
-            rotulo={t`Rua e número`}
-            obrigatorio
-            erro={e?.endereco?.streetAndNumber?.message}
-          >
+          <Campo rotulo={t`Rua e número`} obrigatorio erro={e?.endereco?.streetAndNumber?.message}>
             {(c) => <Entrada {...c} {...register('estudante.endereco.streetAndNumber')} />}
           </Campo>
           <Campo
@@ -211,18 +203,10 @@ export function PassoDados({ anoInicio }: { anoInicio?: string }) {
           >
             {(c) => <Entrada {...c} {...register('estudante.endereco.neighborhood')} />}
           </Campo>
-          <Campo
-            rotulo={t`Município`}
-            obrigatorio
-            erro={e?.endereco?.municipality?.message}
-          >
+          <Campo rotulo={t`Município`} obrigatorio erro={e?.endereco?.municipality?.message}>
             {(c) => <Entrada {...c} {...register('estudante.endereco.municipality')} />}
           </Campo>
-          <Campo
-            rotulo={t`Província`}
-            obrigatorio
-            erro={e?.endereco?.province?.message}
-          >
+          <Campo rotulo={t`Província`} obrigatorio erro={e?.endereco?.province?.message}>
             {(c) => <Entrada {...c} {...register('estudante.endereco.province')} />}
           </Campo>
         </div>

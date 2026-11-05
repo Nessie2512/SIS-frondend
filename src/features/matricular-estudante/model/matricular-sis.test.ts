@@ -6,11 +6,7 @@ import { AREAS_API, definirAreasReais } from '@/shared/config/ligacao'
 import { escutarEscritas } from '@/test/hook-sis'
 import { estudantesSis, handlersSis } from '@/test/sis'
 import { VALORES_INICIAIS, type DadosMatricula } from './esquema'
-import {
-  matricularNoSis,
-  paraNovoEstudanteSis,
-  type MatriculaSisCache,
-} from './matricular-sis'
+import { matricularNoSis, paraNovoEstudanteSis, type MatriculaSisCache } from './matricular-sis'
 
 beforeEach(() => {
   definirAreasReais(AREAS_API)

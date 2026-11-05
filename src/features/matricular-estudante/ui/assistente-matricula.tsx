@@ -329,10 +329,8 @@ function MatriculaConcluida({
             : t`Matrícula de ${nome} registada`}
         </h2>
         <p className="tabular text-texto-2">
-          {codigo
-            ? t`Código de estudante: ${codigo}`
-            : t`Código de estudante não devolvido`}{' '}
-          · {matricula.classe} · {matricula.turma ?? t`sem turma`}
+          {codigo ? t`Código de estudante: ${codigo}` : t`Código de estudante não devolvido`} ·{' '}
+          {matricula.classe} · {matricula.turma ?? t`sem turma`}
         </p>
       </div>
       <EtiquetaEstado tom={matricula.estadoTom}>{matricula.estadoRotulo}</EtiquetaEstado>

@@ -1,11 +1,6 @@
 import { queryOptions } from '@tanstack/react-query'
 import { api, type components } from '@/shared/api'
-import {
-  porId,
-  referenciaSis,
-  type ClasseSis,
-  type NivelSis,
-} from '@/shared/api/sis'
+import { porId, referenciaSis, type ClasseSis, type NivelSis } from '@/shared/api/sis'
 import { FRESCURA } from '@/shared/config/constantes'
 import { eReal } from '@/shared/config/ligacao'
 

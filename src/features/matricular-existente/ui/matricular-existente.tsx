@@ -109,10 +109,7 @@ export function MatricularExistente({
             )}
           </Campo>
           {classeId && (
-            <Campo
-              rotulo={t`Turma`}
-              obrigatorio
-            >
+            <Campo rotulo={t`Turma`} obrigatorio>
               {(c) => (
                 <Selector
                   {...c}

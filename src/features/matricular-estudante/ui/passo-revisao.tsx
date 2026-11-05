@@ -39,7 +39,10 @@ export function PassoRevisao({
           valor={e.dataNascimento ? formatarDataCivil(e.dataNascimento) : '—'}
         />
         <Linha rotulo={t`Sexo`} valor={e.sexo === 'F' ? t`Feminino` : t`Masculino`} />
-        <Linha rotulo={t`Documento`} valor={`${e.tipoDocumento} · ${e.documentoIdentificacao || '—'}`} />
+        <Linha
+          rotulo={t`Documento`}
+          valor={`${e.tipoDocumento} · ${e.documentoIdentificacao || '—'}`}
+        />
         <Linha rotulo={t`Nacionalidade`} valor={e.nacionalidade} />
         <Linha
           rotulo={t`Morada`}
