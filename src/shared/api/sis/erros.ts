@@ -76,11 +76,7 @@ type CorpoNest = {
   statusCode?: unknown
 }
 
-export function problemaDoSis(
-  status: number,
-  corpo: unknown,
-  requestId?: string,
-): ProblemaSis {
+export function problemaDoSis(status: number, corpo: unknown, requestId?: string): ProblemaSis {
   if (corpo && typeof corpo === 'object' && 'title' in corpo && 'status' in corpo) {
     const problema = doProblemJson(status, corpo as CorpoProblema)
     return { ...problema, requestId: requestId ?? problema.requestId }

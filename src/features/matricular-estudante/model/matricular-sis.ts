@@ -84,7 +84,10 @@ export async function matricularNoSis(
     })
   }
   const turma = dados.turmaId ? turmas.find((item) => item.uuid === dados.turmaId) : undefined
-  if (dados.turmaId && (!turma || turma.academicYearId !== academicYearId || turma.gradeId !== classe.id)) {
+  if (
+    dados.turmaId &&
+    (!turma || turma.academicYearId !== academicYearId || turma.gradeId !== classe.id)
+  ) {
     throw new ApiError(409, {
       title: i18n._(msg`Turma indisponível`),
       detail: i18n._(msg`A turma escolhida não pertence à classe e ao ano letivo selecionados.`),
@@ -128,10 +131,9 @@ export async function matricularNoSis(
     }
   }
 
-  const estudante =
-    guardado.matriculaConfirmada
-      ? await estudanteNoAnoSis(qc, guardado.estudante.uuid, anoLectivoId)
-      : guardado.estudante
+  const estudante = guardado.matriculaConfirmada
+    ? await estudanteNoAnoSis(qc, guardado.estudante.uuid, anoLectivoId)
+    : guardado.estudante
   return paraMatricula({
     id: '',
     estudanteId: estudante.uuid,

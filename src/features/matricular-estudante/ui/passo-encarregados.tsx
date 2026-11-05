@@ -25,10 +25,12 @@ export function PassoEncarregados() {
         <Campo rotulo={t`Nome do pai`} obrigatorio erro={dadosEstudante?.fatherName?.message}>
           {(c) => <Entrada {...c} {...register('estudante.fatherName')} />}
         </Campo>
-        <Campo rotulo={t`Contacto do pai`} obrigatorio erro={dadosEstudante?.fatherContact?.message}>
-          {(c) => (
-            <Entrada {...c} inputMode="tel" {...register('estudante.fatherContact')} />
-          )}
+        <Campo
+          rotulo={t`Contacto do pai`}
+          obrigatorio
+          erro={dadosEstudante?.fatherContact?.message}
+        >
+          {(c) => <Entrada {...c} inputMode="tel" {...register('estudante.fatherContact')} />}
         </Campo>
         <Campo rotulo={t`Nome da mãe`} obrigatorio erro={dadosEstudante?.motherName?.message}>
           {(c) => <Entrada {...c} {...register('estudante.motherName')} />}
@@ -38,9 +40,7 @@ export function PassoEncarregados() {
           obrigatorio
           erro={dadosEstudante?.motherContact?.message}
         >
-          {(c) => (
-            <Entrada {...c} inputMode="tel" {...register('estudante.motherContact')} />
-          )}
+          {(c) => <Entrada {...c} inputMode="tel" {...register('estudante.motherContact')} />}
         </Campo>
         <Campo
           rotulo={t`Idioma preferencial`}

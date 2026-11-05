@@ -25,28 +25,58 @@ export const esquemaDados = z.object({
   dataNascimento: z
     .string()
     .min(1, { error: m(msg`Indique a data de nascimento.`) })
-    .refine((v) => {
-      const data = new Date(`${v}T00:00:00`)
-      return !Number.isNaN(data.getTime()) && isBefore(data, subMonths(new Date(), 18))
-    }, { error: m(msg`O estudante deve ter pelo menos 18 meses.`) }),
+    .refine(
+      (v) => {
+        const data = new Date(`${v}T00:00:00`)
+        return !Number.isNaN(data.getTime()) && isBefore(data, subMonths(new Date(), 18))
+      },
+      { error: m(msg`O estudante deve ter pelo menos 18 meses.`) },
+    ),
   sexo: z.enum(['M', 'F'], { error: m(msg`Escolha o sexo.`) }),
   tipoDocumento: z.enum(['BI', 'PASSPORT', 'BIRTH_CERTIFICATE', 'N/A'], {
     error: m(msg`Escolha o tipo de documento.`),
   }),
   documentoIdentificacao: z.string().trim(),
   endereco: z.object({
-    streetAndNumber: z.string().trim().min(1, { error: m(msg`Indique a rua e o número.`) }),
-    neighborhood: z.string().trim().min(1, { error: m(msg`Indique o bairro ou quarteirão.`) }),
-    municipality: z.string().trim().min(1, { error: m(msg`Indique o município.`) }),
-    province: z.string().trim().min(1, { error: m(msg`Indique a província.`) }),
+    streetAndNumber: z
+      .string()
+      .trim()
+      .min(1, { error: m(msg`Indique a rua e o número.`) }),
+    neighborhood: z
+      .string()
+      .trim()
+      .min(1, { error: m(msg`Indique o bairro ou quarteirão.`) }),
+    municipality: z
+      .string()
+      .trim()
+      .min(1, { error: m(msg`Indique o município.`) }),
+    province: z
+      .string()
+      .trim()
+      .min(1, { error: m(msg`Indique a província.`) }),
   }),
-  nacionalidade: z.string().trim().min(1, { error: m(msg`Indique a nacionalidade.`) }),
-  fatherName: z.string().trim().min(1, { error: m(msg`Indique o nome do pai.`) }),
+  nacionalidade: z
+    .string()
+    .trim()
+    .min(1, { error: m(msg`Indique a nacionalidade.`) }),
+  fatherName: z
+    .string()
+    .trim()
+    .min(1, { error: m(msg`Indique o nome do pai.`) }),
   fatherContact: telefone,
-  motherName: z.string().trim().min(1, { error: m(msg`Indique o nome da mãe.`) }),
+  motherName: z
+    .string()
+    .trim()
+    .min(1, { error: m(msg`Indique o nome da mãe.`) }),
   motherContact: telefone,
-  bestLanguage: z.string().trim().min(1, { error: m(msg`Indique o idioma preferencial.`) }),
-  familyPrefix: z.string().trim().min(1, { error: m(msg`Indique o prefixo familiar.`) }),
+  bestLanguage: z
+    .string()
+    .trim()
+    .min(1, { error: m(msg`Indique o idioma preferencial.`) }),
+  familyPrefix: z
+    .string()
+    .trim()
+    .min(1, { error: m(msg`Indique o prefixo familiar.`) }),
 })
 
 export const esquemaDuplicado = z.object({
