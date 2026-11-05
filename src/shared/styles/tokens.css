@@ -47,7 +47,7 @@
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter Variable', system-ui, sans-serif;
   /* Documentos impressos (modelos da secretaria): serifada, como no papel timbrado */
-  --font-documento: Cambria, 'Times New Roman', Georgia, serif;
+  --font-documento: Georgia, 'Times New Roman', serif;
 
   --color-fundo: #f6f6f8;
   --color-superficie: #ffffff;
@@ -105,10 +105,13 @@
       transform: translateX(100%);
     }
   }
+  /* Só o movimento relativo: o centrar do diálogo usa a propriedade translate (-translate-1/2 do
+     Tailwind), que se soma a transform; repetir aqui o -50% atirava-o para cima e para a
+     esquerda durante a entrada */
   @keyframes dialogo-entrar {
     from {
       opacity: 0;
-      transform: translate(-50%, -48%) scale(0.97);
+      transform: translateY(2%) scale(0.97);
     }
   }
   @keyframes gaveta-entrar {
@@ -332,7 +335,7 @@
     width: auto !important;
     min-height: 0 !important;
     margin: 0 !important;
-    padding: 15mm !important;
+    padding: 10mm 15mm 14mm 12.5mm !important;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
     border-radius: 0 !important;

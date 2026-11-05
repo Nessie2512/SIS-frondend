@@ -115,7 +115,8 @@ export function Dialogo({
         <Dialog.Content
           aria-busy={pendente || undefined}
           className={cn(
-            'fixed top-1/2 left-1/2 z-50 flex w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-6',
+            // Nunca maior que o ecrã: o conteúdo longo rola dentro do diálogo
+            'fixed top-1/2 left-1/2 z-50 flex max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] max-w-md -translate-x-1/2 -translate-y-1/2 flex-col gap-6 overflow-y-auto',
             'rounded-folha bg-superficie p-6 shadow-flutuante data-[state=open]:animate-dialogo-entrar',
           )}
         >
