@@ -105,10 +105,13 @@
       transform: translateX(100%);
     }
   }
+  /* Só o movimento relativo: o centrar do diálogo usa a propriedade translate (-translate-1/2 do
+     Tailwind), que se soma a transform; repetir aqui o -50% atirava-o para cima e para a
+     esquerda durante a entrada */
   @keyframes dialogo-entrar {
     from {
       opacity: 0;
-      transform: translate(-50%, -48%) scale(0.97);
+      transform: translateY(2%) scale(0.97);
     }
   }
   @keyframes gaveta-entrar {
