@@ -278,17 +278,27 @@
 }
 
 /* Impressão (guia 7.6): listas nominais e fichas imprimem-se limpas, sem casca nem cor de fundo */
+/*
+ * Página sem margens: o navegador só imprime o cabeçalho e o rodapé dele (data, título, endereço
+ * e número da página) quando há margem onde os pôr, e esses dados não fazem parte dos modelos. A
+ * margem do papel passa a ser o espaço interior da folha, repetido em cada página (ver .papel).
+ */
 @page {
-  margin: 15mm;
+  margin: 0;
 }
 
 /* Listas largas (lista nominal): A4 deitada */
 @page paisagem {
   size: A4 landscape;
-  margin: 12mm;
+  margin: 0;
 }
 .papel-paisagem {
   page: paisagem;
+}
+@media print {
+  .papel.papel-paisagem {
+    padding: 12mm !important;
+  }
 }
 
 @media print {
@@ -316,14 +326,25 @@
   .nao-imprimir {
     display: none !important;
   }
-  /* A folha ocupa a página: sem margens de ecrã, sem moldura */
+  /* A folha ocupa a página: sem margens de ecrã, sem moldura; o espaço interior faz de margem do
+     papel e repete-se no topo e no fundo de cada página */
   .papel {
     width: auto !important;
     min-height: 0 !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 15mm !important;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
     border-radius: 0 !important;
     outline: none !important;
+  }
+  /* Rodapé dos documentos: no fundo de cada página, dentro do espaço da margem */
+  .rodape-documento {
+    position: fixed;
+    right: 0;
+    bottom: 6mm;
+    left: 0;
+    padding: 0 !important;
   }
   * {
     box-shadow: none !important;

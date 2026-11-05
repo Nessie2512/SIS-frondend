@@ -3,8 +3,6 @@ import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
 import { inscritosQuery, turmaQuery } from '@/entities/turma'
-import { meQuery } from '@/entities/utilizador'
-import { formatarInstante } from '@/shared/lib/datas'
 import { formatarTelefone } from '@/shared/lib/formatar'
 import { CabecalhoImpressao, ErroDeRota, Esqueleto, PreVisualizacaoImpressao } from '@/shared/ui'
 import { exigir } from '../../-acesso'
@@ -31,14 +29,11 @@ function ListaNominal() {
   const { turmaId } = Route.useParams()
   const { data: turma } = useQuery(turmaQuery(turmaId))
   const { data: inscritos } = useQuery(inscritosQuery(turmaId))
-  const { data: eu } = useQuery(meQuery())
   if (!turma || !inscritos) return <Esqueleto className="h-[60vh] w-full" />
 
   const designacao = turma.designacao
   const director = turma.directorTurma?.nome ?? '—'
   const lista = [...inscritos].sort((a, b) => a.nome.localeCompare(b.nome, 'pt'))
-  const emitida = formatarInstante(new Date())
-  const autor = eu?.nome ?? ''
 
   return (
     <PreVisualizacaoImpressao
@@ -108,9 +103,6 @@ function ListaNominal() {
           </tbody>
         </table>
       )}
-      <footer className="mt-auto pt-3 text-legenda text-texto-3">
-        {t`Emitida em ${emitida} por ${autor}`}
-      </footer>
     </PreVisualizacaoImpressao>
   )
 }

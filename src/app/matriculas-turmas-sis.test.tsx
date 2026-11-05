@@ -125,10 +125,14 @@ describe('Impressão com o backend SIS', () => {
       name: '2. Informação do encarregado de educação',
     }).parentElement!
     expect(encarregado).toHaveTextContent(
-      /telefone principal \+244 923 000 002, pelo telefone alternativo \+244 923 000 001/,
+      /telefone principal \+244 923 000 002 ou pelo telefone alternativo \+244 923 000 001/,
     )
-    // O BI do encarregado e o e-mail não existem no sistema: ficam para preencher à mão
-    expect(within(encarregado).getAllByLabelText('por preencher')).toHaveLength(2)
+    // O que o servidor não traz (BI do encarregado, e-mail) não entra no termo
+    expect(encarregado).not.toHaveTextContent(/bilhete de identidade|e-mail/)
+    expect(encarregado).toHaveTextContent(/\+244 923 000 001\.$/)
+    expect(
+      screen.getByText('SIS system powered by Serve.io | Bright Minds Academy'),
+    ).toBeInTheDocument()
     expect(screen.queryByRole('heading', { name: 'Documentos' })).toBeNull()
   })
 })

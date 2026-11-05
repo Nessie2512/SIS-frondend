@@ -131,14 +131,6 @@ msgstr "{emFalta, plural, one {Marcar o # em falta como aprovado} other {Marcar 
 msgid "{emFalta} em falta"
 msgstr "{emFalta} em falta"
 
-#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
-msgid "{encarregado} actua na qualidade de encarregado de educação da estudante {estudante}, do sexo feminino, nascida em {nascimento}, portadora do documento de identificação {documento}. Com a assinatura deste termo, a estudante fica registada com o código de estudante {codigo} e matriculada em {classeTurma} no presente ano lectivo, sob o acompanhamento pedagógico do director de turma {director}."
-msgstr "{encarregado} actua na qualidade de encarregado de educação da estudante {estudante}, do sexo feminino, nascida em {nascimento}, portadora do documento de identificação {documento}. Com a assinatura deste termo, a estudante fica registada com o código de estudante {codigo} e matriculada em {classeTurma} no presente ano lectivo, sob o acompanhamento pedagógico do director de turma {director}."
-
-#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
-msgid "{encarregado} actua na qualidade de encarregado de educação do estudante {estudante}, do sexo masculino, nascido em {nascimento}, portador do documento de identificação {documento}. Com a assinatura deste termo, o estudante fica registado com o código de estudante {codigo} e matriculado em {classeTurma} no presente ano lectivo, sob o acompanhamento pedagógico do director de turma {director}."
-msgstr "{encarregado} actua na qualidade de encarregado de educação do estudante {estudante}, do sexo masculino, nascido em {nascimento}, portador do documento de identificação {documento}. Com a assinatura deste termo, o estudante fica registado com o código de estudante {codigo} e matriculado em {classeTurma} no presente ano lectivo, sob o acompanhamento pedagógico do director de turma {director}."
-
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 msgid "{errosLidos, plural, one {# com erros.} other {# com erros.}}"
 msgstr "{errosLidos, plural, one {# com erros.} other {# com erros.}}"
@@ -374,6 +366,14 @@ msgstr "{nome} sobre {destino}."
 #: src/features/alterar-estado-professor/ui/menu-estado-professor.tsx
 msgid "{nome}: {rotulo}."
 msgstr "{nome}: {rotulo}."
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "{nomeEncarregado} actua na qualidade de encarregado de educação da estudante {estudante}"
+msgstr "{nomeEncarregado} actua na qualidade de encarregado de educação da estudante {estudante}"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "{nomeEncarregado} actua na qualidade de encarregado de educação do estudante {estudante}"
+msgstr "{nomeEncarregado} actua na qualidade de encarregado de educação do estudante {estudante}"
 
 #: src/features/gerir-encarregados/ui/encarregados-estudante.tsx
 msgid "{nomeExistente} já está registado com este telefone. Ligue-o em vez de criar outra vez."
@@ -701,6 +701,10 @@ msgstr "A escola de origem e as classes lá concluídas entram no percurso."
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "A escola não se responsabiliza pela perda ou dano de objectos pessoais não autorizados (ex.: aparelhos electrónicos, jóias de valor). Os aparelhos electrónicos só podem ser usados com autorização expressa do professor."
 msgstr "A escola não se responsabiliza pela perda ou dano de objectos pessoais não autorizados (ex.: aparelhos electrónicos, jóias de valor). Os aparelhos electrónicos só podem ser usados com autorização expressa do professor."
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "A estudante {estudante}"
+msgstr "A estudante {estudante}"
 
 #: src/shared/ui/pre-visualizacao-impressao.tsx
 msgid "A folha abaixo é o que vai ser impresso. Para PDF, escolha «Guardar como PDF»."
@@ -1624,6 +1628,14 @@ msgstr "Coluna"
 msgid "Colunas:"
 msgstr "Colunas:"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Com a assinatura deste termo, a estudante fica"
+msgstr "Com a assinatura deste termo, a estudante fica"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Com a assinatura deste termo, o estudante fica"
+msgstr "Com a assinatura deste termo, o estudante fica"
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Com documentos obrigatórios em falta"
 msgstr "Com documentos obrigatórios em falta"
@@ -2238,6 +2250,14 @@ msgstr "Distribuir os estudantes pelas turmas"
 msgid "Distribuir por turmas"
 msgstr "Distribuir por turmas"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "do sexo feminino"
+msgstr "do sexo feminino"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "do sexo masculino"
+msgstr "do sexo masculino"
+
 #: src/entities/administracao/model/mapeadores.ts
 #: src/features/atribuir-docente/ui/docentes-turma.tsx
 msgid "Docente"
@@ -2333,6 +2353,10 @@ msgstr "Duplicar as turmas"
 #: src/features/gerir-ano-lectivo/ui/abertura-ano.tsx
 msgid "Duplique a estrutura do ano em curso."
 msgstr "Duplique a estrutura do ano em curso."
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "e"
+msgstr "e"
 
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
 msgid "É obrigatório o respeito pelos professores, pelo pessoal administrativo, pelos colegas e pelo património da escola."
@@ -2435,10 +2459,6 @@ msgstr "Email"
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Emissão em lote iniciada. Pode continuar a trabalhar."
 msgstr "Emissão em lote iniciada. Pode continuar a trabalhar."
-
-#: src/routes/_app/imprimir/turma.$turmaId.tsx
-msgid "Emitida em {emitida} por {autor}"
-msgstr "Emitida em {emitida} por {autor}"
 
 #: src/routes/_app/documentos.tsx
 msgid "Emitido"
@@ -2906,8 +2926,8 @@ msgid "Este professor não existe."
 msgstr "Este professor não existe."
 
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
-msgid "Este termo diz respeito a {encarregado}, titular do bilhete de identidade n.º {biEncarregado}, que actua em plena capacidade legal como encarregado de educação principal do estudante matriculado."
-msgstr "Este termo diz respeito a {encarregado}, titular do bilhete de identidade n.º {biEncarregado}, que actua em plena capacidade legal como encarregado de educação principal do estudante matriculado."
+msgid "Este termo diz respeito a {nomeEncarregado}, que actua em plena capacidade legal como encarregado de educação principal do estudante matriculado."
+msgstr "Este termo diz respeito a {nomeEncarregado}, que actua em plena capacidade legal como encarregado de educação principal do estudante matriculado."
 
 #: src/shared/config/glossario.ts
 msgid "estudante"
@@ -3707,6 +3727,14 @@ msgstr "matrícula por confirmar"
 msgid "Matrícula por confirmar: confirme-a antes de inscrever."
 msgstr "Matrícula por confirmar: confirme-a antes de inscrever."
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "matriculada em {classeTurma} no presente ano lectivo"
+msgstr "matriculada em {classeTurma} no presente ano lectivo"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "matriculado em {classeTurma} no presente ano lectivo"
+msgstr "matriculado em {classeTurma} no presente ano lectivo"
+
 #: src/routes/_app/estudantes/index.tsx
 msgid "Matriculados sem turma"
 msgstr "Matriculados sem turma"
@@ -3987,6 +4015,14 @@ msgstr "Não tem permissão para esta acção."
 #: src/routes/_app/matriculas/renovar.tsx
 msgid "Não tem permissão para renovar matrículas."
 msgstr "Não tem permissão para renovar matrículas."
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "nascida em {nascimento}"
+msgstr "nascida em {nascimento}"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "nascido em {nascimento}"
+msgstr "nascido em {nascimento}"
 
 #: src/features/importar-estudantes/ui/importar-estudantes.tsx
 #: src/features/matricular-estudante/ui/passo-revisao.tsx
@@ -4276,8 +4312,8 @@ msgid "O encarregado de educação deve informar por escrito a administração d
 msgstr "O encarregado de educação deve informar por escrito a administração da escola de qualquer doença preexistente, alergia ou medicação necessária."
 
 #: src/routes/_app/imprimir/estudante.$estudanteId.tsx
-msgid "O encarregado de educação principal tem residência permanente em {morada}. Para comunicações oficiais, avisos administrativos e correspondência corrente, a administração da escola pode contactá-lo directamente pelo telefone principal {telefone}, pelo telefone alternativo {telefoneAlternativo} ou pelo e-mail {email}."
-msgstr "O encarregado de educação principal tem residência permanente em {morada}. Para comunicações oficiais, avisos administrativos e correspondência corrente, a administração da escola pode contactá-lo directamente pelo telefone principal {telefone}, pelo telefone alternativo {telefoneAlternativo} ou pelo e-mail {email}."
+msgid "O encarregado de educação principal tem residência permanente em {morada}."
+msgstr "O encarregado de educação principal tem residência permanente em {morada}."
 
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "O estado passa a Desistente; pode voltar com um reingresso."
@@ -4290,6 +4326,10 @@ msgstr "O estado passa a Transferido e a saída fica no percurso."
 #: src/features/mudar-situacao/ui/menu-situacao.tsx
 msgid "O estado volta a Activo e o reingresso fica no percurso. Depois matricule-o no ano em curso."
 msgstr "O estado volta a Activo e o reingresso fica no percurso. Depois matricule-o no ano em curso."
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "O estudante {estudante}"
+msgstr "O estudante {estudante}"
 
 #: src/features/matricular-estudante/model/esquema.ts
 msgid "O estudante deve ter pelo menos 18 meses."
@@ -4501,6 +4541,10 @@ msgstr "Os resultados registam-se para as matrículas confirmadas."
 msgid "Os trimestres, os feriados e as datas-chave são gerados e podem ser revistos no calendário."
 msgstr "Os trimestres, os feriados e as datas-chave são gerados e podem ser revistos no calendário."
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "ou"
+msgstr "ou"
+
 #: src/entities/estudante/model/mapeadores.ts
 msgid "Outra"
 msgstr "Outra"
@@ -4567,6 +4611,10 @@ msgstr "Para {designacao}. Os aprovados passam à classe seguinte; os reprovados
 msgid "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
 msgstr "Para arrastar, carregue em Espaço; mova com as setas e largue com Espaço. Esc cancela."
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "Para comunicações oficiais, avisos administrativos e correspondência corrente, a administração da escola pode contactá-lo directamente"
+msgstr "Para comunicações oficiais, avisos administrativos e correspondência corrente, a administração da escola pode contactá-lo directamente"
+
 #: src/features/emitir-documento/ui/documentos-oficiais.tsx
 #: src/features/emitir-documento/ui/emitir-lote.tsx
 msgid "Para efeitos de"
@@ -4625,6 +4673,18 @@ msgstr "Pedir excepção"
 #: src/features/inscrever-na-turma/ui/quadro-turmas.tsx
 msgid "Pedir excepção de lotação"
 msgstr "Pedir excepção de lotação"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "pelo e-mail {email}"
+msgstr "pelo e-mail {email}"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "pelo telefone alternativo {telefoneAlternativo}"
+msgstr "pelo telefone alternativo {telefoneAlternativo}"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "pelo telefone principal {telefone}"
+msgstr "pelo telefone principal {telefone}"
 
 #: src/features/gerir-ano-lectivo/ui/encerramento-ano.tsx
 msgid "Pendências do encerramento"
@@ -4714,10 +4774,6 @@ msgstr "Por fazer"
 msgid "Por inactividade. O que estava a fazer continua guardado, {nome}."
 msgstr "Por inactividade. O que estava a fazer continua guardado, {nome}."
 
-#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
-msgid "por preencher"
-msgstr "por preencher"
-
 #: src/features/registar-resultados/ui/tabela-resultados.tsx
 msgid "Por registar"
 msgstr "Por registar"
@@ -4726,6 +4782,14 @@ msgstr "Por registar"
 #: src/features/matricular-estudante/ui/passo-dados.tsx
 msgid "Porque não é o mesmo estudante?"
 msgstr "Porque não é o mesmo estudante?"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "portador do documento de identificação {documento}"
+msgstr "portador do documento de identificação {documento}"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "portadora do documento de identificação {documento}"
+msgstr "portadora do documento de identificação {documento}"
 
 #: src/features/matricular-estudante/ui/assistente-matricula.tsx
 msgid "Possível duplicado"
@@ -4992,9 +5056,17 @@ msgstr "Regista e matricula estudantes; consulta turmas e currículo."
 msgid "Registada"
 msgstr "Registada"
 
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "registada com o código de estudante {codigo}"
+msgstr "registada com o código de estudante {codigo}"
+
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Registada por {autor}"
 msgstr "Registada por {autor}"
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "registado com o código de estudante {codigo}"
+msgstr "registado com o código de estudante {codigo}"
 
 #: src/features/registar-ocorrencia/ui/ocorrencias-estudante.tsx
 msgid "Registar"
@@ -5463,6 +5535,10 @@ msgstr "Só se reabre com justificação, e fica registado na auditoria."
 #: src/routes/_app/anos-lectivos/index.tsx
 msgid "Só um ano está em curso de cada vez. O seguinte prepara-se por etapas."
 msgstr "Só um ano está em curso de cada vez. O seguinte prepara-se por etapas."
+
+#: src/routes/_app/imprimir/estudante.$estudanteId.tsx
+msgid "sob o acompanhamento pedagógico do director de turma {director}"
+msgstr "sob o acompanhamento pedagógico do director de turma {director}"
 
 #: src/features/renovar-matriculas/ui/renovacao-matriculas.tsx
 msgid "Sobe"
