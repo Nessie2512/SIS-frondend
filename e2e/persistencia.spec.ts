@@ -28,7 +28,12 @@ test('só os dados de referência vão para disco, e voltam ao reabrir', async (
   await expect(page.getByRole('table', { name: 'Estudantes' })).toBeVisible()
   await page.goto('/curriculo/classes')
   await expect(page.getByRole('heading', { level: 1, name: 'Ciclos e classes' })).toBeVisible()
-  await expect.poll(() => chavesEmDisco(page), { timeout: 5_000 }).toContainEqual(['classes'])
+  // As classes guardam-se por ano lectivo: ['classes', ano]
+  await expect
+    .poll(async () => (await chavesEmDisco(page)).some((c) => c[0] === 'classes'), {
+      timeout: 5_000,
+    })
+    .toBe(true)
   await page.goto('/calendario')
   await expect(page.getByRole('heading', { level: 1, name: 'Calendário' })).toBeVisible()
 
@@ -44,7 +49,7 @@ test('só os dados de referência vão para disco, e voltam ao reabrir', async (
     expect(['anos-lectivos', 'classes', 'disciplinas', 'calendario']).toContain(raiz)
   }
   // As classes vistas antes de recarregar continuam lá: voltaram do disco e foram regravadas
-  expect(chaves).toContainEqual(['classes'])
+  expect(chaves.some((c) => c[0] === 'classes')).toBe(true)
 
   // Ao reabrir, o que estava em disco entra logo na cache
   await page.reload()

@@ -14,10 +14,11 @@ import {
  */
 export function eReferencia(chave: QueryKey): boolean {
   const [raiz, segundo] = chave
-  if (chave.length === 1)
-    return raiz === 'anos-lectivos' || raiz === 'classes' || raiz === 'disciplinas'
-  if (chave.length === 2)
-    return (raiz === 'classes' && segundo === 'ciclos') || raiz === 'calendario'
+  if (raiz === 'anos-lectivos') return chave.length === 1
+  // Classes e disciplinas são por ano lectivo: ['classes', ano] e ['classes', 'ciclos', ano]
+  if (raiz === 'classes') return segundo === 'ciclos' ? chave.length <= 3 : chave.length <= 2
+  if (raiz === 'disciplinas') return chave.length <= 2
+  if (raiz === 'calendario') return chave.length === 2
   return false
 }
 

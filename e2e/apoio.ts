@@ -15,6 +15,15 @@ export async function entrar(page: Page, conta = SECRETARIA, destino = '/') {
 
 /** Sem violações WCAG 2.2 A/AA no estado actual da página (guia 6.4). */
 export async function semViolacoes(page: Page) {
+  // Diálogos que entram, tabelas que voltam a ficar opacas: o axe mede o estado final, não um
+  // fotograma a meio da transição (cores a meio caminho falham o contraste)
+  await page.waitForFunction(() =>
+    document
+      .getAnimations()
+      .every(
+        (a) => a.playState !== 'running' || a.effect?.getComputedTiming().iterations === Infinity,
+      ),
+  )
   const { violations } = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'])
     // Notificações do Sonner entram e saem com animação: avaliadas nas histórias

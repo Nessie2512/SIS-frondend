@@ -3200,6 +3200,10 @@ msgstr "Financeiro"
 msgid "Foco na pesquisa da lista"
 msgstr "Foco na pesquisa da lista"
 
+#: src/shared/ui/pre-visualizacao-impressao.tsx
+msgid "Folha a imprimir"
+msgstr "Folha a imprimir"
+
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Fora dos trimestres"
 msgstr "Fora dos trimestres"

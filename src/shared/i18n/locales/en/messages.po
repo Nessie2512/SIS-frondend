@@ -3201,6 +3201,10 @@ msgstr "Finance"
 msgid "Foco na pesquisa da lista"
 msgstr "Focus the list search"
 
+#: src/shared/ui/pre-visualizacao-impressao.tsx
+msgid "Folha a imprimir"
+msgstr "Sheet to print"
+
 #: src/features/gerir-eventos/ui/folha-dia.tsx
 msgid "Fora dos trimestres"
 msgstr "Outside the terms"

@@ -26,6 +26,7 @@ export function PreVisualizacaoImpressao({
   orientacao = 'retrato',
   children,
 }: Props) {
+  const { t } = useLingui()
   useEffect(() => {
     const anterior = document.title
     document.title = titulo
@@ -53,7 +54,14 @@ export function PreVisualizacaoImpressao({
           <Trans>Imprimir</Trans>
         </Button>
       </div>
-      <div className="-mx-6 overflow-x-auto bg-fundo px-6 pb-8 print:m-0 print:overflow-visible print:p-0">
+      {/* A folha deitada é mais larga que o ecrã: a área rola e, por isso, recebe o foco (teclado) */}
+      <div
+        role="region"
+        aria-label={t`Folha a imprimir`}
+        // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- área que rola: o teclado tem de lá chegar (axe scrollable-region-focusable)
+        tabIndex={0}
+        className="-mx-6 overflow-x-auto bg-fundo px-6 pb-8 focus-visible:ring-2 focus-visible:ring-acento focus-visible:outline-none focus-visible:ring-inset print:m-0 print:overflow-visible print:p-0"
+      >
         <article
           aria-label={titulo}
           className={cn(
