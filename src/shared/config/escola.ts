@@ -9,6 +9,8 @@ export const ESCOLA = {
   nome: 'Bright Minds Academy',
   /** Ficheiro em public/ */
   logotipo: 'escola/logotipo.jpg',
+  /** Marcador dos níveis de ensino (imagem da lista do modelo em Word) */
+  marcador: 'escola/marcador.gif',
   morada: [
     'Bairro Golf II, junto a Igreja Pentecostal',
     'Município de Belas, Kilamba Kiaxi, Luanda-Angola.',

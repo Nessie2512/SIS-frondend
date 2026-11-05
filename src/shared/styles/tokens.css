@@ -47,7 +47,7 @@
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter Variable', system-ui, sans-serif;
   /* Documentos impressos (modelos da secretaria): serifada, como no papel timbrado */
-  --font-documento: Cambria, 'Times New Roman', Georgia, serif;
+  --font-documento: Georgia, 'Times New Roman', serif;
 
   --color-fundo: #f6f6f8;
   --color-superficie: #ffffff;
@@ -335,7 +335,7 @@
     width: auto !important;
     min-height: 0 !important;
     margin: 0 !important;
-    padding: 15mm !important;
+    padding: 10mm 15mm 14mm 12.5mm !important;
     box-decoration-break: clone;
     -webkit-box-decoration-break: clone;
     border-radius: 0 !important;

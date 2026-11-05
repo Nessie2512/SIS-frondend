@@ -65,10 +65,12 @@ export function PreVisualizacaoImpressao({
         <article
           aria-label={titulo}
           className={cn(
-            'papel mx-auto flex flex-col gap-5 rounded-[2px] p-[15mm] font-documento text-[10.5pt] shadow-elevado ring-1 ring-linha',
+            'papel mx-auto flex flex-col gap-5 rounded-[2px] font-documento text-[10.5pt] shadow-elevado ring-1 ring-linha',
             orientacao === 'paisagem'
-              ? 'papel-paisagem min-h-[210mm] w-[297mm]'
-              : 'min-h-[297mm] w-[210mm]',
+              ? 'papel-paisagem min-h-[210mm] w-[297mm] p-[12mm]'
+              : // Margens do modelo em Word: 10 mm em cima, 15 à direita, 12,5 à esquerda (em baixo
+                // fica espaço para o rodapé)
+                'min-h-[297mm] w-[210mm] pt-[10mm] pr-[15mm] pb-[14mm] pl-[12.5mm]',
           )}
         >
           {children}
@@ -82,57 +84,65 @@ export function PreVisualizacaoImpressao({
   )
 }
 
-/** Marca dos níveis de ensino no papel timbrado (bandeira de quatro cores, como no modelo). */
-function MarcaNivel() {
-  return (
-    <svg aria-hidden viewBox="0 0 10 10" className="size-[2.6mm] shrink-0">
-      <rect x="4" y="0" width="5" height="5" fill="#f5c400" />
-      <rect x="0" y="4" width="5" height="4" fill="#f0607a" />
-      <rect x="4" y="5" width="5" height="5" fill="#1d2bf0" />
-      <path d="M5.5 0v10M1 6.8h9" stroke="#000" strokeWidth="1" />
-    </svg>
-  )
-}
-
 /**
- * Papel timbrado da escola, comum aos documentos impressos (modelos da secretaria): logótipo,
- * nome, morada e telefones ao centro, níveis de ensino à direita; por baixo, o título.
+ * Papel timbrado da escola, medido sobre o modelo em Word (ENROLLMENT AGREEMENT AND SCHOOL RULES
+ * ACKNOWLEDGMENT.docx): cada peça na mesma posição e tamanho, em milímetros a partir do canto da
+ * área de texto (182,5 mm de largura, margens de 12,5 e 15 mm). Na folha deitada o bloco fica
+ * centrado. Por baixo, o título do documento, como no modelo.
  */
 export function CabecalhoImpressao({ titulo }: { titulo: string }) {
   const { t, i18n } = useLingui()
   const telefones = ESCOLA.telefones.join(', ')
+  const base = import.meta.env.BASE_URL
   return (
-    <header className="flex flex-col items-center gap-4">
-      <div className="grid w-full grid-cols-[1fr_auto_1fr] items-center gap-6">
+    <header className="flex flex-col">
+      <div className="relative mx-auto h-[37.7mm] w-[182.5mm] shrink-0">
         <img
-          src={`${import.meta.env.BASE_URL}${ESCOLA.logotipo}`}
+          src={`${base}${ESCOLA.logotipo}`}
           alt={t`Logótipo da escola`}
-          className="h-[24mm] w-auto justify-self-center"
+          className="absolute top-0 left-[15.9mm] h-[26.3mm] w-[21.1mm]"
         />
-        <div className="flex flex-col items-center text-center">
-          <p className="text-[15pt] leading-tight font-bold tracking-wide text-[#0b2a6f] uppercase">
-            {ESCOLA.nome}
-          </p>
-          <div className="mt-1 text-[7.5pt] leading-snug text-[#c00012]">
-            {ESCOLA.morada.map((linha) => (
-              <p key={linha}>{linha}</p>
-            ))}
-            <p>{t`Telefone: ${telefones}`}</p>
-          </div>
+        {/* Nome: caixa de 97,8 mm a 38,3 mm, Georgia 18 pt negrito, azul-escuro */}
+        <p className="absolute top-[1.5mm] left-[38.3mm] w-[97.8mm] px-[2.54mm] text-center font-[Georgia,'Times_New_Roman',serif] text-[18pt] leading-[1.15] font-bold text-[#002060] uppercase">
+          {ESCOLA.nome}
+        </p>
+        {/* Morada e telefones: caixa de 76,7 mm a 47,3 mm, Georgia 8 pt, vermelho-escuro */}
+        <div className="absolute top-[12.2mm] left-[47.3mm] w-[76.7mm] px-[2.54mm] text-center font-[Georgia,'Times_New_Roman',serif] text-[8pt] leading-[1.14] text-[#c00000]">
+          {ESCOLA.morada.map((linha) => (
+            <p key={linha}>{linha}</p>
+          ))}
+          <p>{t`Telefone: ${telefones}`}</p>
         </div>
+        {/* Linhas azuis (0,5 pt) que enquadram os níveis: vertical à esquerda e horizontal em baixo */}
+        <span
+          aria-hidden
+          className="absolute top-0 left-[141.1mm] h-[26.2mm] border-l-[0.5pt] border-[#4472c4]"
+        />
+        <span
+          aria-hidden
+          className="absolute top-[26.2mm] left-[136.4mm] w-[33.4mm] border-t-[0.5pt] border-[#4472c4]"
+        />
+        {/* Níveis de ensino: Cambria 12 pt negrito, com o marcador de imagem do modelo */}
         <ul
           aria-label={t`Níveis de ensino`}
-          className="flex flex-col gap-0.5 justify-self-start border-b border-l border-[#6b8ed6] pr-8 pb-3 pl-2 text-[8pt] font-bold"
+          className="absolute top-[1.3mm] left-[137.8mm] font-[Cambria,Georgia,serif] text-[12pt] leading-[1.26] font-bold whitespace-nowrap"
         >
           {ESCOLA.niveis.map((nivel) => (
-            <li key={nivel.id} className="flex items-center gap-1.5">
-              <MarcaNivel />
-              {i18n._(nivel)}
+            <li key={nivel.id} className="flex items-center">
+              <img
+                src={`${base}${ESCOLA.marcador}`}
+                alt=""
+                className="ml-[6.35mm] size-[11.25pt] shrink-0"
+              />
+              <span className="pl-[2.4mm]">{i18n._(nivel)}</span>
             </li>
           ))}
         </ul>
       </div>
-      <h2 className="text-[13pt] leading-tight font-bold uppercase">{titulo}</h2>
+      {/* Título: Georgia 11 pt negrito, centrado */}
+      <h2 className="text-center font-[Georgia,'Times_New_Roman',serif] text-[11pt] leading-tight font-bold uppercase">
+        {titulo}
+      </h2>
     </header>
   )
 }
