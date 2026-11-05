@@ -14,6 +14,8 @@ export const ESCOLA = {
     'Município de Belas, Kilamba Kiaxi, Luanda-Angola.',
   ],
   telefones: ['927690224', '947410603', '923933866'],
+  /** Rodapé de todas as páginas impressas */
+  rodape: 'SIS system powered by Serve.io | Bright Minds Academy',
   niveis: [msg`Creche`, msg`Jardim de infância`, msg`Ensino primário`, msg`I ciclo do secundário`],
 } as const
 /* eslint-enable lingui/no-unlocalized-strings */

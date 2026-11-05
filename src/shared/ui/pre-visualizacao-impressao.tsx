@@ -72,6 +72,10 @@ export function PreVisualizacaoImpressao({
           )}
         >
           {children}
+          {/* No papel fica fixo no fundo e repete-se em todas as páginas (ver .rodape-documento) */}
+          <footer className="rodape-documento mt-auto pt-4 text-center text-[8pt] text-texto-3">
+            {ESCOLA.rodape}
+          </footer>
         </article>
       </div>
     </div>

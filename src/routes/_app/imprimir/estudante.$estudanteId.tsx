@@ -4,7 +4,7 @@ import { Trans, useLingui } from '@lingui/react/macro'
 import { useQuery } from '@tanstack/react-query'
 import { createFileRoute, Link, notFound } from '@tanstack/react-router'
 import { ChevronLeft } from 'lucide-react'
-import type { ReactNode } from 'react'
+import { Fragment, type ReactNode } from 'react'
 import { anosLectivosQuery } from '@/entities/ano-lectivo'
 import { encarregadosQuery, estudanteQuery, formatarTelefone } from '@/entities/estudante'
 import { turmaQuery } from '@/entities/turma'
@@ -42,19 +42,19 @@ export const Route = createFileRoute('/_app/imprimir/estudante/$estudanteId')({
   component: FichaImpressa,
 })
 
-/** Dado preenchido a negrito; em falta, uma linha para completar à mão. */
-function Valor({ children }: { children?: ReactNode }) {
-  if (children === null || children === undefined || children === '' || children === '—') {
-    return (
-      <span
-        aria-label={i18n._(msg`por preencher`)}
-        className="inline-block w-[38mm] border-b border-current align-baseline"
-      >
-        &nbsp;
-      </span>
-    )
-  }
+/** Dado vindo do servidor, a negrito. */
+function Valor({ children }: { children: ReactNode }) {
   return <strong>{children}</strong>
+}
+
+/** Junta os pedaços de uma frase, só os que têm dados: «a, b ou c». */
+function Enumeracao({ itens, ou }: { itens: ReactNode[]; ou: string }) {
+  return itens.map((item, i) => (
+    <Fragment key={i}>
+      {i > 0 && (i === itens.length - 1 ? ` ${ou} ` : ', ')}
+      {item}
+    </Fragment>
+  ))
 }
 
 function Seccao({ titulo, children }: { titulo: string; children: ReactNode }) {
@@ -118,20 +118,90 @@ function FichaImpressa() {
     (x) => x !== principal && x.telefone && x.telefone !== principal?.telefone,
   )
 
+  // Só entra no termo o que o servidor tem: o que falta não aparece, nem como espaço a preencher
+  const preenchido = (v: string | null | undefined): v is string => Boolean(v?.trim()) && v !== '—'
+  const feminino = e.sexo === 'F'
   const estudante = <Valor>{nome}</Valor>
-  const encarregado = <Valor>{principal?.nome}</Valor>
+  const encarregado = principal && preenchido(principal.nome) ? principal : null
+  const nomeEncarregado = <Valor>{encarregado?.nome}</Valor>
   const nascimento = <Valor>{formatarDataCivil(e.dataNascimento)}</Valor>
   const documento = <Valor>{e.documentoIdentificacao}</Valor>
   const codigo = <Valor>{e.numeroProcesso}</Valor>
-  const classeTurma = (
-    <Valor>{turma ? `${turma.classe}, ${t`turma`} ${turma.designacao}` : e.matricula}</Valor>
-  )
-  const director = <Valor>{turma?.directorTurma?.nome}</Valor>
-  const biEncarregado = <Valor />
+  const textoTurma = turma
+    ? `${turma.classe}, ${t`turma`} ${turma.designacao}`
+    : preenchido(e.matricula)
+      ? e.matricula
+      : null
+  const classeTurma = <Valor>{textoTurma}</Valor>
+  const nomeDirector = turma?.directorTurma?.nome
+  const director = <Valor>{nomeDirector}</Valor>
   const morada = <Valor>{e.morada}</Valor>
-  const telefone = <Valor>{formatarTelefone(principal?.telefone ?? null)}</Valor>
+  const telefone = <Valor>{formatarTelefone(encarregado?.telefone ?? null)}</Valor>
   const telefoneAlternativo = <Valor>{formatarTelefone(alternativo?.telefone ?? null)}</Valor>
-  const email = <Valor>{principal?.email}</Valor>
+  const email = <Valor>{encarregado?.email}</Valor>
+
+  // 1. Informação do estudante: uma oração por dado que existe
+  const identificacao: ReactNode[] = [
+    encarregado ? (
+      feminino ? (
+        <Trans key="enc">
+          {nomeEncarregado} actua na qualidade de encarregado de educação da estudante {estudante}
+        </Trans>
+      ) : (
+        <Trans key="enc">
+          {nomeEncarregado} actua na qualidade de encarregado de educação do estudante {estudante}
+        </Trans>
+      )
+    ) : feminino ? (
+      <Trans key="enc">A estudante {estudante}</Trans>
+    ) : (
+      <Trans key="enc">O estudante {estudante}</Trans>
+    ),
+    feminino ? (
+      <Trans key="sexo">do sexo feminino</Trans>
+    ) : (
+      <Trans key="sexo">do sexo masculino</Trans>
+    ),
+    feminino ? (
+      <Trans key="nasc">nascida em {nascimento}</Trans>
+    ) : (
+      <Trans key="nasc">nascido em {nascimento}</Trans>
+    ),
+  ]
+  if (preenchido(e.documentoIdentificacao))
+    identificacao.push(
+      feminino ? (
+        <Trans key="doc">portadora do documento de identificação {documento}</Trans>
+      ) : (
+        <Trans key="doc">portador do documento de identificação {documento}</Trans>
+      ),
+    )
+  const registo: ReactNode[] = []
+  if (preenchido(e.numeroProcesso))
+    registo.push(
+      feminino ? (
+        <Trans key="cod">registada com o código de estudante {codigo}</Trans>
+      ) : (
+        <Trans key="cod">registado com o código de estudante {codigo}</Trans>
+      ),
+    )
+  if (textoTurma)
+    registo.push(
+      feminino ? (
+        <Trans key="mat">matriculada em {classeTurma} no presente ano lectivo</Trans>
+      ) : (
+        <Trans key="mat">matriculado em {classeTurma} no presente ano lectivo</Trans>
+      ),
+    )
+
+  // 2. Encarregado: contactos que existem, «telefone, alternativo ou e-mail»
+  const contactos: ReactNode[] = []
+  if (preenchido(encarregado?.telefone))
+    contactos.push(<Trans key="tel">pelo telefone principal {telefone}</Trans>)
+  if (preenchido(alternativo?.telefone))
+    contactos.push(<Trans key="alt">pelo telefone alternativo {telefoneAlternativo}</Trans>)
+  if (preenchido(encarregado?.email)) contactos.push(<Trans key="email">pelo e-mail {email}</Trans>)
+  const ou = t`ou`
 
   return (
     <PreVisualizacaoImpressao
@@ -148,51 +218,64 @@ function FichaImpressa() {
       }
     >
       <CabecalhoImpressao titulo={t`Termo de matrícula e de aceitação do regulamento escolar`} />
-      <p className="font-bold">
-        <Trans>Ano lectivo: {ano}</Trans>
-      </p>
+      {ano && (
+        <p className="font-bold">
+          <Trans>Ano lectivo: {ano}</Trans>
+        </p>
+      )}
 
       <Seccao titulo={t`1. Informação do estudante`}>
-        {e.sexo === 'F' ? (
-          <p className={classeParagrafo}>
-            <Trans>
-              {encarregado} actua na qualidade de encarregado de educação da estudante {estudante},
-              do sexo feminino, nascida em {nascimento}, portadora do documento de identificação{' '}
-              {documento}. Com a assinatura deste termo, a estudante fica registada com o código de
-              estudante {codigo} e matriculada em {classeTurma} no presente ano lectivo, sob o
-              acompanhamento pedagógico do director de turma {director}.
-            </Trans>
-          </p>
-        ) : (
-          <p className={classeParagrafo}>
-            <Trans>
-              {encarregado} actua na qualidade de encarregado de educação do estudante {estudante},
-              do sexo masculino, nascido em {nascimento}, portador do documento de identificação{' '}
-              {documento}. Com a assinatura deste termo, o estudante fica registado com o código de
-              estudante {codigo} e matriculado em {classeTurma} no presente ano lectivo, sob o
-              acompanhamento pedagógico do director de turma {director}.
-            </Trans>
-          </p>
-        )}
+        <p className={classeParagrafo}>
+          <Enumeracao itens={identificacao} ou={t`e`} />.
+          {registo.length > 0 && (
+            <>
+              {' '}
+              {feminino ? (
+                <Trans>Com a assinatura deste termo, a estudante fica</Trans>
+              ) : (
+                <Trans>Com a assinatura deste termo, o estudante fica</Trans>
+              )}{' '}
+              <Enumeracao itens={registo} ou={t`e`} />
+              {nomeDirector ? (
+                <>
+                  , <Trans>sob o acompanhamento pedagógico do director de turma {director}</Trans>
+                </>
+              ) : null}
+              .
+            </>
+          )}
+        </p>
       </Seccao>
 
-      <Seccao titulo={t`2. Informação do encarregado de educação`}>
-        <p className={classeParagrafo}>
-          <Trans>
-            Este termo diz respeito a {encarregado}, titular do bilhete de identidade n.º{' '}
-            {biEncarregado}, que actua em plena capacidade legal como encarregado de educação
-            principal do estudante matriculado.
-          </Trans>
-        </p>
-        <p className={classeParagrafo}>
-          <Trans>
-            O encarregado de educação principal tem residência permanente em {morada}. Para
-            comunicações oficiais, avisos administrativos e correspondência corrente, a
-            administração da escola pode contactá-lo directamente pelo telefone principal {telefone}
-            , pelo telefone alternativo {telefoneAlternativo} ou pelo e-mail {email}.
-          </Trans>
-        </p>
-      </Seccao>
+      {encarregado && (
+        <Seccao titulo={t`2. Informação do encarregado de educação`}>
+          <p className={classeParagrafo}>
+            <Trans>
+              Este termo diz respeito a {nomeEncarregado}, que actua em plena capacidade legal como
+              encarregado de educação principal do estudante matriculado.
+            </Trans>
+          </p>
+          {(preenchido(e.morada) || contactos.length > 0) && (
+            <p className={classeParagrafo}>
+              {preenchido(e.morada) && (
+                <Trans>
+                  O encarregado de educação principal tem residência permanente em {morada}.
+                </Trans>
+              )}
+              {preenchido(e.morada) && contactos.length > 0 && ' '}
+              {contactos.length > 0 && (
+                <>
+                  <Trans>
+                    Para comunicações oficiais, avisos administrativos e correspondência corrente, a
+                    administração da escola pode contactá-lo directamente
+                  </Trans>{' '}
+                  <Enumeracao itens={contactos} ou={ou} />.
+                </>
+              )}
+            </p>
+          )}
+        </Seccao>
+      )}
 
       <Seccao titulo={t`3. Regulamento escolar e código de conduta`}>
         <p className="text-justify">
