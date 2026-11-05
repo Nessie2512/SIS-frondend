@@ -53,6 +53,11 @@ export interface Inscrito {
   porConfirmar?: boolean
   /** Já matriculado na turma e sem forma de mudar (backend SIS: não há rota para mover) */
   fixo?: boolean
+  /** Para a lista nominal (backend SIS): idioma preferencial e nacionalidade */
+  idioma?: string | null
+  nacionalidade?: string | null
+  /** Contactos dos pais, o do encarregado principal primeiro (backend SIS) */
+  contactos?: string[]
 }
 
 /** Disciplina do plano com o docente em vigor e o histórico de substituições (guia 2.3). */

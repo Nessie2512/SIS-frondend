@@ -46,6 +46,8 @@
 @theme {
   --font-sans:
     -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter Variable', system-ui, sans-serif;
+  /* Documentos impressos (modelos da secretaria): serifada, como no papel timbrado */
+  --font-documento: Cambria, 'Times New Roman', Georgia, serif;
 
   --color-fundo: #f6f6f8;
   --color-superficie: #ffffff;
@@ -278,6 +280,15 @@
 /* Impressão (guia 7.6): listas nominais e fichas imprimem-se limpas, sem casca nem cor de fundo */
 @page {
   margin: 15mm;
+}
+
+/* Listas largas (lista nominal): A4 deitada */
+@page paisagem {
+  size: A4 landscape;
+  margin: 12mm;
+}
+.papel-paisagem {
+  page: paisagem;
 }
 
 @media print {

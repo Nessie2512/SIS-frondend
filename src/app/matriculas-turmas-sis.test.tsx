@@ -56,30 +56,80 @@ describe('Matrículas no backend SIS (GET /enrollments)', () => {
 })
 
 describe('Impressão com o backend SIS', () => {
-  it('lista nominal: os estudantes matriculados na turma', async () => {
-    renderizarEm('/imprimir/turma/turma-7a')
-    const lista = await screen.findByRole(
-      'table',
-      { name: 'Estudantes da turma 7.ª A' },
-      { timeout: 10_000 },
-    )
-    expect(within(lista).getByRole('row', { name: /1 BMA20260001 João Baptista/ }))
-    expect(within(lista).queryByText('Conceição Neto')).toBeNull()
+  it('lista nominal no modelo da escola: turma, director e contactos dos pais', async () => {
+    const turma = turmasSis.find((t) => t.uuid === 'turma-7a')!
+    turma.director = 'Mário Kiala'
+    try {
+      renderizarEm('/imprimir/turma/turma-7a')
+      const lista = await screen.findByRole(
+        'table',
+        { name: 'Estudantes da turma 7.ª A' },
+        { timeout: 10_000 },
+      )
+      expect(
+        within(lista)
+          .getAllByRole('columnheader')
+          .map((c) => c.textContent),
+      ).toEqual([
+        'N.º',
+        'Nome',
+        'Código de estudante',
+        'Idioma preferencial',
+        'Contactos dos pais',
+        'Nacionalidade',
+      ])
+      // O contacto do encarregado principal (a mãe) vem primeiro
+      const linhas = within(lista).getAllByRole('row').slice(1)
+      expect(linhas).toHaveLength(1)
+      expect(
+        within(linhas[0]!)
+          .getAllByRole('cell')
+          .map((c) => c.textContent),
+      ).toEqual([
+        '1',
+        'João Baptista',
+        'BMA20260001',
+        'Português',
+        '+244 923 000 002+244 923 000 001',
+        'Angolana',
+      ])
+      expect(within(lista).queryByText('Conceição Neto')).toBeNull()
+      expect(
+        screen.getByText(/Turma: 7\.ª A\s*\|\s*Director de turma: Mário Kiala/),
+      ).toBeInTheDocument()
+      expect(screen.getByRole('heading', { name: 'Lista de estudantes' })).toBeInTheDocument()
+      expect(screen.getByRole('img', { name: 'Logótipo da escola' })).toBeInTheDocument()
+    } finally {
+      turma.director = null
+    }
   })
 
-  it('ficha do estudante: dados, matrícula do ano, pai e mãe; sem documentos nem percurso', async () => {
+  it('ficha do estudante: termo de matrícula com o encarregado principal e a turma', async () => {
     renderizarEm('/imprimir/estudante/est-1')
     expect(
-      await screen.findByRole('heading', { name: 'Ficha do estudante' }, { timeout: 10_000 }),
+      await screen.findByRole(
+        'heading',
+        { name: 'Termo de matrícula e de aceitação do regulamento escolar' },
+        { timeout: 10_000 },
+      ),
     ).toBeInTheDocument()
-    expect(screen.getByText(/7\.ª classe · 7\.ª A/)).toBeInTheDocument()
-    const encarregados = screen.getByRole('heading', {
-      name: 'Encarregados de educação',
+    const estudante = screen.getByRole('heading', {
+      name: '1. Informação do estudante',
     }).parentElement!
-    expect(within(encarregados).getByText('Pai')).toBeInTheDocument()
-    expect(within(encarregados).getByText('Mãe')).toBeInTheDocument()
+    expect(estudante).toHaveTextContent(
+      /Mãe actua na qualidade de encarregado de educação do estudante João Baptista, do sexo masculino/,
+    )
+    expect(estudante).toHaveTextContent(/código de estudante BMA20260001/)
+    expect(estudante).toHaveTextContent(/matriculado em 7\.ª classe, turma 7\.ª A/)
+    const encarregado = screen.getByRole('heading', {
+      name: '2. Informação do encarregado de educação',
+    }).parentElement!
+    expect(encarregado).toHaveTextContent(
+      /telefone principal \+244 923 000 002, pelo telefone alternativo \+244 923 000 001/,
+    )
+    // O BI do encarregado e o e-mail não existem no sistema: ficam para preencher à mão
+    expect(within(encarregado).getAllByLabelText('por preencher')).toHaveLength(2)
     expect(screen.queryByRole('heading', { name: 'Documentos' })).toBeNull()
-    expect(screen.queryByRole('heading', { name: 'Percurso' })).toBeNull()
   })
 })
 

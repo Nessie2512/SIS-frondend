@@ -69,6 +69,14 @@ export function turmaQuery(id: string, anoLectivoId?: string) {
   })
 }
 
+/** Contacto do encarregado principal primeiro, depois o outro dos pais, sem repetir. */
+function contactosDosPais(e: EstudanteSis): string[] {
+  const todos = [e.primaryGuardian, e.fatherContact, e.motherContact]
+    .map((c) => c?.trim())
+    .filter((c): c is string => Boolean(c))
+  return [...new Set(todos)]
+}
+
 export function inscritosQuery(turmaId: string) {
   return queryOptions({
     queryKey: turmaKeys.inscritos(turmaId),
@@ -87,6 +95,9 @@ export function inscritosQuery(turmaId: string) {
           nome: e.name,
           numeroProcesso: e.studentCode ?? '',
           fotografiaUrl: null,
+          idioma: e.bestLanguage || null,
+          nacionalidade: e.nationality || null,
+          contactos: contactosDosPais(e),
         }))
       }
       const { data } = await api.GET('/turmas/{id}/inscritos', {
